@@ -1,0 +1,30 @@
+<?php
+// Set page character encoding to Unicode.
+$frontController = Zend_Controller_Front::getInstance();
+$response        = $frontController->getResponse();
+$charset         = $this->getEncoding();
+
+$response->setHeader('Content-type', "text/html; charset=$charset");
+$this->headMeta()->setCharset($charset);
+
+// Set the page title.
+$this->headTitle($this->pageTitle)
+     ->headTitle("Society of St. Vincent de Paul")
+     ->setSeparator(" :: ");
+
+// Render <head> elements.
+echo $this->doctype(),    "\n";
+echo $this->headMeta(),   "\n";
+echo $this->headTitle(),  "\n";
+echo $this->headLink(),   "\n";
+echo $this->headScript(), "\n";
+?>
+<header>
+    <h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>
+</header>
+<div id=content>
+    <?php
+        // Write out page content specific to the current controller/action.
+        echo $this->layout()->content;
+    ?>
+</div>
