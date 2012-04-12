@@ -12,6 +12,9 @@ $this->headTitle($this->pageTitle)
      ->headTitle("Society of St. Vincent de Paul")
      ->setSeparator(" :: ");
 
+// Use the main stylesheet.
+$this->headLink()->prependStylesheet($this->baseUrl('main.css'), 'all');
+
 // Render <head> elements.
 echo $this->doctype(),    "\n";
 echo $this->headMeta(),   "\n";
