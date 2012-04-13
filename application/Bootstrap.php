@@ -2,15 +2,14 @@
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
-    Zend_Session::start();
+    public function init(){
+        Zend_Session::start();
+    }
     
-    protected function _initConfig()
-    {
-        /*
-        Load configuration data
-        Zend_Registry::set('logo',$logo);
-        Zend_Registry::set('organization',$logo);
-        */
+    private function _initView(){
+        $this->boostrap('view');
+        $view = $this->getResource('view');
+        $view->pageTitle('test');
     }
 }
 

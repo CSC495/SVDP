@@ -6,7 +6,7 @@ class LoginController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
-        $this->view->pagetitle = "Login page";
+        $this->view->pageTitle = "Login page";
     }
 
     public function indexAction()
@@ -40,7 +40,7 @@ class LoginController extends Zend_Controller_Action
         
         // Setting Sessions Username
         $sessionNamespace = new Zend_Session_Namespace();
-        $sessionNamespace-> userID = $userid;
+        $sessionNamespace->userID = $userid;
         $valid = true;
         
         // Check if user name and what not is valid.
