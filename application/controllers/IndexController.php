@@ -6,11 +6,11 @@ class IndexController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
-        // Load site image into session
+        //$this->view->pageTitle = "Index";
     }
 
     public function indexAction()
     {
-        $this->redirect('/login/index');
+        $this->_helper->redirector('index','login');
     }
 }
