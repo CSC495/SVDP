@@ -56,8 +56,9 @@ class LoginController extends Zend_Controller_Action
         $form = new Application_Model_LoginForm();
         $form->populate($_POST);
 
+        // Check if the password forgot button was pressed
         if($form->forgot->isChecked()){
-            $this->_redirect('/login/index/forgot/true');
+            $this->_redirect('/login/index/forgot/TRUE');
         }
 
         // Validate username and password for matching criteria

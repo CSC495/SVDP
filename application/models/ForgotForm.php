@@ -5,7 +5,7 @@ class Application_Model_ForgotForm extends Zend_Form
 	public function __construct($options = null){
 		parent::__construct($options);
 		$this->setName('forgot');
-		$this->setAttrib('id');
+		$this->setAttrib('id', 'forgot');
 		$this->setMethod('post');
 		$this->setAction('/SVDP/public/login/forgot');
 		
@@ -24,7 +24,7 @@ class Application_Model_ForgotForm extends Zend_Form
                $login = $this->addElement('submit', 'proceed', array(
                    'required' => false,
                    'ignore'   => true,
-                   'label'    => 'Submit',
+                   'label'    => 'E-mail Password',
                 ));
                
 	}
