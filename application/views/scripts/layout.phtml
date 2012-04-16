@@ -21,10 +21,22 @@ echo $this->headMeta(),   "\n";
 echo $this->headTitle(),  "\n";
 echo $this->headLink(),   "\n";
 echo $this->headScript(), "\n";
+
+// Get any unread flash messages.
+$flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+$messages       = $flashMessenger->hasCurrentMessages()
+                ? $flashMessenger->getCurrentMessages()
+                : $flashMessenger->getMessages();
 ?>
 <header>
     <h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>
 </header>
+<?php
+foreach ($messages as $message) {
+    // Write each flash message as a top-level alert.
+    echo '<p class=alert>' . $this->escape($message) . '</p>';
+}
+?>
 <div id=content>
     <?php
         // Write out page content specific to the current controller/action.
