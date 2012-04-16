@@ -9,10 +9,14 @@ class LoginController extends Zend_Controller_Action
     //
     // Check for person
     // Zend_Auth::getInstance()->hasIdentity();
+    
+    // ACL
+    // http://stackoverflow.com/questions/545702/help-with-zend-acl
+    // http://devzone.zend.com/1258/zend_acl-and-mvc-integration-part-i-basic-use/
     public function init()
     {
         /* Initialize action controller here */
-        $this->view->pageTitle = "Login page";
+        $this->view->pageTitle = "Login Page";
     }
 
     public function preDispath()
@@ -26,21 +30,14 @@ class LoginController extends Zend_Controller_Action
     public function indexAction()
     {
         $this->view->error_flag = $this->getRequest()->getParam('error_flag');
-        
-        // Check for forgot password
-        if( $this->getRequest()->getParam('forgot') ){
-            $this->view->form = new Application_Model_ForgotForm();
-        }
-        else{  
-            $this->view->form = new Application_Model_LoginForm();
-        }
-        
-        
+        $this->view->form = new Application_Model_LoginForm();
+        $this->view->pageTitle = "Login Page";
     }
     
     public function forgotAction()
     {
-        
+        $this->view->form = new Application_Model_ForgotForm();
+        $this->view->pageTitle = "Forgot Password";
     }
     
     public function processAction()
@@ -58,22 +55,26 @@ class LoginController extends Zend_Controller_Action
 
         // Check if the password forgot button was pressed
         if($form->forgot->isChecked()){
-            $this->_redirect('/login/index/forgot/TRUE');
+            $this->_helper->redirector('forgot','login');
         }
 
         // Validate username and password for matching criteria
         if( !$form->isValid( $request->getPost() ) ){
             // Redirect to login page and set error flag
             $this->_redirect('/login/index/error_flag/TRUE');
-            exit();
         }
         
         // Get user name and pass
         $userid = $form->getValue('username');
         $password = $form->getValue('password');
         
+        // Check password
+        if( !$this->isValidPassowrd($password) )
+        {
+            $this->_redirect('/login/index/error_flag/TRUE');
+        }
+        
         $this->authenticate($userid, $password);
-
     }
     
     public function logoutAction()
@@ -124,6 +125,16 @@ class LoginController extends Zend_Controller_Action
         //User was valid redirect to correct page
     }
 
-
+    protected function isValidPassword($password)
+    {
+        // Check password. Rules..
+        // One digit from 0-9
+        // one lowercase character
+        // one uppercase character
+        // and one of @,#,$,%
+        // Length of 6 to 20 characters
+        
+        return preg_match('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})', $password);
+    }
 }
 
