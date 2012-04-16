@@ -26,7 +26,6 @@ class Application_Model_LoginForm extends Zend_Form
                $password = $this->addElement('password', 'password', array(
                    'filters'    => array('StringTrim'),
                    'validators' => array(
-                       'Alnum',
                        array('StringLength', false, array(6, 20)),
                    ),
                    'required'   => true,
