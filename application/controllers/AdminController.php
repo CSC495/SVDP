@@ -10,6 +10,8 @@ class AdminController extends Zend_Controller_Action
     
     public function indexAction()
     {
-        $this->_helper->redirector('index','login');
+        $this->view->pageTitle = "Admin Controller";
+        $auth = Zend_Auth::getInstance();
+        $this->view->role = $auth->getIdentity()->role;
     }
 }

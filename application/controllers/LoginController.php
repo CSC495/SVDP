@@ -9,23 +9,10 @@ class LoginController extends Zend_Controller_Action
     //
     // Check for person
     // Zend_Auth::getInstance()->hasIdentity();
-    
-    // ACL
-    // http://stackoverflow.com/questions/545702/help-with-zend-acl
-    // http://devzone.zend.com/1258/zend_acl-and-mvc-integration-part-i-basic-use/
     public function init()
     {
         /* Initialize action controller here */
         $this->view->pageTitle = "Login Page";
-    }
-
-    public function preDispath()
-    {
-        // Check if already logged in
-        if( Zend_Auth::getInstance()->hasIdentity() )
-        {
-            // Redirect to their appropriate page
-        }
     }
     public function indexAction()
     {
@@ -43,7 +30,7 @@ class LoginController extends Zend_Controller_Action
     public function processAction()
     {
         $request = $this->getRequest();
-    
+
         // If there isnt a post request go back to index
         if( !$request->isPost() ){
             return $this->_helper->redirector('index');
@@ -69,10 +56,10 @@ class LoginController extends Zend_Controller_Action
         $password = $form->getValue('password');
         
         // Check password
-        if( !$this->isValidPassowrd($password) )
-        {
-            $this->_redirect('/login/index/error_flag/TRUE');
-        }
+        //if( !$this->isValidPassowrd($password) )
+        //{
+        //    $this->_redirect('/login/index/error_flag/TRUE');
+        //}
         
         $this->authenticate($userid, $password);
     }
@@ -86,32 +73,31 @@ class LoginController extends Zend_Controller_Action
     
     protected function getAuthAdapter()
     {
-        // TODO:
-        // Get database adapter
-        $dbAdapter = null;
+        // Get the database adapter
+        $registry = Zend_Registry::getInstance();
+        $adapter = new Zend_Auth_Adapter_DbTable($registry->db);
         
-        // Set instance parameters
-        $authAdapter = new Zend_Auth_Adapter_DbTable(
-            $dbAdapter,
-            'users',
-            'username',
-            'password'
-        );
-        
-        return($authAdapter);
+        // Set the parameters
+        $adapter
+            ->setTableName('user')
+            ->setIdentityColumn('user_id')
+            ->setCredentialColumn('password')
+        ;
+        return($adapter);
     }
     protected function authenticate($userid, $password)
     {
         $auth = Zend_Auth::getInstance();
         $authAdapter = $this->getAuthAdapter();
         
+        // Set the user inputed values
         $authAdapter
             ->setIdentity($userid)
             ->setCredential($password)
         ;
         
         // Authenticate the user
-        $result = $auth->authenticate($adapter);
+        $result = $auth->authenticate($authAdapter);
         
         // Check for invalid result
         if( !$result->isValid() ){
@@ -119,10 +105,29 @@ class LoginController extends Zend_Controller_Action
             
             // redirect to login
             $this->_redirect('/login/index/error_flag/TRUE');
-            //return($this->render('index') );
         }
         
+        // Erase the password in cache.
+        $data = $authAdapter->getResultRowObject(null,'password');
+        $auth->getStorage()->write($data);
+        
         //User was valid redirect to correct page
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        $identity->role = $authAdapter->getResultRowObject('role')->role;
+
+        //Redirect accordinly
+        $switch( $identity->role)
+        {
+            case App_Roles::MEMBER:
+                $this->_helper->redirector('index','member');
+                break;
+            case App_Roles::ADMIN:
+                $this->_helper->redirector('index','admin');
+                break;
+            case App_Roles::TREASURER:
+                $this->_helper->redirector('index','treasurer');
+                break;
+        }
     }
 
     protected function isValidPassword($password)
@@ -133,7 +138,7 @@ class LoginController extends Zend_Controller_Action
         // one uppercase character
         // and one of @,#,$,%
         // Length of 6 to 20 characters
-        
+        return(true);
         return preg_match('((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,20})', $password);
     }
 }
