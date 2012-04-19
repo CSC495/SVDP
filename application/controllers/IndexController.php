@@ -11,6 +11,6 @@ class IndexController extends Zend_Controller_Action
 
     public function indexAction()
     {
-        $this->_helper->redirector('index','login');
+        $this->_helper->redirector('login','login');
     }
 }
