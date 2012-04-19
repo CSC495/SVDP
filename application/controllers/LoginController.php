@@ -14,8 +14,12 @@ class LoginController extends Zend_Controller_Action
         /* Initialize action controller here */
         $this->view->pageTitle = "Login Page";
     }
-    public function indexAction()
+    public function loginAction()
     {
+        // Forwards the user if they are already logged on
+        $this->forwardUser();
+        
+        // Set page variables
         $this->view->error_flag = $this->getRequest()->getParam('error_flag');
         $this->view->form = new Application_Model_LoginForm();
         $this->view->pageTitle = "Login Page";
@@ -33,7 +37,7 @@ class LoginController extends Zend_Controller_Action
 
         // If there isnt a post request go back to index
         if( !$request->isPost() ){
-            return $this->_helper->redirector('index');
+            return $this->_helper->redirector('login');
         }
         
         // Get form and validate it
@@ -54,20 +58,20 @@ class LoginController extends Zend_Controller_Action
         // Get user name and pass
         $userid = $form->getValue('username');
         $password = $form->getValue('password');
-        
+
         // Check password
-        //if( !$this->isValidPassowrd($password) )
-        //{
-        //    $this->_redirect('/login/index/error_flag/TRUE');
-        //}
-        
+        if( !$this->isValidPassword($password) )
+        {
+            $this->_redirect('/login/login/error_flag/TRUE');
+        }
+
         $this->authenticate($userid, $password);
     }
     
     public function logoutAction()
     {
         // Clear credentials and redirect to login form.
-        Zend_Autho::getInstance()->clearIdentity();
+        Zend_Auth::getInstance()->clearIdentity();
         $this->_helper->redirector('index');
     }
     
@@ -102,21 +106,32 @@ class LoginController extends Zend_Controller_Action
         // Check for invalid result
         if( !$result->isValid() ){
             // User was not valid
-            
             // redirect to login
-            $this->_redirect('/login/index/error_flag/TRUE');
+            $this->_redirect('/login/login/error_flag/TRUE');
         }
         
-        // Erase the password in cache.
+        // Erase the password
         $data = $authAdapter->getResultRowObject(null,'password');
+        // Store the users data
         $auth->getStorage()->write($data);
         
-        //User was valid redirect to correct page
+        // Get the users identity
         $identity = Zend_Auth::getInstance()->getIdentity();
+        // Set the identities role
         $identity->role = $authAdapter->getResultRowObject('role')->role;
-
+        
+        $this->forwardUser();
+    }
+    
+    protected function forwardUser()
+    {
+        // If user does not have an identity return.
+        if( !Zend_Auth::getInstance()->hasIdentity())
+            return;
+        
+        $identity = Zend_Auth::getInstance()->getIdentity();
         //Redirect accordinly
-        $switch( $identity->role)
+        switch( $identity->role)
         {
             case App_Roles::MEMBER:
                 $this->_helper->redirector('index','member');
@@ -127,9 +142,10 @@ class LoginController extends Zend_Controller_Action
             case App_Roles::TREASURER:
                 $this->_helper->redirector('index','treasurer');
                 break;
+            default:
+                return;
         }
     }
-
     protected function isValidPassword($password)
     {
         // Check password. Rules..
