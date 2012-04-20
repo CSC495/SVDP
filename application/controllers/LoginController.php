@@ -52,7 +52,7 @@ class LoginController extends Zend_Controller_Action
         // Validate username and password for matching criteria
         if( !$form->isValid( $request->getPost() ) ){
             // Redirect to login page and set error flag
-            $this->_redirect('/login/index/error_flag/TRUE');
+            $this->_redirect('/login/login/error_flag/TRUE');
         }
         
         // Get user name and pass
