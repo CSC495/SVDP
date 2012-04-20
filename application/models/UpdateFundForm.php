@@ -6,7 +6,9 @@ class Application_Model_UpdateFundForm extends Zend_Form
             $this->setName('fund');
             $this->setAttrib('id', 'fund');
             $this->setMethod('post');
-            $this->setAction('/SVDP/public/admin/fundprocess');
+
+            $baseUrl = new Zend_View_Helper_BaseUrl();
+            $this->setAction($baseUrl->baseUrl('/admin/fundprocess'));
             
             // Username must consist of letters only
             //          must be between 5 and 20 characters

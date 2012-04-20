@@ -7,7 +7,9 @@ class Application_Model_AdminForm extends Zend_Form
 		$this->setName('admin');
 		$this->setAttrib('id', 'admin');
 		$this->setMethod('post');
-		$this->setAction('/SVDP/public/admin/process');
+
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+		$this->setAction($baseUrl->baseUrl('/admin/process'));
 
                 $update = $this->addElement('submit', 'user', array(
                    'required' => false,
