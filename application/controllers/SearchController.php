@@ -17,10 +17,12 @@ class SearchController extends Zend_Controller_Action
     public function memberAction()
     {
         $this->view->pageTitle = 'Client and Case Search';
+        $this->view->form      = new Application_Model_MemberSearchForm();
     }
 
     public function treasurerAction()
     {
         $this->view->pageTitle = 'Check Request Search';
+        $this->view->form      = new Application_Model_TreasurerSearchForm();
     }
 }
