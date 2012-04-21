@@ -18,11 +18,43 @@ class SearchController extends Zend_Controller_Action
     {
         $this->view->pageTitle = 'Client and Case Search';
         $this->view->form      = new Application_Model_MemberSearchForm();
+
+        $req  = $this->getRequest();
+        $form = $this->view->form;
+
+        if (!$req->isGet() || !$req->getQuery('search')) {
+            return;
+        }
+
+        if (!$form->isValid($req->getQuery())) {
+            foreach ($form->getMessages() as $elementErrors) {
+                foreach ($elementErrors as $error) {
+                    $this->_helper->flashMessenger($error);
+                }
+            }
+            return;
+        }
     }
 
     public function treasurerAction()
     {
         $this->view->pageTitle = 'Check Request Search';
-        $this->view->form      = new Application_Model_TreasurerSearchForm();
+        $this->view->form      = new Application_Model_MemberSearchForm();
+
+        $req  = $this->getRequest();
+        $form = $this->view->form;
+
+        if (!$req->isGet() || !$req->getQuery('search')) {
+            return;
+        }
+
+        if (!$form->isValid($req->getQuery())) {
+            foreach ($form->getMessages() as $elementErrors) {
+                foreach ($elementErrors as $error) {
+                    $this->_helper->flashMessenger($error);
+                }
+            }
+            return;
+        }
     }
 }
