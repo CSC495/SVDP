@@ -19,7 +19,7 @@ echo $this->partial('partial/searchResultCommon.phtml', array(
     <th class=search-cell>Date</th>
     <td class=search-cell><?php echo $this->escape($this->case->getOpenedDate()); ?></td>
     <th class=search-cell>Status</th>
-    <td class=search-cell>[TODO]</td>
+    <td class=search-cell><?php echo $this->escape($this->case->getStatus()); ?></td>
     <td rowspan=2 class='search-cell last'></td>
 </tr>
 <tr class='search-result <?php echo $rowStripeClass; ?>'>

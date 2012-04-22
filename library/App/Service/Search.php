@@ -245,6 +245,7 @@ class App_Service_Search
             ->from(array('s' => 'client_case'), array(
                 's.case_id',
                 's.opened_date',
+                's.status',
             ))
             ->join(
                 array('n' => 'case_need'),
@@ -373,6 +374,7 @@ class App_Service_Search
             $case
                 ->setId($dbResult['case_id'])
                 ->setOpenedDate($dbResult['opened_date'])
+                ->setStatus($dbResult['status'])
                 ->setNeedList($dbResult['need_list'])
                 ->setTotalAmount($dbResult['total_amount'])
                 ->setClient($client);
