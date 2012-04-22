@@ -22,7 +22,7 @@ echo $this->partial('partial/searchResultCommon.phtml', array(
 </tr>
 <tr class='search-result <?php echo $rowStripeClass; ?>'>
     <th class='search-cell bot first'>Amount</th>
-    <td class='search-cell bot'><?php echo $this->escape($this->case->getTotalAmount()); ?></td>
+    <td class='search-cell bot'>$<?php echo $this->escape($this->case->getTotalAmount()); ?></td>
     <th class='search-cell bot'>Needs</th>
     <td class='search-cell bot' colspan=3><?php echo $this->escape($this->case->getNeedList()); ?></td>
 </tr>
