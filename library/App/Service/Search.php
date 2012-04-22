@@ -37,6 +37,10 @@ class App_Service_Search
         'a.zipcode',
     );
 
+    private $_doNotHelpColumns = array(
+        'do_not_help_client_id' => 'd.client_id',
+    );
+
     private $_caseColumns = array(
         's.case_id',
         's.opened_date',
@@ -154,7 +158,13 @@ class App_Service_Search
             ->join(
                 array('a' => 'address'),
                 'a.address_id = h.address_id',
-                $this->_addrColumns)
+                $this->_addrColumns
+            )
+            ->joinLeft(
+                array('d' => 'do_not_help'),
+                'c.client_id = d.client_id',
+                $this->_doNotHelpColumns
+            )
             ->where('h.current_flag = 1')
             ->order($this->_clientOrderColumns);
     }
@@ -204,7 +214,8 @@ class App_Service_Search
                 ->setCellPhone($dbResult['cell_phone'])
                 ->setHomePhone($dbResult['home_phone'])
                 ->setWorkPhone($dbResult['work_phone'])
-                ->setCurrentAddr($addr);
+                ->setCurrentAddr($addr)
+                ->setDoNotHelp($dbResult['do_not_help_client_id'] !== null);
 
             $clients[] = $client;
         }

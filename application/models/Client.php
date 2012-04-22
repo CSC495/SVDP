@@ -24,6 +24,8 @@ class Application_Model_Client
 
     private $_currentAddr = null;
 
+    private $_doNotHelp = null;
+
     /* Generic get/set methods: */
 
     public function getId()
@@ -100,6 +102,17 @@ class Application_Model_Client
     public function setCurrentAddr($currentAddr)
     {
         $this->_currentAddr = $currentAddr;
+        return $this;
+    }
+
+    public function isDoNotHelp()
+    {
+        return $this->_doNotHelp;
+    }
+
+    public function setDoNotHelp($doNotHelp)
+    {
+        $this->_doNotHelp = $doNotHelp;
         return $this;
     }
 

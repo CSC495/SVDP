@@ -6,7 +6,6 @@ $viewClientUrl  = $this->escape($this->baseUrl(App_Resources::MEMBER . '/viewCli
 echo $this->partial('partial/searchResultCommon.phtml', array(
     'rowStripeClass' => $rowStripeClass,
     'viewClientUrl' => $viewClientUrl,
-    'gotoRowSpan' => 2,
     'gotoUrl' => $viewClientUrl,
     'gotoLabel' => 'client',
     'client' => $this->client,
@@ -15,4 +14,5 @@ echo $this->partial('partial/searchResultCommon.phtml', array(
 <tr class='search-result <?php echo $rowStripeClass; ?>'>
     <th class='search-cell bot first'>Address</th>
     <td colspan=5 class='search-cell bot'><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
+    <td class='search-cell donothelp'><?php if ($this->client->isDoNotHelp()) { ?>Do not help.<?php } ?></td>
 </tr>
