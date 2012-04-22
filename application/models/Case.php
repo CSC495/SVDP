@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Model class represent a single case, which belongs to some client and which is assigned to some
- * parish member.
+ * Model class representing a single case, which belongs to some client and which is assigned to
+ * some parish member.
  *
  * Note: This class implements the fluent interface pattern, i.e., consecutive set method calls can
  * be chained together: `$case->setId(...)->setOpenedDate(...)` and so on.
@@ -13,6 +13,8 @@ class Application_Model_Case
     private $_id = null;
 
     private $_openedDate = null;
+
+    private $_status = null;
 
     private $_needList = null;
 
@@ -41,6 +43,17 @@ class Application_Model_Case
     public function setOpenedDate($openedDate)
     {
         $this->_openedDate = $openedDate;
+        return $this;
+    }
+
+    public function getStatus()
+    {
+        return $this->_status;
+    }
+
+    public function setStatus($status)
+    {
+        $this->_status = $status;
         return $this;
     }
 
