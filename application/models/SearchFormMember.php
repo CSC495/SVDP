@@ -1,10 +1,18 @@
 <?php
 
-class Application_Model_MemberSearchForm extends Application_Model_SearchForm
+/**
+ * Search form specialized for client searches performed by a member user.
+ */
+class Application_Model_SearchFormMember extends Application_Model_SearchFormAbstract
 {
 
-    private $additionalTypes = array(
-        Application_Model_SearchForm::TYPE_CLIENT_ID => array(
+    /**
+     * Search query types specific to member users.
+     *
+     * @var array
+     */
+    private $_additionalTypes = array(
+        Application_Model_SearchFormAbstract::TYPE_CLIENT_ID => array(
             'label' => 'Client ID',
             'validators' => array(
                 array('Db_RecordExists', true, array(
@@ -16,7 +24,7 @@ class Application_Model_MemberSearchForm extends Application_Model_SearchForm
                 )),
             ),
         ),
-        Application_Model_SearchForm::TYPE_CASE_ID => array(
+        Application_Model_SearchFormAbstract::TYPE_CASE_ID => array(
             'label' => 'Case ID',
             'validators' => array(
                 array('Db_RecordExists', true, array(
@@ -30,8 +38,11 @@ class Application_Model_MemberSearchForm extends Application_Model_SearchForm
         ),
     );
 
-    public function __construct($options = null)
+    /**
+     * Initializes a new instance of the `Application_Model_SearchFormMember` class.
+     */
+    public function __construct()
     {
-        parent::__construct('member', $this->additionalTypes, $options);
+        parent::__construct('member', $this->_additionalTypes);
     }
 }
