@@ -1,2 +1,6 @@
 <p>Please enter a search query to find clients and cases.</p>
 <?php echo $this->form; ?>
+
+<?php if (isset($this->clients)) { ?>
+<pre><?php echo $this->escape(print_r($this->clients, true)); ?></pre>
+<?php } ?>
