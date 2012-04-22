@@ -109,6 +109,21 @@ class App_Service_Search
     /* Check request search methods: */
 
     /**
+     * Retrieve a list of currently open check requests.
+     *
+     * @return Application_Model_CheckReq[]
+     */
+    public function getOpenCheckReqs()
+    {
+        // XXX: Check requests don't currently have a status field in the database, so we just
+        // return all open check requests. This is not desired behavior, obviously!
+        $select  = $this->initCheckReqSelect();
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCheckReqModels($results);
+    }
+
+    /**
      * Retrieve a list of check request whose first or last client names match the specified query.
      *
      * @param string $name
