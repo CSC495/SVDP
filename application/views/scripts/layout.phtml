@@ -24,9 +24,13 @@ echo $this->headScript(), "\n";
 
 // Get any unread flash messages.
 $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
-$messages       = $flashMessenger->hasCurrentMessages()
-                ? $flashMessenger->getCurrentMessages()
-                : $flashMessenger->getMessages();
+
+if ($flashMessenger->hasCurrentMessages()) {
+    $messages = $flashMessenger->getCurrentMessages();
+    $flashMessenger->clearCurrentMessages();
+} else {
+    $messages = $flashMessenger->getMessages();
+}
 ?>
 <header>
     <h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>

@@ -1,0 +1,17 @@
+<?php
+if (empty($this->checkReqs)) {
+?>
+<p>There are not any open check requests.</p>
+<?php
+} else {
+?>
+<p>Here is a summary of currently open check requests.</p>
+<table id=search-results>
+<?php
+$this->partialLoop()->setObjectKey('checkReq');
+echo $this->partialLoop('partial/searchResultCheckReq.phtml', $this->checkReqs);
+?>
+</table>
+<?php
+}
+?>
