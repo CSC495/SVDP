@@ -9,12 +9,12 @@
     width: 100%;
 }
 
-.search-result.odd {
+.search-result.even {
     background: #d4d4d4;
 }
 
 .search-cell {
-    padding: 8px 12px;
+    padding: 8px 14px;
     text-align: left;
 }
 

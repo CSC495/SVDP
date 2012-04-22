@@ -16,8 +16,8 @@ Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a ne
 ?>
 <table id=search-results>
 <?php
-        $this->partialLoop()->setObjectKey('client');
-        echo $this->partialLoop('partial/searchResultClient.phtml', $this->clients);
+$this->partialLoop()->setObjectKey('client');
+echo $this->partialLoop('partial/searchResultClient.phtml', $this->clients);
 ?>
 </table>
 <p>
