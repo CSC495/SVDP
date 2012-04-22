@@ -1,11 +1,14 @@
+<?php
+$viewClientUrl = $this->escape($this->baseUrl(App_Resources::MEMBER . '/viewClient/id/' . urlencode($this->client->getId())));
+?>
 <tr class='search-result <?php echo ($this->partialCounter % 2 == 0) ? 'even' : 'odd'; ?>'>
     <th class='search-cell top first'>Client ID</th>
-    <td class='search-cell top id'><?php echo $this->escape($this->client->getId()); ?></td>
+    <td class='search-cell top id'><a href="<?php echo $this->escape($viewClientUrl) ?>"><?php echo $this->escape($this->client->getId()); ?></a></td>
     <th class='search-cell top'>Name</th>
     <td class='search-cell top name'><?php echo $this->escape($this->client->getFullName()); ?></td>
     <th class='search-cell top'>Phone</th>
     <td class='search-cell top'><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
-    <td rowspan=2 class='search-cell top last'><a href="<?php echo $this->escape($this->baseUrl(App_Resources::MEMBER . '/viewClient/id/' . urlencode($this->client->getId()))); ?>">Go to client.</a></td>
+    <td rowspan=2 class='search-cell top last'><a href="<?php echo $this->escape($viewClientUrl); ?>">Go to client.</a></td>
 </tr>
 <tr class='search-result <?php echo ($this->partialCounter % 2 == 0) ? 'even' : 'odd'; ?>'>
     <th class='search-cell bot first'>Address</th>
