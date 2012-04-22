@@ -3,11 +3,13 @@
 echo $this->form;
 
 if (isset($this->clients)) {
+    $addClientUrl = $this->baseUrl(App_Resources::MEMBER . '/addClient');
+
     if (empty($this->clients)) {
 ?>
 <p>
 Your search query returned no results.
-Would you like to <a href="<?php echo $this->baseUrl(App_Resources::MEMBER . '/addClient'); ?>">add a new client</a>?
+Would you like to <a href="<?php echo $addClientUrl; ?>">add a new client</a>?
 </p>
 <?php
     } else {
@@ -18,6 +20,10 @@ Would you like to <a href="<?php echo $this->baseUrl(App_Resources::MEMBER . '/a
         echo $this->partialLoop('partial/searchResultClient.phtml', $this->clients);
 ?>
 </table>
+<p>
+Client not listed?
+Would you like to <a href="<?php echo $addClientUrl; ?>">add a new client</a>?
+</p>
 <?php
     }
 }
