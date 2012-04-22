@@ -9,7 +9,7 @@ if (isset($this->clients)) {
 ?>
 <p>
 Your search query returned no results.
-Would you like to <a href="<?php echo $addClientUrl; ?>">add a new client</a>?
+Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a new client</a>?
 </p>
 <?php
     } else {
@@ -22,7 +22,7 @@ Would you like to <a href="<?php echo $addClientUrl; ?>">add a new client</a>?
 </table>
 <p>
 Client not listed?
-Would you like to <a href="<?php echo $addClientUrl; ?>">add a new client</a>?
+Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a new client</a>?
 </p>
 <?php
     }
