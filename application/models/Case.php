@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Model class represent a single case, which belongs to some client and which is assigned to some
+ * parish member.
+ *
+ * Note: This class implements the fluent interface pattern, i.e., consecutive set method calls can
+ * be chained together: `$case->setId(...)->setOpenedDate(...)` and so on.
+ */
 class Application_Model_Case
 {
 
@@ -12,6 +19,8 @@ class Application_Model_Case
     private $_totalAmount = null;
 
     private $_client = null;
+
+    /* Generic get/set methods: */
 
     public function getId()
     {
