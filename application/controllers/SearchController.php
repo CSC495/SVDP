@@ -26,30 +26,40 @@ class SearchController extends Zend_Controller_Action
         $this->view->form      = new Application_Model_SearchFormMember();
 
         if ($this->validateForm()) {
-            switch ($this->view->form->getType()) {
-                // Member searches by client name retrieve a list of clients.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
-                    break;
+            $searchType  = $this->view->form->getType();
+            $searchQuery = $this->view->form->getQuery();
 
-                // Member searches by client address retrieve a list of clients.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ADDR:
-                    break;
-
-                // Member searches by client phone number retrieve a list of clients.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_PHONE:
-                    break;
-
+            switch ($searchType) {
                 // Member searches by client ID go to a single client's page.
                 case Application_Model_SearchFormAbstract::TYPE_CLIENT_ID:
                     $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
-                        'id' => $this->view->form->getQuery(),
+                        'id' => $searchQuery,
                     ));
 
                 // Member searches by case ID go to a single case's page.
                 case Application_Model_SearchFormAbstract::TYPE_CASE_ID:
                     $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
-                        'id' => $this->view->form->getQuery(),
+                        'id' => $searchQuery,
                     ));
+            }
+
+            $service = new App_Service_Search();
+
+            switch ($searchType) {
+                // Member searches by client name retrieve a list of clients.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
+                    $this->view->clients = $service->getClientsByName($searchQuery);
+                    break;
+
+                // Member searches by client address retrieve a list of clients.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ADDR:
+                    $this->view->clients = $service->getClientsByAddr($searchQuery);
+                    break;
+
+                // Member searches by client phone number retrieve a list of clients.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_PHONE:
+                    $this->view->clients = $service->getClientsByPhone($searchQuery);
+                    break;
             }
         }
     }
@@ -63,7 +73,20 @@ class SearchController extends Zend_Controller_Action
         $this->view->form      = new Application_Model_SearchFormTreasurer();
 
         if ($this->validateForm()) {
-            switch ($this->view->form->getType()) {
+            $searchType  = $this->view->form->getType();
+            $searchQuery = $this->view->form->getQuery();
+
+            switch ($searchType) {
+                // Treasurer searches by check request go to a single check request's page.
+                case Application_Model_SearchFormAbstract::TYPE_CHECK_REQ_ID:
+                    $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+                        'id' => $this->view->form->getQuery(),
+                    ));
+            }
+
+            $service = new App_Service_Search();
+
+            switch ($searchType) {
                 // Treasurer searches by client name retrieve a list of check requests.
                 case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
                     break;
@@ -83,12 +106,6 @@ class SearchController extends Zend_Controller_Action
                 // Treasurer searches by case ID retrieve a list of check requests.
                 case Application_Model_SearchFormAbstract::TYPE_CASE_ID:
                     break;
-
-                // Treasurer searches by check request go to a single check request's page.
-                case Application_Model_SearchFormAbstract::TYPE_CHECK_REQ_ID:
-                    $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
-                        'id' => $this->view->form->getQuery(),
-                    ));
             }
         }
     }
