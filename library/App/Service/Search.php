@@ -100,7 +100,7 @@ class App_Service_Search
     {
         $select  = $this->initCaseSelect()
             ->where('s.opened_user_id = ?', $userId)
-            ->where('s.status = "Open"');
+            ->where('s.status <> "Closed"');
         $results = $this->_db->fetchAssoc($select);
 
         return $this->buildCaseModels($results);
