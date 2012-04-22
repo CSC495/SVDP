@@ -148,7 +148,7 @@ class App_Service_Search
             ->from(array('c' => 'client'), $this->_clientColumns)
             ->join(
                 array('h' => 'household'),
-                'c.client_id = h.mainclient_id',
+                'c.client_id = h.mainclient_id OR c.client_id = h.spouse_id',
                 $this->_householdColumns
             )
             ->join(
@@ -165,7 +165,7 @@ class App_Service_Search
             ->from(array('c' => 'client'), $this->_clientColumns)
             ->join(
                 array('h' => 'household'),
-                'c.client_id = h.mainclient_id',
+                'c.client_id = h.mainclient_id OR c.client_id = h.spouse_id',
                 $this->_householdColumns
             )
             ->join(
