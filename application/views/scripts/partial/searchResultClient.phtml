@@ -14,5 +14,5 @@ echo $this->partial('partial/searchResultCommon.phtml', array(
 <tr class='search-result <?php echo $rowStripeClass; ?>'>
     <th class='search-cell bot first'>Address</th>
     <td colspan=5 class='search-cell bot'><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
-    <td class='search-cell donothelp'><?php if ($this->client->isDoNotHelp()) { ?>Do not help.<?php } ?></td>
+    <td class='search-cell donothelp last'><?php if ($this->client->isDoNotHelp()) { ?>Do not help.<?php } ?></td>
 </tr>
