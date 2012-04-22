@@ -62,6 +62,12 @@ class App_Service_Search
 
     /* Client search methods: */
 
+    /**
+     * Retrieve a list of clients whose first or last names match the specified query.
+     *
+     * @param string $name
+     * @return Application_Model_Client[]
+     */
     public function getClientsByName($name)
     {
         $likeName = '%' . App_Escaping::escapeLike($name) . '%';
@@ -72,6 +78,12 @@ class App_Service_Search
         return $this->buildClientModels($results);
     }
 
+    /**
+     * Retrieve a list of clients whose addresses match the specified query.
+     *
+     * @param string $addr
+     * @return Application_Model_Client[]
+     */
     public function getClientsByAddr($addr)
     {
         $likeAddr = '%' . App_Escaping::escapeLike($addr) . '%';
@@ -90,6 +102,12 @@ class App_Service_Search
         return $this->buildClientModels($results);
     }
 
+    /**
+     * Retrieve a list of clients whose cell, home, or work phone numbers match the specified query.
+     *
+     * @param string $phone
+     * @return Application_Model_Client[]
+     */
     public function getClientsByPhone($phone)
     {
         $select  = $this->initClientSelect()
@@ -106,6 +124,12 @@ class App_Service_Search
 
     /* Case search methods: */
 
+    /**
+     * Retrieve a list of open cases for the specified user.
+     *
+     * @param string $userId
+     * @return Application_Model_Case[]
+     */
     public function getOpenCasesByUserId($userId)
     {
         $select  = $this->initCaseSelect()
