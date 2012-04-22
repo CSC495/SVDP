@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Search layer for various actions that perform searches and display a summarized list of
+ * clients/cases/check requests. This includes all actions in the search controller, as well as the
+ * index actions of the member and treasurer controllers.
+ *
+ * Note: No methods in this service class should write to the database.
+ *
+ * Note: Methods in this class only populate the model fields likely to be needed when displaying
+ * short summaries of clients, cases, and check request. Complete data (e.g., full address and
+ * employment history, amounts broken down by need, etc.) will not be fetched, and any unnecessary
+ * model properties will be left set to `null`.
+ */
 class App_Service_Search
 {
 
@@ -39,11 +51,16 @@ class App_Service_Search
 
     private $_caseOrderColumns = array('c.last_name', 'c.first_name', 'c.client_id', 'n.case_id');
 
+    /**
+     * Constructs a new `App_Service_Search` object, retrieving a database connection for future
+     * use.
+     */
     public function __construct()
     {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
 
+    /* Client search methods: */
 
     public function getClientsByName($name)
     {
@@ -87,6 +104,8 @@ class App_Service_Search
         return $this->buildClientModels($results);
     }
 
+    /* Case search methods: */
+
     public function getOpenCasesByUserId($userId)
     {
         $select  = $this->initCaseSelect()
@@ -96,6 +115,8 @@ class App_Service_Search
 
         return $this->buildCaseModels($results);
     }
+
+    /* Internal helper methods: */
 
     private function initClientSelect()
     {
