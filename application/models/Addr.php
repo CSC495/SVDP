@@ -98,14 +98,28 @@ class Application_Model_Addr
      *
      * @return string
      */
-    public function getFullAddress()
+    public function getFullAddr()
     {
-        $part1 = implode(' ', array_filter(array($this->_street, $this->_apt), 'is_null'));
+        $part1 = implode(' ', array_filter(array(
+            $this->_street,
+            $this->_apt,
+        ), 'Application_Model_Addr::isNotNull'));
         $part2 = implode(', ', array_filter(array(
             $this->_city,
             $this->_state,
-            $this->_zip),
-        'is_null'));
+            $this->_zip,
+        ), 'Application_Model_Addr::isNotNull'));
         return $part1 . (($part1 !== null && $part2 !== null) ? ', ' : '') . $part2;
+    }
+
+    /**
+     * Returns `false` if the specified value is `null` and `true` if it is not.
+     *
+     * @param mixed $x
+     * @return bool
+     */
+    private static function isNotNull($x)
+    {
+        return $x !== null;
     }
 }

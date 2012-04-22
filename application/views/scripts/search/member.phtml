@@ -1,6 +1,24 @@
 <p>Please enter a search query to find clients and cases.</p>
-<?php echo $this->form; ?>
+<?php
+echo $this->form;
 
-<?php if (isset($this->clients)) { ?>
-<pre><?php echo $this->escape(print_r($this->clients, true)); ?></pre>
-<?php } ?>
+if (isset($this->clients)) {
+    if (empty($this->clients)) {
+?>
+<p>
+Your search query returned no results.
+Would you like to <a href="<?php echo $this->baseUrl(App_Resources::MEMBER . '/addClient'); ?>">add a new client</a>?
+</p>
+<?php
+    } else {
+?>
+<table id=search-results>
+<?php
+        $this->partialLoop()->setObjectKey('client');
+        echo $this->partialLoop('partial/searchResultClient.phtml', $this->clients);
+?>
+</table>
+<?php
+    }
+}
+?>

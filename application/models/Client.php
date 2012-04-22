@@ -165,9 +165,9 @@ class Application_Model_Client
      */
     public function getFormattedPhone()
     {
-        $cellPhone = getFormattedCellPhone();
-        $homePhone = getFormattedHomePhone();
-        $workPhone = getFormattedWorkPhone();
+        $cellPhone = $this->getFormattedCellPhone();
+        $homePhone = $this->getFormattedHomePhone();
+        $workPhone = $this->getFormattedWorkPhone();
         return ($cellPhone !== '') ? $cellPhone :
               (($homePhone !== '') ? $homePhone : $workPhone);
     }
