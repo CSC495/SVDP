@@ -1,0 +1,17 @@
+<?php
+if (empty($this->cases)) {
+?>
+<p>You currently have no open cases.</p>
+<?php
+} else {
+?>
+<p>Here are your current cases.</p>
+<table id=search-results>
+<?php
+$this->partialLoop()->setObjectKey('case');
+echo $this->partialLoop('partial/searchResultCase.phtml', $this->cases);
+?>
+</table>
+<?php
+}
+?>

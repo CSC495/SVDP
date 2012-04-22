@@ -14,11 +14,7 @@ class App_Service_Search
         'c.work_phone',
     );
 
-    private $_householdColumns = array(
-        'h.address_id',
-        'h.mainclient_id',
-        'h.current_flag',
-    );
+    private $_householdColumns = array();
 
     private $_addrColumns = array(
         'a.address_id',
@@ -29,7 +25,19 @@ class App_Service_Search
         'a.zipcode',
     );
 
-    private $_clientOrderColumns = array('last_name', 'first_name', 'client_id');
+    private $_caseColumns = array(
+        's.case_id',
+        's.opened_date',
+    );
+
+    private $_caseNeedColumns = array(
+        'need_list' => 'GROUP_CONCAT(n.need SEPARATOR ", ")',
+        'total_amount' => 'SUM(n.amount)',
+    );
+
+    private $_clientOrderColumns = array('c.last_name', 'c.first_name', 'c.client_id');
+
+    private $_caseOrderColumns = array('c.last_name', 'c.first_name', 'c.client_id', 'n.case_id');
 
     public function __construct()
     {
@@ -79,6 +87,16 @@ class App_Service_Search
         return $this->buildClientModels($results);
     }
 
+    public function getOpenCasesByUserId($userId)
+    {
+        $select  = $this->initCaseSelect()
+            ->where('s.opened_user_id = ?', $userId)
+            ->where('s.status = "Open"');
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCaseModels($results);
+    }
+
     private function initClientSelect()
     {
         return $this->_db->select()
@@ -94,6 +112,29 @@ class App_Service_Search
                 $this->_addrColumns)
             ->where('h.current_flag = 1')
             ->order($this->_clientOrderColumns);
+    }
+
+    private function initCaseSelect()
+    {
+        return $this->_db->select()
+            ->from(array('c' => 'client'), $this->_clientColumns)
+            ->join(
+                array('h' => 'household'),
+                'c.client_id = h.mainclient_id',
+                $this->_householdColumns
+            )
+            ->join(
+                array('s' => 'client_case'),
+                'h.household_id = s.household_id',
+                $this->_caseColumns
+            )
+            ->join(
+                array('n' => 'case_need'),
+                's.case_id = n.case_id',
+                $this->_caseNeedColumns
+            )
+            ->group('n.case_id')
+            ->order($this->_caseOrderColumns);
     }
 
     private function buildClientModels($dbResults)
@@ -124,5 +165,33 @@ class App_Service_Search
         }
 
         return $clients;
+    }
+
+    public function buildCaseModels($dbResults)
+    {
+        $cases = array();
+
+        foreach ($dbResults as $dbResult) {
+            $client = new Application_Model_Client();
+            $client
+                ->setId($dbResult['client_id'])
+                ->setFirstName($dbResult['first_name'])
+                ->setLastName($dbResult['last_name'])
+                ->setCellPhone($dbResult['cell_phone'])
+                ->setHomePhone($dbResult['home_phone'])
+                ->setWorkPhone($dbResult['work_phone']);
+
+            $case = new Application_Model_Case();
+            $case
+                ->setId($dbResult['case_id'])
+                ->setOpenedDate($dbResult['opened_date'])
+                ->setNeedList($dbResult['need_list'])
+                ->setTotalAmount($dbResult['total_amount'])
+                ->setClient($client);
+
+            $cases[] = $case;
+        }
+
+        return $cases;
     }
 }
