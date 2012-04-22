@@ -89,22 +89,27 @@ class SearchController extends Zend_Controller_Action
             switch ($searchType) {
                 // Treasurer searches by client name retrieve a list of check requests.
                 case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
+                    $this->view->checkReqs = $service->getCheckReqsByClientName($searchQuery);
                     break;
 
                 // Treasurer searches by client address retrieve a list of check requests.
                 case Application_Model_SearchFormAbstract::TYPE_CLIENT_ADDR:
+                    $this->view->checkReqs = $service->getCheckReqsByClientAddr($searchQuery);
                     break;
 
                 // Treasurer searches by client phone number retrieve a list of check requests.
                 case Application_Model_SearchFormAbstract::TYPE_CLIENT_PHONE:
+                    $this->view->checkReqs = $service->getCheckReqsByClientPhone($searchQuery);
                     break;
 
                 // Treasurer searches by client ID retrieve a list of check requests.
                 case Application_Model_SearchFormAbstract::TYPE_CLIENT_ID:
+                    $this->view->checkReqs = $service->getCheckReqsByClientId($searchQuery);
                     break;
 
                 // Treasurer searches by case ID retrieve a list of check requests.
                 case Application_Model_SearchFormAbstract::TYPE_CASE_ID:
+                    $this->view->checkReqs = $service->getCheckReqsByCaseId($searchQuery);
                     break;
             }
         }
