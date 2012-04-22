@@ -8,7 +8,6 @@ $viewCaseUrl    = $this->escape($this->baseUrl(App_Resources::MEMBER . '/viewCas
 echo $this->partial('partial/searchResultCommon.phtml', array(
     'rowStripeClass' => $rowStripeClass,
     'viewClientUrl' => $viewClientUrl,
-    'gotoRowSpan' => 3,
     'gotoUrl' => $viewCaseUrl,
     'gotoLabel' => 'case',
     'client' => $this->case->getClient(),
@@ -18,7 +17,10 @@ echo $this->partial('partial/searchResultCommon.phtml', array(
     <th class='search-cell first'>Case ID</th>
     <td class=search-cell><a href="<?php echo $this->escape($viewCaseUrl) ?>"><?php echo $this->escape($this->case->getId()); ?></a></td>
     <th class=search-cell>Date</th>
-    <td class=search-cell colspan=3><?php echo $this->escape($this->case->getOpenedDate()); ?></td>
+    <td class=search-cell><?php echo $this->escape($this->case->getOpenedDate()); ?></td>
+    <th class=search-cell>Status</th>
+    <td class=search-cell>[TODO]</td>
+    <td rowspan=2 class=search-cell></td>
 </tr>
 <tr class='search-result <?php echo $rowStripeClass; ?>'>
     <th class='search-cell bot first'>Amount</th>

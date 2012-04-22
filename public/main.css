@@ -38,6 +38,10 @@
     width: 12%;
 }
 
+.search-cell.donothelp {
+    color: #f00;
+}
+
 .search-cell.last {
     vertical-align: top;
     width: 12ex;
