@@ -1,12 +1,15 @@
 <?php
 
+/**
+ * Controller to handle search requests made by member and treasurer users.
+ */
 class SearchController extends Zend_Controller_Action
 {
 
-    public function init()
-    {
-    }
-
+    /**
+     * Main search action should never be linked to, but if someone access it manually, then we'll
+     * send them to member search page rather than just 404ing.
+     */
     public function indexAction()
     {
         // Redirect the index action to the member search page as that's what end users will likely
@@ -14,38 +17,97 @@ class SearchController extends Zend_Controller_Action
         $this->_helper->redirector('member');
     }
 
+    /**
+     * Action that displays member search form and executes client search queries.
+     */
     public function memberAction()
     {
         $this->view->pageTitle = 'Client and Case Search';
-        $this->view->form      = new Application_Model_MemberSearchForm();
+        $this->view->form      = new Application_Model_SearchFormMember();
 
-        $req  = $this->getRequest();
-        $form = $this->view->form;
+        if ($this->validateForm()) {
+            switch ($this->view->form->getType()) {
+                // Member searches by client name retrieve a list of clients.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
+                    break;
 
-        if (!$req->isGet() || !$req->getQuery('search')) {
-            return;
-        }
+                // Member searches by client address retrieve a list of clients.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ADDR:
+                    break;
 
-        if (!$form->isValid($req->getQuery())) {
-            foreach ($form->getMessages() as $elementErrors) {
-                foreach ($elementErrors as $error) {
-                    $this->_helper->flashMessenger($error);
-                }
+                // Member searches by client phone number retrieve a list of clients.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_PHONE:
+                    break;
+
+                // Member searches by client ID go to a single client's page.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ID:
+                    $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
+                        'id' => $this->view->form->getQuery(),
+                    ));
+
+                // Member searches by case ID go to a single case's page.
+                case Application_Model_SearchFormAbstract::TYPE_CASE_ID:
+                    $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+                        'id' => $this->view->form->getQuery(),
+                    ));
             }
-            return;
         }
     }
 
+    /**
+     * Action that displays treasurer search form and executes check request search queries.
+     */
     public function treasurerAction()
     {
         $this->view->pageTitle = 'Check Request Search';
-        $this->view->form      = new Application_Model_MemberSearchForm();
+        $this->view->form      = new Application_Model_SearchFormTreasurer();
 
+        if ($this->validateForm()) {
+            switch ($this->view->form->getType()) {
+                // Treasurer searches by client name retrieve a list of check requests.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
+                    break;
+
+                // Treasurer searches by client address retrieve a list of check requests.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ADDR:
+                    break;
+
+                // Treasurer searches by client phone number retrieve a list of check requests.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_PHONE:
+                    break;
+
+                // Treasurer searches by client ID retrieve a list of check requests.
+                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ID:
+                    break;
+
+                // Treasurer searches by case ID retrieve a list of check requests.
+                case Application_Model_SearchFormAbstract::TYPE_CASE_ID:
+                    break;
+
+                // Treasurer searches by check request go to a single check request's page.
+                case Application_Model_SearchFormAbstract::TYPE_CHECK_REQ_ID:
+                    $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+                        'id' => $this->view->form->getQuery(),
+                    ));
+            }
+        }
+    }
+
+    /**
+     * Validate the search form stored in `$this->view->form`, displaying any errors as flash
+     * messages. If there are no GET arguments associated with the current request, then no action
+     * is taken.
+     *
+     * @return bool `true` if the user sent a GET request with valid data, `false` if there are no
+     * GET arguments or a field is invalid.
+     */
+    private function validateForm()
+    {
         $req  = $this->getRequest();
         $form = $this->view->form;
 
         if (!$req->isGet() || !$req->getQuery('search')) {
-            return;
+            return false;
         }
 
         if (!$form->isValid($req->getQuery())) {
@@ -54,7 +116,9 @@ class SearchController extends Zend_Controller_Action
                     $this->_helper->flashMessenger($error);
                 }
             }
-            return;
+            return false;
         }
+
+        return true;
     }
 }
