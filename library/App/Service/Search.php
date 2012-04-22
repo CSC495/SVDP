@@ -17,44 +17,6 @@ class App_Service_Search
 
     private $_db;
 
-    private $_clientColumns = array(
-        'c.client_id',
-        'c.first_name',
-        'c.last_name',
-        'c.cell_phone',
-        'c.home_phone',
-        'c.work_phone',
-    );
-
-    private $_householdColumns = array();
-
-    private $_addrColumns = array(
-        'a.address_id',
-        'a.street',
-        'a.apt',
-        'a.city',
-        'a.state',
-        'a.zipcode',
-    );
-
-    private $_doNotHelpColumns = array(
-        'do_not_help_client_id' => 'd.client_id',
-    );
-
-    private $_caseColumns = array(
-        's.case_id',
-        's.opened_date',
-    );
-
-    private $_caseNeedColumns = array(
-        'need_list' => 'GROUP_CONCAT(n.need SEPARATOR ", ")',
-        'total_amount' => 'SUM(n.amount)',
-    );
-
-    private $_clientOrderColumns = array('c.last_name', 'c.first_name', 'c.client_id');
-
-    private $_caseOrderColumns = array('c.last_name', 'c.first_name', 'c.client_id', 'n.case_id');
-
     /**
      * Constructs a new `App_Service_Search` object, retrieving a database connection for future
      * use.
@@ -144,52 +106,222 @@ class App_Service_Search
         return $this->buildCaseModels($results);
     }
 
+    /* Check request search methods: */
+
+    /**
+     * Retrieve a list of check request whose first or last client names match the specified query.
+     *
+     * @param string $name
+     * @return Application_Model_CheckReq[]
+     */
+    public function getCheckReqsByClientName($name)
+    {
+        $likeName = '%' . App_Escaping::escapeLike($name) . '%';
+        $select   = $this->initCheckReqSelect()
+            ->where('c.last_name LIKE ? OR c.first_name LIKE ?', $likeName, $likeName);
+        $results  = $this->_db->fetchAssoc($select);
+
+        return $this->buildCheckReqModels($results);
+    }
+
+    /**
+     * Retrieve a list of check requests whose client addresses match the specified query.
+     *
+     * @param string $addr
+     * @return Application_Model_CheckReq[]
+     */
+    public function getCheckReqsByClientAddr($addr)
+    {
+        $likeAddr = '%' . App_Escaping::escapeLike($addr) . '%';
+        $select  = $this->initCheckReqSelect()
+            ->join(array('a' => 'address'), 'a.address_id = h.address_id', array())
+            ->where(
+                'a.street LIKE ? OR a.apt LIKE ? OR a.city LIKE ? OR a.state LIKE ?'
+                    . ' OR a.zipcode LIKE ?',
+                $likeAddr,
+                $likeAddr,
+                $likeAddr,
+                $likeAddr,
+                $likeAddr
+            );
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCheckReqModels($results);
+    }
+
+    /**
+     * Retrieve a list of check requests whose client cell, home, or work phone numbers match the
+     * specified query.
+     *
+     * @param string $phone
+     * @return Application_Model_CheckReq[]
+     */
+    public function getCheckReqsByClientPhone($phone)
+    {
+        $select  = $this->initCheckReqSelect()
+            ->where(
+                'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ?',
+                $phone,
+                $phone,
+                $phone
+            );
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCheckReqModels($results);
+    }
+
+    /**
+     * Retrieve a list of check requests matching the specified client ID.
+     *
+     * @param string $clientId
+     * @return Application_Model_CheckReq[]
+     */
+    public function getCheckReqsByClientId($clientId)
+    {
+        $select  = $this->initCheckReqSelect()
+            ->where('c.client_id = ?', $clientId);
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCheckReqModels($results);
+    }
+
+    /**
+     * Retrieve a list of check requests matching the specified case ID.
+     *
+     * @param string $caseId
+     * @return Application_Model_CheckReq[]
+     */
+    public function getCheckReqsByCaseId($caseId)
+    {
+        $select  = $this->initCheckReqSelect()
+            ->where('s.case_id = ?', $caseId);
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCheckReqModels($results);
+    }
+
     /* Internal helper methods: */
 
     private function initClientSelect()
     {
         return $this->_db->select()
-            ->from(array('c' => 'client'), $this->_clientColumns)
+            ->from(array('c' => 'client'), array(
+                'c.client_id',
+                'c.first_name',
+                'c.last_name',
+                'c.cell_phone',
+                'c.home_phone',
+                'c.work_phone',
+            ))
             ->join(
                 array('h' => 'household'),
                 'c.client_id = h.mainclient_id OR c.client_id = h.spouse_id',
-                $this->_householdColumns
+                array()
             )
             ->join(
                 array('a' => 'address'),
                 'a.address_id = h.address_id',
-                $this->_addrColumns
+                array(
+                    'a.address_id',
+                    'a.street',
+                    'a.apt',
+                    'a.city',
+                    'a.state',
+                    'a.zipcode',
+                )
             )
             ->joinLeft(
                 array('d' => 'do_not_help'),
                 'c.client_id = d.client_id',
-                $this->_doNotHelpColumns
+                array('do_not_help_client_id' => 'd.client_id')
             )
             ->where('h.current_flag = 1')
-            ->order($this->_clientOrderColumns);
+            ->order(array('c.last_name', 'c.first_name', 'c.client_id'));
     }
 
     private function initCaseSelect()
     {
         return $this->_db->select()
-            ->from(array('c' => 'client'), $this->_clientColumns)
-            ->join(
-                array('h' => 'household'),
-                'c.client_id = h.mainclient_id OR c.client_id = h.spouse_id',
-                $this->_householdColumns
-            )
-            ->join(
-                array('s' => 'client_case'),
-                'h.household_id = s.household_id',
-                $this->_caseColumns
-            )
+            ->from(array('s' => 'client_case'), array(
+                's.case_id',
+                's.opened_date',
+            ))
             ->join(
                 array('n' => 'case_need'),
                 's.case_id = n.case_id',
-                $this->_caseNeedColumns
+                array(
+                    'need_list' => 'GROUP_CONCAT(n.need SEPARATOR ", ")',
+                    'total_amount' => 'SUM(n.amount)',
+                )
+            )
+            ->join(
+                array('h' => 'household'),
+                's.household_id = h.household_id',
+                array()
+            )
+            ->join(
+                array('c' => 'client'),
+                'h.mainclient_id = c.client_id OR h.spouse_id = c.client_id',
+                array(
+                    'c.client_id',
+                    'c.first_name',
+                    'c.last_name',
+                    'c.cell_phone',
+                    'c.home_phone',
+                    'c.work_phone',
+                )
             )
             ->group('n.case_id')
-            ->order($this->_caseOrderColumns);
+            ->order(array('c.last_name', 'c.first_name', 'c.client_id', 's.case_id'));
+    }
+
+    private function initCheckReqSelect()
+    {
+        return $this->_db->select()
+            ->from(array('r' => 'check_request'), array(
+                'r.checkrequest_id',
+                'r.request_date',
+            ))
+            ->join(
+                array('n' => 'case_need'),
+                'r.caseneed_id = n.caseneed_id',
+                array(
+                    'n.need',
+                    'n.amount',
+                )
+            )
+            ->join(
+                array('s' => 'client_case'),
+                'n.case_id = s.case_id',
+                array(
+                    's.case_id',
+                    's.opened_date',
+                )
+            )
+            ->join(
+                array('h' => 'household'),
+                's.household_id = h.household_id',
+                array()
+            )
+            ->join(
+                array('c' => 'client'),
+                'h.mainclient_id = c.client_id OR h.spouse_id = c.client_id',
+                array(
+                    'c.client_id',
+                    'c.first_name',
+                    'c.last_name',
+                    'c.cell_phone',
+                    'c.home_phone',
+                    'c.work_phone',
+                )
+            )
+            ->order(array(
+                'c.last_name',
+                'c.first_name',
+                'c.client_id',
+                's.case_id',
+                'r.checkrequest_id',
+            ));
     }
 
     private function buildClientModels($dbResults)
@@ -249,5 +381,39 @@ class App_Service_Search
         }
 
         return $cases;
+    }
+
+    public function buildCheckReqModels($dbResults)
+    {
+        $checkReqs = array();
+
+        foreach ($dbResults as $dbResult) {
+            $client = new Application_Model_Client();
+            $client
+                ->setId($dbResult['client_id'])
+                ->setFirstName($dbResult['first_name'])
+                ->setLastName($dbResult['last_name'])
+                ->setCellPhone($dbResult['cell_phone'])
+                ->setHomePhone($dbResult['home_phone'])
+                ->setWorkPhone($dbResult['work_phone']);
+
+            $case = new Application_Model_Case();
+            $case
+                ->setId($dbResult['case_id'])
+                ->setOpenedDate($dbResult['opened_date'])
+                ->setNeedList($dbResult['need'])
+                ->setTotalAmount($dbResult['amount'])
+                ->setClient($client);
+
+            $checkReq = new Application_Model_CheckReq();
+            $checkReq
+                ->setId($dbResult['checkrequest_id'])
+                ->setRequestDate($dbResult['request_date'])
+                ->setCase($case);
+
+            $checkReqs[] = $checkReq;
+        }
+
+        return $checkReqs;
     }
 }
