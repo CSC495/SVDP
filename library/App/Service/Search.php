@@ -57,11 +57,7 @@ class App_Service_Search
             ->where(
                 'a.street LIKE ? OR a.apt LIKE ? OR a.city LIKE ? OR a.state LIKE ?'
                     . ' OR a.zipcode LIKE ?',
-                $likeAddr,
-                $likeAddr,
-                $likeAddr,
-                $likeAddr,
-                $likeAddr
+                $likeAddr, $likeAddr, $likeAddr, $likeAddr, $likeAddr
             );
         $results = $this->_db->fetchAssoc($select);
 
@@ -79,9 +75,7 @@ class App_Service_Search
         $select  = $this->initClientSelect()
             ->where(
                 'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ?',
-                $phone,
-                $phone,
-                $phone
+                $phone, $phone, $phone
             );
         $results = $this->_db->fetchAssoc($select);
 
@@ -133,7 +127,9 @@ class App_Service_Search
     {
         $likeName = '%' . App_Escaping::escapeLike($name) . '%';
         $select   = $this->initCheckReqSelect()
-            ->where('c.last_name LIKE ? OR c.first_name LIKE ?', $likeName, $likeName);
+            ->where('c.last_name LIKE ? OR c.first_name LIKE ? OR c2.last_name LIKE ?'
+                        .' OR c2.first_name LIKE ?',
+                    $likeName, $likeName, $likeName, $likeName);
         $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildCheckReqModels($results);
@@ -153,11 +149,7 @@ class App_Service_Search
             ->where(
                 'a.street LIKE ? OR a.apt LIKE ? OR a.city LIKE ? OR a.state LIKE ?'
                     . ' OR a.zipcode LIKE ?',
-                $likeAddr,
-                $likeAddr,
-                $likeAddr,
-                $likeAddr,
-                $likeAddr
+                $likeAddr, $likeAddr, $likeAddr, $likeAddr, $likeAddr
             );
         $results = $this->_db->fetchAssoc($select);
 
@@ -175,10 +167,9 @@ class App_Service_Search
     {
         $select  = $this->initCheckReqSelect()
             ->where(
-                'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ?',
-                $phone,
-                $phone,
-                $phone
+                'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ? OR c2.cell_phone = ?'
+                    . ' OR c2.home_phone = ? OR c2.work_phone = ?',
+                $phone, $phone, $phone, $phone, $phone, $phone
             );
         $results = $this->_db->fetchAssoc($select);
 
@@ -194,7 +185,7 @@ class App_Service_Search
     public function getCheckReqsByClientId($clientId)
     {
         $select  = $this->initCheckReqSelect()
-            ->where('c.client_id = ?', $clientId);
+            ->where('c.client_id = ? OR c2.client_id = ?', $clientId, $clientId);
         $results = $this->_db->fetchAssoc($select);
 
         return $this->buildCheckReqModels($results);
@@ -236,14 +227,7 @@ class App_Service_Search
             ->join(
                 array('a' => 'address'),
                 'a.address_id = h.address_id',
-                array(
-                    'a.address_id',
-                    'a.street',
-                    'a.apt',
-                    'a.city',
-                    'a.state',
-                    'a.zipcode',
-                )
+                array('a.address_id', 'a.street', 'a.apt', 'a.city', 'a.state', 'a.zipcode')
             )
             ->joinLeft(
                 array('d' => 'do_not_help'),
@@ -257,11 +241,7 @@ class App_Service_Search
     private function initCaseSelect()
     {
         return $this->_db->select()
-            ->from(array('s' => 'client_case'), array(
-                's.case_id',
-                's.opened_date',
-                's.status',
-            ))
+            ->from(array('s' => 'client_case'), array('s.case_id', 's.opened_date', 's.status'))
             ->join(
                 array('n' => 'case_need'),
                 's.case_id = n.case_id',
@@ -270,14 +250,10 @@ class App_Service_Search
                     'total_amount' => 'SUM(n.amount)',
                 )
             )
-            ->join(
-                array('h' => 'household'),
-                's.household_id = h.household_id',
-                array()
-            )
+            ->join(array('h' => 'household'), 's.household_id = h.household_id', array())
             ->join(
                 array('c' => 'client'),
-                'h.mainclient_id = c.client_id OR h.spouse_id = c.client_id',
+                'h.mainclient_id = c.client_id',
                 array(
                     'c.client_id',
                     'c.first_name',
@@ -294,34 +270,21 @@ class App_Service_Search
     private function initCheckReqSelect()
     {
         return $this->_db->select()
-            ->from(array('r' => 'check_request'), array(
-                'r.checkrequest_id',
-                'r.request_date',
-            ))
+            ->from(array('r' => 'check_request'), array('r.checkrequest_id', 'r.request_date'))
             ->join(
                 array('n' => 'case_need'),
                 'r.caseneed_id = n.caseneed_id',
-                array(
-                    'n.need',
-                    'n.amount',
-                )
+                array('n.need', 'n.amount')
             )
             ->join(
                 array('s' => 'client_case'),
                 'n.case_id = s.case_id',
-                array(
-                    's.case_id',
-                    's.opened_date',
-                )
+                array('s.case_id', 's.opened_date')
             )
-            ->join(
-                array('h' => 'household'),
-                's.household_id = h.household_id',
-                array()
-            )
+            ->join(array('h' => 'household'), 's.household_id = h.household_id', array())
             ->join(
                 array('c' => 'client'),
-                'h.mainclient_id = c.client_id OR h.spouse_id = c.client_id',
+                'h.mainclient_id = c.client_id',
                 array(
                     'c.client_id',
                     'c.first_name',
@@ -331,6 +294,7 @@ class App_Service_Search
                     'c.work_phone',
                 )
             )
+            ->joinLeft(array('c2' => 'client'), 'h.spouse_id = c2.client_id', array())
             ->order(array(
                 'c.last_name',
                 'c.first_name',
