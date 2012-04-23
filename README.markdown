@@ -5,6 +5,7 @@
 
 ###Recent Changes
 
+* kurtsiegfried: Merged in layout from gh-pages branch to main.
 * bcat: Put database config in application.ini, add prototype of user model and auth service, write action helper to verify user credentials from controllers, show flash messages in layout.phtml, add empty search controller
 * kurtsiegfried: Add readme, create gh-pages branch for live hosting layout.
 * bcat: Add empty stylesheet, strip out default content, add starter layout, change application.ini to dev settings.
