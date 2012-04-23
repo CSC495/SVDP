@@ -8,11 +8,9 @@ class Application_Model_ClientForm extends Zend_Form
 
 		$baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/member/client'));
-		
-		$form = new Zend_Form;
-		
-		$form->setDecorators(array(
-				array('ViewScript', array('script' => 'member/clientViewScript.phtml'))
+			
+		$this->setDecorators(array(
+				array('ViewScript', array('viewScript' => 'member/clientViewScript.phtml'))
 		));
 		
 		$clientID = $this->addElement('text', 'clientID',array(
@@ -23,6 +21,7 @@ class Application_Model_ClientForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Client #:',
+				'size'		 => 30,
 				'attribs'    => array('disabled' => 'disabled'),
 				));
 		
@@ -34,6 +33,7 @@ class Application_Model_ClientForm extends Zend_Form
 						),
 				'required'   => true,
 				'label'      => 'First Name:',
+				'size'		 => 30,
 				));
 		$lastName = $this->addElement('text', 'lastName',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
@@ -43,6 +43,7 @@ class Application_Model_ClientForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Last Name:',
+				'size'		 => 30,
 				));
 		
 		$otherName = $this->addElement('text', 'otherName',array(
@@ -53,6 +54,7 @@ class Application_Model_ClientForm extends Zend_Form
 				),
 				'required'   => false,
 				'label'      => 'Other Name:',
+				'size'		 => 30,
 				));
 		
 		$doNotHelp = $this->addElement('checkbox', 'doNotHelp',array(
@@ -67,7 +69,8 @@ class Application_Model_ClientForm extends Zend_Form
 						array('StringLength', false, array(13)),
 				),
 				'required'   => true,
-				'label'      => 'Last Name:',
+				'label'      => 'Home Phone:',
+				'size'		 => 13,
 		));
 		
 		$cellPhone = $this->addElement('text', 'cellPhone',array(
@@ -78,6 +81,7 @@ class Application_Model_ClientForm extends Zend_Form
 				),
 				'required'   => false,
 				'label'      => 'Cell Phone:',
+				'size'		 => 13,
 		));
 		
 		$workPhone = $this->addElement('text', 'workPhone',array(
@@ -87,7 +91,8 @@ class Application_Model_ClientForm extends Zend_Form
 						array('StringLength', false, array(13)),
 				),
 				'required'   => false,
-				'label'      => 'Last Name:',
+				'label'      => 'Work Phone:',
+				'size'		 => 13,
 		));
 		
 		$address = $this->addElement('text', 'address',array(
@@ -98,6 +103,16 @@ class Application_Model_ClientForm extends Zend_Form
 				),
 				'required'   => false,
 				'label'      => 'Address:',
+		));
+		
+		$apartment = $this->addElement('text', 'apartment',array(
+				'filters'    => array('StringTrim', 'StringToLower'),
+				'validators' => array(
+						'Alnum',
+						array('StringLength', false, array(1, 30)),
+				),
+				'required'   => false,
+				'label'      => 'Apt #:',
 		));
 		
 		$city = $this->addElement('text', 'city',array(
@@ -132,7 +147,7 @@ class Application_Model_ClientForm extends Zend_Form
 		
 		$marriageStatus = $this->addElement('checkbox', 'marriageStatus',array(
 				'required'   => false,
-				'label'      => 'Marital Status:',
+				'label'      => 'Married:',
 				));
 		
 		$spouse = $this->addElement('text', 'spouse',array(
