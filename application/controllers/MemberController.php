@@ -17,4 +17,16 @@ class MemberController extends Zend_Controller_Action
         $userId            = Zend_Auth::getInstance()->getIdentity()->user_id;
         $this->view->cases = $service->getOpenCasesByUserId($userId);
     }
+    
+    public function clientAction()
+    {
+    	$this->view->pageTitle = 'Client View/Edit';
+    	$this->view->form      = new Application_Model_CaseForm();
+    }
+    
+    public function caseAction()
+    {
+    	$this->view->pageTitle = 'Case View/Edit';
+    	$this->view->form      = new Application_Model_CaseForm();
+    }
 }

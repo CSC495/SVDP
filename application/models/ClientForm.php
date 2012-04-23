@@ -4,12 +4,16 @@ class Application_Model_ClientForm extends Zend_Form
 
 	public function __construct($options = null){
 		parent::__construct($options);
-		$this->setName('member');
-		$this->setAttrib('id', 'member');
 		$this->setMethod('post');
 
 		$baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/member/client'));
+		
+		$form = new Zend_Form;
+		
+		$form->setDecorators(array(
+				array('ViewScript', array('script' => 'clientViewScript.phtml'))
+		));
 		
 		$clientID = $this->addElement('text', 'clientID',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
@@ -56,16 +60,6 @@ class Application_Model_ClientForm extends Zend_Form
 				'label'      => 'Do NOT Help:',
 		));
 		
-		$cellPhone = $this->addElement('text', 'cellPhone',array(
-				'filters'    => array('Digits'),
-				'validators' => array(
-						'Digits',
-						array('StringLength', false, array(13)),
-				),
-				'required'   => false,
-				'label'      => 'Cell Phone:',
-		));
-		
 		$homePhone = $this->addElement('text', 'homePhone',array(
 				'filters'    => array('Digits'),
 				'validators' => array(
@@ -74,6 +68,16 @@ class Application_Model_ClientForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Last Name:',
+		));
+		
+		$cellPhone = $this->addElement('text', 'cellPhone',array(
+				'filters'    => array('Digits'),
+				'validators' => array(
+						'Digits',
+						array('StringLength', false, array(13)),
+				),
+				'required'   => false,
+				'label'      => 'Cell Phone:',
 		));
 		
 		$workPhone = $this->addElement('text', 'workPhone',array(
