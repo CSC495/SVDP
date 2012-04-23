@@ -1,5 +1,9 @@
 @charset "utf-8";
 
+/* TODO: Add common site styling here. */
+
+#map { border: 1px solid black; width: 400px; height: 300px }
+
 /* Styles for search views: */
 
 #search-results {
