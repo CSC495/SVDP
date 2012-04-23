@@ -17,6 +17,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $frontController = Zend_Controller_Front::getInstance();
         $frontController->registerPlugin(new App_Controller_Plugin_AuthPlugin($acl));
     }
+	
+	public function _initActionHelpers()
+    {
+        Zend_Controller_Action_HelperBroker::addHelper(new App_Helper_AuthCheck());
+    }
 
     protected function _initDbConnection()
     {
@@ -28,8 +33,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
    		    'dbname' => 'svdp');
         
         // Create the database Adapter
-   	$db = Zend_Db::factory('PDO_MYSQL', $options);
-   	Zend_Db_Table_Abstract::setDefaultAdapter($db);
+		$db = Zend_Db::factory('PDO_MYSQL', $options);
+		Zend_Db_Table_Abstract::setDefaultAdapter($db);
         
         // Store the db connection in memory
         $registry = Zend_Registry::getInstance();
