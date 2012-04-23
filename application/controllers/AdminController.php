@@ -20,54 +20,54 @@ class AdminController extends Zend_Controller_Action
     {
         $request = $this->getRequest();
         
+        if( !$request->isPost() ){
+            return $this->_helper->redirector('index');
+        }
+
         // Get the form and populate it
         $form = new Application_Model_AdminForm();
         $form->populate($_POST);
         
         // Check if user wants to view user info
         if( $form->user->isChecked() ){
-            $this->_helper->redirector('list','admin');
+            $this->_helper->redirector('listusers','admin');
         }
         
-        // Check if user wants to view funds
-        if( $form->fund->isChecked() ){
-            $this->_helper->redirector('fund','admin');
+        // Check if user wants to adjust limits
+        if( $form->adjust->isChecked() ){
+            $this->_helper->redirector('adjust','admin');
         }
         
         $this->_helper->redirector('index','admin');
         
     }
-    
-    // Displays all of the user information
-    public function listAction()
+    // Displays view for modifying limits
+    public function adjustAction()
     {
-        
+        $this->view->pageTitle = "Admin Limit Adjustments";
+        $this->view->form = new Application_Model_AdjustForm();       
     }
-    
-    // Displays interface for adjusting limits()
-    public function fundAction()
-    {
-        $this->view->pageTitle = "Adjust Funds";
-        $this->view->form = new Application_Model_UpdateFundForm();
-    }
-    
-    // Logic for updating the funds
-    public function fundprocessAction()
+    // Handles persistance of adjustment
+    public function adjustprocessAction()
     {
         $request = $this->getRequest();
         
-        // Get the form and populate it
-        $form = new Application_Model_UpdateFundForm();
-        $form->populate($_POST);
-        
-        if( !$form->isValid( $request->getPost() ) )
-        {
-            // Redirect to login page and set error flag
-            $this->_redirect('/admin/fund/error_flag/TRUE');
+        // Verify Post
+        if( !$request->isPost() ){
+            return $this->_helper->redirector('index');
         }
         
-        //TODO: Logic to update funds
+        // Get the form and populate it
+        $form = new Application_Model_AdjustForm();
+        $form->populate($_POST);
         
-        $this->_redirect('/admin/index/');
+        $this->_helper->redirector('index','admin');
+        
     }
+    // Displays all member information
+    public function listusersAction()
+    {
+        
+    }
+    
 }

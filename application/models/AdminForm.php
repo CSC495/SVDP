@@ -15,10 +15,10 @@ class Application_Model_AdminForm extends Zend_Form
                    'label'    => 'View User Information',
                 ));
                 
-                $update = $this->addElement('submit', 'fund', array(
+                $update = $this->addElement('submit', 'adjust', array(
                    'required' => false,
                    'ignore'   => true,
-                   'label'    => 'Manage Funds',
+                   'label'    => 'Adjust Limits',
                 ));
                
 	}
