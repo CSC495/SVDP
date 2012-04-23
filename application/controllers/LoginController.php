@@ -79,7 +79,7 @@ class LoginController extends Zend_Controller_Action
     {
         // Get the database adapter
         $registry = Zend_Registry::getInstance();
-        $adapter = new Zend_Auth_Adapter_DbTable($registry->db);
+        $adapter  = Zend_Db_Table::getDefaultAdapter();
         
         // Set the parameters
         $adapter
