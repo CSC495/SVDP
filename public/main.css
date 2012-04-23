@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-/* TODO: Add common site styling here. */
+/* Styles for member map: */
 
 #map { border: 1px solid black; width: 400px; height: 300px }
 
@@ -48,7 +48,7 @@
 
 .search-cell.last {
     vertical-align: top;
-    width: 12ex;
+    width: 14ex;
 }
 
 th.search-cell {
