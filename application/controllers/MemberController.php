@@ -22,6 +22,13 @@ class MemberController extends Zend_Controller_Action
     {
     	$this->view->pageTitle = 'Client View/Edit';
     	$this->view->form      = new Application_Model_ClientForm();
+
+        if ($this->_hasParam('id')) {
+            $service = new App_Service_Member();
+            $client  = $service->getClientById($this->_getParam('id'));
+
+            print_r($client);
+        }
     }
     
     public function caseAction()
