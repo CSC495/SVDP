@@ -31,11 +31,13 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
                ));
                
 	       // Type of memebr
-               $email = $this->addElement('text', 'type', array(
-                   'filters'    => array('StringTrim'),
-                   'required'   => true,
-                   'label'      => 'Member Type:',
-               ));
+               $type = $this->createElement('select','type');
+	       $type->setLabel('Member Type:')
+			->addMultiOptions(array(
+				'Member' => 'M',
+				'Treasurer' => 'T',
+				'Admin' => 'A',
+			));
                
                $adjust = $this->addElement('submit', 'submit', array(
                    'required' => false,

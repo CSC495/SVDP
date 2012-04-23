@@ -8,3 +8,11 @@ Set default values of Fund adjustment form with Database Values
 Login Controller
 ------------------------
 Add script to e-mail user password
+
+
+Database/Services
+-------------------------
+Add DBTable to hold "Total Recievable Aid" (FLOAT), "Lifetime Cases" (INT), "Yearly Cases" (INT)
+Query to update any of the above in table
+Query to display all member information (Name, phone, e-mail, member)
+Query to create a new member.
