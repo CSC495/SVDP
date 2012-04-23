@@ -12,15 +12,31 @@ class Application_Model_Client
 
     private $_id = null;
 
+    private $_userId = null;
+
     private $_firstName = null;
 
     private $_lastName = null;
+
+    private $_otherName = null;
+
+    private $_married = null;
+
+    private $_birthDate = null;
+
+    private $_ssn4 = null;
 
     private $_cellPhone = null;
 
     private $_homePhone = null;
 
     private $_workPhone = null;
+
+    private $_createdDate = null;
+
+    private $_parish = null;
+
+    private $_veteran = null;
 
     private $_currentAddr = null;
 
@@ -36,6 +52,17 @@ class Application_Model_Client
     public function setId($id)
     {
         $this->_id = $id;
+        return $this;
+    }
+
+    public function getUserId()
+    {
+        return $this->_userId;
+    }
+
+    public function setUserId($userId)
+    {
+        $this->_userId = $userId;
         return $this;
     }
 
@@ -58,6 +85,50 @@ class Application_Model_Client
     public function setLastName($lastName)
     {
         $this->_lastName = $lastName;
+        return $this;
+    }
+
+    public function getOtherName()
+    {
+        return $this->_otherName;
+    }
+
+    public function setOtherName($otherName)
+    {
+        $this->_otherName = $otherName;
+        return $this;
+    }
+
+    public function isMarried()
+    {
+        return $this->_married;
+    }
+
+    public function setMarried($married)
+    {
+        $this->_married = $married;
+        return $this;
+    }
+
+    public function getBirthDate()
+    {
+        return $this->_birthDate;
+    }
+
+    public function setBirthDate($birthDate)
+    {
+        $this->_birthDate = $birthDate;
+        return $this;
+    }
+
+    public function getSsn4()
+    {
+        return $this->_ssn4;
+    }
+
+    public function setSsn4($ssn4)
+    {
+        $this->_ssn4 = $ssn4;
         return $this;
     }
 
@@ -91,6 +162,39 @@ class Application_Model_Client
     public function setWorkPhone($workPhone)
     {
         $this->_workPhone = $workPhone;
+        return $this;
+    }
+
+    public function getCreatedDate()
+    {
+        return $this->_createdDate;
+    }
+
+    public function setCreatedDate($createdDate)
+    {
+        $this->_createdDate = $createdDate;
+        return $this;
+    }
+
+    public function getParish()
+    {
+        return $this->_parish;
+    }
+
+    public function setParish($parish)
+    {
+        $this->_parish = $parish;
+        return $this;
+    }
+
+    public function isVeteran()
+    {
+        return $this->_veteran;
+    }
+
+    public function setVeteran($veteran)
+    {
+        $this->_veteran = $veteran;
         return $this;
     }
 
@@ -144,7 +248,7 @@ class Application_Model_Client
      */
     public function getFormattedCellPhone()
     {
-        return ($this->_cellPhone !== null) ? self::formatPhone($this->_cellPhone) : '';
+        return ($this->_cellPhone !== null) ? App_Formatting::formatPhone($this->_cellPhone) : '';
     }
 
     /**
@@ -155,7 +259,7 @@ class Application_Model_Client
      */
     public function getFormattedHomePhone()
     {
-        return ($this->_homePhone !== null) ? self::formatPhone($this->_homePhone) : '';
+        return ($this->_homePhone !== null) ? App_Formatting::formatPhone($this->_homePhone) : '';
     }
 
     /**
@@ -166,7 +270,7 @@ class Application_Model_Client
      */
     public function getFormattedWorkPhone()
     {
-        return ($this->_workPhone !== null) ? self::formatPhone($this->_workPhone) : '';
+        return ($this->_workPhone !== null) ? App_Formatting::formatPhone($this->_workPhone) : '';
     }
 
     /**
@@ -183,19 +287,5 @@ class Application_Model_Client
         $workPhone = $this->getFormattedWorkPhone();
         return ($cellPhone !== '') ? $cellPhone :
               (($homePhone !== '') ? $homePhone : $workPhone);
-    }
-
-    /**
-     * Formats a 10-digit United States phone number.
-     *
-     * @param string $phone
-     * @return string
-     */
-    private static function formatPhone($phone)
-    {
-        $phone1 = substr($phone, 0, 3);
-        $phone2 = substr($phone, 3, 3);
-        $phone3 = substr($phone, 6, 4);
-        return sprintf('(%s) %s-%s', $phone1, $phone2, $phone3);
     }
 }

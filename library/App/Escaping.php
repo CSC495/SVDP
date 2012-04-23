@@ -5,9 +5,9 @@
  * functions for performing various special character escapes not supported directly by PHP or Zend
  * Framework.
  */
-
 class App_Escaping
 {
+
     /**
      * Escapes wildcards in SQL LIKE expressions. This shouldn't have any immediate security
      * benefit, but it prevents users from being exposed to potentially confusing behavior.
