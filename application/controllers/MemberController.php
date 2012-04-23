@@ -21,7 +21,7 @@ class MemberController extends Zend_Controller_Action
     public function clientAction()
     {
     	$this->view->pageTitle = 'Client View/Edit';
-    	$this->view->form      = new Application_Model_CaseForm();
+    	$this->view->form      = new Application_Model_ClientForm();
     }
     
     public function caseAction()
