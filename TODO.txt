@@ -1,0 +1,10 @@
+Admin Controller
+------------------------
+Add partials for display user information in table
+Interface for modifying user information
+Server Side adjustment to change in funds
+client side script for adjustment to funds
+
+Login Controller
+------------------------
+Add script to e-mail user password
