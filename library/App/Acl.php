@@ -30,6 +30,7 @@ class App_Acl extends Zend_Acl
         $this->add(new Zend_Acl_Resource(App_Resources::MEMBER));
         $this->add(new Zend_Acl_Resource(App_Resources::SEARCH));
         $this->add(new Zend_Acl_Resource(App_Resources::TREASURER));
+        $this->add(new Zend_Acl_Resource(App_Resources::REPORT));
     }
     // Create the various roles
     protected function createRoles()
@@ -53,6 +54,7 @@ class App_Acl extends Zend_Acl
         // Allow access to all actions in the index and login controller
         $this->allow(App_Roles::GENERAL,App_Resources::LOGIN);
         $this->allow(App_Roles::GENERAL,App_Resources::INDEX);
+        $this->allow(App_Roles::GENERAL,App_Resources::REPORT);
     }
     protected function setMemberAccess()
     {

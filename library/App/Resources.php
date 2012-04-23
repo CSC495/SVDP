@@ -9,4 +9,5 @@ class App_Resources
     const MEMBER    = 'member';
     const SEARCH    = 'search';
     const TREASURER = 'treasurer';
+    const REPORT    = 'report';
 }
