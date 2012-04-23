@@ -36,7 +36,10 @@ abstract class Application_Model_SearchFormAbstract extends Zend_Form
 
         $this->setAction($baseUrl->baseUrl("/search/$action"))
              ->setMethod('get')
-             ->setDecorators(array('FormElements', 'Form'))
+             ->setDecorators(array(
+                 'FormElements',
+                 array('Form', array('class' => 'form-search'),
+             )))
              ->setElementDecorators(array('ViewHelper', 'Label'));
 
         $this->_types = array_merge($this->_types, $additionalTypes);
@@ -61,11 +64,13 @@ abstract class Application_Model_SearchFormAbstract extends Zend_Form
                 )),
             ),
             'size' => 40,
+            'class' => 'search-query',
         ));
 
         $this->addElement('submit', 'search', array(
             'label' => 'Search',
             'decorators' => array('ViewHelper'),
+            'class' => 'btn',
         ));
 
         // Populate search type dropdown.
