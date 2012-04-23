@@ -248,7 +248,7 @@ class Application_Model_Client
      */
     public function getFormattedCellPhone()
     {
-        return ($this->_cellPhone !== null) ? self::formatPhone($this->_cellPhone) : '';
+        return ($this->_cellPhone !== null) ? App_Formatting::formatPhone($this->_cellPhone) : '';
     }
 
     /**
@@ -259,7 +259,7 @@ class Application_Model_Client
      */
     public function getFormattedHomePhone()
     {
-        return ($this->_homePhone !== null) ? self::formatPhone($this->_homePhone) : '';
+        return ($this->_homePhone !== null) ? App_Formatting::formatPhone($this->_homePhone) : '';
     }
 
     /**
@@ -270,7 +270,7 @@ class Application_Model_Client
      */
     public function getFormattedWorkPhone()
     {
-        return ($this->_workPhone !== null) ? self::formatPhone($this->_workPhone) : '';
+        return ($this->_workPhone !== null) ? App_Formatting::formatPhone($this->_workPhone) : '';
     }
 
     /**
@@ -287,19 +287,5 @@ class Application_Model_Client
         $workPhone = $this->getFormattedWorkPhone();
         return ($cellPhone !== '') ? $cellPhone :
               (($homePhone !== '') ? $homePhone : $workPhone);
-    }
-
-    /**
-     * Formats a 10-digit United States phone number.
-     *
-     * @param string $phone
-     * @return string
-     */
-    private static function formatPhone($phone)
-    {
-        $phone1 = substr($phone, 0, 3);
-        $phone2 = substr($phone, 3, 3);
-        $phone3 = substr($phone, 6, 4);
-        return sprintf('(%s) %s-%s', $phone1, $phone2, $phone3);
     }
 }
