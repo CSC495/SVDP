@@ -1,5 +1,5 @@
 <?php
-class Application_Model_AdminForm extends Zend_Form
+class Application_Model_Admin_AdminForm extends Zend_Form
 {
 	
 	public function __construct($options = null){
@@ -11,13 +11,13 @@ class Application_Model_AdminForm extends Zend_Form
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/admin/process'));
 
-                $update = $this->addElement('submit', 'user', array(
+                $user = $this->addElement('submit', 'user', array(
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'View User Information',
                 ));
                 
-                $update = $this->addElement('submit', 'adjust', array(
+                $adjust = $this->addElement('submit', 'adjust', array(
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Adjust Limits',
