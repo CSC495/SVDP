@@ -1,5 +1,11 @@
+// Include Utility JS library
+var script = document.createElement('script');
+script.type = 'text/javascript';
+script.src = '/SVDP/public/utility.js';
+var content = document.getElementById('head');
+document.getElementById('head').appendChild(script);
+
 function adjust_validation(myform){
-    var moneyRegex = new RegExp(/^\$?([1-9]{1}[0-9]{0,2}(\,[0-9]{3})*(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$/);    
     $aid  = myform.aid.value;
     $lifetimecases = myform.lifetimecases.value;
     $yearlycases = myform.yearlycases.value;
@@ -9,6 +15,7 @@ function adjust_validation(myform){
         alert("Enter a value for Total Recievable Aid");
         return false;
     }
+    parseMoney($aid);
     if( !moneyRegex.test($aid) ){
         alert("Format does not match for Total Recievable Aid.\nExamples of proper format: $1,234.50,$0.70,.7");
         return false;
@@ -50,8 +57,4 @@ function adjust_validation(myform){
     }
     
     return true;
-}
-
-function isInteger(num){
-    return(num % 1 == 0);
 }

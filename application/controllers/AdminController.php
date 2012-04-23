@@ -81,7 +81,6 @@ class AdminController extends Zend_Controller_Action
         $form->populate($_POST);
         
         // Get form values
-        $name = 
         $this->_helper->redirector('index','admin');   
     }
     
