@@ -12,7 +12,7 @@ class Application_Model_CaseForm extends Zend_Form
 		$form = new Zend_Form;
 		
 		$form->setDecorators(array(
-				array('ViewScript', array('script' => 'caseViewScript.phtml'))
+				array('ViewScript', array('script' => 'member/caseViewScript.phtml'))
 		));
 		
 		$clientID = $this->addElement('text', 'clientID',array(

@@ -12,7 +12,7 @@ class Application_Model_ClientForm extends Zend_Form
 		$form = new Zend_Form;
 		
 		$form->setDecorators(array(
-				array('ViewScript', array('script' => 'clientViewScript.phtml'))
+				array('ViewScript', array('script' => 'member/clientViewScript.phtml'))
 		));
 		
 		$clientID = $this->addElement('text', 'clientID',array(
@@ -150,7 +150,7 @@ class Application_Model_ClientForm extends Zend_Form
 				'validators' => array(
 						'Digits',
 						array('StringLength', false, array(8)),
-						Date(array('format' => 'yyyymmdd')),
+						array('Date', false, array('format', 'yyyymmdd')),
 				),
 				'required'   => true,
 				'label'      => 'Birthdate (YYYYMMDD):',
@@ -215,7 +215,7 @@ class Application_Model_ClientForm extends Zend_Form
 				'validators' => array(
 						'Digits',
 						array('StringLength', false, array(8)),
-						Date(array('format' => 'yyyymmdd')),
+						array('Date', false, array('format', 'yyyymmdd')),
 				),
 				'required'   => true,
 				'label'      => 'Start Date:',
@@ -226,7 +226,7 @@ class Application_Model_ClientForm extends Zend_Form
 				'validators' => array(
 						'Digits',
 						array('StringLength', false, array(8)),
-						Date(array('format' => 'yyyymmdd')),
+						array('Date', false, array('format', 'yyyymmdd')),
 				),
 				'required'   => true,
 				'label'      => 'End Date:',
@@ -237,7 +237,7 @@ class Application_Model_ClientForm extends Zend_Form
 				'validators' => array(
 						'Digits',
 						array('StringLength', false, array(8)),
-						Date(array('format' => 'yyyymmdd')),
+						array('Date', false, array('format', 'yyyymmdd')),
 				),
 				'required'   => true,
 				'label'      => 'Date Created:',
