@@ -1,10 +1,10 @@
 <?php
 $rowStripeClass  = ($this->partialCounter % 2 == 1) ? 'even' : 'odd';
-$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
+$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/client/id/'
     . urlencode($this->checkReq->getCase()->getClient()->getId()));
-$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/viewCase/id/'
+$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/case/id/'
     . urlencode($this->checkReq->getCase()->getId()));
-$viewCheckReqUrl = $this->baseUrl(App_Resources::TREASURER . '/viewCheckReq/id/'
+$viewCheckReqUrl = $this->baseUrl(App_Resources::TREASURER . '/checkReq/id/'
     . urlencode($this->checkReq->getId()));
 
 echo $this->partial('partial/searchResultCommon.phtml', array(
