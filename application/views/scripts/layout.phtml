@@ -21,13 +21,137 @@ echo $this->headMeta(),   "\n";
 echo $this->headTitle(),  "\n";
 echo $this->headLink(),   "\n";
 echo $this->headScript(), "\n";
+
+// Get any unread flash messages.
+$flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+
+if ($flashMessenger->hasCurrentMessages()) {
+    $messages = $flashMessenger->getCurrentMessages();
+    $flashMessenger->clearCurrentMessages();
+} else {
+    $messages = $flashMessenger->getMessages();
+}
+
+// Fetch user role for later use.
+$auth = Zend_Auth::getInstance();
+$role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 ?>
 <header>
     <h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>
+    <style type="text/css">
+     
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+    </style>
 </header>
-<div id=content>
+<div class="row">
+	<div class="span3">
+	<img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150"/>
+	</div>
+	<div class="span7" >
+	<ul class="unstyled" style="padding-top: 75px">
+                <?php
+foreach ($messages as $message) {
+    // Write each flash message as a top-level alert.
+    echo '<p class=alert>' . $this->escape($message) . '</p>';
+}
+?>
+		<li><h1>St. Vincent de Paul </h1>
+		<li><div class="nav nav-tabs nav-stacked">
+            <?php echo $this->partial("partial/navigation.phtml", array('role' => $role)); ?>
+        </div></li>
+	</ul>
+	</div>
+	</div>
+<div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              
+			  <li class="nav-header">Balance</li>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+
+              <li class="nav-header">Schedule</li>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+              <li><a href="#">Link</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+
+        <div class="span9" id="zendcontent">
+          <div class="hero-unit">
+            <div id=content>
     <?php
         // Write out page content specific to the current controller/action.
         echo $this->layout()->content;
     ?>
-</div>
+            </div>         
+          </div>
+          <div class="comments">
+
+            <div class="well comment">
+
+            <h4>Username:</h4>
+
+            <p>This is a comment about a client, case, or check request. It might be multi-line, or short, but it should tied to a particular user.</p>
+
+            <h6>December 22, 2012</h6>
+
+            </div>
+
+            <div class="well comment">
+
+            <h4>Username:</h4>
+
+            <p>This is a comment about a client, case, or check request. It might be multi-line, or short, but it should tied to a particular user.</p>
+
+            <h6>December 22, 2012</h6>
+
+            </div>
+
+            <div class="well comment">
+
+            <h4>Username:</h4>
+
+            <p>This is a comment about a client, case, or check request. It might be multi-line, or short, but it should tied to a particular user.</p>
+
+            <h6>December 22, 2012</h6>
+
+            </div>
+
+            <div class="well comment">
+
+            <h4>Username:</h4>
+
+            <p>This is a comment about a client, case, or check request. It might be multi-line, or short, but it should tied to a particular user.</p>
+
+            <h6>December 22, 2012</h6>
+
+            </div>
+
+          </div><!--/row-->
+
+          <div class="row-fluid">
+            <div class="span4">
+              <h2>Heading</h2>
+              <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+              <p><a class="btn" href="#">View details &raquo;</a></p>
+
+            </div><!--/span-->
+          </div><!--/row-->
+        </div><!--/span-->
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+        <p>&copy; Placeholder! 2048</p>
+      </footer>
+
+    </div>
+

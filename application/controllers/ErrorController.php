@@ -5,6 +5,7 @@ class ErrorController extends Zend_Controller_Action
 
     public function errorAction()
     {
+        $this->view->pageTitle = 'Error Page';
         $errors = $this->_getParam('error_handler');
         
         if (!$errors || !$errors instanceof ArrayObject) {
@@ -20,6 +21,10 @@ class ErrorController extends Zend_Controller_Action
                 $this->getResponse()->setHttpResponseCode(404);
                 $priority = Zend_Log::NOTICE;
                 $this->view->message = 'Page not found';
+                break;
+            case 'NotAuthorizedException':
+                $this->getResponse()->setHttpResponseCode(403);
+                $this->view->message = 'You are not authorized to view this content';
                 break;
             default:
                 // application error
