@@ -8,11 +8,9 @@ class Application_Model_CaseForm extends Zend_Form
 
 		$baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/member/case'));
-
-		$form = new Zend_Form;
 		
-		$form->setDecorators(array(
-				array('ViewScript', array('script' => 'member/caseViewScript.phtml'))
+		$this->setDecorators(array(
+				array('ViewScript', array('viewScript' => 'member/caseViewScript.phtml'))
 		));
 		
 		$clientID = $this->addElement('text', 'clientID',array(
@@ -97,7 +95,7 @@ class Application_Model_CaseForm extends Zend_Form
 				'label'      => 'Hours Spent:',
 		));
 		
-		$caseNeed = $this->addElement('checkbox', 'caseNeed',array(
+		$caseNeed = $this->addElement('text', 'caseNeed',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
 						'Alnum',
@@ -107,9 +105,9 @@ class Application_Model_CaseForm extends Zend_Form
 				'label'      => 'Case Need:',
 		));
 		
-		$amount = $this->addElement('checkbox', 'amount',array(
-				'filters'    => array('StringTrim', 'LocalizedToNormalized', 
-						array('precision' => 2)),
+		$amount = $this->addElement('text', 'amount',array(
+				'filters'    => array('StringTrim',
+				array('LocalizedToNormalized', false, array('precision', 2))),
 				'validators' => array(
 						'Alnum',
 						array('StringLength', false, array(1, 50)),
@@ -139,7 +137,7 @@ class Application_Model_CaseForm extends Zend_Form
 				'attribs'    => array('disabled' => 'disabled'),
 		));
 		
-		$referral = $this->addElement('checkbox', 'referral',array(
+		$referral = $this->addElement('text', 'referral',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
 						'Alnum',
@@ -149,7 +147,7 @@ class Application_Model_CaseForm extends Zend_Form
 				'label'      => 'Referred To:',
 		));
 		
-		$referredReason = $this->addElement('checkbox', 'referredReason',array(
+		$referredReason = $this->addElement('text', 'referredReason',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
 						'Alnum',
@@ -158,17 +156,18 @@ class Application_Model_CaseForm extends Zend_Form
 				'label'      => 'Reason For Referral:',
 		));
 		
-		$referralDate = $this->addElement('checkbox', 'referralDate',array(
+		$referralDate = $this->addElement('text', 'referralDate',array(
 				'filters'    => array('Digits'),
 				'validators' => array(
 						'Digits',
 						array('StringLength', false, array(8)),
+						array('Date', false, array('format', 'yyyymmdd')),
 				),
 				'required'   => true,
-				'label'      => 'Referral Date:',
+				'label'      => 'Referral Date (YYYYMMDD):',
 		));
 		
-		$commentDate = $this->addElement('checkbox', 'commentDate',array(
+		$commentDate = $this->addElement('text', 'commentDate',array(
 				'filters'    => array('Digits'),
 				'validators' => array(
 						'Digits',
@@ -179,7 +178,7 @@ class Application_Model_CaseForm extends Zend_Form
 				'attribs'    => array('disabled' => 'disabled'),
 		));
 		
-		$comment = $this->addElement('checkbox', 'comment',array(
+		$comment = $this->addElement('text', 'comment',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
 						'Alnum',
