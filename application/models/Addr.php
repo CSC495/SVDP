@@ -36,8 +36,7 @@ class Application_Model_Addr
 
     public function getStreet()
     {
-        $this->_street = $street;
-        return $this;
+        return $this->_street;
     }
 
     public function setStreet($street)
