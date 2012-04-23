@@ -53,6 +53,7 @@ class App_Acl extends Zend_Acl
         // Allow access to all actions in the index and login controller
         $this->allow(App_Roles::GENERAL,App_Resources::LOGIN);
         $this->allow(App_Roles::GENERAL,App_Resources::INDEX);
+        $this->allow(App_Roles::GENERAL,App_Resources::ERROR);
     }
     protected function setMemberAccess()
     {

@@ -1,13 +1,13 @@
 <?php
-class Application_Model_AdjustForm extends Zend_Form
+class Application_Model_Admin_AdjustForm extends Zend_Form
 {
 	
 	public function __construct($options = null){
 		parent::__construct($options);
-		$this->setName('login');
-		$this->setAttrib('id', 'login');
+		$this->setName('adjust');
+		$this->setAttrib('id', 'adjust');
 		$this->setMethod('post');
-		$this->setAction('/SVDP/public/admin/adjustprocess');
+		$this->setAction('/SVDP/public/admin/adjust');
 		
 		// Input of total aid a client can recieve
 		$aid = $this->addElement('text', 'aid', array(
@@ -39,5 +39,7 @@ class Application_Model_AdjustForm extends Zend_Form
                    'label'    => 'Adjust Client Limits',
                 ));
                
+	       $jsparam = 'javascript:return adjust_validation(this)';
+	       $this->addAttribs(array('onSubmit'=>$jsparam));
 	}
 }
