@@ -2,7 +2,7 @@
 
 class LoginController extends Zend_Controller_Action
 {
-    private $_timeout = 1; // Time out in minutes
+    private $_timeout = 10; // Time out in minutes
     // Getting user info
     // $identity = Zend_Auth::getInstance()->getIdentity();
     // $identity->username;
@@ -22,13 +22,13 @@ class LoginController extends Zend_Controller_Action
         
         // Set page variables
         $this->view->error_flag = $this->getRequest()->getParam('error_flag');
-        $this->view->form = new Application_Model_LoginForm();
+        $this->view->form = new Application_Model_Login_LoginForm();
         $this->view->pageTitle = "Login Page";
     }
     
     public function forgotAction()
     {
-        $this->view->form = new Application_Model_ForgotForm();
+        $this->view->form = new Application_Model_Login_ForgotForm();
         $this->view->pageTitle = "Forgot Password";
     }
     
@@ -42,7 +42,7 @@ class LoginController extends Zend_Controller_Action
         }
         
         // Get form and validate it
-        $form = new Application_Model_LoginForm();
+        $form = new Application_Model_Login_LoginForm();
         $form->populate($_POST);
 
         // Check if the password forgot button was pressed

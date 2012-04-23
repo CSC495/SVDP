@@ -9,13 +9,13 @@ function adjust_validation(myform){
     $aid  = myform.aid.value;
     $lifetimecases = myform.lifetimecases.value;
     $yearlycases = myform.yearlycases.value;
-    
+
     // Check the total recievable aid fields
     if($aid == ""){
         alert("Enter a value for Total Recievable Aid");
         return false;
     }
-    parseMoney($aid);
+
     if( !moneyRegex.test($aid) ){
         alert("Format does not match for Total Recievable Aid.\nExamples of proper format: $1,234.50,$0.70,.7");
         return false;
@@ -56,5 +56,7 @@ function adjust_validation(myform){
         return false;
     }
     
+    // Set values to proper format
+    myform.aid.value = parseMoney($aid);
     return true;
 }

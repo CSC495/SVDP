@@ -16,7 +16,6 @@ function isEmail(email){
 function parseMoney(money){
     var moneyRegex = /^\$?([1-9]{1}[0-9]{0,2}(\,[0-9]{3})*(\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\.[0-9]{0,2})?|0(\.[0-9]{0,2})?|(\.[0-9]{1,2})?)$/;
     var match = moneyRegex.exec(money);
-    alert(match[1]);
     return(match[1]);
 }
 
