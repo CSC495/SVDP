@@ -44,7 +44,8 @@ class App_Service_Member
                 'c.client_id = d.client_id',
                 array('do_not_help_client_id' => 'd.client_id')
             )
-            ->where('h.current_flag = 1');
+            ->where('h.current_flag = 1')
+            ->where('c.client_id = ?', $clientId);
 
         $results = $this->_db->fetchRow($select);
         return $this->buildClientModel($results);

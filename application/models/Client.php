@@ -123,7 +123,7 @@ class Application_Model_Client
 
     public function getSsn4()
     {
-        return $ssn4;
+        return $this->_ssn4;
     }
 
     public function setSsn4($ssn4)
