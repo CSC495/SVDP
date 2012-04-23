@@ -1,3 +1,57 @@
 @charset "utf-8";
 
-/* TODO: Add common site styling here. */
+/* Styles for map view*/
+
+#map { border: 1px solid black; width: 400px; height: 300px }
+
+/* Styles for search views: */
+
+#search-results {
+    border-collapse: collapse;
+    margin-top: 1em;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.search-result.even {
+    background: #d4d4d4;
+}
+
+.search-cell {
+    padding: 6px 14px;
+    text-align: left;
+}
+
+.search-cell.top {
+    padding-top: 12px;
+}
+
+.search-cell.bot {
+    padding-bottom: 12px;
+}
+
+.search-cell.first {
+    width: 12ex;
+}
+
+.search-cell.id {
+    width: 10%;
+}
+
+.search-cell.name {
+    width: 14%;
+}
+
+.search-cell.donothelp {
+    color: #f00;
+}
+
+.search-cell.last {
+    vertical-align: top;
+    width: 14ex;
+}
+
+th.search-cell {
+    text-align: right;
+    width: 5%;
+}

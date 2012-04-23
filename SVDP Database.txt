@@ -1,0 +1,222 @@
+CREATE DATABASE svdp;
+
+USE svdp;
+
+GRANT select, insert, delete, update
+ ON *
+ TO 'webuser'@'localhost';
+
+
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS client;
+DROP TABLE IF EXISTS address;
+DROP TABLE IF EXISTS household;
+DROP TABLE IF EXISTS hmember;
+DROP TABLE IF EXISTS employment;
+DROP TABLE IF EXISTS client_comment;
+DROP TABLE IF EXISTS client_case;
+DROP TABLE IF EXISTS case_comment;
+DROP TABLE IF EXISTS case_visit;
+DROP TABLE IF EXISTS case_visitors;
+DROP TABLE IF EXISTS case_need;
+DROP TABLE IF EXISTS check_request;
+DROP TABLE IF EXISTS referral;
+DROP TABLE IF EXISTS do_not_help;
+DROP TABLE IF EXISTS case_need;
+DROP TABLE IF EXISTS fund_limit;
+
+CREATE TABLE user(
+     user_id VARCHAR(30),
+     password VARCHAR(256),
+	first_name VARCHAR(30),
+	last_name VARCHAR(30),
+	email VARCHAR(100),
+	cell_phone VARCHAR(13),
+	home_phone VARCHAR(13),
+	role CHAR(1),
+	PRIMARY KEY (user_id)
+) ENGINE = InnoDB;
+
+CREATE TABLE client(
+     client_id VARCHAR(30),
+	created_user_id VARCHAR(30),
+	first_name VARCHAR(30),
+	last_name VARCHAR(30),
+	other_name VARCHAR(30),
+	marriage_status TINYINT(1),
+	birthdate DATE,
+	ssn4 INT,
+	cell_phone VARCHAR(13),
+	home_phone VARCHAR(13),	
+	work_phone VARCHAR(13),
+	created_date DATE,
+	member_parish VARCHAR(50),
+	veteran_flag TINYINT(1),
+     PRIMARY KEY (client_id),
+     FOREIGN KEY (created_user_id) REFERENCES user(user_id)
+) ENGINE = InnoDB;
+
+CREATE TABLE address(
+	address_id VARCHAR(30),
+	client_id VARCHAR(30),
+	street VARCHAR(100),
+	apt VARCHAR(30),
+	city VARCHAR(50),
+	state CHAR(2),
+	zipcode CHAR(5),
+	reside_parish VARCHAR(50),
+	PRIMARY KEY (address_id)
+)ENGINE = 	InnoDB;
+
+
+CREATE TABLE household(
+	household_id VARCHAR(30),
+	address_id VARCHAR (30),
+     	mainclient_id VARCHAR(30),
+	spouse_id VARCHAR(30),
+	current_flag TINYINT(1),
+ 	PRIMARY KEY (household_id),
+     	FOREIGN KEY (address_id) REFERENCES address(address_id),
+     	FOREIGN KEY (mainclient_id) REFERENCES client(client_id)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE hmember(
+     	hmember_id VARCHAR(30),
+	household_id VARCHAR(30),
+	first_name VARCHAR(30),
+	last_name VARCHAR(30),
+	relationship VARCHAR(30),
+     	birthdate DATE,
+	left_date DATE,
+     	PRIMARY KEY (hmember_id),
+     	FOREIGN KEY (household_id) REFERENCES household(household_id)
+) ENGINE = InnoDB;
+
+CREATE TABLE employment(
+	employment_id VARCHAR(30),
+	client_id VARCHAR(30),
+	company VARCHAR(50),
+	position VARCHAR(50),
+	start_date DATE,
+	end_date DATE,
+	PRIMARY KEY (employment_id),
+	FOREIGN KEY (client_id) REFERENCES client(client_id)
+) ENGINE = InnoDB;	
+
+
+CREATE TABLE client_comment(
+     clientcomment_id VARCHAR(30),
+     client_id VARCHAR(30),
+	user_id VARCHAR(30),
+     comment_date DATETIME,
+     comment TEXT,
+     PRIMARY KEY (clientcomment_id),
+     FOREIGN KEY (user_id) REFERENCES user(user_id),
+     FOREIGN KEY (client_id) REFERENCES client(client_id)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE client_case(
+     case_id VARCHAR(30),
+     household_id VARCHAR(30),
+     opened_user_id VARCHAR(30),
+     opened_date DATE,
+     status VARCHAR(10), 
+     PRIMARY KEY (case_id),
+     FOREIGN KEY (household_id) REFERENCES household(household_id),
+     FOREIGN KEY (opened_user_id) REFERENCES user(user_id)
+) ENGINE = InnoDB;
+
+CREATE TABLE case_visit(
+	visit_id VARCHAR(30),
+	case_id VARCHAR(30),
+	visit_date DATE,
+     	miles INT,
+     	hours INT,
+	PRIMARY KEY (visit_id),
+	FOREIGN KEY (case_id) REFERENCES client_case(case_id)
+) ENGINE = InnoDB;
+
+CREATE TABLE case_visitors(
+	visit_id VARCHAR(30),
+	user_id VARCHAR(30),
+	PRIMARY KEY(visit_id, user_id),
+	FOREIGN KEY(visit_id) REFERENCES case_visit(visit_id),
+	FOREIGN KEY(user_id) REFERENCES user(user_id)
+)ENGINE = InnoDB;
+
+CREATE TABLE case_comment(
+     	casecomment_id VARCHAR(30),
+     	case_id VARCHAR(30),
+	user_id VARCHAR(30),
+     	comment_date DATETIME,
+     	comment TEXT,
+     	PRIMARY KEY (casecomment_id),
+     	FOREIGN KEY (case_id) REFERENCES client_case(case_id),
+	FOREIGN KEY (user_id) REFERENCES user(user_id)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE case_need(
+        caseneed_id VARCHAR(30),
+        case_id VARCHAR(30),
+        need VARCHAR(30),
+        amount DECIMAL(7,2),
+     	PRIMARY KEY (caseneed_id),
+     	FOREIGN KEY (case_id) REFERENCES client_case(case_id)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE check_request(
+     	checkrequest_id VARCHAR(30),
+     	caseneed_id VARCHAR(30),
+	user_id VARCHAR(30),
+     	request_date DATE,
+     	amount DECIMAL(7,2),
+     	comment TEXT,
+     	signee_userid VARCHAR(30),
+     	check_number VARCHAR(15),
+     	issue_date DATE,
+	account_number VARCHAR(30),
+     	payee_name VARCHAR(50),
+     	street VARCHAR(100),
+     	city VARCHAR(50),
+     	state CHAR(2),
+     	zipcode CHAR(5),
+     	phone VARCHAR(13),
+     	contact_fname VARCHAR(30),
+     	contact_lname VARCHAR(30),
+     	PRIMARY KEY (checkrequest_id),
+     	FOREIGN KEY (caseneed_id) REFERENCES case_need(caseneed_id),
+     	FOREIGN KEY (user_id) REFERENCES user(user_id)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE referral(
+        referral_id VARCHAR(30),
+        caseneed_id VARCHAR(30),
+        referred_date DATE,
+        reason TEXT,
+        referred_to VARCHAR(256),
+     	PRIMARY KEY (referral_id),
+     	FOREIGN KEY (caseneed_id) REFERENCES case_need(caseneed_id)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE do_not_help(
+        client_id VARCHAR(30),
+        create_user_id VARCHAR(30),
+        added_date DATE,
+        reason TEXT,
+        PRIMARY KEY (client_id),
+        FOREIGN KEY (create_user_id) REFERENCES user(user_id)
+) ENGINE = InnoDB;
+
+
+CREATE TABLE parish_funds(
+        available_funds DECIMAL(8,2),
+        year_limit INT,
+        fund_limit DECIMAL(7,2),
+        case_limit INT
+) ENGINE = InnoDB;
