@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS referral;
 DROP TABLE IF EXISTS do_not_help;
 DROP TABLE IF EXISTS case_need;
 DROP TABLE IF EXISTS fund_limit;
+DROP TABLE IF EXISTS parish_funds;
 
 CREATE TABLE user(
      user_id VARCHAR(30),
