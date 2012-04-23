@@ -11,14 +11,15 @@ div.search-results {
 }
 
 table.search-results {
+    border-bottom: 1px solid #ddd;
     border-collapse: collapse;
-    margin-top: 1em;
+    margin: 1em 0;
     table-layout: fixed;
     width: 100%;
 }
 
 .search-result.even {
-    background: #d4d4d4;
+    background: #f9f9f9;
 }
 
 .search-cell {
@@ -27,6 +28,7 @@ table.search-results {
 }
 
 .search-cell.top {
+    border-top: 1px solid #ddd;
     padding-top: 12px;
 }
 

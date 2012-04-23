@@ -59,7 +59,7 @@ foreach ($messages as $message) {
 ?>
 		<li><h1>St. Vincent de Paul </h1>
 		<li><div class="nav nav-tabs nav-stacked">
-                <?php echo $this->partial("navigation/$role.phtml"); ?>
+            <?php echo $this->partial("partial/navigation.phtml", array('role' => $role)); ?>
         </div></li>
 	</ul>
 	</div>
