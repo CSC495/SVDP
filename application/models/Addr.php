@@ -102,23 +102,23 @@ class Application_Model_Addr
         $part1 = implode(' ', array_filter(array(
             $this->_street,
             $this->_apt,
-        ), 'Application_Model_Addr::isNotNull'));
+        ), 'Application_Model_Addr::isNotNullOrEmpty'));
         $part2 = implode(', ', array_filter(array(
             $this->_city,
             $this->_state,
             $this->_zip,
-        ), 'Application_Model_Addr::isNotNull'));
+        ), 'Application_Model_Addr::isNotNullOrEmpty'));
         return $part1 . (($part1 !== null && $part2 !== null) ? ', ' : '') . $part2;
     }
 
     /**
-     * Returns `false` if the specified value is `null` and `true` if it is not.
+     * Returns `false` if the specified value is `null` or the empty string and `true` if it is not.
      *
      * @param mixed $x
      * @return bool
      */
-    private static function isNotNull($x)
+    private static function isNotNullOrEmpty($x)
     {
-        return $x !== null;
+        return $x !== null && $x !== '';
     }
 }
