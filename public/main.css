@@ -6,7 +6,11 @@
 
 /* Styles for search views: */
 
-#search-results {
+div.search-results {
+    margin: 0 -60px;
+}
+
+table.search-results {
     border-collapse: collapse;
     margin-top: 1em;
     table-layout: fixed;
