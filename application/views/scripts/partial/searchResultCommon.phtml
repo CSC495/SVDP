@@ -1,0 +1,11 @@
+<?php
+?>
+<tr class='search-result <?php echo $this->rowStripeClass; ?>'>
+    <th class='search-cell top first'>Client ID</th>
+    <td class='search-cell top id'><a href="<?php echo $this->escape($this->viewClientUrl) ?>"><?php echo $this->escape($this->client->getId()); ?></a></td>
+    <th class='search-cell top'>Name</th>
+    <td class='search-cell top name'><?php echo $this->escape($this->client->getFullName()); ?></td>
+    <th class='search-cell top'>Phone</th>
+    <td class='search-cell top'><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
+    <td class='search-cell top last'><a href="<?php echo $this->escape($this->gotoUrl); ?>" class="btn btn-mini">Go to <?php echo $this->escape($this->gotoLabel); ?>.</a></td>
+</tr>

@@ -1,0 +1,30 @@
+<?php
+$rowStripeClass = ($this->partialCounter % 2 == 1) ? 'even' : 'odd';
+$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/client/id/'
+    . urlencode($this->case->getClient()->getId()));
+$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/case/id/'
+    . urlencode($this->case->getId()));
+
+echo $this->partial('partial/searchResultCommon.phtml', array(
+    'rowStripeClass' => $rowStripeClass,
+    'viewClientUrl' => $viewClientUrl,
+    'gotoUrl' => $viewCaseUrl,
+    'gotoLabel' => 'case',
+    'client' => $this->case->getClient(),
+));
+?>
+<tr class='search-result <?php echo $rowStripeClass; ?>'>
+    <th class='search-cell first'>Case ID</th>
+    <td class=search-cell><a href="<?php echo $this->escape($viewCaseUrl) ?>"><?php echo $this->escape($this->case->getId()); ?></a></td>
+    <th class=search-cell>Date</th>
+    <td class=search-cell><?php echo $this->escape($this->case->getOpenedDate()); ?></td>
+    <th class=search-cell>Status</th>
+    <td class=search-cell><?php echo $this->escape($this->case->getStatus()); ?></td>
+    <td rowspan=2 class='search-cell last'></td>
+</tr>
+<tr class='search-result <?php echo $rowStripeClass; ?>'>
+    <th class='search-cell bot first'>Amount</th>
+    <td class='search-cell bot'>$<?php echo $this->escape($this->case->getTotalAmount()); ?></td>
+    <th class='search-cell bot'>Needs</th>
+    <td class='search-cell bot' colspan=3><?php echo $this->escape($this->case->getNeedList()); ?></td>
+</tr>
