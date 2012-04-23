@@ -24,13 +24,24 @@ echo $this->headScript(), "\n";
 
 // Get any unread flash messages.
 $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
-$messages       = $flashMessenger->hasCurrentMessages()
-                ? $flashMessenger->getCurrentMessages()
-                : $flashMessenger->getMessages();
+
+if ($flashMessenger->hasCurrentMessages()) {
+    $messages = $flashMessenger->getCurrentMessages();
+    $flashMessenger->clearCurrentMessages();
+} else {
+    $messages = $flashMessenger->getMessages();
+}
+
+// Fetch user role for later use.
+$auth = Zend_Auth::getInstance();
+$role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 ?>
 <header>
     <h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>
 </header>
+<div class="nav nav-tabs nav-stacked">
+<?php echo $this->partial("navigation/$role.phtml"); ?>
+</div>
 <?php
 foreach ($messages as $message) {
     // Write each flash message as a top-level alert.
