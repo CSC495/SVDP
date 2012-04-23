@@ -47,7 +47,7 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 </header>
 <div class="row">
 	<div class="span3">
-	<img src="svdp_logo.jpg" width="150" height="150"/>
+	<img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150"/>
 	</div>
 	<div class="span7" >
 	<ul class="unstyled" style="padding-top: 75px">
