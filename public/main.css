@@ -48,10 +48,6 @@ table.search-results {
     width: 14%;
 }
 
-.search-cell.donothelp {
-    color: #f00;
-}
-
 .search-cell.last {
     vertical-align: top;
     width: 14ex;
