@@ -4,13 +4,17 @@ class Application_Model_CaseForm extends Zend_Form
 
 	public function __construct($options = null){
 		parent::__construct($options);
-		$this->setName('member');
-		$this->setAttrib('id', 'member');
 		$this->setMethod('post');
 
 		$baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/member/case'));
 
+		$form = new Zend_Form;
+		
+		$form->setDecorators(array(
+				array('ViewScript', array('script' => 'member/caseViewScript.phtml'))
+		));
+		
 		$clientID = $this->addElement('text', 'clientID',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
@@ -184,6 +188,4 @@ class Application_Model_CaseForm extends Zend_Form
 				'label'      => 'Comment:',
 		));
 	}
-	
-	public function updateCase
 }
