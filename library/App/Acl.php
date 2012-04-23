@@ -28,6 +28,8 @@ class App_Acl extends Zend_Acl
         $this->add(new Zend_Acl_Resource(App_Resources::INDEX));
         $this->add(new Zend_Acl_Resource(App_Resources::LOGIN));
         $this->add(new Zend_Acl_Resource(App_Resources::MEMBER));
+        $this->add(new Zend_Acl_Resource(App_Resources::SEARCH));
+        $this->add(new Zend_Acl_Resource(App_Resources::TREASURER));
     }
     // Create the various roles
     protected function createRoles()
@@ -54,12 +56,20 @@ class App_Acl extends Zend_Acl
     }
     protected function setMemberAccess()
     {
-        // Allow access to all actions in memebr controller
+        // Allow access to all actions in member controller
         $this->allow(App_Roles::MEMBER,App_Resources::MEMBER);
+        // Allow access to member search pages
+        $this->allow(App_Roles::MEMBER,App_Resources::SEARCH,array(
+            App_Resources::INDEX,
+            App_Resources::MEMBER,
+        ));
     }
     protected function setTreasurerAccess()
     {
-        
+        // Allow access to all actions in the treasurer controller
+        $this->allow(App_Roles::TREASURER,App_Resources::TREASURER);
+        // Allow access to treasurer search pages
+        $this->allow(App_Roles::TREASURER,App_Resources::SEARCH,array(App_Resources::TREASURER));
     }
     protected function setAdminAccess()
     {

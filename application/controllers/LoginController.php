@@ -52,7 +52,7 @@ class LoginController extends Zend_Controller_Action
         // Validate username and password for matching criteria
         if( !$form->isValid( $request->getPost() ) ){
             // Redirect to login page and set error flag
-            $this->_redirect('/login/index/error_flag/TRUE');
+            $this->_redirect('/login/login/error_flag/TRUE');
         }
         
         // Get user name and pass
@@ -78,8 +78,8 @@ class LoginController extends Zend_Controller_Action
     protected function getAuthAdapter()
     {
         // Get the database adapter
-        $registry = Zend_Registry::getInstance();
-        $adapter = new Zend_Auth_Adapter_DbTable($registry->db);
+        $db = Zend_Db_Table::getDefaultAdapter();
+        $adapter = new Zend_Auth_Adapter_DbTable($db);
         
         // Set the parameters
         $adapter

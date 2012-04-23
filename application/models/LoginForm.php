@@ -7,7 +7,9 @@ class Application_Model_LoginForm extends Zend_Form
 		$this->setName('login');
 		$this->setAttrib('id', 'login');
 		$this->setMethod('post');
-		$this->setAction('/SVDP/public/login/process');
+
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+		$this->setAction($baseUrl->baseUrl('/login/process'));
 		
 		// Username must consist of letters only
 		//          must be between 5 and 20 characters
