@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Controller implementing the bulk of functionality needed by parish members.
  */
