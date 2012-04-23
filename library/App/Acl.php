@@ -55,6 +55,7 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::GENERAL,App_Resources::LOGIN);
         $this->allow(App_Roles::GENERAL,App_Resources::INDEX);
         $this->allow(App_Roles::GENERAL,App_Resources::REPORT);
+        $this->allow(App_Roles::GENERAL,App_Resources::ERROR);
     }
     protected function setMemberAccess()
     {
