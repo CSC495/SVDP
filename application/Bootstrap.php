@@ -17,25 +17,5 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $frontController = Zend_Controller_Front::getInstance();
         $frontController->registerPlugin(new App_Controller_Plugin_AuthPlugin($acl));
     }
-
-    protected function _initDbConnection()
-    {
-        // Specifiy database access paramters
-        $options = array(
-                    'host' => 'localhost', 
-   		    'username' => 'webuser', 
-   		    'password' => '',
-   		    'dbname' => 'svdp');
-        
-        // Create the database Adapter
-		$db = Zend_Db::factory('PDO_MYSQL', $options);
-		Zend_Db_Table_Abstract::setDefaultAdapter($db);
-        
-        // Store the db connection in memory
-        $registry = Zend_Registry::getInstance();
-        $registry->set('db',$db);
-    }
-
-
 }
 
