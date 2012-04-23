@@ -1,5 +1,5 @@
 <?php
-class Application_Model_LoginForm extends Zend_Form
+class Application_Model_Login_LoginForm extends Zend_Form
 {
 	
 	public function __construct($options = null){
