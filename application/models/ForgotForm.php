@@ -7,7 +7,9 @@ class Application_Model_ForgotForm extends Zend_Form
 		$this->setName('forgot');
 		$this->setAttrib('id', 'forgot');
 		$this->setMethod('post');
-		$this->setAction('/SVDP/public/login/forgot');
+
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+		$this->setAction($baseUrl->baseUrl('/login/forgot'));
 		
 		// Username must consist of letters only
 		//          must be between 5 and 20 characters

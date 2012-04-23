@@ -17,6 +17,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $frontController = Zend_Controller_Front::getInstance();
         $frontController->registerPlugin(new App_Controller_Plugin_AuthPlugin($acl));
     }
+
 	
 	public function _initActionHelpers()
     {
@@ -40,5 +41,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $registry = Zend_Registry::getInstance();
         $registry->set('db',$db);
     }
+
+
 }
 

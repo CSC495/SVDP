@@ -1,16 +1,11 @@
-<p>Please enter a search query to find check requests.</p>
 <?php
-echo $this->form;
-
-if (isset($this->checkReqs)) {
-    if (empty($this->checkReqs)) {
+if (empty($this->checkReqs)) {
 ?>
-<p>
-Your search query returned no results.
-</p>
+<p>There are not any open check requests.</p>
 <?php
-    } else {
+} else {
 ?>
+<p>Here is a summary of currently open check requests.</p>
 <div class=search-results>
 <table class=search-results>
 <?php
@@ -20,6 +15,5 @@ echo $this->partialLoop('partial/searchResultCheckReq.phtml', $this->checkReqs);
 </table>
 </div>
 <?php
-    }
 }
 ?>
