@@ -1,0 +1,15 @@
+<?php if ($this->role === App_Roles::ADMIN) { ?>
+<a href="<?php echo $this->escape($this->baseUrl('/admin/members')); ?>" class="btn btn-primary btn-large">Manage Members</a>
+<a href="<?php echo $this->escape($this->baseUrl('/admin/limits')); ?>" class="btn btn-primary btn-large">Adjust Client Limits</a>
+<a href="<?php echo $this->escape($this->baseUrl('/admin/docs')); ?>" class="btn btn-primary btn-large">Documents</a>
+<?php } else if ($this->role === App_Roles::MEMBER) { ?>
+<a href="<?php echo $this->escape($this->baseUrl('/member')); ?>" class="btn btn-primary btn-large">Open Clients</a>
+<a href="<?php echo $this->escape($this->baseUrl('/search/member')); ?>" class="btn btn-primary btn-large">Search</a>
+<a href="<?php echo $this->escape($this->baseUrl('/member/maps')); ?>" class="btn btn-primary btn-large">Maps</a>
+<a href="<?php echo $this->escape($this->baseUrl('/member/docs')); ?>" class="btn btn-primary btn-large">Documents</a>
+<a href="<?php echo $this->escape($this->baseUrl('/report')); ?>" class="btn btn-primary btn-large">Reports</a>
+<a href="<?php echo $this->escape($this->baseUrl('/member/contact')); ?>" class="btn btn-primary btn-large">Contact</a>
+<?php } else if ($this->role === App_Roles::TREASURER) { ?>
+<a href="<?php echo $this->escape($this->baseUrl('/treasurer')); ?>" class="btn btn-primary btn-large">Open Check Requests</a>
+<a href="<?php echo $this->escape($this->baseUrl('/search/treasurer')); ?>" class="btn btn-primary btn-large">Search</a>
+<?php } ?>
