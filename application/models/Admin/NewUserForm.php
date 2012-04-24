@@ -7,7 +7,9 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
 		$this->setName('new');
 		$this->setAttrib('id', 'new');
 		$this->setMethod('post');
-		$this->setAction('/SVDP/public/admin/newmember');
+
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+		$this->setAction($baseUrl->baseUrl('/admin/newmember'));
 		
 		// The memebrs name
 		$name = $this->addElement('text', 'name', array(

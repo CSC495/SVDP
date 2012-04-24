@@ -7,7 +7,9 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 		$this->setName('adjust');
 		$this->setAttrib('id', 'adjust');
 		$this->setMethod('post');
-		$this->setAction('/SVDP/public/admin/adjust');
+
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+		$this->setAction($baseUrl->baseUrl('/admin/adjust'));
 		
 		// Input of total aid a client can recieve
 		$aid = $this->addElement('text', 'aid', array(
