@@ -1,0 +1,25 @@
+<p>Please enter a search query to find check requests.</p>
+<?php
+echo $this->form;
+
+if (isset($this->checkReqs)) {
+    if (empty($this->checkReqs)) {
+?>
+<p>
+Your search query returned no results.
+</p>
+<?php
+    } else {
+?>
+<div class=search-results>
+<table class=search-results>
+<?php
+$this->partialLoop()->setObjectKey('checkReq');
+echo $this->partialLoop('partial/searchResultCheckReq.phtml', $this->checkReqs);
+?>
+</table>
+</div>
+<?php
+    }
+}
+?>
