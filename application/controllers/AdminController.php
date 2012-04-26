@@ -93,6 +93,9 @@ class AdminController extends Zend_Controller_Action
         $this->view->form->aid->setValue("$2000");
         $this->view->form->lifetimecases->setValue(5);
         $this->view->form->yearlycases->setValue(1);
+
+        $this->view->headScript()->appendFile($this->view->baseUrl('admin.js'));
+        $this->view->headScript()->appendFile($this->view->baseUrl('utility.js'));
         
     }
     
@@ -106,6 +109,9 @@ class AdminController extends Zend_Controller_Action
     {
         $this->view->pageTitle = "Admin New Member Contact";
         $this->view->form = new Application_Model_Admin_NewUserForm();
+
+        $this->view->headScript()->appendFile($this->view->baseUrl('admin.js'));
+        $this->view->headScript()->appendFile($this->view->baseUrl('utility.js'));
     }
     
 }
