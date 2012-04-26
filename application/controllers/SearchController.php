@@ -23,7 +23,7 @@ class SearchController extends Zend_Controller_Action
     public function memberAction()
     {
         $this->view->pageTitle = 'Client and Case Search';
-        $this->view->form      = new Application_Model_SearchFormMember();
+        $this->view->form      = new Application_Model_Search_SearchFormMember();
 
         if ($this->validateForm()) {
             $searchType  = $this->view->form->getType();
@@ -31,13 +31,13 @@ class SearchController extends Zend_Controller_Action
 
             switch ($searchType) {
                 // Member searches by client ID go to a single client's page.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ID:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_ID:
                     $this->_helper->redirector('client', App_Resources::MEMBER, null, array(
                         'id' => $searchQuery,
                     ));
 
                 // Member searches by case ID go to a single case's page.
-                case Application_Model_SearchFormAbstract::TYPE_CASE_ID:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CASE_ID:
                     $this->_helper->redirector('case', App_Resources::MEMBER, null, array(
                         'id' => $searchQuery,
                     ));
@@ -47,17 +47,17 @@ class SearchController extends Zend_Controller_Action
 
             switch ($searchType) {
                 // Member searches by client name retrieve a list of clients.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_NAME:
                     $this->view->clients = $service->getClientsByName($searchQuery);
                     break;
 
                 // Member searches by client address retrieve a list of clients.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ADDR:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_ADDR:
                     $this->view->clients = $service->getClientsByAddr($searchQuery);
                     break;
 
                 // Member searches by client phone number retrieve a list of clients.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_PHONE:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_PHONE:
                     $this->view->clients = $service->getClientsByPhone($searchQuery);
                     break;
             }
@@ -70,7 +70,7 @@ class SearchController extends Zend_Controller_Action
     public function treasurerAction()
     {
         $this->view->pageTitle = 'Check Request Search';
-        $this->view->form      = new Application_Model_SearchFormTreasurer();
+        $this->view->form      = new Application_Model_Search_SearchFormTreasurer();
 
         if ($this->validateForm()) {
             $searchType  = $this->view->form->getType();
@@ -78,7 +78,7 @@ class SearchController extends Zend_Controller_Action
 
             switch ($searchType) {
                 // Treasurer searches by check request go to a single check request's page.
-                case Application_Model_SearchFormAbstract::TYPE_CHECK_REQ_ID:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CHECK_REQ_ID:
                     $this->_helper->redirector('case', App_Resources::MEMBER, null, array(
                         'id' => $this->view->form->getQuery(),
                     ));
@@ -88,27 +88,27 @@ class SearchController extends Zend_Controller_Action
 
             switch ($searchType) {
                 // Treasurer searches by client name retrieve a list of check requests.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_NAME:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_NAME:
                     $this->view->checkReqs = $service->getCheckReqsByClientName($searchQuery);
                     break;
 
                 // Treasurer searches by client address retrieve a list of check requests.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ADDR:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_ADDR:
                     $this->view->checkReqs = $service->getCheckReqsByClientAddr($searchQuery);
                     break;
 
                 // Treasurer searches by client phone number retrieve a list of check requests.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_PHONE:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_PHONE:
                     $this->view->checkReqs = $service->getCheckReqsByClientPhone($searchQuery);
                     break;
 
                 // Treasurer searches by client ID retrieve a list of check requests.
-                case Application_Model_SearchFormAbstract::TYPE_CLIENT_ID:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_ID:
                     $this->view->checkReqs = $service->getCheckReqsByClientId($searchQuery);
                     break;
 
                 // Treasurer searches by case ID retrieve a list of check requests.
-                case Application_Model_SearchFormAbstract::TYPE_CASE_ID:
+                case Application_Model_Search_SearchFormAbstract::TYPE_CASE_ID:
                     $this->view->checkReqs = $service->getCheckReqsByCaseId($searchQuery);
                     break;
             }
