@@ -5,6 +5,10 @@ script.src = '/SVDP/public/utility.js';
 var content = document.getElementById('head');
 document.getElementById('head').appendChild(script);
 
+function validate_new(myform){
+
+}
+
 function adjust_validation(myform){
     $aid  = myform.aid.value;
     $lifetimecases = myform.lifetimecases.value;
