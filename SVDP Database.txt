@@ -7,23 +7,23 @@ GRANT select, insert, delete, update
  TO 'webuser'@'localhost';
 
 
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS client;
-DROP TABLE IF EXISTS address;
-DROP TABLE IF EXISTS household;
+DROP TABLE IF EXISTS parish_funds;
+DROP TABLE IF EXISTS do_not_help;
 DROP TABLE IF EXISTS hmember;
 DROP TABLE IF EXISTS employment;
 DROP TABLE IF EXISTS client_comment;
-DROP TABLE IF EXISTS client_case;
 DROP TABLE IF EXISTS case_comment;
-DROP TABLE IF EXISTS case_visit;
 DROP TABLE IF EXISTS case_visitors;
-DROP TABLE IF EXISTS case_need;
+DROP TABLE IF EXISTS case_visit;
+DROP TABLE IF EXISTS client_case;
 DROP TABLE IF EXISTS check_request;
-DROP TABLE IF EXISTS referral;
-DROP TABLE IF EXISTS do_not_help;
+DROP TABLE IF EXISTS household;
+DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS case_need;
+DROP TABLE IF EXISTS referral;
 DROP TABLE IF EXISTS fund_limit;
+DROP TABLE IF EXISTS address;
+DROP TABLE IF EXISTS client;
 
 CREATE TABLE user(
      user_id VARCHAR(30),

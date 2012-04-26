@@ -2,6 +2,7 @@
 
 class LoginController extends Zend_Controller_Action
 {
+    private $_timeout = 10; // Time out in minutes
     // Getting user info
     // $identity = Zend_Auth::getInstance()->getIdentity();
     // $identity->username;
@@ -21,13 +22,13 @@ class LoginController extends Zend_Controller_Action
         
         // Set page variables
         $this->view->error_flag = $this->getRequest()->getParam('error_flag');
-        $this->view->form = new Application_Model_LoginForm();
+        $this->view->form = new Application_Model_Login_LoginForm();
         $this->view->pageTitle = "Login Page";
     }
     
     public function forgotAction()
     {
-        $this->view->form = new Application_Model_ForgotForm();
+        $this->view->form = new Application_Model_Login_ForgotForm();
         $this->view->pageTitle = "Forgot Password";
     }
     
@@ -41,7 +42,7 @@ class LoginController extends Zend_Controller_Action
         }
         
         // Get form and validate it
-        $form = new Application_Model_LoginForm();
+        $form = new Application_Model_Login_LoginForm();
         $form->populate($_POST);
 
         // Check if the password forgot button was pressed
@@ -80,7 +81,7 @@ class LoginController extends Zend_Controller_Action
         // Get the database adapter
         $db = Zend_Db_Table::getDefaultAdapter();
         $adapter = new Zend_Auth_Adapter_DbTable($db);
-        
+
         // Set the parameters
         $adapter
             ->setTableName('user')
@@ -110,7 +111,7 @@ class LoginController extends Zend_Controller_Action
             $this->_redirect('/login/login/error_flag/TRUE');
         }
         
-        // Erase the password
+        // Erase the password from the data to be stored with user
         $data = $authAdapter->getResultRowObject(null,'password');
         // Store the users data
         $auth->getStorage()->write($data);
@@ -119,6 +120,10 @@ class LoginController extends Zend_Controller_Action
         $identity = Zend_Auth::getInstance()->getIdentity();
         // Set the identities role
         $identity->role = $authAdapter->getResultRowObject('role')->role;
+        
+        // Set the time out length
+        $authSession = new Zend_Session_Namespace('Zend_Auth');
+        $authSession->setExpirationSeconds($this->_timeout * 60);
         
         $this->forwardUser();
     }

@@ -1,5 +1,5 @@
 <?php
-class Application_Model_ForgotForm extends Zend_Form
+class Application_Model_Login_ForgotForm extends Zend_Form
 {
 	
 	public function __construct($options = null){
