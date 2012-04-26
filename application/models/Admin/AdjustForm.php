@@ -11,7 +11,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/admin/adjust'));
 		$this->setDecorators(array(
-			array('ViewScript', array('viewScript' => 'Admin/limitsViewScript.phtml'))
+			array('ViewScript', array('viewScript' => 'admin/limitsViewScript.phtml'))
 		));	
 		// Input of total aid a client can recieve
 		$aid = $this->addElement('text', 'aid', array(
