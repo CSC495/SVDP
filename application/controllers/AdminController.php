@@ -12,7 +12,6 @@ class AdminController extends Zend_Controller_Action
     public function indexAction()
     {
         $this->view->pageTitle = "Admin Controller";
-        $this->view->form = new Application_Model_Admin_AdminForm();
     }
     
     // Processes the users selection of what page to navigate to next
@@ -101,11 +100,6 @@ class AdminController extends Zend_Controller_Action
     public function membersAction()
     {
         $this->view->pageTitle = "Admin Viewing Users";
-    }
-    // Display document view
-    public function docsAction()
-    {
-        $this->view->pageTitle = "Admin Document View";
     }
     // displays view for creating new member
     public function newAction()
