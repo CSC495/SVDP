@@ -1,0 +1,24 @@
+
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod()) ?>">
+
+<fieldset>
+    <legend>Login</legend>
+    
+    <?php echo $this->element->username ?>
+    <?php echo $this->element->password ?>
+
+</fieldset>
+
+<table>
+    <tr>
+        <td>
+            <?php echo $this->element->login ?>
+        </td>
+        <td>
+            <?php echo $this->element->forgot ?>
+        </td>
+    </tr>
+</table>
+
+</form>
