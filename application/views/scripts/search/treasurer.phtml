@@ -11,12 +11,14 @@ Your search query returned no results.
 <?php
     } else {
 ?>
-<table id=search-results>
+<div class=search-results>
+<table class=search-results>
 <?php
 $this->partialLoop()->setObjectKey('checkReq');
 echo $this->partialLoop('partial/searchResultCheckReq.phtml', $this->checkReqs);
 ?>
 </table>
+</div>
 <?php
     }
 }

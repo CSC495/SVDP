@@ -22,11 +22,6 @@ class App_Controller_Plugin_AuthPlugin extends Zend_Controller_Plugin_Abstract
     */
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        // If this request is for the error page
-        // simply go to the error page and do nothing
-        if($request->getControllerName() == 'error')
-            return;
-        
         $loginController = 'login';
         $loginAction     = 'process';
 
