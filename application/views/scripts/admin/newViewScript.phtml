@@ -1,0 +1,46 @@
+
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod()) ?>"
+      onsubmit="javascript:return validate_new(this)">
+
+<fieldset>
+    <legend>Add New SVDP Member</legend>
+    
+    <table>
+        <tr>
+            <td>
+                <?php echo $this->element->firstname ?>
+                
+            </td>
+            
+            <td>
+                <?php echo $this->element->lastname ?>
+                
+            </td>
+            
+        </tr>
+        <tr>
+            <td>
+                <?php echo $this->element->phonetype; ?>
+            </td>
+            <td>
+                <?php echo $this->element->phone ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <?php echo $this->element->email ?>
+            </td>
+        </tr>
+        
+        <tr>
+            <td>
+            <?php echo $this->element->type ?>
+            </td>
+        </tr>
+    
+    </table>
+</fieldset>
+    
+    <?php echo $this->element->submit ?>
+</form>
