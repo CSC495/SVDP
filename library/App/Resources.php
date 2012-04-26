@@ -10,4 +10,5 @@ class App_Resources
     const SEARCH    = 'search';
     const TREASURER = 'treasurer';
     const REPORT    = 'report';
+    const DOCUMENT  = 'document';
 }

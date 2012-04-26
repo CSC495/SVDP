@@ -10,7 +10,9 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/admin/adjust'));
-		
+		$this->setDecorators(array(
+			array('ViewScript', array('viewScript' => 'Admin/limitsViewScript.phtml'))
+		));	
 		// Input of total aid a client can recieve
 		$aid = $this->addElement('text', 'aid', array(
                                    'filters'    => array('StringTrim', 'StringToLower'),
@@ -19,6 +21,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 		                        ),
 				   'required'   => true,
 				   'label'      => 'Total Recievable Aid:',
+				   'class'      => 'input-small',
 				 ));
 		
                // Input of lifetime cases a client can have
@@ -26,6 +29,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
                    'filters'    => array('StringTrim'),
                    'required'   => true,
                    'label'      => 'Lifetime Cases:',
+		   'class'      => 'input-small',
                ));
         
 		// Input of lifetime cases a client can have
@@ -33,12 +37,14 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
                    'filters'    => array('StringTrim'),
                    'required'   => true,
                    'label'      => 'Yearly Cases:',
+		   'class'      => 'input-small',
                ));
                
                $adjust = $this->addElement('submit', 'adjust', array(
                    'required' => false,
                    'ignore'   => true,
-                   'label'    => 'Adjust Client Limits',
+                   'label'    => 'Submit Changes',
+		   'class'    => 'btn',
                 ));
                
 	       $jsparam = 'javascript:return adjust_validation(this)';
