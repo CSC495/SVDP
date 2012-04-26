@@ -18,7 +18,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 				          'Alnum',
 		                        ),
 				   'required'   => true,
-				   'label'      => 'Total Recievable Aid:',
+				   'label'      => 'Total Yearly Limit:',
 				 ));
 		
                // Input of lifetime cases a client can have
