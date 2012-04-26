@@ -2,7 +2,7 @@
 
 class LoginController extends Zend_Controller_Action
 {
-    private $_timeout = 10; // Time out in minutes
+    private $_timeout = 1440; // Time out in minutes
     // Getting user info
     // $identity = Zend_Auth::getInstance()->getIdentity();
     // $identity->username;
