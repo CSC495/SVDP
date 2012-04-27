@@ -10,44 +10,60 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
 
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/admin/newmember'));
+		$this->setDecorators(array(
+			array('ViewScript',array('viewScript' => 'admin/newViewScript.phtml'))
+		));
 		
 		// The memebrs name
-		$name = $this->addElement('text', 'name', array(
+		$firstname = $this->addElement('text', 'firstname', array(
                                    'filters'    => array('StringTrim', 'StringToLower'),
 				   'required'   => true,
-				   'label'      => 'Name:',
+				   'label'      => 'First Name:',
 				 ));
 		
-               // Members phone number
-               $phone = $this->addElement('text', 'phone', array(
+		// The memebrs name
+		$lastname = $this->addElement('text', 'lastname', array(
+                                   'filters'    => array('StringTrim', 'StringToLower'),
+				   'required'   => true,
+				   'label'      => 'Last Name:',
+				 ));
+		
+		// Members phone type
+		$phonetype = $this->addElement('select','phonetype',array(
+			'label' => 'Phone Type:',
+			'multiOptions' => array ( 'home'    => 'Home',
+						  'cell'     => 'Cell',
+						  'work' => 'Work',)
+			,));
+		
+                // Members phone number
+                $phone = $this->addElement('text', 'phone', array(
                    'filters'    => array('StringTrim'),
                    'required'   => true,
                    'label'      => 'Phone Number:',
-               ));
+                ));
         
 		// IMemebers e-mail
-               $email = $this->addElement('text', 'email', array(
+                $email = $this->addElement('text', 'email', array(
                    'filters'    => array('StringTrim'),
                    'required'   => true,
                    'label'      => 'Email:',
-               ));
+                ));
                
-	       // Type of memebr
-               $type = $this->createElement('select','type');
-	       $type->setLabel('Member Type:')
-			->addMultiOptions(array(
-				'Member' => 'M',
-				'Treasurer' => 'T',
-				'Admin' => 'A',
-			));
+	        // Type of memebr
+                $type = $this->addElement('select','type',array(
+			'label' => 'Member Type:',
+			'multiOptions' => array ( App_Roles::MEMBER    => 'Member',
+						  App_Roles::ADMIN     => 'Admin',
+						  App_Roles::TREASURER => 'Treasurer',)
+			,));
                
-               $adjust = $this->addElement('submit', 'submit', array(
+                $adjust = $this->addElement('submit', 'submit', array(
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Add New Contact',
+		   'class'    => 'btn-success',
                 ));
                
-	       //$jsparam = 'javascript:return adjust_validation(this)';
-	       //$this->addAttribs(array('onSubmit'=>$jsparam));
 	}
 }

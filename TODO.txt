@@ -12,7 +12,8 @@ Add script to e-mail user password
 
 Database/Services
 -------------------------
-Add DBTable to hold "Total Recievable Aid" (FLOAT), "Lifetime Cases" (INT), "Yearly Cases" (INT)
-Query to update any of the above in table
-Query to display all member information (Name, phone, e-mail, member)
-Query to create a new member.
+Query to update any value from parish_funds table;
+Query to access all data from parish_funds table;
+Query to display all member information (Name, phone #'s, e-mail, member, role)
+Query to create a new member (initializes Forgot Password to true)
+Query to update a memebers password and update forgot password to true.
