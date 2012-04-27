@@ -15,13 +15,15 @@ $this->headTitle($this->pageTitle)
 // Use the main stylesheet.
 $this->headLink()->prependStylesheet($this->baseUrl('main.css'), 'all');
 
+// Include jQuery libraries.
+$this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js');
+
 // Render <head> elements.
 echo $this->doctype(),    "\n";
 echo $this->headMeta(),   "\n";
 echo $this->headTitle(),  "\n";
 echo $this->headLink(),   "\n";
 echo $this->headScript(), "\n";
-
 
 // Fetch user role for later use.
 $auth = Zend_Auth::getInstance();
