@@ -7,7 +7,7 @@
  * Note: This class implements the fluent interface pattern, i.e., consecutive set method calls can
  * be chained together: `$client->setId(...)->setFirstName(...)` and so on.
  */
-class Application_Model_Client
+class Application_Model_Impl_Client
 {
 
     private $_id = null;
