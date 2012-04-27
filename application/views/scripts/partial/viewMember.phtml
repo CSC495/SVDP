@@ -1,38 +1,22 @@
 <?php
 $rowStripeClass = ($this->partialCounter % 2 == 1) ? 'even' : 'odd';?>
-<!--
-<tr class='search-result <?php echo $rowStripeClass; ?>'>
-    <th class='search-cell first'>User Id</th>
-    <td class='search-cell'><?php echo $this->escape($this->user->getUserId()); ?></td>
-    <th class='search-cell'>Name</th>
-    <td class='search-cell'><?php echo $this->escape($this->user->getFirstName()) . " " . $this->escape($this->user->getLastName()); ?></td>
-    <th class='search-cell'>E-Mail</th>
-    <td class='search-cell'><?php echo $this->escape($this->user->getEmail()); ?></td>
-    <th class='search-cell'>Cell Phone</th>
-    <td class='search-cell'><?php echo $this->escape($this->user->getCellPhone()); ?></td>
-    <th class='search-cell'>Home Phone</th>
-    <td class='search-cell'><?php echo $this->escape($this->user->getHomePhone()); ?></td>
-    <th class='search-cell'>Role</th>
-    <td class='search-cell'><?php echo $this->escape($this->user->getRole()); ?></td>
-</tr>
--->
 
 <tr class='search-result <?php echo $rowStripeClass; ?>'>
-    <th class='search-cell first'></th>
-    <th class='search-cell'>User Id</th>
-    <th class='search-cell'>Name</th>
-    <th class='search-cell'>E-Mail</th>
-    <th class='search-cell'>Cell Phone</th>
-    <th class='search-cell'>Home Phone</th>
-    <th class='search-cell'>Role</th>
+    <th class='search-cell top first'>User Id</th>
+    <td class='search-cell top'><?php echo $this->escape($this->user->getUserId()); ?></td>
+    <th class='search-cell top'>Name</th>
+    <td class='search-cell top'><?php echo $this->escape($this->user->getFirstName()) . " " . $this->escape($this->user->getLastName()); ?></td>
+    <th class='search-cell top'>E-Mail</th>
+    <td class='search-cell top'><?php echo $this->escape($this->user->getEmail()); ?></td>
+    <td class='search-cell top last'><a href="<?php echo $this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId())); ?>" class='btn btn-mini'>Edit</a></td>
+    
 </tr>
-
 <tr class='search-result <?php echo $rowStripeClass; ?>'>
-    <td class='search-cell bot'></td>
-    <td class='search-cell bot'><?php echo $this->escape($this->user->getUserId()); ?></td>
-    <td class='search-cell bot'><?php echo $this->escape($this->user->getFirstName()) . " " . $this->escape($this->user->getLastName()); ?></td>
-    <td class='search-cell bot'><?php echo $this->escape($this->user->getEmail()); ?></td>
+    <th class='search-cell bot first'>Cell Phone</th>
     <td class='search-cell bot'><?php echo $this->escape($this->user->getCellPhone()); ?></td>
+    <th class='search-cell bot'>Home Phone</th>
     <td class='search-cell bot'><?php echo $this->escape($this->user->getHomePhone()); ?></td>
+    <th class='search-cell bot'>Role</th>
     <td class='search-cell bot'><?php echo $this->escape($this->user->getRole()); ?></td>
+    <td class="search-cell last"><?php if (!$this->user->isActive()) { ?><span class="label label-important">Inactive</span><?php } ?></td>
 </tr>

@@ -88,7 +88,7 @@ class AdminController extends Zend_Controller_Action
         $form->populate($_POST);
         
         // Get form values
-        $this->_helper->redirector('index','admin');   
+        return $this->_helper->redirector('index');
     }
     
     // Displays view for modiying limits
@@ -129,4 +129,66 @@ class AdminController extends Zend_Controller_Action
         $this->view->headScript()->appendFile($this->view->baseUrl('utility.js'));
     }
     
+    // Display for modifying a users information
+    public function modifyAction()
+    {
+        $this->view->pageTitle = "Admin Modify Member";
+        
+        // Get request and passed parameter
+        $request = $this->getRequest();
+        $userId = $request->getParam('id');
+        
+        // If theres no param go back to index
+        if($userId == "")
+            $this->_helper->redirector('index','admin');  
+        
+        // Get the users data
+        $service = new App_Service_AdminService();
+        $user = $service->getUserInfo($userId);
+        
+        $this->view->form = new Application_Model_Admin_ModifyUserForm();
+        
+        // Set form default values
+        $this->view->form->userid->setValue($user->getUserId());
+        $this->view->form->firstname->setValue($user->getFirstName());
+        $this->view->form->lastname->setValue($user->getLastName());
+        $this->view->form->email->setValue($user->getEmail());
+        $this->view->form->cell->setValue($user->getCellPhone());
+        $this->view->form->home->setValue($user->getHomePhone());
+        $this->view->form->role->setValue($user->getRole());
+        $this->view->form->status->setValue($user->getActive());
+         
+    }
+    
+    // Handles submission of user modify form
+    public function modifyprocAction()
+    {
+        $request = $this->getRequest();
+        
+        // Verify Post
+        if( !$request->isPost() ){
+            return $this->_helper->redirector('index');
+        }
+        
+        // Get form values
+        $form = new Application_Model_Admin_ModifyUserForm();
+        $form->populate($_POST);
+        
+        // Update in database
+        $service = new App_Service_AdminService();
+        
+        $user = new Application_Model_Impl_User();
+        $user
+            ->setUserId($form->getValue('userid'))
+            ->setFirstName($form->getValue('firstname'))
+            ->setLastName($form->getValue('lastname'))
+            ->setEmail($form->getValue('email'))
+            ->setCellPhone($form->getValue('cell'))
+            ->setHomePhone($form->getValue('home'))
+            ->setRole($form->getValue('role'))
+            ->setActive($form->getValue('status'));
+        
+        $service->updateUserInformation($user);
+        return $this->_helper->redirector('index');
+    }
 }

@@ -52,7 +52,7 @@ class LoginController extends Zend_Controller_Action
         $service = new App_Service_LoginService();
         $user = $service->getUserInfo($identity->user_id);
         
-        // generate and send e-mail
+        // generate passwordand send e-mail
         if($user){
             $mail = new Zend_Mail();
             $mail->setBodyText('Here is your temporary password. You will be prompted to change it at next login.');
