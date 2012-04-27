@@ -17,6 +17,10 @@ class LoginController extends Zend_Controller_Action
     }
     public function loginAction()
     {
+        $a = new Application_Model_Impl_ParishParams(1,1,1,1);
+        $s = new App_Service_AdminService();
+        var_dump($s->getParishMembers());
+        exit();
         // Forwards the user if they are already logged on
         $this->forwardUser();
         
