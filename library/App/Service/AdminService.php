@@ -27,8 +27,9 @@ class App_Service_AdminService {
         $params = new Application_Model_Impl_ParishParams(
                                               $result['available_funds'],
                                               $result['year_limit'],
-                                              $result['fund_limit'],
-                                              $result['case_limit']);
+                                              $result['lifetime_limit'],
+                                              $result['case_limit'],
+                                              $result['casefund_limit']);
         
         return($params);
     }
@@ -38,10 +39,11 @@ class App_Service_AdminService {
      */
     public function updateParishParams($params)
     {
-        $data = array('available_funds'  => $params->_fundsAvailable,
-                      'year_limit'       => $params->_yearLimit,
-                      'fund_limit'       => $params->_fundLimit,
-                      'case_limit'       => $params->_caseLimit);
+        $data = array('available_funds'  => $params->getAvailableFunds(),
+                      'year_limit'       => $params->getYearlyLimit(),
+                      'lifetime_limit'   => $params->getLifeTimeLimit(),
+                      'case_limit'       => $params->getCaseLimit(),
+                      'casefund_limit'   => $params->getCaseFundLimit());
         $this->_db->update('parish_funds',$data,'1');
     }
     
@@ -75,7 +77,8 @@ class App_Service_AdminService {
                 ->setEmail($row['email'])
                 ->setCellPhone($row['cell_phone'])
                 ->setHomePhone($row['home_phone'])
-                ->setRole($row['role']);
+                ->setRole($row['role'])
+                ->setActive($row['active_flag']);
                 
             array_push($list,$user);
         }
@@ -88,14 +91,17 @@ class App_Service_AdminService {
      */
     public function createParishMemeber($user,$password)
     {
-        $params = array('user_id'    => $user->getUserId(),
-                        'password'   => $password,
-                        'first_name' => $user->getFirstName(),
-                        'last_name'  => $user->getLastName(),
-                        'email'      => $user->getEmail(),
-                        'cell_phone' => $user->getCellPhone(),
-                        'home_phone' => $user->getHomePhone(),
-                        'role'       => $user->getRole());
+        $params = array('user_id'     => $user->getUserId(),
+                        'password'    => $password,
+                        'first_name'  => $user->getFirstName(),
+                        'last_name'   => $user->getLastName(),
+                        'email'       => $user->getEmail(),
+                        'cell_phone'  => $user->getCellPhone(),
+                        'home_phone'  => $user->getHomePhone(),
+                        'role'        => $user->getRole(),
+                        'change_pswd' => 1,
+                        'active_flag' => 1,
+                        );
         $result = $this->_db->insert('user',$params);
     }
     
@@ -105,12 +111,13 @@ class App_Service_AdminService {
     public function updateUserInformation($user)
     {
         $data = array(  
-                        'first_name' => $user->getFirstName(),
-                        'last_name'  => $user->getLastName(),
-                        'email'      => $user->getEmail(),
-                        'cell_phone' => $user->getCellPhone(),
-                        'home_phone' => $user->getHomePhone(),
-                        'role'       => $user->getRole());
+                        'first_name'  => $user->getFirstName(),
+                        'last_name'   => $user->getLastName(),
+                        'email'       => $user->getEmail(),
+                        'cell_phone'  => $user->getCellPhone(),
+                        'home_phone'  => $user->getHomePhone(),
+                        'role'        => $user->getRole(),
+                        'active_flag' => $user->isActive());
         
         $this->_db->update('user',$data,'user_id = ' . $user->getUserId());
     }
@@ -120,7 +127,19 @@ class App_Service_AdminService {
      */
     public function resetUserPassword($userId,$password)
     {
-        $data = array( 'password' => $password);
+        $data = array( 'password'      => $password,
+                       'change_pswrd'  => 1);
+        
+        $this->_db->update('user',$data,'user_id = ' . $userId);
+    }
+    
+    /****
+     *  Sets the users password
+     */
+    public function updateUserPassword($userId,$password)
+    {
+        $data = array( 'password'      => $password,
+                       'change_pswrd'  => 0);
         
         $this->_db->update('user',$data,'user_id = ' . $userId);
     }

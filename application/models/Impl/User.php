@@ -16,6 +16,7 @@ class Application_Model_Impl_User
     
     private $_role;
     
+    private $_active;
     
     public function setUserId($userId){
         // User ids should not be changed.
@@ -84,5 +85,14 @@ class Application_Model_Impl_User
         return $this->_role;
     }
     
-
+    public function setActive(){
+        $this->_active = 1;
+        return $this;
+    }
+    
+    public function isActive(){
+        if(!$this->_active)
+            return 0;
+        return $this->_active;
+    }
 }
