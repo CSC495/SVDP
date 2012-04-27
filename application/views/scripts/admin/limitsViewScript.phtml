@@ -1,0 +1,15 @@
+
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod()) ?>">
+
+<fieldset>
+    <legend>Adjust Client Limits</legend>
+    
+    <?php echo $this->element->aid ?>
+    <?php echo $this->element->lifetimecases ?>
+    <?php echo $this->element->yearlycases ?>
+
+</fieldset>
+    
+    <?php echo $this->element->adjust ?>
+</form>

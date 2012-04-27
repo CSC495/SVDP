@@ -2,7 +2,7 @@
 
 class LoginController extends Zend_Controller_Action
 {
-    private $_timeout = 10; // Time out in minutes
+    private $_timeout = 1440; // Time out in minutes
     // Getting user info
     // $identity = Zend_Auth::getInstance()->getIdentity();
     // $identity->username;
@@ -61,7 +61,7 @@ class LoginController extends Zend_Controller_Action
         $password = $form->getValue('password');
 
         // Check password
-        if( !$this->isValidPassword($password) )
+        if( !$this->isValidPasswordFormat($password) )
         {
             $this->_redirect('/login/login/error_flag/TRUE');
         }
@@ -139,19 +139,19 @@ class LoginController extends Zend_Controller_Action
         switch( $identity->role)
         {
             case App_Roles::MEMBER:
-                $this->_helper->redirector('index','member');
+                $this->_helper->redirector('index',App_Resources::MEMBER);
                 break;
             case App_Roles::ADMIN:
-                $this->_helper->redirector('index','admin');
+                $this->_helper->redirector('index',App_Resources::ADMIN);
                 break;
             case App_Roles::TREASURER:
-                $this->_helper->redirector('index','treasurer');
+                $this->_helper->redirector('index',App_Resources::TREASURER);
                 break;
             default:
                 return;
         }
     }
-    protected function isValidPassword($password)
+    protected function isValidPasswordFormat($password)
     {
         // Check password. Rules..
         // One digit from 0-9

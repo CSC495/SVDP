@@ -3,7 +3,7 @@
 /**
  * Search form specialized for client searches performed by a member user.
  */
-class Application_Model_SearchFormMember extends Application_Model_SearchFormAbstract
+class Application_Model_Search_SearchFormMember extends Application_Model_Search_SearchFormAbstract
 {
 
     /**
@@ -12,7 +12,7 @@ class Application_Model_SearchFormMember extends Application_Model_SearchFormAbs
      * @var array
      */
     private $_additionalTypes = array(
-        Application_Model_SearchFormAbstract::TYPE_CLIENT_ID => array(
+        Application_Model_Search_SearchFormAbstract::TYPE_CLIENT_ID => array(
             'label' => 'Client ID',
             'validators' => array(
                 array('Db_RecordExists', true, array(
@@ -24,7 +24,7 @@ class Application_Model_SearchFormMember extends Application_Model_SearchFormAbs
                 )),
             ),
         ),
-        Application_Model_SearchFormAbstract::TYPE_CASE_ID => array(
+        Application_Model_Search_SearchFormAbstract::TYPE_CASE_ID => array(
             'label' => 'Case ID',
             'validators' => array(
                 array('Db_RecordExists', true, array(

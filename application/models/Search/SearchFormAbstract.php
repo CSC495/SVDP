@@ -3,7 +3,7 @@
 /**
  * Abstract base class for both member and treasurer search forms.
  */
-abstract class Application_Model_SearchFormAbstract extends Zend_Form
+abstract class Application_Model_Search_SearchFormAbstract extends Zend_Form
 {
 
     /* Various types of searches that users can perform. */
