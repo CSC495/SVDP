@@ -86,14 +86,18 @@ class Application_Model_Impl_User
     }
     
     public function setActive($val){
-        if(!$val)
-            $this->_active = 1;
-        else
-            $this->_active = $val;
+        $this->_active = $val;
+
         return $this;
     }
     
     public function isActive(){
+        if($this->_active == 1)
+            return true;
+        else
+            return false;
+    }
+    public function getActive(){
         if(!$this->_active)
             return 0;
         return $this->_active;
