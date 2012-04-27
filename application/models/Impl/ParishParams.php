@@ -1,30 +1,20 @@
 <?php
 
-class App_Models_Impl_ParishParams
+class Application_Model_Impl_ParishParams
 {
-    private $_fundsAvailable;
+    public $_fundsAvailable;
     
-    private $_yearLimit;
+    public $_yearLimit;
     
-    private $_fundLimit;
+    public $_fundLimit;
     
-    private $_caseLimit;
+    public $_caseLimit;
     
-    
-    // Magical php getter
-    public function __get($property){
-        if(property_exists($this, $property)){
-            return $this->$property;
-        }
+    public function __construct($funds,$year,$fund,$case)
+    {
+        $this->_fundsAvailable = $funds;
+        $this->_yearLimit = $year;
+        $this->_fundLimit = $fund;
+        $this->_caseLimit = $case;
     }
-    
-    // Magical php setter
-    public function __set($property,$value){
-        if(property_exists($this, $property)){
-            $this->$property = $value;
-        }
-        return($this);
-    }
-    
-    
 }
