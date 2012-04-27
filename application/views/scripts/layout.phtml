@@ -7,11 +7,12 @@ $charset         = $this->getEncoding();
 $response->setHeader('Content-type', "text/html; charset=$charset");
 $this->headMeta()->setCharset($charset);
 
+/*
 // Set the page title.
 $this->headTitle($this->pageTitle)
      ->headTitle("Society of St. Vincent de Paul")
      ->setSeparator(" :: ");
-
+*/
 // Use the main stylesheet.
 $this->headLink()->prependStylesheet($this->baseUrl('main.css'), 'all');
 
@@ -22,22 +23,13 @@ echo $this->headTitle(),  "\n";
 echo $this->headLink(),   "\n";
 echo $this->headScript(), "\n";
 
-// Get any unread flash messages.
-$flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
-
-if ($flashMessenger->hasCurrentMessages()) {
-    $messages = $flashMessenger->getCurrentMessages();
-    $flashMessenger->clearCurrentMessages();
-} else {
-    $messages = $flashMessenger->getMessages();
-}
 
 // Fetch user role for later use.
 $auth = Zend_Auth::getInstance();
 $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 ?>
 <header>
-    <h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>
+    <!--<h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>-->
     <style type="text/css">
      
       .sidebar-nav {
@@ -47,16 +39,11 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 </header>
 <div class="row">
 	<div class="span3">
-	<img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150"/>
+	<img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0 />
 	</div>
 	<div class="span8" >
 	<ul class="unstyled" style="padding-top: 75px">
-                <?php
-foreach ($messages as $message) {
-    // Write each flash message as a top-level alert.
-    echo '<p class=alert>' . $this->escape($message) . '</p>';
-}
-?>
+    
 		<li><h1>St. Vincent de Paul </h1>
 		<li><div class="nav nav-tabs nav-stacked">
             <?php echo $this->partial("partial/navigation.phtml", array('role' => $role)); ?>
@@ -66,7 +53,7 @@ foreach ($messages as $message) {
 	</div>
 <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span3">
+        <div class="span2">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               
@@ -87,6 +74,20 @@ foreach ($messages as $message) {
           <div class="hero-unit">
             <div id=content>
     <?php
+		// Get any unread flash messages.
+		$flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+
+		if ($flashMessenger->hasCurrentMessages()) {
+			$messages = $flashMessenger->getCurrentMessages();
+			$flashMessenger->clearCurrentMessages();
+		} else {
+			$messages = $flashMessenger->getMessages();
+		}
+		foreach ($messages as $message) {
+			// Write each flash message as a top-level alert.
+			echo '<p class=alert>' . $this->escape($message) . '</p>';
+		}
+		
         // Write out page content specific to the current controller/action.
         echo $this->layout()->content;
     ?>
