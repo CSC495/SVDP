@@ -18,6 +18,7 @@ class Application_Model_Login_LoginForm extends Zend_Form
 		$username = $this->addElement('text', 'username', array(
 				   'required'   => true,
 				   'label'      => 'Username:',
+				   'class'      => 'input-large',
 				 ));
 		
                // Password must consist of alphanumeric characters only
@@ -25,6 +26,7 @@ class Application_Model_Login_LoginForm extends Zend_Form
                $password = $this->addElement('password', 'password', array(
                    'required'   => true,
                    'label'      => 'Password:',
+		   'class'      => 'input-large',
                ));
         
 		
