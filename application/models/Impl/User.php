@@ -30,7 +30,7 @@ class Application_Model_Impl_User
     }
     
     public function getUserId(){
-        return $this->userId;
+        return $this->_userId;
     }
     
     public function setEmail($email){
@@ -48,7 +48,7 @@ class Application_Model_Impl_User
     }
     
     public function getFirstName(){
-        return $this->getFirstName;
+        return $this->_firstName;
     }
     
     public function setLastName($ln){
@@ -85,8 +85,11 @@ class Application_Model_Impl_User
         return $this->_role;
     }
     
-    public function setActive(){
-        $this->_active = 1;
+    public function setActive($val){
+        if(!$val)
+            $this->_active = 1;
+        else
+            $this->_active = $val;
         return $this;
     }
     

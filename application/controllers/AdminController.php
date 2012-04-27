@@ -55,12 +55,20 @@ class AdminController extends Zend_Controller_Action
         $form->populate($_POST);
         
         // Get Form Values
+        $lifetimeLimit = $form->getValue('aid');
+        $yearlyLimit = $form->getValue('yearlycases');
         $lifetimeCases = $form->getValue('lifetimecases');
-        $yearlyCases = $form->getValue('yearlycases');
-        $aid = $form->getValue('aid');
+        $caseFund = $form->getValue('casefund');
         
         //TODO: Persist the data to database.
+        $config = Zend_Registry::get('config');
+        $config->setYearlyLimit($yearlyLimit);
+        $config->setLifeTimeLimit($lifetimeLimit);
+        $config->setCaseLimit($lifetimeCases);
+        $config->setCaseFundLimit($caseFund);
         
+        $service = new App_Service_AdminService();
+        $service->updateParishParams($config);
         //
         
         $this->_helper->redirector('index','admin');   
@@ -89,10 +97,14 @@ class AdminController extends Zend_Controller_Action
         $this->view->pageTitle = "Admin Limit Adjustments";
         $this->view->form = new Application_Model_Admin_AdjustForm();
         
+        $config = Zend_Registry::get('config');
+
         // TODO set default values
-        $this->view->form->aid->setValue("$2000");
-        $this->view->form->lifetimecases->setValue(5);
-        $this->view->form->yearlycases->setValue(1);
+        $this->view->form->aid->setValue("$" . $config->getLifeTimeLimit());
+        $this->view->form->casefund->setValue("$" .$config->getCaseFundLimit());
+        $this->view->form->lifetimecases->setValue($config->getCaseLimit());
+        $this->view->form->yearlycases->setValue($config->getYearlyLimit());
+        
 
         $this->view->headScript()->appendFile($this->view->baseUrl('admin.js'));
         $this->view->headScript()->appendFile($this->view->baseUrl('utility.js'));
@@ -103,6 +115,9 @@ class AdminController extends Zend_Controller_Action
     public function membersAction()
     {
         $this->view->pageTitle = "Admin Viewing Users";
+        
+        $service = new App_Service_AdminService();
+        $this->view->users = $service->getParishMembers();
     }
     // displays view for creating new member
     public function newAction()

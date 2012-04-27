@@ -58,7 +58,7 @@ class Application_Model_Impl_ParishParams
     }
     
     public function setCaseFundLimit($amt){
-        $this->_caseFundLimit;
+        $this->_caseFundLimit = $amt;
         return $this;
     }
     
