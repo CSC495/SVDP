@@ -17,5 +17,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $frontController = Zend_Controller_Front::getInstance();
         $frontController->registerPlugin(new App_Controller_Plugin_AuthPlugin($acl));
     }
+    
+    protected function _initParishParams()
+    {
+        // Ensure DB is bootstrapped first
+        $this->bootstrap('db');
+        
+        $service = new App_Service_AdminService();
+        $params = $service->getParishParams();
+        Zend_Registry::set('config', $params);
+    }
 }
 

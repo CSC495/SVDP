@@ -1,6 +1,5 @@
 <?php
-//Service File for Admin Controller
-//Authored by: Matthew Tieman
+
 class App_Service_AdminService {
     private $_db;
     
@@ -129,17 +128,6 @@ class App_Service_AdminService {
     {
         $data = array( 'password'      => $password,
                        'change_pswrd'  => 1);
-        
-        $this->_db->update('user',$data,'user_id = ' . $userId);
-    }
-    
-    /****
-     *  Sets the users password
-     */
-    public function updateUserPassword($userId,$password)
-    {
-        $data = array( 'password'      => $password,
-                       'change_pswrd'  => 0);
         
         $this->_db->update('user',$data,'user_id = ' . $userId);
     }
