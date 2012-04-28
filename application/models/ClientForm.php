@@ -2,6 +2,10 @@
 class Application_Model_ClientForm extends Zend_Form
 {
 
+	const TYPE_NULL  = 'NULL';
+	const TYPE_UPDATE = 'Address Update';
+	const TYPE_MOVED  = 'Moved';
+	
 	public function __construct($options = null){
 		parent::__construct($options);
 		$this->setMethod('post');
@@ -35,6 +39,7 @@ class Application_Model_ClientForm extends Zend_Form
 				'label'      => 'First Name:',
 				'size'		 => 30,
 				));
+		
 		$lastName = $this->addElement('text', 'lastName',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
@@ -119,6 +124,14 @@ class Application_Model_ClientForm extends Zend_Form
 				'label'      => 'Work Phone:',
 				'size'		 => 13,
 		));
+		
+		$addressChange = $this->addElement('select', 'addressChange', array(
+				'label'			=> 'Address Change',
+				'multiOptions'	=> array(
+						'NULL',
+						'Address Update',
+						'Moved')
+				));
 		
 		$address = $this->addElement('text', 'address',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
@@ -333,6 +346,13 @@ class Application_Model_ClientForm extends Zend_Form
 				'required'   => true,
 				'label'      => 'Added By:',
 				'attribs'    => array('disabled' => 'disabled'),
+		));
+		
+		$edit = $this->addElement('submit', 'edit', array(
+				'required' => false,
+				'ignore'   => true,
+				'label'    => '     Edit Client     ',
+				'class'    => 'btn-success',
 		));
 
 	}
