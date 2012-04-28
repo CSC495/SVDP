@@ -24,13 +24,18 @@ class MemberController extends Zend_Controller_Action
         // If we don't have any GET parameters, display the form but not the map.
         $request = $this->getRequest();
 
-        if (!$request->getQuery('search')) {
+        if (!$request->getQuery('search') && !$request->getQuery('newClient')) {
             return;
         }
 
         // Otherwise, check for form errors.
         if (!$this->view->form->isValid($request->getQuery())) {
             return;
+        }
+
+        // If the user wants to create a new client, send them to the appropriate place.
+        if ($this->view->form->isNewClientRequest()) {
+            // TODO: Actually do the redirect.
         }
 
         // If we got this far, the address seems (vaguely) legit, and so we can fetch geolocation
@@ -47,6 +52,7 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Update the form with Google's reformatted address and prepare to show a Google map.
+        $this->view->form->showNewClientButton();
         $this->view->form->setAddr($service->getAddr());
         $this->view->latitude = $service->getLatitude();
         $this->view->longitude = $service->getLongitude();

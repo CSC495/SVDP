@@ -5,6 +5,8 @@
  */
 class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizontal {
 
+    private $_showNewClientButton = false;
+
     /**
      * Instantiates a new instance of the `Application_Model_Member_MapsForm` class.
      */
@@ -125,6 +127,11 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
             'label' => 'Search',
         ));
 
+        $this->addElement('submit', 'newClient', array(
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
+            'label' => 'New Client',
+        ));
+
         $this->addDisplayGroup(
             array('street', 'apt', 'city', 'state', 'zip'),
             'fields',
@@ -132,10 +139,44 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
         );
 
         $this->addDisplayGroup(
-            array('search'),
+            array('search', 'newClient'),
             'actions',
             array('disableLoadDefaultDecorators' => true, 'decorators' => array('Actions'))
         );
+    }
+
+    /**
+     * Renders the form, display the "New Client" button if and only if `showNewClientButton()` has
+     * been called.
+     *
+     * @param Zend_View_Interface $view
+     * @return string
+     */
+    public function render($view = null)
+    {
+        if (!$this->_showNewClientButton) {
+            $this->removeElement('newClient');
+        }
+
+        return parent::render($view);
+    }
+
+    /**
+     * Enables displaying the "New Client" button.
+     */
+    public function showNewClientButton()
+    {
+        $this->_showNewClientButton = true;
+    }
+
+    /**
+     * Returns true if the request requires creation of a new client and false otherwise.
+     *
+     * @return bool
+     */
+    public function isNewClientRequest()
+    {
+        return $this->newClient->isChecked();
     }
 
     /**
