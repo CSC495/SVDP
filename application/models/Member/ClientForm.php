@@ -1,5 +1,5 @@
 <?php
-class Application_Model_ClientForm extends Zend_Form
+class Application_Model_Member_ClientForm extends Zend_Form
 {
 
 	const TYPE_NULL  = 'NULL';

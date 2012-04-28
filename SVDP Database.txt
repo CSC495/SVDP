@@ -7,23 +7,23 @@ GRANT select, insert, delete, update
  TO 'webuser'@'localhost';
 
 
-DROP TABLE IF EXISTS parish_funds;
-DROP TABLE IF EXISTS do_not_help;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS client;
+DROP TABLE IF EXISTS address;
+DROP TABLE IF EXISTS household;
 DROP TABLE IF EXISTS hmember;
 DROP TABLE IF EXISTS employment;
 DROP TABLE IF EXISTS client_comment;
-DROP TABLE IF EXISTS case_comment;
-DROP TABLE IF EXISTS case_visitors;
-DROP TABLE IF EXISTS case_visit;
 DROP TABLE IF EXISTS client_case;
-DROP TABLE IF EXISTS check_request;
-DROP TABLE IF EXISTS household;
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS case_comment;
+DROP TABLE IF EXISTS case_visit;
+DROP TABLE IF EXISTS case_visitors;
 DROP TABLE IF EXISTS case_need;
+DROP TABLE IF EXISTS check_request;
 DROP TABLE IF EXISTS referral;
+DROP TABLE IF EXISTS do_not_help;
+DROP TABLE IF EXISTS case_need;
 DROP TABLE IF EXISTS fund_limit;
-DROP TABLE IF EXISTS address;
-DROP TABLE IF EXISTS client;
 
 CREATE TABLE user(
      user_id VARCHAR(30),
@@ -31,14 +31,16 @@ CREATE TABLE user(
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
 	email VARCHAR(100),
-	cell_phone VARCHAR(13),
-	home_phone VARCHAR(13),
+	cell_phone INT,
+	home_phone INT,
 	role CHAR(1),
+	change_pswd TINYINT(1),
+	active_flag TINYINT(1),
 	PRIMARY KEY (user_id)
 ) ENGINE = InnoDB;
 
 CREATE TABLE client(
-     client_id VARCHAR(30),
+     client_id INT,
 	created_user_id VARCHAR(30),
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
@@ -46,9 +48,9 @@ CREATE TABLE client(
 	marriage_status TINYINT(1),
 	birthdate DATE,
 	ssn4 INT,
-	cell_phone VARCHAR(13),
-	home_phone VARCHAR(13),	
-	work_phone VARCHAR(13),
+	cell_phone INT,
+	home_phone INT,	
+	work_phone INT,
 	created_date DATE,
 	member_parish VARCHAR(50),
 	veteran_flag TINYINT(1),
@@ -57,8 +59,8 @@ CREATE TABLE client(
 ) ENGINE = InnoDB;
 
 CREATE TABLE address(
-	address_id VARCHAR(30),
-	client_id VARCHAR(30),
+	address_id INT,
+	client_id INT,
 	street VARCHAR(100),
 	apt VARCHAR(30),
 	city VARCHAR(50),
@@ -70,10 +72,10 @@ CREATE TABLE address(
 
 
 CREATE TABLE household(
-	household_id VARCHAR(30),
-	address_id VARCHAR (30),
-     	mainclient_id VARCHAR(30),
-	spouse_id VARCHAR(30),
+	household_id INT,
+	address_id INT,
+     	mainclient_id INT,
+	spouse_id INT,
 	current_flag TINYINT(1),
  	PRIMARY KEY (household_id),
      	FOREIGN KEY (address_id) REFERENCES address(address_id),
@@ -82,8 +84,8 @@ CREATE TABLE household(
 
 
 CREATE TABLE hmember(
-     	hmember_id VARCHAR(30),
-	household_id VARCHAR(30),
+     	hmember_id INT,
+	household_id INT,
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
 	relationship VARCHAR(30),
@@ -94,8 +96,8 @@ CREATE TABLE hmember(
 ) ENGINE = InnoDB;
 
 CREATE TABLE employment(
-	employment_id VARCHAR(30),
-	client_id VARCHAR(30),
+	employment_id INT,
+	client_id INT,
 	company VARCHAR(50),
 	position VARCHAR(50),
 	start_date DATE,
@@ -106,8 +108,8 @@ CREATE TABLE employment(
 
 
 CREATE TABLE client_comment(
-     clientcomment_id VARCHAR(30),
-     client_id VARCHAR(30),
+     clientcomment_id INT,
+     client_id INT,
 	user_id VARCHAR(30),
      comment_date DATETIME,
      comment TEXT,
@@ -118,8 +120,8 @@ CREATE TABLE client_comment(
 
 
 CREATE TABLE client_case(
-     case_id VARCHAR(30),
-     household_id VARCHAR(30),
+     case_id INT,
+     household_id INT,
      opened_user_id VARCHAR(30),
      opened_date DATE,
      status VARCHAR(10), 
@@ -129,8 +131,8 @@ CREATE TABLE client_case(
 ) ENGINE = InnoDB;
 
 CREATE TABLE case_visit(
-	visit_id VARCHAR(30),
-	case_id VARCHAR(30),
+	visit_id INT,
+	case_id INT,
 	visit_date DATE,
      	miles INT,
      	hours INT,
@@ -139,7 +141,7 @@ CREATE TABLE case_visit(
 ) ENGINE = InnoDB;
 
 CREATE TABLE case_visitors(
-	visit_id VARCHAR(30),
+	visit_id INT,
 	user_id VARCHAR(30),
 	PRIMARY KEY(visit_id, user_id),
 	FOREIGN KEY(visit_id) REFERENCES case_visit(visit_id),
@@ -147,10 +149,10 @@ CREATE TABLE case_visitors(
 )ENGINE = InnoDB;
 
 CREATE TABLE case_comment(
-     	casecomment_id VARCHAR(30),
-     	case_id VARCHAR(30),
+     	casecomment_id INT,
+     	case_id INT,
 	user_id VARCHAR(30),
-     	comment_date DATETIME,
+     	case_date DATETIME,
      	comment TEXT,
      	PRIMARY KEY (casecomment_id),
      	FOREIGN KEY (case_id) REFERENCES client_case(case_id),
@@ -159,8 +161,8 @@ CREATE TABLE case_comment(
 
 
 CREATE TABLE case_need(
-        caseneed_id VARCHAR(30),
-        case_id VARCHAR(30),
+        caseneed_id INT,
+        case_id INT,
         need VARCHAR(30),
         amount DECIMAL(7,2),
      	PRIMARY KEY (caseneed_id),
@@ -169,8 +171,8 @@ CREATE TABLE case_need(
 
 
 CREATE TABLE check_request(
-     	checkrequest_id VARCHAR(30),
-     	caseneed_id VARCHAR(30),
+     	checkrequest_id INT,
+     	caseneed_id INT,
 	user_id VARCHAR(30),
      	request_date DATE,
      	amount DECIMAL(7,2),
@@ -184,7 +186,7 @@ CREATE TABLE check_request(
      	city VARCHAR(50),
      	state CHAR(2),
      	zipcode CHAR(5),
-     	phone VARCHAR(13),
+     	phone INT,
      	contact_fname VARCHAR(30),
      	contact_lname VARCHAR(30),
      	PRIMARY KEY (checkrequest_id),
@@ -194,8 +196,8 @@ CREATE TABLE check_request(
 
 
 CREATE TABLE referral(
-        referral_id VARCHAR(30),
-        caseneed_id VARCHAR(30),
+        referral_id INT,
+        caseneed_id INT,
         referred_date DATE,
         reason TEXT,
         referred_to VARCHAR(256),
@@ -205,7 +207,7 @@ CREATE TABLE referral(
 
 
 CREATE TABLE do_not_help(
-        client_id VARCHAR(30),
+        client_id INT,
         create_user_id VARCHAR(30),
         added_date DATE,
         reason TEXT,
@@ -217,6 +219,16 @@ CREATE TABLE do_not_help(
 CREATE TABLE parish_funds(
         available_funds DECIMAL(8,2),
         year_limit INT,
-        fund_limit DECIMAL(7,2),
-        case_limit INT
+        lifetime_limit DECIMAL(7,2),
+        case_limit INT,
+	casefund_limit DECIMAL(7,2)
 ) ENGINE = InnoDB;
+
+CREATE TABLE schedule(
+	week_id INT,
+	start_date DATE,
+	user_id VARCHAR(30),
+	PRIMARY KEY (week_id),
+	FOREIGN KEY (user_id) REFERENCES user(user_id)
+) ENGINE = InnoDB;
+
