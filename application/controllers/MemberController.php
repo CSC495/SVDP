@@ -36,6 +36,11 @@ class MemberController extends Zend_Controller_Action
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_CaseForm();
     }
+    
+    public function indexAction()
+    {
+    	
+    }
 
     private function prefillClient($form, $client)
     {

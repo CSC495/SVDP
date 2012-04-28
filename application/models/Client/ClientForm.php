@@ -62,31 +62,6 @@ class Application_Model_ClientForm extends Zend_Form
 				'label'      => 'Do NOT Help:',
 		));
 		
-		$birthdate = $this->addElement('text', 'birthdate',array(
-				'filters'    => array('Digits'),
-				'validators' => array(
-						'Digits',
-						array('StringLength', false, array(8)),
-						array('Date', false, array('format', 'yyyymmdd')),
-				),
-				'required'   => true,
-				'label'      => 'Birthdate (YYYYMMDD):',
-		));
-		
-		$ssn4 = $this->addElement('text', 'ssn4',array(
-				'validators' => array(
-						'Digits',
-						array('StringLength', false, array(4)),
-				),
-				'required'   => true,
-				'label'      => 'Last 4 of SSN:',
-		));
-		
-		$veteranFlag = $this->addElement('checkbox', 'veteranFlag',array(
-				'required'   => false,
-				'label'      => 'Veteran:',
-		));
-		
 		$homePhone = $this->addElement('text', 'homePhone',array(
 				'filters'    => array('Digits'),
 				'validators' => array(
@@ -175,58 +150,17 @@ class Application_Model_ClientForm extends Zend_Form
 				'label'      => 'Married:',
 				));
 		
-		$spouseFirstName = $this->addElement('text', 'spouseFirstName',array(
+		$spouse = $this->addElement('text', 'spouse',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
 						'Alpha',
 						array('StringLength', false, array(1, 30)),
 				),
 				'required'   => false,
-				'label'      => 'Spouse\'s First Name:',
+				'label'      => 'Spouse\'s Name:',
 		));
 		
-		$spouseLastName = $this->addElement('text', 'spouseLastName',array(
-				'filters'    => array('StringTrim', 'StringToLower'),
-				'validators' => array(
-						'Alpha',
-						array('StringLength', false, array(1, 30)),
-				),
-				'required'   => false,
-				'label'      => 'Spouse\'s Last Name:',
-		));
-		
-		////////////Household members/////////////////
-		$houseMemberFirst = $this->addElement('text', 'houseMemberFirst',array(
-				'filters'    => array('StringTrim', 'StringToLower'),
-				'validators' => array(
-						'Alpha',
-						array('StringLength', false, array(1, 30)),
-				),
-				'required'   => false,
-				'label'      => 'Household Member First Name:',
-		));
-		
-		$houseMemberLast = $this->addElement('text', 'houseMemberLast',array(
-				'filters'    => array('StringTrim', 'StringToLower'),
-				'validators' => array(
-						'Alpha',
-						array('StringLength', false, array(1, 30)),
-				),
-				'required'   => false,
-				'label'      => 'Household Member Last Name:',
-		));
-		
-		$relationship = $this->addElement('text', 'relationship',array(
-				'filters'    => array('StringTrim', 'StringToLower'),
-				'validators' => array(
-						'Alpha',
-						array('StringLength', false, array(1, 30)),
-				),
-				'required'   => false,
-				'label'      => 'Relationship:',
-		));		
-		
-		$houseMemberBirthdate = $this->addElement('text', 'houseMemberBirthdate',array(
+		$birthdate = $this->addElement('text', 'birthdate',array(
 				'filters'    => array('Digits'),
 				'validators' => array(
 						'Digits',
@@ -235,21 +169,22 @@ class Application_Model_ClientForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Birthdate (YYYYMMDD):',
-		));
+				));
 		
-		$dateLeft = $this->addElement('text', 'dateLeft',array(
-				'filters'    => array('Digits'),
+		$ssn4 = $this->addElement('text', 'ssn4',array(
 				'validators' => array(
 						'Digits',
-						array('StringLength', false, array(8)),
-						array('Date', false, array('format', 'yyyymmdd')),
+						array('StringLength', false, array(4)),
 				),
 				'required'   => true,
-				'label'      => 'Left Household (YYYYMMDD):',
+				'label'      => 'Last 4 of SSN:',
+				));
+		
+		$veteranFlag = $this->addElement('checkbox', 'veteranFlag',array(
+				'required'   => false,
+				'label'      => 'Veteran:',
 		));
 		
-		////////////////////End Household Members////////////////////
-				
 		$resideParish = $this->addElement('text', 'resideParish',array(
 				'filters'    => array('StringTrim', 'StringToLower'),
 				'validators' => array(
