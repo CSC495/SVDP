@@ -3,7 +3,7 @@
 /**
  * Abstract base class for both member and treasurer search forms.
  */
-abstract class Application_Model_Search_FormAbstract extends Zend_Form
+abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_Form_Inline
 {
 
     /* Various types of searches that users can perform. */
@@ -35,12 +35,7 @@ abstract class Application_Model_Search_FormAbstract extends Zend_Form
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         $this->setAction($baseUrl->baseUrl("/search/$action"))
-             ->setMethod('get')
-             ->setDecorators(array(
-                 'FormElements',
-                 array('Form', array('class' => 'form-search'),
-             )))
-             ->setElementDecorators(array('ViewHelper', 'Label'));
+             ->setMethod('get');
 
         $this->_types = array_merge($this->_types, $additionalTypes);
 
@@ -49,7 +44,8 @@ abstract class Application_Model_Search_FormAbstract extends Zend_Form
             'required' => true,
             'validators' => array(
                 array('NotEmpty', true, array(
-                    'messages' => array('isEmpty' => 'You must enter a search criterion.'),
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'You must select a search criterion.'),
                 )),
             ),
         ));
@@ -68,9 +64,8 @@ abstract class Application_Model_Search_FormAbstract extends Zend_Form
         ));
 
         $this->addElement('submit', 'search', array(
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
             'label' => 'Search',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn',
         ));
 
         // Populate search type dropdown.
