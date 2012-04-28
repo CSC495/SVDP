@@ -6,18 +6,64 @@ class MemberController extends Zend_Controller_Action
 {
 
     /**
-     * Home page action that lists open cases for the current member. Only a short summary shall be
+     * Home page action: currently just redirects to the map search screen.
+     */
+    public function indexAction()
+    {
+        $this->_helper->redirector('map');
+    }
+
+    /**
+     * Action that allows members to locate potential clients on a map.
+     */
+    public function mapAction()
+    {
+        $this->view->pageTitle = 'Maps';
+        $this->view->form = new Application_Model_Member_MapsForm();
+
+        // If we don't have any GET parameters, display the form but not the map.
+        $request = $this->getRequest();
+
+        if (!$request->getQuery('search')) {
+            return;
+        }
+
+        // Otherwise, check for form errors.
+        if (!$this->view->form->isValid($request->getQuery())) {
+            return;
+        }
+
+        // If we got this far, the address seems (vaguely) legit, and so we can fetch geolocation
+        // data.
+        $service = new App_Service_Map($this->view->form->getAddr());
+
+        // Respond to geocoding errors.
+        if ($service->hasErrorMsg()) {
+            $this->_helper->flashMessenger($service->getErrorMsg());
+            return;
+        } else if (!$service->hasResult()) {
+            $this->_helper->flashMessenger('No results were found for that address.');
+            return;
+        }
+
+        // Update the form with Google's reformatted address and prepare to show a Google map.
+        $this->view->form->setAddr($service->getAddr());
+        $this->view->coords = $service->getCoords();
+    }
+
+    /**
+     * Action that lists open cases for the current member. Only a short summary shall be
      * displayed for each case.
      */
     public function opencasesAction()
     {
-        $this->view->pageTitle = "Open Cases";
+        $this->view->pageTitle = 'Open Cases';
 
         $service           = new App_Service_Search();
         $userId            = Zend_Auth::getInstance()->getIdentity()->user_id;
         $this->view->cases = $service->getOpenCasesByUserId($userId);
     }
-    
+
     public function clientAction()
     {
     	$this->view->pageTitle = 'Client View/Edit';
@@ -30,7 +76,7 @@ class MemberController extends Zend_Controller_Action
             $this->prefillClient($this->view->form, $client);
         }
     }
-    
+
     public function caseAction()
     {
     	$this->view->pageTitle = 'Case View/Edit';
