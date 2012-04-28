@@ -33,7 +33,7 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
                     ),
                 )),
             ),
-            'label' => 'Street',
+            'label' => 'Street address',
             'maxLength' => 100,
             'dimension' => 3,
         ));
@@ -49,7 +49,8 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
                     ),
                 )),
             ),
-            'label' => 'Apt. #',
+            'label' => 'Apartment #',
+            'description' => '(optional)',
             'maxLength' => 30,
             'dimension' => 1,
         ));
@@ -114,6 +115,7 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
                 )),
             ),
             'label' => 'ZIP code',
+            'description' => '(optional)',
             'maxLength' => 5,
             'dimension' => 1,
         ));
@@ -126,7 +128,7 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
         $this->addDisplayGroup(
             array('street', 'apt', 'city', 'state', 'zip'),
             'fields',
-            array('legend' => "Enter an address to determine a client's parish.")
+            array('legend' => "Enter a client's address.")
         );
 
         $this->addDisplayGroup(

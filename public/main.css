@@ -1,8 +1,10 @@
 @charset "utf-8";
 
-/* Styles for map view*/
+/* Styles for map view: */
 
-#map { border: 1px solid black; width: 400px; height: 300px }
+#map {
+    height: 400px;
+}
 
 /* Styles for search views: */
 
@@ -58,7 +60,15 @@ th.search-cell {
     width: 5%;
 }
 
-/* Base boostrap style */
+/* Patches to Bootstrap: */
+
+.hero-unit .help-block {
+    font-size: 13px;
+    line-height: 18px;
+}
+
+/* Base Bootstrap style: */
+
 /*!
  * Bootstrap v2.0.2
  *
