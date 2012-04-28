@@ -48,7 +48,11 @@ class MemberController extends Zend_Controller_Action
 
         // Update the form with Google's reformatted address and prepare to show a Google map.
         $this->view->form->setAddr($service->getAddr());
-        $this->view->coords = $service->getCoords();
+        $this->view->latitude = $service->getLatitude();
+        $this->view->longitude = $service->getLongitude();
+
+        $this->view->headScript()->appendFile(
+            'http://maps.googleapis.com/maps/api/js?sensor=false');
     }
 
     /**

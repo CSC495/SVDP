@@ -115,14 +115,25 @@ class App_Service_Map
     }
 
     /**
-     * Returns a JSON object with latitude and longitude of the requested address, or `null` if no
-     * such coordinates could be obtained.
+     * Returns the latitude component of the request address, or `null` if no coordinates could be
+     * obtained.
      *
-     * @return object|null
+     * @return float|null
      */
-    public function getCoords()
+    public function getLatitude()
     {
-        return $this->_coords;
+        return $this->_coords->lat;
+    }
+
+    /**
+     * Returns the longitude component of the request address, or `null` if no coordinates could be
+     * obtained.
+     *
+     * @return float|null
+     */
+    public function getLongitude()
+    {
+        return $this->_coords->lng;
     }
 
     /**
