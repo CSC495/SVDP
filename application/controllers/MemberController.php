@@ -78,7 +78,7 @@ class MemberController extends Zend_Controller_Action
     public function clientAction()
     {
     	$this->view->pageTitle = 'Client View/Edit';
-    	$this->view->form      = new Application_Model_ClientForm();
+    	$this->view->form      = new Application_Model_Member_ClientForm();
 
         if ($this->_hasParam('id')) {
             $service = new App_Service_Member();
@@ -91,7 +91,7 @@ class MemberController extends Zend_Controller_Action
     public function caseAction()
     {
     	$this->view->pageTitle = 'Case View/Edit';
-    	$this->view->form      = new Application_Model_CaseForm();
+    	$this->view->form      = new Application_Model_Member_CaseForm();
     }
 
     private function prefillClient($form, $client)

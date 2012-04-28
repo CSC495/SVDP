@@ -1,5 +1,5 @@
 <?php
-class Application_Model_CaseForm extends Zend_Form
+class Application_Model_Member_CaseForm extends Zend_Form
 {
 
 	public function __construct($options = null){
