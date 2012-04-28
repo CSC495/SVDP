@@ -127,10 +127,7 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
             'label' => 'Search',
         ));
 
-        $this->addElement('submit', 'newClient', array(
-            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
-            'label' => 'New Client',
-        ));
+        $this->addElement('submit', 'newClient', array('label' => 'New Client'));
 
         $this->addDisplayGroup(
             array('street', 'apt', 'city', 'state', 'zip'),

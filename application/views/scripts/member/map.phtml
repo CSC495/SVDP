@@ -3,7 +3,7 @@ if (isset($this->latitude) && isset($this->longitude)) {
     $this->headScript()->captureStart();
 ?>
 $(function() {
-    drawMap($('#map'), new google.maps.LatLng(<?php echo Zend_Json::encode($this->latitude); ?>, <?php echo Zend_Json::encode($this->longitude); ?>));
+    renderMap(new google.maps.LatLng(<?php echo Zend_Json::encode($this->latitude); ?>, <?php echo Zend_Json::encode($this->longitude); ?>));
 });
 <?php
     $this->headScript()->captureEnd();
@@ -16,7 +16,7 @@ $(function() {
 
     <?php if (isset($this->latitude) && isset($this->longitude)) { ?>
     <div class=span6><div class=well><div id=map>
-        <noscript>JavaScript must be enabled to display maps.</noscript>
+        <noscript><p>JavaScript must be enabled to display maps.</p></noscript>
     </div></div></div>
     <?php } ?>
 </div>
