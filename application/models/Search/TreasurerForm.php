@@ -3,7 +3,7 @@
 /**
  * Search form specialized for check request searches performed by a treasurer user.
  */
-class Application_Model_Search_FormTreasurer extends Application_Model_Search_FormAbstract
+class Application_Model_Search_TreasurerForm extends Application_Model_Search_FormAbstract
 {
 
     /**
@@ -33,7 +33,7 @@ class Application_Model_Search_FormTreasurer extends Application_Model_Search_Fo
     );
 
     /**
-     * Initializes a new instance of the `Application_Model_FormTreasurer` class.
+     * Initializes a new instance of the `Application_Model_TreasurerForm` class.
      */
     public function __construct()
     {
