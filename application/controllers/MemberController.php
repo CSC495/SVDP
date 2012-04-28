@@ -33,9 +33,10 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
-        // If the user wants to create a new client, send them to the appropriate place.
+        // If the user wants to create a new client, redirect them to the appropriate place.
         if ($this->view->form->isNewClientRequest()) {
-            // TODO: Actually do the redirect.
+            $this->_helper->redirector('editclient', App_Resources::MEMBER, null,
+                $this->view->form->getValues());
         }
 
         // If we got this far, the address seems (vaguely) legit, and so we can fetch geolocation
@@ -58,7 +59,7 @@ class MemberController extends Zend_Controller_Action
         $this->view->longitude = $service->getLongitude();
 
         $this->view->headScript()->appendFile(
-            'http://maps.googleapis.com/maps/api/js?sensor=false');
+            'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry');
     }
 
     /**
