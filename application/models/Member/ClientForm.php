@@ -334,7 +334,17 @@ class Application_Model_Member_ClientForm extends Zend_Form
         ));
     }
 
-    public function isValid($data)
+    public function isAddHouseholderRequest($data)
+    {
+        return isset($data['newHouseholder']);
+    }
+
+    public function isAddEmployerRequest($data)
+    {
+        return isset($data['newEmployer']);
+    }
+
+    public function prevalidate($data)
     {
         if (isset($data['householders'])) {
             foreach ($data['householders'] as $householderId => $householderData) {
@@ -353,8 +363,6 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 );
             }
         }
-
-        return parent::isValid($data);
     }
 
     /*public function getClient()
@@ -418,6 +426,14 @@ class Application_Model_Member_ClientForm extends Zend_Form
         }
     }
 
+    public function addHouseholder()
+    {
+        $this->_householdersSubForm->addSubForm(
+            new Application_Model_Member_HouseholderSubForm(),
+            count($this->_householdersSubForm->getSubForms())
+        );
+    }
+
     public function getEmployers($employers)
     {
         $employers = array();
@@ -441,5 +457,13 @@ class Application_Model_Member_ClientForm extends Zend_Form
 
             $this->_employersSubForm->addSubForm($employerSubForm, $i++);
         }
+    }
+
+    public function addEmployer()
+    {
+        $this->_employersSubForm->addSubForm(
+            new Application_Model_Member_EmployerSubForm(),
+            count($this->_employersSubForm->getSubForms())
+        );
     }
 }
