@@ -127,11 +127,31 @@ class MemberController extends Zend_Controller_Action
             }
         }
 
-        if ($request->isPost()) {
-            // If the user just submitted the form, make some validation goodness happen.
-            if (!$this->view->form->isValid($request->getPost())) {
-                return;
-            }
+        // If this isn't a post request, then we're done.
+        if (!$request->isPost()) {
+            return;
+        }
+
+        $data = $request->getPost();
+
+        // Re-add existing form data.
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        // Handles requests to add new householders or employers.
+        if ($this->view->form->isAddHouseholderRequest($data)) {
+            $this->view->form->addHouseholder();
+            return;
+        }
+
+        if ($this->view->form->isAddEmployerRequest($data)) {
+            $this->view->form->addEmployer();
+            return;
+        }
+
+        // If the user just submitted the form, make some validation goodness happen.
+        if (!$this->view->form->isValid($data)) {
+            return;
         }
     }
 
