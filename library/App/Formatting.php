@@ -17,7 +17,7 @@ class App_Formatting
         return sprintf('(%s) %s-%s', $phone1, $phone2, $phone3);
     }
 
-    private static function emptyToNull($x)
+    public static function emptyToNull($x)
     {
         return ($x !== '') ? $x : null;
     }

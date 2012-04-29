@@ -115,6 +115,14 @@ class App_Service_Member
         return $this->buildEmployerModels($results);
     }
 
+    public function createClient($client) {
+        $this->_db->insert('client', $this->disassembleClientModel($client));;
+
+        $client->setId($this->_db->lastInsertId());
+
+        return $client;
+    }
+
     private function buildClientModel($dbResult)
     {
         $addr = new Application_Model_Impl_Addr();
@@ -157,6 +165,25 @@ class App_Service_Member
             ->setDoNotHelpReason($dbResult['do_not_help_reason']);
 
         return $client;
+    }
+
+    private function disassembleClientModel($client)
+    {
+        return array(
+            'created_user_id' => $client->getUserId(),
+            'first_name' => $client->getFirstName(),
+            'last_name' => $client->getLastName(),
+            'other_name' => $client->getOtherName(),
+            'marriage_status' => (int)$client->isMarried(),
+            'birthdate' => $client->getBirthDate(),
+            'ssn4' => $client->getSsn4(),
+            'cell_phone' => $client->getCellPhone(),
+            'home_phone' => $client->getHomePhone(),
+            'work_phone' => $client->getWorkPhone(),
+            'created_date' => $client->getCreatedDate(),
+            'member_parish' => $client->getParish(),
+            'veteran_flag' => (int)$client->isVeteran(),
+        );
     }
 
     private function buildHouseholderModels($dbResults)
