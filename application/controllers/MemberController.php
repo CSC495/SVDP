@@ -89,6 +89,9 @@ class MemberController extends Zend_Controller_Action
 
     public function editclientAction()
     {
+        $request = $this->getRequest();
+        $service = new App_Service_Member();
+
         if ($this->_hasParam('id')) {
             // Editing an existing client.
             $id = $this->_getParam('id');
@@ -96,17 +99,18 @@ class MemberController extends Zend_Controller_Action
             $this->view->pageTitle = 'Edit Client';
             $this->view->form = new Application_Model_Member_ClientForm($id);
 
-            $service = new App_Service_Member();
-
-            $this->view->form->setClient($service->getClientById($id));
-            $this->view->form->setHouseholders($service->getHouseholdersByClientId($id));
-            $this->view->form->setEmployers($service->getEmployersByClientId($id));
+            if (!$request->isPost()) {
+                // If the user hasn't submitted the form yet, load client info from the database.
+                $this->view->form->setClient($service->getClientById($id));
+                $this->view->form->setHouseholders($service->getHouseholdersByClientId($id));
+                $this->view->form->setEmployers($service->getEmployersByClientId($id));
+            }
         } else {
             // Adding a new client.
             $this->view->pageTitle = 'New Client';
             $this->view->form = new Application_Model_Member_ClientForm();
 
-            if ($this->_hasParam('street') && $this->_hasParam('city')
+            if (!$request->isPost() && $this->_hasParam('street') && $this->_hasParam('city')
                     && $this->_hasParam('state')) {
                 // Using address information from map action.
                 $addr = new Application_Model_Impl_Addr();
@@ -120,6 +124,13 @@ class MemberController extends Zend_Controller_Action
                 $client->setCurrentAddr($addr);
 
                 $this->view->form->setClient($client);
+            }
+        }
+
+        if ($request->isPost()) {
+            // If the user just submitted the form, make some validation goodness happen.
+            if (!$this->view->form->isValid($request->getPost())) {
+                return;
             }
         }
     }
