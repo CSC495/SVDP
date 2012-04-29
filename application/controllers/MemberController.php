@@ -91,12 +91,15 @@ class MemberController extends Zend_Controller_Action
     {
         if ($this->_hasParam('id')) {
             // Editing an existing client.
+            $id = $this->_getParam('id');
+
             $this->view->pageTitle = 'Edit Client';
-            $this->view->form = new Application_Model_Member_ClientForm($this->_getParam('id'));
+            $this->view->form = new Application_Model_Member_ClientForm($id);
 
             $service = new App_Service_Member();
 
-            $this->view->form->setClient($service->getClientById($this->_getParam('id')));
+            $this->view->form->setClient($service->getClientById($id));
+            $this->view->form->setHouseholders($service->getHouseholdersByClientId($id));
         } else {
             // Adding a new client.
             $this->view->pageTitle = 'New Client';

@@ -232,7 +232,7 @@ class App_Service_Search
             ->joinLeft(
                 array('d' => 'do_not_help'),
                 'c.client_id = d.client_id',
-                array('do_not_help_client_id' => 'd.client_id')
+                array('do_not_help_reason' => 'd.reason')
             )
             ->where('h.current_flag = 1')
             ->order(array('c.last_name', 'c.first_name', 'c.client_id'));
@@ -327,7 +327,7 @@ class App_Service_Search
                 ->setHomePhone($dbResult['home_phone'])
                 ->setWorkPhone($dbResult['work_phone'])
                 ->setCurrentAddr($addr)
-                ->setDoNotHelp($dbResult['do_not_help_client_id'] !== null);
+                ->setDoNotHelpReason($dbResult['do_not_help_reason']);
 
             $clients[] = $client;
         }

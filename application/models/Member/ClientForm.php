@@ -1,16 +1,47 @@
 <?php
 
-class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizontal
+class Application_Model_Member_ClientForm extends Zend_Form
 {
+
+    private $_id;
+
+    private $_householderSubForms = array();
+
+    private $_employerSubForms = array();
+
+    private static function makeActionUrl($id)
+    {
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editClient'
+            . (($id !== null) ? '/id/' . urlencode($id) : ''));
+    }
 
     public function __construct($id = null)
     {
+        $this->_id = $id;
+
         parent::__construct();
 
-        $baseUrl = new Zend_View_Helper_BaseUrl();
+        $this
+            ->setAction(self::makeActionUrl($id))
+            ->setMethod('post')
+            ->setDecorators(array(
+                'PrepareElements',
+                array('ViewScript', array(
+                    'viewScript' => 'form/editclient.phtml',
+                    'householderSubForms' => &$this->_householderSubForms,
+                    'employerSubForms' => &$this->_employerSubForms,
+                )),
+                array('Form', array('class' => 'member form-horizontal')),
+            ))
+            ->setElementDecorators(array(
+                'ViewHelper',
+                array('Description', array('class' => 'help-block')),
+                array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
+                array('Label', array('class' => 'control-label')),
+            ));
 
-        $this->setAction($baseUrl->baseUrl(App_Resources::MEMBER) . '/editclient')
-             ->setMethod('post');
+        // Personal information elements:
 
         $this->addElement('text', 'firstName', array(
             'required' => true,
@@ -28,8 +59,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => 'First name',
-            'maxLength' => 30,
-            'dimension' => 3,
+            'maxlength' => 30,
+            'class' => 'span3',
         ));
 
         $this->addElement('text', 'lastName', array(
@@ -48,8 +79,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => 'Last name',
-            'maxLength' => 30,
-            'dimension' => 3,
+            'maxlength' => 30,
+            'class' => 'span3',
         ));
 
         $this->addElement('text', 'otherName', array(
@@ -64,8 +95,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             ),
             'label' => 'Other name',
             'description' => '(optional)',
-            'maxLength' => 30,
-            'dimension' => 3,
+            'maxlength' => 30,
+            'class' => 'span3',
         ));
 
         $this->addElement('text', 'birthDate', array(
@@ -79,10 +110,28 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                     ),
                 )),
             ),
-            'label' => 'Birth date (mm/dd/yyyy)',
+            'label' => 'Birth date',
             'description' => '(optional)',
-            'maxLength' => 10,
-            'dimension' => 2,
+            'maxlength' => 10,
+            'class' => 'span2',
+        ));
+
+        $this->addElement('text', 'ssn4', array(
+            'required' => true,
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', true, array(
+                    'min' => 4,
+                    'max' => 4,
+                    'messages' => array(
+                        'stringLengthTooShort' => 'SSN must be last four digits.',
+                        'stringLengthTooLong' => 'SSN must be last four digits.',
+                    ),
+                )),
+            ),
+            'label' => 'Last four digits of SSN',
+            'maxlength' => 4,
+            'class' => 'span1',
         ));
 
         $this->addElement('checkbox', 'married', array(
@@ -105,8 +154,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => "Spouse's name",
-            'maxLength' => 30,
-            'dimension' => 3,
+            'maxlength' => 30,
+            'class' => 'span3',
         ));
 
         $this->addElement('text', 'spouseBirthDate', array(
@@ -120,44 +169,13 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                     ),
                 )),
             ),
-            'label' => "Spouse's birth date (mm/dd/yyyy)",
+            'label' => "Spouse's birth date",
             'description' => '(optional)',
-            'maxLength' => 10,
-            'dimension' => 2,
+            'maxlength' => 10,
+            'class' => 'span2',
         ));
 
-        $this->addElement('text', 'ssn4', array(
-            'required' => true,
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('StringLength', true, array(
-                    'min' => 4,
-                    'max' => 4,
-                    'messages' => array(
-                        'stringLengthTooShort' => 'SSN must be last four digits.',
-                        'stringLengthTooLong' => 'SSN must be last four digits.',
-                    ),
-                )),
-            ),
-            'label' => 'Last four digits of SSN',
-            'maxLength' => 4,
-            'dimension' => 1,
-        ));
-
-        $this->addDisplayGroup(
-            array(
-                'firstName',
-                'lastName',
-                'otherName',
-                'birthDate',
-                'married',
-                'spouseName',
-                'spouseBirthDate',
-                'ssn4',
-            ),
-            'personal',
-            array('legend' => 'Personal information:')
-        );
+        // Additional information elements:
 
         $this->addElement('checkbox', 'doNotHelp', array(
             'required' => true,
@@ -180,8 +198,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => '"Do not help" reason',
-            'maxLength' => 100,
-            'dimension' => 4,
+            'maxlength' => 100,
+            'class' => 'span3',
         ));
 
         $this->addElement('checkbox', 'veteran', array(
@@ -205,15 +223,11 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => 'Parish attended',
-            'maxLength' => 50,
-            'dimension' => 3,
+            'maxlength' => 50,
+            'class' => 'span3',
         ));
 
-        $this->addDisplayGroup(
-            array('doNotHelp', 'doNotHelpReason', 'veteran', 'parish'),
-            'extra',
-            array('legend' => 'Additional information:')
-        );
+        // Contact information elements:
 
         $this->addElement('text', 'cellPhone', array(
             'filters' => array('StringTrim', 'Digits'),
@@ -228,9 +242,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => 'Cell phone',
-            'description' => '(at least one phone required)',
-            'maxLength' => 12,
-            'dimension' => 2,
+            'maxlength' => 12,
+            'class' => 'span2',
         ));
 
         $this->addElement('text', 'homePhone', array(
@@ -246,9 +259,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => 'Home phone',
-            'description' => '(at least one phone required)',
-            'maxLength' => 12,
-            'dimension' => 2,
+            'maxlength' => 12,
+            'class' => 'span2',
         ));
 
         $this->addElement('text', 'workPhone', array(
@@ -264,33 +276,48 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => 'Work phone',
-            'description' => '(at least one phone required)',
-            'maxLength' => 12,
-            'dimension' => 2,
+            'maxlength' => 12,
+            'class' => 'span2',
         ));
 
-        $this->addDisplayGroup(
-            array('cellPhone', 'homePhone', 'workPhone'),
-            'contact',
-            array('legend' => 'Contact information:')
-        );
+        $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');
 
-        $this->addSubForm(
-            new Application_Model_Member_AddressSubForm('Current address:', true, true),
-            'addr'
-        );
+        // Householder elements:
+
+        $this->addElement('submit', 'newHouseholder', array(
+            'label' => 'Add Another Member',
+            'decorators' => array('ViewHelper'),
+            'class' => 'btn btn-info',
+        ));
+
+        // Employer elements:
+
+        $this->addElement('submit', 'newEmployer', array(
+            'label' => 'Add Another Employer',
+            'decorators' => array('ViewHelper'),
+            'class' => 'btn btn-info',
+        ));
+
+        // Primary form actions:
 
         $this->addElement('submit', 'submit', array(
-            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
-            'label' => ($id === null) ? 'Create Client' : 'Submit Changes'
+            'label' => ($id === null) ? 'Create Client' : 'Submit Changes',
+            'decorators' => array('ViewHelper'),
+            'class' => 'btn btn-success',
         ));
-
-        $this->addDisplayGroup(
-            array('submit'),
-            'actions',
-            array('disableLoadDefaultDecorators' => true, 'decorators' => array('Actions'))
-        );
     }
+
+    /*public function getClient()
+    {
+        $client = new Application_Model_Impl_Client();
+        $client->setId($this->_id)
+               ->setFirstName($this->firstName->getValue())
+               ->setLastName($this->lastName->getValue())
+               ->setOtherName(self::emptyToNull($this->otherName->getValue()))
+               ->setCurrentAddr($this->addr->getAddr());
+
+        return $client;
+    }*/
 
     public function setClient($client)
     {
@@ -301,24 +328,34 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         $this->birthDate->setValue($client->getBirthDate());
         $this->ssn4->setValue($client->getSsn4());
         $this->doNotHelp->setChecked($client->isDoNotHelp());
+        $this->doNotHelpReason->setValue($client->getDoNotHelpReason());
         $this->veteran->setChecked($client->isVeteran());
         $this->parish->setValue($client->getParish());
         $this->homePhone->setValue($client->getFormattedHomePhone());
         $this->cellPhone->setValue($client->getFormattedCellPhone());
         $this->workPhone->setValue($client->getFormattedWorkPhone());
         $this->addr->setAddr($client->getCurrentAddr());
+
+        if ($client->isMarried()) {
+            $spouse = $client->getSpouse();
+            $this->spouseName->setValue($spouse->getFirstName());
+            $this->spouseBirthDate->setValue($spouse->getBirthDate());
+        }
     }
 
-    public function getClient()
+    public function setHouseholders($householders)
     {
-        $client = new Application_Model_Impl_Client();
-        $client->setId($this->_id)
-               ->setFirstName($this->firstName->getValue())
-               ->setLastName($this->lastName->getValue())
-               ->setOtherName(self::emptyToNull($this->otherName->getValue()))
-               ->setCurrentAddr($this->addr->getAddr());
+        $i = 0;
 
-        return $client;
+        foreach ($householders as $householder) {
+            $householderSubForm = new Application_Model_Member_HouseholderSubForm();
+            $householderSubForm->setHouseholder($householder);
+
+            $this->_householderSubForms[] = $householderSubForm;
+            $this->addSubForm($householderSubForm, "householder$i");
+
+            ++$i;
+        }
     }
 
     private static function emptyToNull($x)
