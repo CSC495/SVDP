@@ -122,8 +122,8 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
         $householder->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()));
         $householder->setLastName(App_Formatting::emptyToNull($this->lastName->getValue()));
         $householder->setRelationship(App_Formatting::emptyToNull($this->relationship->getValue()));
-        $householder->setBirthDate(App_Formatting::emptyToNull($this->birthDate->getValue()));
-        $householder->setDepartDate(App_Formatting::emptyToNull($this->departDate->getValue()));
+        $householder->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()));
+        $householder->setDepartDate(App_Formatting::unformatDate($this->departDate->getValue()));
 
         return $householder;
     }
@@ -134,7 +134,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
         $this->firstName->setValue($householder->getFirstName());
         $this->lastName->setValue($householder->getLastName());
         $this->relationship->setValue($householder->getRelationship());
-        $this->birthDate->setValue($householder->getBirthDate());
-        $this->departDate->setValue($householder->getDepartDate());
+        $this->birthDate->setValue(App_Formatting::formatDate($householder->getBirthDate()));
+        $this->departDate->setValue(App_Formatting::formatDate($householder->getDepartDate()));
     }
 }

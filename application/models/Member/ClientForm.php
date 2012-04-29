@@ -373,7 +373,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                ->setLastName(App_Formatting::emptyToNull($this->firstName->getValue()))
                ->setOtherName(App_Formatting::emptyToNull($this->otherName->getValue()))
                ->setMarried($this->married->isChecked())
-               ->setBirthDate(App_Formatting::emptyToNull($this->birthDate->getValue()))
+               ->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()))
                ->setSsn4(App_Formatting::emptyToNull($this->ssn4->getValue()))
                ->setCellPhone(App_Formatting::emptyToNull($this->cellPhone->getValue()))
                ->setHomePhone(App_Formatting::emptyToNull($this->homePhone->getValue()))
@@ -391,7 +391,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->lastName->setValue($client->getLastName());
         $this->otherName->setValue($client->getOtherName());
         $this->married->setChecked($client->isMarried());
-        $this->birthDate->setValue($client->getBirthDate());
+        $this->birthDate->setValue(App_Formatting::formatDate($client->getBirthDate()));
         $this->ssn4->setValue($client->getSsn4());
         $this->doNotHelp->setChecked($client->isDoNotHelp());
         $this->doNotHelpReason->setValue($client->getDoNotHelpReason());
@@ -405,7 +405,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         if ($client->isMarried()) {
             $spouse = $client->getSpouse();
             $this->spouseName->setValue($spouse->getFirstName());
-            $this->spouseBirthDate->setValue($spouse->getBirthDate());
+            $this->spouseBirthDate->setValue(App_Formatting::formatDate($spouse->getBirthDate()));
         }
     }
 

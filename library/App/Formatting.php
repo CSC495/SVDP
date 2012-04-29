@@ -17,6 +17,16 @@ class App_Formatting
         return sprintf('(%s) %s-%s', $phone1, $phone2, $phone3);
     }
 
+    public static function formatDate($date)
+    {
+        return ($date !== null) ? date('m/d/Y', strtotime($date)) : '';
+    }
+
+    public static function unformatDate($date)
+    {
+        return ($date !== '') ? date('Y-m-d', strtotime($date)) : null;
+    }
+
     public static function emptyToNull($x)
     {
         return ($x !== '') ? $x : null;
