@@ -100,6 +100,7 @@ class MemberController extends Zend_Controller_Action
 
             $this->view->form->setClient($service->getClientById($id));
             $this->view->form->setHouseholders($service->getHouseholdersByClientId($id));
+            $this->view->form->setEmployers($service->getEmployersByClientId($id));
         } else {
             // Adding a new client.
             $this->view->pageTitle = 'New Client';

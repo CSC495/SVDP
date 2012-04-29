@@ -343,6 +343,17 @@ class Application_Model_Member_ClientForm extends Zend_Form
         }
     }
 
+    public function getHouseholders($householders)
+    {
+        $householders = array();
+
+        foreach ($this->_householderSubForms as $householderSubForm) {
+            $householders[] = $householderSubForm->getHouseholder();
+        }
+
+        return $householders;
+    }
+
     public function setHouseholders($householders)
     {
         $i = 0;
@@ -358,8 +369,29 @@ class Application_Model_Member_ClientForm extends Zend_Form
         }
     }
 
-    private static function emptyToNull($x)
+    public function getEmployers($employers)
     {
-        return ($x !== '') ? $x : null;
+        $employers = array();
+
+        foreach ($this->_employerSubForms as $employerSubForm) {
+            $employers[] = $employerSubForm->getEmployer();
+        }
+
+        return $employers;
+    }
+
+    public function setEmployers($employers)
+    {
+        $i = 0;
+
+        foreach ($employers as $employer) {
+            $employerSubForm = new Application_Model_Member_EmployerSubForm();
+            $employerSubForm->setEmployer($employer);
+
+            $this->_employerSubForms[] = $employerSubForm;
+            $this->addSubForm($employerSubForm, "employer$i");
+
+            ++$i;
+        }
     }
 }

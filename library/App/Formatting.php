@@ -16,4 +16,9 @@ class App_Formatting
         $phone3 = substr($phone, 6, 4);
         return sprintf('(%s) %s-%s', $phone1, $phone2, $phone3);
     }
+
+    private static function emptyToNull($x)
+    {
+        return ($x !== '') ? $x : null;
+    }
 }
