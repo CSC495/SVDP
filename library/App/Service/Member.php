@@ -20,7 +20,7 @@ class App_Service_Member
                 'c.last_name',
                 'c.other_name',
                 'c.marriage_status',
-                'c.birthdate',
+                'birthdate' => 'DATE_FORMAT(c.birthdate, "%m/%d/%Y")',
                 'c.ssn4',
                 'c.cell_phone',
                 'c.home_phone',
@@ -37,7 +37,15 @@ class App_Service_Member
             ->join(
                 array('a' => 'address'),
                 'a.address_id = h.address_id',
-                array('a.address_id', 'a.street', 'a.apt', 'a.city', 'a.state', 'a.zipcode')
+                array(
+                    'a.address_id',
+                    'a.street',
+                    'a.apt',
+                    'a.city',
+                    'a.state',
+                    'a.zipcode',
+                    'a.reside_parish',
+                )
             )
             ->joinLeft(
                 array('d' => 'do_not_help'),
@@ -60,7 +68,8 @@ class App_Service_Member
             ->setApt($dbResult['apt'])
             ->setCity($dbResult['city'])
             ->setState($dbResult['state'])
-            ->setZip($dbResult['zipcode']);
+            ->setZip($dbResult['zipcode'])
+            ->setParish($dbResult['reside_parish']);
 
         $client = new Application_Model_Impl_Client();
         $client
