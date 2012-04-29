@@ -103,8 +103,8 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
         $employer->setId(App_Formatting::emptyToNull($this->id->getValue()));
         $employer->setCompany(App_Formatting::emptyToNull($this->company->getValue()));
         $employer->setPosition(App_Formatting::emptyToNull($this->position->getValue()));
-        $employer->setStartDate(App_Formatting::emptyToNull($this->startDate->getValue()));
-        $employer->setEndDate(App_Formatting::emptyToNull($this->endDate->getValue()));
+        $employer->setStartDate(App_Formatting::unformatDate($this->startDate->getValue()));
+        $employer->setEndDate(App_Formatting::unformatDate($this->endDate->getValue()));
 
         return $employer;
     }
@@ -114,7 +114,7 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
         $this->id->setValue($employer->getId());
         $this->company->setValue($employer->getCompany());
         $this->position->setValue($employer->getPosition());
-        $this->startDate->setValue($employer->getStartDate());
-        $this->endDate->setValue($employer->getEndDate());
+        $this->startDate->setValue(App_Formatting::formatDate($employer->getStartDate()));
+        $this->endDate->setValue(App_Formatting::formatDate($employer->getEndDate()));
     }
 }

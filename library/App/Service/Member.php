@@ -20,7 +20,7 @@ class App_Service_Member
                 'c.last_name',
                 'c.other_name',
                 'c.marriage_status',
-                'birthdate' => 'DATE_FORMAT(c.birthdate, "%m/%d/%Y")',
+                'c.birthdate',
                 'c.ssn4',
                 'c.cell_phone',
                 'c.home_phone',
@@ -41,7 +41,7 @@ class App_Service_Member
                 array(
                     'spouse_id' => 'c2.client_id',
                     'spouse_first_name' => 'c2.first_name',
-                    'spouse_birthdate' => 'DATE_FORMAT(c2.birthdate, "%m/%d/%Y")',
+                    'spouse_birthdate' => 'c2.birthdate',
                 )
             )
             ->join(
@@ -77,8 +77,8 @@ class App_Service_Member
                 'm.first_name',
                 'm.last_name',
                 'm.relationship',
-                'birthdate' => 'DATE_FORMAT(m.birthdate, "%m/%d/%Y")',
-                'left_date' => 'DATE_FORMAT(m.left_date, "%m/%d/%Y")',
+                'm.birthdate',
+                'm.left_date',
             ))
             ->join(
                 array('h' => 'household'),
@@ -100,8 +100,8 @@ class App_Service_Member
                 'e.employment_id',
                 'e.company',
                 'e.position',
-                'start_date' => 'DATE_FORMAT(e.start_date, "%m/%d/%Y")',
-                'end_date' => 'DATE_FORMAT(e.end_date, "%m/%d/%Y")',
+                'e.start_date',
+                'e.end_date',
             ))
             ->where('e.client_id = ?', $clientId)
             ->order(array(
@@ -116,9 +116,18 @@ class App_Service_Member
     }
 
     public function createClient($client) {
-        $this->_db->insert('client', $this->disassembleClientModel($client));;
+        $this->_db->beginTransaction();
 
-        $client->setId($this->_db->lastInsertId());
+        try {
+            $this->_db->insert('client', $this->disassembleClientModel($client));;
+
+            $client->setId($this->_db->lastInsertId());
+
+            $this->_db->commit();
+        } catch (Exception $ex) {
+            $this->_db->rollBack();
+            throw $ex;
+        }
 
         return $client;
     }
