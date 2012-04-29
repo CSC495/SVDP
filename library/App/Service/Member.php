@@ -93,6 +93,28 @@ class App_Service_Member
         return $this->buildHouseholderModels($results);
     }
 
+    public function getEmployersByClientId($clientId)
+    {
+        $select = $this->_db->select()
+            ->from(array('e' => 'employment'), array(
+                'e.employment_id',
+                'e.company',
+                'e.position',
+                'start_date' => 'DATE_FORMAT(e.start_date, "%m/%d/%Y")',
+                'end_date' => 'DATE_FORMAT(e.end_date, "%m/%d/%Y")',
+            ))
+            ->where('e.client_id = ?', $clientId)
+            ->order(array(
+                'ISNULL(e.end_date) DESC',
+                'e.end_date DESC',
+                'e.start_date DESC',
+                'e.employment_id',
+            ));
+
+        $results = $this->_db->fetchAssoc($select);
+        return $this->buildEmployerModels($results);
+    }
+
     private function buildClientModel($dbResult)
     {
         $addr = new Application_Model_Impl_Addr();
@@ -155,5 +177,24 @@ class App_Service_Member
         }
 
         return $householders;
+    }
+
+    private function buildEmployerModels($dbResults)
+    {
+        $employers = array();
+
+        foreach ($dbResults as $dbResult) {
+            $employer = new Application_Model_Impl_Employer();
+            $employer
+                ->setId($dbResult['employment_id'])
+                ->setCompany($dbResult['company'])
+                ->setPosition($dbResult['position'])
+                ->setStartDate($dbResult['start_date'])
+                ->setEndDate($dbResult['end_date']);
+
+            $employers[] = $employer;
+        }
+
+        return $employers;
     }
 }
