@@ -22,6 +22,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				'required'   => true,
 				'label'      => 'Client #:',
 				'attribs'    => array('disabled' => 'disabled'),
+				'size'		 => 30,
 		));
 		
 		$name = $this->addElement('text', 'name',array(
@@ -33,6 +34,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				'required'   => true,
 				'label'      => 'Client Name:',
 				'attribs'    => array('disabled' => 'disabled'),
+				'size'		 => 30,
 		));
 		
 		$homePhone = $this->addElement('text', 'homePhone',array(
@@ -44,6 +46,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				'required'   => true,
 				'label'      => 'Home Phone:',
 				'attribs'    => array('disabled' => 'disabled'),
+				'size'		 => 13,
 		));
 		
 		$caseID = $this->addElement('text', 'caseID',array(
@@ -55,6 +58,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				'required'   => true,
 				'label'      => 'Case #:',
 				'attribs'    => array('disabled' => 'disabled'),
+				'size'		 => 30,
 		));
 		
 		$status = $this->addElement('text', 'status',array(
@@ -65,6 +69,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Status:',
+				'size'		 => 10,
 		));
 		
 		$visitDate = $this->addElement('text', 'visitDate',array(
@@ -75,6 +80,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Visit Date (YYYYMMDD):',
+				'size'		 => 30,
 		));
 		
 		$miles = $this->addElement('text', 'miles',array(
@@ -84,6 +90,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => false,
 				'label'      => 'Miles Traveled:',
+				'size'		 => 11,
 		));
 		
 		$hours = $this->addElement('text', 'hours',array(
@@ -93,6 +100,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Hours Spent:',
+				'size'		 => 11,
 		));
 		
 		$caseNeed = $this->addElement('text', 'caseNeed',array(
@@ -103,6 +111,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Case Need:',
+				'size'		 => 30,
 		));
 		
 		$amount = $this->addElement('text', 'amount',array(
@@ -110,10 +119,11 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				array('LocalizedToNormalized', false, array('precision', 2))),
 				'validators' => array(
 						'Alnum',
-						array('StringLength', false, array(1, 50)),
+						array('StringLength', false, array(1, 7)),
 				),
 				'required'   => true,
 				'label'      => 'Amount Needed:',
+				'size'		 => 7,
 		));
 		
 		$openedUserID = $this->addElement('text', 'openedUserID',array(
@@ -124,6 +134,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Opened User:',
+				'size'		 => 30,
 		));
 		
 		$openedDate = $this->addElement('text', 'openedDate',array(
@@ -135,6 +146,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				'required'   => true,
 				'label'      => 'Opened Date:',
 				'attribs'    => array('disabled' => 'disabled'),
+				'size'		 => 8,
 		));
 		
 		$referral = $this->addElement('text', 'referral',array(
@@ -145,6 +157,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => false,
 				'label'      => 'Referred To:',
+				'size'		 => 256,
 		));
 		
 		$referredReason = $this->addElement('text', 'referredReason',array(
@@ -154,6 +167,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Reason For Referral:',
+				'size'		 => 30,
 		));
 		
 		$referralDate = $this->addElement('text', 'referralDate',array(
@@ -165,6 +179,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Referral Date (YYYYMMDD):',
+				'size'		 => 8,
 		));
 		
 		$commentDate = $this->addElement('text', 'commentDate',array(
@@ -176,6 +191,7 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				'required'   => true,
 				'label'      => 'Comment Date:',
 				'attribs'    => array('disabled' => 'disabled'),
+				'size'		 => 8,
 		));
 		
 		$comment = $this->addElement('text', 'comment',array(
@@ -185,6 +201,16 @@ class Application_Model_Member_CaseForm extends Zend_Form
 				),
 				'required'   => true,
 				'label'      => 'Comment:',
+				
 		));
+		
+		////////////Edit Client Button/////////////////
+		$editCase = $this->addElement('submit', 'editCase', array(
+				'required' => false,
+				'ignore'   => true,
+				'label'    => '     Edit Case     ',
+				'class'    => 'btn-success',
+		));
+		////////////End Edit Client Button/////////////////
 	}
 }

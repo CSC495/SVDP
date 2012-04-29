@@ -93,11 +93,6 @@ class MemberController extends Zend_Controller_Action
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_Member_CaseForm();
     }
-    
-    public function indexAction()
-    {
-    	
-    }
 
     private function prefillClient($form, $client)
     {
@@ -111,12 +106,12 @@ class MemberController extends Zend_Controller_Action
         $form->homePhone->setValue($client->getFormattedHomePhone());
         $form->cellPhone->setValue($client->getFormattedCellPhone());
         $form->workPhone->setValue($client->getFormattedWorkPhone());
-        $form->address->setValue($addr->getStreet());
+        $form->street->setValue($addr->getStreet());
         $form->apartment->setValue($addr->getApt());
         $form->city->setValue($addr->getCity());
         $form->state->setValue($addr->getState());
         $form->zipcode->setValue($addr->getZip());
-        $form->marriageStatus->setChecked($client->isMarried());
+        //$form->marriageStatus->setChecked($client->isMarried());
         $form->birthdate->setValue($client->getBirthDate());
         $form->ssn4->setValue($client->getSsn4());
         $form->veteranFlag->setChecked($client->isVeteran());
