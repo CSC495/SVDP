@@ -365,17 +365,25 @@ class Application_Model_Member_ClientForm extends Zend_Form
         }
     }
 
-    /*public function getClient()
+    public function getClient()
     {
         $client = new Application_Model_Impl_Client();
         $client->setId($this->_id)
-               ->setFirstName($this->firstName->getValue())
-               ->setLastName($this->lastName->getValue())
-               ->setOtherName(self::emptyToNull($this->otherName->getValue()))
+               ->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()))
+               ->setLastName(App_Formatting::emptyToNull($this->firstName->getValue()))
+               ->setOtherName(App_Formatting::emptyToNull($this->otherName->getValue()))
+               ->setMarried($this->married->isChecked())
+               ->setBirthDate(App_Formatting::emptyToNull($this->birthDate->getValue()))
+               ->setSsn4(App_Formatting::emptyToNull($this->ssn4->getValue()))
+               ->setCellPhone(App_Formatting::emptyToNull($this->cellPhone->getValue()))
+               ->setHomePhone(App_Formatting::emptyToNull($this->homePhone->getValue()))
+               ->setWorkPhone(App_Formatting::emptyToNull($this->workPhone->getValue()))
+               ->setParish(App_Formatting::emptyToNull($this->parish->getValue()))
+               ->setVeteran($this->veteran->isChecked())
                ->setCurrentAddr($this->addr->getAddr());
 
         return $client;
-    }*/
+    }
 
     public function setClient($client)
     {
