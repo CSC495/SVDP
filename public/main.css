@@ -6,6 +6,28 @@
     height: 400px;
 }
 
+/* Styles for edit client/case views: */
+
+form.member fieldset.row-fluid {
+    max-width: 960px;
+}
+
+form.member .span6 {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+form.member table {
+    margin-bottom: 18px;
+    max-width: 960px;
+    width: 100%;
+}
+
+form.member th {
+  font-weight: normal;
+  vertical-align: bottom;
+}
+
 /* Styles for search views: */
 
 div.search-results {

@@ -1,0 +1,101 @@
+<fieldset class=row-fluid>
+    <legend>Personal information</legend>
+
+    <div class=span6><div class=control-group><?php echo $this->element->firstName; ?></div></div>
+    <div class=span6><div class=control-group><?php echo $this->element->lastName; ?></div></div>
+
+    <div class=span6><div class=control-group><?php echo $this->element->otherName; ?></div></div>
+    <div class=span6><div class=control-group><?php echo $this->element->birthDate; ?></div></div>
+
+    <div class=span6><div class=control-group><?php echo $this->element->ssn4; ?></div></div>
+    <div class=span6><div class=control-group><?php echo $this->element->married; ?></div></div>
+
+    <div class="span6 member-spouse"><div class=control-group><?php echo $this->element->spouseName; ?></div></div>
+    <div class="span6 member-spouse"><div class=control-group><?php echo $this->element->spouseBirthDate; ?></div></div>
+</fieldset>
+
+<fieldset class=row-fluid>
+    <legend>Additional information:</legend>
+
+    <div class=span6><div class=control-group><?php echo $this->element->doNotHelp; ?></div></div>
+    <div class=span6><div class="control-group member-donothelp"><?php echo $this->element->doNotHelpReason; ?></div></div>
+
+    <div class=span6><div class=control-group><?php echo $this->element->veteran; ?></div></div>
+    <div class=span6><div class=control-group><?php echo $this->element->parish; ?></div></div>
+</fieldset>
+
+<fieldset class=row-fluid>
+    <legend>Contact information:</legend>
+
+    <div class=span6><div class=control-group><?php echo $this->element->cellPhone; ?></div></div>
+    <div class=span6><div class="control-group member-donothelp"><?php echo $this->element->homePhone; ?></div></div>
+
+    <div class=span6><div class=control-group><?php echo $this->element->workPhone; ?></div></div>
+    <div class=span6><div class=control-group><div class=controls><p class=help-block>(at least one phone required)</p></div></div></div>
+</fieldset>
+
+<fieldset class=row-fluid>
+    <legend>Current address:</legend>
+
+    <div class=span6><?php echo $this->element->addr->street; ?></div>
+    <div class=span6><?php echo $this->element->addr->apt; ?></div>
+
+    <div class=span6><?php echo $this->element->addr->city; ?></div>
+    <div class=span6><?php echo $this->element->addr->state; ?></div>
+
+    <div class=span6><?php echo $this->element->addr->zip; ?></div>
+    <div class=span6><?php echo $this->element->addr->parish; ?></div>
+</fieldset>
+
+<fieldset>
+    <legend>Household members:</legend>
+
+    <?php if (!empty($this->householderSubForms)) { ?>
+    <table class=table>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Relationship</th>
+            <th>Birth date<br>(optional)</th>
+            <th>Departure date<br>(optional)</th>
+        </tr>
+        <?php
+        foreach ($this->householderSubForms as $householderSubForm) {
+            echo $householderSubForm;
+        }
+        ?>
+    </table>
+    <?php } else { ?>
+    <div class=control-group><div class=controls><p class=help-block>No household members listed.</p></div></div>
+    <?php } ?>
+
+    <div class=control-group><div class=controls><?php echo $this->element->newHouseholder; ?></div></div>
+</fieldset>
+
+<fieldset>
+    <legend>Employment status:</legend>
+
+    <?php if (!empty($this->employerSubForms)) { ?>
+    <table class=table>
+        <tr>
+            <th>Company</th>
+            <th>Position</th>
+            <th>Start date</th>
+            <th>End date</th>
+        </tr>
+        <?php
+        foreach ($this->employerSubForms as $employerSubForm) {
+            echo $employerSubForm;
+        }
+        ?>
+    </table>
+    <?php } else { ?>
+    <div class=control-group><div class=controls><p class=help-block>No employers listed.</p></div></div>
+    <?php } ?>
+
+    <div class=control-group><div class=controls><?php echo $this->element->newEmployer; ?></div></div>
+</fieldset>
+
+<div class=form-actions>
+    <?php echo $this->element->submit; ?>
+</div>

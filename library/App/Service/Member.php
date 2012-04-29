@@ -34,6 +34,16 @@ class App_Service_Member
                 'c.client_id = h.mainclient_id OR c.client_id = h.spouse_id',
                 array()
             )
+            ->joinLeft(
+                array('c2' => 'client'),
+                'c2.client_id <> c.client_id '
+                . 'AND (c2.client_id = h.mainclient_id OR c2.client_id = h.spouse_id)',
+                array(
+                    'spouse_id' => 'c2.client_id',
+                    'spouse_first_name' => 'c2.first_name',
+                    'spouse_birthdate' => 'DATE_FORMAT(c2.birthdate, "%m/%d/%Y")',
+                )
+            )
             ->join(
                 array('a' => 'address'),
                 'a.address_id = h.address_id',
@@ -50,13 +60,37 @@ class App_Service_Member
             ->joinLeft(
                 array('d' => 'do_not_help'),
                 'c.client_id = d.client_id',
-                array('do_not_help_client_id' => 'd.client_id')
+                array('do_not_help_reason' => 'd.reason')
             )
             ->where('h.current_flag = 1')
             ->where('c.client_id = ?', $clientId);
 
         $results = $this->_db->fetchRow($select);
         return $this->buildClientModel($results);
+    }
+
+    public function getHouseholdersByClientId($clientId)
+    {
+        $select = $this->_db->select()
+            ->from(array('m' => 'hmember'), array(
+                'm.hmember_id',
+                'm.first_name',
+                'm.last_name',
+                'm.relationship',
+                'birthdate' => 'DATE_FORMAT(m.birthdate, "%m/%d/%Y")',
+                'left_date' => 'DATE_FORMAT(m.left_date, "%m/%d/%Y")',
+            ))
+            ->join(
+                array('h' => 'household'),
+                'm.household_id = h.household_id',
+                array()
+            )
+            ->where('h.current_flag = 1')
+            ->where('h.mainclient_id = ? OR h.spouse_id = ?', $clientId, $clientId)
+            ->order(array('m.last_name', 'm.first_name', 'm.hmember_id'));
+
+        $results = $this->_db->fetchAssoc($select);
+        return $this->buildHouseholderModels($results);
     }
 
     private function buildClientModel($dbResult)
@@ -70,6 +104,15 @@ class App_Service_Member
             ->setState($dbResult['state'])
             ->setZip($dbResult['zipcode'])
             ->setParish($dbResult['reside_parish']);
+
+        if ($dbResult['spouse_first_name'] !== null) {
+            $spouse = new Application_Model_Impl_Client();
+            $spouse->setId($dbResult['spouse_id'])
+                   ->setFirstName($dbResult['spouse_first_name'])
+                   ->setBirthDate($dbResult['spouse_birthdate']);
+        } else {
+            $spouse = null;
+        }
 
         $client = new Application_Model_Impl_Client();
         $client
@@ -87,9 +130,30 @@ class App_Service_Member
             ->setCreatedDate($dbResult['created_date'])
             ->setParish($dbResult['member_parish'])
             ->setVeteran($dbResult['veteran_flag'])
+            ->setSpouse($spouse)
             ->setCurrentAddr($addr)
-            ->setDoNotHelp($dbResult['do_not_help_client_id'] !== null);
+            ->setDoNotHelpReason($dbResult['do_not_help_reason']);
 
         return $client;
+    }
+
+    private function buildHouseholderModels($dbResults)
+    {
+        $householders = array();
+
+        foreach ($dbResults as $dbResult) {
+            $householder = new Application_Model_Impl_Householder();
+            $householder
+                ->setId($dbResult['hmember_id'])
+                ->setFirstName($dbResult['first_name'])
+                ->setLastName($dbResult['last_name'])
+                ->setRelationship($dbResult['relationship'])
+                ->setBirthDate($dbResult['birthdate'])
+                ->setDepartDate($dbResult['left_date']);
+
+            $householders[] = $householder;
+        }
+
+        return $householders;
     }
 }
