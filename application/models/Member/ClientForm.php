@@ -3,6 +3,17 @@
 class Application_Model_Member_ClientForm extends Zend_Form
 {
 
+    private $_PARISH_OPTIONS = array(
+        '' => '',
+        'St. Raphael' => 'St. Raphael',
+        'Holy Spirit' => 'Holy Spirit',
+        'St. Elizabeth Seton' => 'St. Elizabeth Seton',
+        'St. Thomas' => 'St. Thomas',
+        'SS. Peter & Paul' => 'SS. Peter & Paul',
+        'Other' => 'Other',
+        'None' => 'None',
+    );
+
     private $_id;
 
     private $_householdersSubForm;
@@ -223,23 +234,21 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Veteran',
         ));
 
-        $this->addElement('text', 'parish', array(
+        $this->addElement('select', 'parish', array(
+            'multiOptions' => $this->_PARISH_OPTIONS,
             'required' => true,
-            'filters' => array('StringTrim'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a parish name.'),
+                    'messages' => array('isEmpty' => 'You must choose a parish name.'),
                 )),
-                array('StringLength', true, array(
-                    'max' => 50,
-                    'messages' => array(
-                        'stringLengthTooLong' => 'Parish name must be shorter than 50 characters.',
-                    ),
+                array('InArray', true, array(
+                    'haystack' => array_keys($this->_PARISH_OPTIONS),
+                    'strict' => true,
+                    'messages' => array('notInArray' => 'You must choose a parish name.'),
                 )),
             ),
             'label' => 'Parish attended',
-            'maxlength' => 50,
             'dimension' => 3,
         ));
 
