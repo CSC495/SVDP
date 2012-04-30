@@ -31,8 +31,8 @@ CREATE TABLE user(
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
 	email VARCHAR(100),
-	cell_phone INT,
-	home_phone INT,
+	cell_phone CHAR(10),
+	home_phone CHAR(10),
 	role CHAR(1),
 	change_pswd TINYINT(1),
 	active_flag TINYINT(1),
@@ -40,7 +40,7 @@ CREATE TABLE user(
 ) ENGINE = InnoDB;
 
 CREATE TABLE client(
-     client_id INT,
+     client_id INT NOT NULL AUTO_INCREMENT,
 	created_user_id VARCHAR(30),
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
@@ -48,9 +48,9 @@ CREATE TABLE client(
 	marriage_status TINYINT(1),
 	birthdate DATE,
 	ssn4 INT,
-	cell_phone INT,
-	home_phone INT,	
-	work_phone INT,
+	cell_phone CHAR(10),
+	home_phone CHAR(10),	
+	work_phone CHAR(10),
 	created_date DATE,
 	member_parish VARCHAR(50),
 	veteran_flag TINYINT(1),
@@ -59,7 +59,7 @@ CREATE TABLE client(
 ) ENGINE = InnoDB;
 
 CREATE TABLE address(
-	address_id INT,
+	address_id INT NOT NULL AUTO_INCREMENT,
 	client_id INT,
 	street VARCHAR(100),
 	apt VARCHAR(30),
@@ -72,7 +72,7 @@ CREATE TABLE address(
 
 
 CREATE TABLE household(
-	household_id INT,
+	household_id INT NOT NULL AUTO_INCREMENT,
 	address_id INT,
      	mainclient_id INT,
 	spouse_id INT,
@@ -84,7 +84,7 @@ CREATE TABLE household(
 
 
 CREATE TABLE hmember(
-     	hmember_id INT,
+     	hmember_id INT NOT NULL AUTO_INCREMENT,
 	household_id INT,
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
@@ -96,7 +96,7 @@ CREATE TABLE hmember(
 ) ENGINE = InnoDB;
 
 CREATE TABLE employment(
-	employment_id INT,
+	employment_id INT NOT NULL AUTO_INCREMENT,
 	client_id INT,
 	company VARCHAR(50),
 	position VARCHAR(50),
@@ -108,7 +108,7 @@ CREATE TABLE employment(
 
 
 CREATE TABLE client_comment(
-     clientcomment_id INT,
+     clientcomment_id INT NOT NULL AUTO_INCREMENT,
      client_id INT,
 	user_id VARCHAR(30),
      comment_date DATETIME,
@@ -120,7 +120,7 @@ CREATE TABLE client_comment(
 
 
 CREATE TABLE client_case(
-     case_id INT,
+     case_id INT NOT NULL AUTO_INCREMENT,
      household_id INT,
      opened_user_id VARCHAR(30),
      opened_date DATE,
@@ -131,7 +131,7 @@ CREATE TABLE client_case(
 ) ENGINE = InnoDB;
 
 CREATE TABLE case_visit(
-	visit_id INT,
+	visit_id INT NOT NULL AUTO_INCREMENT,
 	case_id INT,
 	visit_date DATE,
      	miles INT,
@@ -149,7 +149,7 @@ CREATE TABLE case_visitors(
 )ENGINE = InnoDB;
 
 CREATE TABLE case_comment(
-     	casecomment_id INT,
+     	casecomment_id INT NOT NULL AUTO_INCREMENT,
      	case_id INT,
 	user_id VARCHAR(30),
      	case_date DATETIME,
@@ -161,7 +161,7 @@ CREATE TABLE case_comment(
 
 
 CREATE TABLE case_need(
-        caseneed_id INT,
+        caseneed_id INT NOT NULL AUTO_INCREMENT,
         case_id INT,
         need VARCHAR(30),
         amount DECIMAL(7,2),
@@ -171,7 +171,7 @@ CREATE TABLE case_need(
 
 
 CREATE TABLE check_request(
-     	checkrequest_id INT,
+     	checkrequest_id INT NOT NULL AUTO_INCREMENT,
      	caseneed_id INT,
 	user_id VARCHAR(30),
      	request_date DATE,
@@ -186,7 +186,7 @@ CREATE TABLE check_request(
      	city VARCHAR(50),
      	state CHAR(2),
      	zipcode CHAR(5),
-     	phone INT,
+     	phone CHAR(10),
      	contact_fname VARCHAR(30),
      	contact_lname VARCHAR(30),
      	PRIMARY KEY (checkrequest_id),
@@ -196,7 +196,7 @@ CREATE TABLE check_request(
 
 
 CREATE TABLE referral(
-        referral_id INT,
+        referral_id INT NOT NULL AUTO_INCREMENT,
         caseneed_id INT,
         referred_date DATE,
         reason TEXT,

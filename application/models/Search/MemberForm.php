@@ -3,7 +3,7 @@
 /**
  * Search form specialized for client searches performed by a member user.
  */
-class Application_Model_Search_FormMember extends Application_Model_Search_FormAbstract
+class Application_Model_Search_MemberForm extends Application_Model_Search_FormAbstract
 {
 
     /**
@@ -39,7 +39,7 @@ class Application_Model_Search_FormMember extends Application_Model_Search_FormA
     );
 
     /**
-     * Initializes a new instance of the `Application_Model_FormMember` class.
+     * Initializes a new instance of the `Application_Model_MemberForm` class.
      */
     public function __construct()
     {

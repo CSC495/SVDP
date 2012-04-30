@@ -16,6 +16,7 @@ $this->headTitle($this->pageTitle)
 $this->headLink()->prependStylesheet($this->baseUrl('main.css'), 'all');
 
 // Include jQuery libraries.
+$this->headScript()->prependFile($this->baseUrl('main.js'));
 $this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js');
 
 // Render <head> elements.
@@ -73,9 +74,10 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
           </div><!--/.well -->
         </div><!--/span-->
 
-        <div class="span9" id="zendcontent">
+        <div class="span10" id="zendcontent">
           <div class="hero-unit">
             <div id=content>
+              <div id=alerts>
     <?php
 		// Get any unread flash messages.
 		$flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
@@ -90,7 +92,9 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 			// Write each flash message as a top-level alert.
 			echo '<p class=alert>' . $this->escape($message) . '</p>';
 		}
-		
+    ?>
+              </div>
+    <?php
         // Write out page content specific to the current controller/action.
         echo $this->layout()->content;
     ?>

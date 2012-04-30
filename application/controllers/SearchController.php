@@ -23,7 +23,7 @@ class SearchController extends Zend_Controller_Action
     public function memberAction()
     {
         $this->view->pageTitle = 'Client and Case Search';
-        $this->view->form      = new Application_Model_Search_FormMember();
+        $this->view->form      = new Application_Model_Search_MemberForm();
 
         if ($this->validateForm()) {
             $searchType  = $this->view->form->getType();
@@ -70,7 +70,7 @@ class SearchController extends Zend_Controller_Action
     public function treasurerAction()
     {
         $this->view->pageTitle = 'Check Request Search';
-        $this->view->form      = new Application_Model_Search_FormTreasurer();
+        $this->view->form      = new Application_Model_Search_TreasurerForm();
 
         if ($this->validateForm()) {
             $searchType  = $this->view->form->getType();
