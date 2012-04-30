@@ -92,7 +92,7 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2',
+            'class' => 'span2 date',
         ));
 
         $this->addElement('text', 'endDate', array(
@@ -107,7 +107,7 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2',
+            'class' => 'span2 date',
         ));
     }
 
