@@ -220,7 +220,7 @@ class LoginController extends Zend_Controller_Action
         switch( $identity->role)
         {
             case App_Roles::MEMBER:
-                $this->_helper->redirector('opencases',App_Resources::MEMBER);
+                $this->_helper->redirector('index',App_Resources::MEMBER);
                 break;
             case App_Roles::ADMIN:
                 $this->_helper->redirector('index',App_Resources::ADMIN);
