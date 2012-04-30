@@ -28,6 +28,10 @@ form.member th {
   vertical-align: bottom;
 }
 
+form.member td .control-group {
+    margin-bottom: 0;
+}
+
 /* Styles for search views: */
 
 div.search-results {
