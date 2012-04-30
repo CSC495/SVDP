@@ -1,0 +1,102 @@
+<?php
+function isMissingPhone($element)
+{
+    return $element->cellPhone->hasErrors()
+        && $element->cellPhone->getValue() === ''
+        && $element->homePhone->getValue() === ''
+        && $element->workPhone->getValue() === '';
+}
+?>
+<fieldset class=row-fluid>
+    <legend>Personal information</legend>
+
+    <div class=span6><?php echo $this->element->firstName; ?></div>
+    <div class=span6><?php echo $this->element->lastName; ?></div>
+
+    <div class=span6><?php echo $this->element->otherName; ?></div>
+    <div class=span6><?php echo $this->element->birthDate; ?></div>
+
+    <div class=span6><?php echo $this->element->ssn4; ?></div>
+    <div class=span6><?php echo $this->element->married; ?></div>
+
+    <div class="span6 member-spouse"><?php echo $this->element->spouseName; ?></div>
+    <div class="span6 member-spouse"><?php echo $this->element->spouseBirthDate; ?></div>
+</fieldset>
+
+<fieldset class=row-fluid>
+    <legend>Additional information:</legend>
+
+    <div class=span6><?php echo $this->element->doNotHelp; ?></div>
+    <div class="span6 member-donothelp"><?php echo $this->element->doNotHelpReason; ?></div>
+
+    <div class=span6><?php echo $this->element->veteran; ?></div>
+    <div class=span6><?php echo $this->element->parish; ?></div>
+</fieldset>
+
+<fieldset class=row-fluid>
+    <legend>Contact information:</legend>
+
+    <div class=span6><?php echo $this->element->cellPhone; ?></div>
+    <div class=span6><?php echo $this->element->homePhone; ?></div>
+
+    <div class=span6><?php echo $this->element->workPhone; ?></div>
+    <div class=span6><div class="control-group<?php if (isMissingPhone($this->element)) { echo ' error'; } ?>"><div class=controls><p class=help-block>(at least one phone required)</p></div></div></div>
+</fieldset>
+
+<fieldset class=row-fluid>
+    <legend>Current address:</legend>
+
+    <div class=span6><?php echo $this->element->addr->street; ?></div>
+    <div class=span6><?php echo $this->element->addr->apt; ?></div>
+
+    <div class=span6><?php echo $this->element->addr->city; ?></div>
+    <div class=span6><?php echo $this->element->addr->state; ?></div>
+
+    <div class=span6><?php echo $this->element->addr->zip; ?></div>
+    <div class=span6><?php echo $this->element->addr->resideParish; ?></div>
+</fieldset>
+
+<fieldset>
+    <legend>Household members:</legend>
+
+    <?php if ($this->householdersSubForm->getSubForms()) { ?>
+    <table class=table>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Relationship</th>
+            <th>Birth date<br>(optional)</th>
+            <th>Departure date<br>(optional)</th>
+        </tr>
+        <?php echo $this->householdersSubForm; ?>
+    </table>
+    <?php } else { ?>
+    <div class=control-group><div class=controls><p class=help-block>No household members listed.</p></div></div>
+    <?php } ?>
+
+    <div class=control-group><div class=controls><?php echo $this->element->newHouseholder; ?></div></div>
+</fieldset>
+
+<fieldset>
+    <legend>Employment status:</legend>
+
+    <?php if ($this->employersSubForm->getSubForms()) { ?>
+    <table class=table>
+        <tr>
+            <th>Company</th>
+            <th>Position</th>
+            <th>Start date</th>
+            <th>End date<br>(optional)</th>
+        </tr>
+        <?php echo $this->employersSubForm; ?>
+    </table>
+    <?php } else { ?>
+    <div class=control-group><div class=controls><p class=help-block>No employers listed.</p></div></div>
+    <?php } ?>
+
+    <div class=control-group><div class=controls><?php echo $this->element->newEmployer; ?></div></div>
+</fieldset>
+
+<div class=form-actions>
+    <?php echo $this->element->submit; ?>
+</div>

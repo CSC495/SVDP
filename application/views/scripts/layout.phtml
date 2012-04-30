@@ -7,14 +7,17 @@ $charset         = $this->getEncoding();
 $response->setHeader('Content-type', "text/html; charset=$charset");
 $this->headMeta()->setCharset($charset);
 
-/*
 // Set the page title.
 $this->headTitle($this->pageTitle)
      ->headTitle("Society of St. Vincent de Paul")
-     ->setSeparator(" :: ");
-*/
+     ->setSeparator(" - ");
+
 // Use the main stylesheet.
 $this->headLink()->prependStylesheet($this->baseUrl('main.css'), 'all');
+
+// Include jQuery libraries.
+$this->headScript()->prependFile($this->baseUrl('main.js'));
+$this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js');
 
 // Render <head> elements.
 echo $this->doctype(),    "\n";
@@ -22,7 +25,6 @@ echo $this->headMeta(),   "\n";
 echo $this->headTitle(),  "\n";
 echo $this->headLink(),   "\n";
 echo $this->headScript(), "\n";
-
 
 // Fetch user role for later use.
 $auth = Zend_Auth::getInstance();
@@ -72,9 +74,10 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
           </div><!--/.well -->
         </div><!--/span-->
 
-        <div class="span9" id="zendcontent">
+        <div class="span10" id="zendcontent">
           <div class="hero-unit">
             <div id=content>
+              <div id=alerts>
     <?php
 		// Get any unread flash messages.
 		$flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
@@ -89,7 +92,9 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 			// Write each flash message as a top-level alert.
 			echo '<p class=alert>' . $this->escape($message) . '</p>';
 		}
-		
+    ?>
+              </div>
+    <?php
         // Write out page content specific to the current controller/action.
         echo $this->layout()->content;
     ?>
