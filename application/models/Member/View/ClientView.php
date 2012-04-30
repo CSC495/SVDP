@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Member_ClientForm extends Zend_Form
+class Application_Model_Member_ClientView extends Zend_Form
 {
 	private $_PARISH_OPTIONS = array(
         '' => '',
@@ -22,7 +22,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
     private static function makeActionUrl($id)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
-        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editClient'
+        return $baseUrl->baseUrl(App_Resources::MEMBER . '/viewclient'
             . (($id !== null) ? '/id/' . urlencode($id) : ''));
     }
 
@@ -45,7 +45,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             ->setDecorators(array(
                 'PrepareElements',
                 array('ViewScript', array(
-                    'viewScript' => 'form/client-form.phtml',
+                    'viewScript' => 'form/client-view.phtml',
                     'householdersSubForm' => &$this->_householdersSubForm,
                     'employersSubForm' => &$this->_employersSubForm,
                 )),
@@ -61,261 +61,120 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 array('Label', array('class' => 'control-label')),
                 'Wrapper',
             ));
+        
+        // Primary form actions:
+        
+        $this->addElement('submit', 'editClient', array(
+        		'label' => 'Edit Client',
+        		'decorators' => array('ViewHelper'),
+        		'class' => 'btn btn-success',
+        ));
 
         // Personal information elements:
 
         $this->addElement('text', 'firstName', array(
-            'required' => true,
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a first name.'),
-                )),
-                array('StringLength', true, array(
-                    'max' => 30,
-                    'messages' => array(
-                        'stringLengthTooLong' => 'First name must be shorter than 30 characters.',
-                    ),
-                )),
-            ),
             'label' => 'First name',
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'lastName', array(
-            'required' => true,
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a last name.'),
-                )),
-                array('StringLength', true, array(
-                    'max' => 30,
-                    'messages' => array(
-                        'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
-                    ),
-                )),
-            ),
             'label' => 'Last name',
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'otherName', array(
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('StringLength', true, array(
-                    'max' => 30,
-                    'messages' => array(
-                        'stringLengthTooLong' => 'Other name must be shorter than 30 characters.',
-                    ),
-                )),
-            ),
             'label' => 'Other name',
             'description' => '(optional)',
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'birthDate', array(
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('Date', true, array(
-                    'format' => 'MM/dd/yyyy',
-                    'messages' => array(
-                        'dateInvalidDate' => 'Birth date must be properly formatted.',
-                        'dateFalseFormat' => 'Birth date must be a valid date.',
-                    ),
-                )),
-            ),
             'label' => 'Birth date',
             'description' => '(optional)',
             'maxlength' => 10,
             'dimension' => 2,
-            'class' => 'date',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'ssn4', array(
-            'required' => true,
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'Must be four digits.'),
-                )),
-                array('StringLength', true, array(
-                    'min' => 4,
-                    'max' => 4,
-                    'messages' => array(
-                        'stringLengthTooShort' => 'Must be four digits.',
-                        'stringLengthTooLong' => 'Must be four digits.',
-                    ),
-                )),
-            ),
             'label' => 'Last four digits of SSN',
             'maxlength' => 4,
             'dimension' => 1,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('checkbox', 'married', array(
-            'required' => true,
             'label' => 'Currently married',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'spouseName', array(
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => "You must enter a spouse's first name."),
-                )),
-                array('StringLength', true, array(
-                    'max' => 30,
-                    'messages' => array(
-                        'stringLengthTooLong'
-                            => "Spouse's first name must be shorter than 30 characters.",
-                    ),
-                )),
-            ),
             'label' => "Spouse's name",
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'spouseBirthDate', array(
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('Date', true, array(
-                    'format' => 'MM/dd/yyyy',
-                    'messages' => array(
-                        'dateInvalidDate' => "Spouse's birth date must be properly formatted.",
-                        'dateFalseFormat' => "Spouse's birth date must be a valid date.",
-                    ),
-                )),
-            ),
             'label' => "Spouse's birth date",
             'description' => '(optional)',
             'maxlength' => 10,
             'dimension' => 2,
-            'class' => 'date',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         // Additional information elements:
 
         $this->addElement('checkbox', 'doNotHelp', array(
-            'required' => true,
             'label' => 'Do not help',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'doNotHelpReason', array(
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a "do not help" reason.'),
-                )),
-                array('StringLength', true, array(
-                    'max' => 100,
-                    'messages' => array(
-                        'stringLengthTooLong'
-                            => '"Do not help" reason must be shorter than 100 characters.',
-                    ),
-                )),
-            ),
             'label' => '"Do not help" reason',
             'maxlength' => 100,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('checkbox', 'veteran', array(
-            'required' => true,
             'label' => 'Veteran',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('select', 'parish', array(
-            'multiOptions' => $this->_PARISH_OPTIONS,
-            'required' => true,
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must choose a parish name.'),
-                )),
-                array('InArray', true, array(
-                    'haystack' => array_keys($this->_PARISH_OPTIONS),
-                    'strict' => true,
-                    'messages' => array('notInArray' => 'You must choose a parish name.'),
-                )),
-            ),
             'label' => 'Parish attended',
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         // Contact information elements:
 
         $this->addElement('text', 'cellPhone', array(
-            'filters' => array('StringTrim', 'Digits'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => ''),
-                )),
-                array('StringLength', true, array(
-                    'min' => 10,
-                    'max' => 10,
-                    'messages' => array(
-                        'stringLengthTooShort' => 'Cell phone must be a ten digit number.',
-                        'stringLengthTooLong' => 'Cell phone must be a ten digit number.',
-                    ),
-                )),
-            ),
             'label' => 'Cell phone',
             'maxlength' => 12,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'homePhone', array(
-            'filters' => array('StringTrim', 'Digits'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => ''),
-                )),
-                array('StringLength', true, array(
-                    'min' => 10,
-                    'max' => 10,
-                    'messages' => array(
-                        'stringLengthTooShort' => 'Home phone must be a ten digit number.',
-                        'stringLengthTooLong' => 'Home phone must be a ten digit number.',
-                    ),
-                )),
-            ),
             'label' => 'Home phone',
             'maxlength' => 12,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'workPhone', array(
-            'filters' => array('StringTrim', 'Digits'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => ''),
-                )),
-                array('StringLength', true, array(
-                    'min' => 10,
-                    'max' => 10,
-                    'messages' => array(
-                        'stringLengthTooShort' => 'Work phone must be a ten digit number.',
-                        'stringLengthTooLong' => 'Work phone must be a ten digit number.',
-                    ),
-                )),
-            ),
             'label' => 'Work phone',
             'maxlength' => 12,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');
