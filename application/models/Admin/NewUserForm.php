@@ -30,7 +30,7 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
 		
 		// Members phone type
 		$phonetype = $this->addElement('select','phonetype',array(
-			'label' => 'Phone Type:',
+			'label' => 'Primary Phone Type:',
 			'multiOptions' => array ( 'home'    => 'Home',
 						  'cell'     => 'Cell',
 						  'work' => 'Work',)
@@ -40,9 +40,24 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
                 $phone = $this->addElement('text', 'phone', array(
                    'filters'    => array('StringTrim'),
                    'required'   => true,
-                   'label'      => 'Phone Number:',
+                   'label'      => 'Primary Phone Number:',
                 ));
         
+		// Memebrs other phone
+		$otherphonetype = $this->addElement('select','otherphonetype',array(
+			'label' => 'Other Phone Type:',
+			'multiOptions' => array ( 'home'    => 'Home',
+						  'cell'     => 'Cell',
+						  'work' => 'Work',)
+			,));
+		
+		// Members other phone
+		$otherphone = $this->addElement('text', 'otherphone', array(
+                   'filters'    => array('StringTrim'),
+                   'required'   => true,
+                   'label'      => 'Other Phone Number:',
+                ));
+		
 		// IMemebers e-mail
                 $email = $this->addElement('text', 'email', array(
                    'filters'    => array('StringTrim'),
