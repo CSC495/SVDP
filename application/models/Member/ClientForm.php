@@ -159,12 +159,13 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a first name.'),
+                    'messages' => array('isEmpty' => "You must enter a spouse's first name."),
                 )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
-                        'stringLengthTooLong' => 'First name must be shorter than 30 characters.',
+                        'stringLengthTooLong'
+                            => "Spouse's first name must be shorter than 30 characters.",
                     ),
                 )),
             ),
@@ -346,6 +347,10 @@ class Application_Model_Member_ClientForm extends Zend_Form
 
     public function prevalidate($data)
     {
+        if (isset($data['married']) && $data['married']) {
+            $this->spouseName->setRequired(true);
+        }
+
         if (isset($data['householders'])) {
             foreach ($data['householders'] as $householderId => $householderData) {
                 $this->_householdersSubForm->addSubForm(
