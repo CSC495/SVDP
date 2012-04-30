@@ -380,7 +380,10 @@ class Application_Model_Member_ClientForm extends Zend_Form
                ->setWorkPhone(App_Formatting::emptyToNull($this->workPhone->getValue()))
                ->setParish(App_Formatting::emptyToNull($this->parish->getValue()))
                ->setVeteran($this->veteran->isChecked())
-               ->setCurrentAddr($this->addr->getAddr());
+               ->setCurrentAddr($this->addr->getAddr())
+               ->setDoNotHelpReason($this->doNotHelp->isChecked()
+                   ? App_Formatting::emptyToNull($this->doNotHelpReason->getValue())
+                   : null);
 
         if ($client->isMarried()) {
             $spouse = new Application_Model_Impl_Client();
