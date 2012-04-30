@@ -146,6 +146,9 @@ class Application_Model_Member_ClientForm extends Zend_Form
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must be four digits.'),
                 )),
+                array('Digits', true, array(
+                    'messages' => array('notDigits' => 'Must be four digits.'),
+                )),
                 array('StringLength', true, array(
                     'min' => 4,
                     'max' => 4,
