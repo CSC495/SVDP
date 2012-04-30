@@ -38,9 +38,11 @@ class Application_Model_Impl_Client
 
     private $_veteran = null;
 
+    private $_spouse = null;
+
     private $_currentAddr = null;
 
-    private $_doNotHelp = null;
+    private $_doNotHelpReason = null;
 
     /* Generic get/set methods: */
 
@@ -198,6 +200,17 @@ class Application_Model_Impl_Client
         return $this;
     }
 
+    public function getSpouse()
+    {
+        return $this->_spouse;
+    }
+
+    public function setSpouse($spouse)
+    {
+        $this->_spouse = $spouse;
+        return $this;
+    }
+
     public function getCurrentAddr()
     {
         return $this->_currentAddr;
@@ -209,14 +222,14 @@ class Application_Model_Impl_Client
         return $this;
     }
 
-    public function isDoNotHelp()
+    public function getDoNotHelpReason()
     {
-        return $this->_doNotHelp;
+        return $this->_doNotHelpReason;
     }
 
-    public function setDoNotHelp($doNotHelp)
+    public function setDoNotHelpReason($doNotHelpReason)
     {
-        $this->_doNotHelp = $doNotHelp;
+        $this->_doNotHelpReason = $doNotHelpReason;
         return $this;
     }
 
@@ -287,5 +300,13 @@ class Application_Model_Impl_Client
         $workPhone = $this->getFormattedWorkPhone();
         return ($cellPhone !== '') ? $cellPhone :
               (($homePhone !== '') ? $homePhone : $workPhone);
+    }
+
+    /**
+     * Returns true if the client has a "do not help" reason set and false otherwise.
+     */
+    public function isDoNotHelp()
+    {
+        return $this->_doNotHelpReason !== null;
     }
 }
