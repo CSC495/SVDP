@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Member_ClientForm extends Zend_Form
+class Application_Model_Member_ClientView extends Zend_Form
 {
 	private $_PARISH_OPTIONS = array(
         '' => '',
@@ -22,7 +22,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
     private static function makeActionUrl($id)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
-        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editClient'
+        return $baseUrl->baseUrl(App_Resources::MEMBER . '/viewclient'
             . (($id !== null) ? '/id/' . urlencode($id) : ''));
     }
 
@@ -45,7 +45,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             ->setDecorators(array(
                 'PrepareElements',
                 array('ViewScript', array(
-                    'viewScript' => 'form/client-form.phtml',
+                    'viewScript' => 'form/client-view.phtml',
                     'householdersSubForm' => &$this->_householdersSubForm,
                     'employersSubForm' => &$this->_employersSubForm,
                 )),
@@ -61,6 +61,14 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 array('Label', array('class' => 'control-label')),
                 'Wrapper',
             ));
+        
+        // Primary form actions:
+        
+        $this->addElement('submit', 'editClient', array(
+        		'label' => 'Edit Client',
+        		'decorators' => array('ViewHelper'),
+        		'class' => 'btn btn-success',
+        ));
 
         // Personal information elements:
 
@@ -82,6 +90,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'First name',
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'lastName', array(
@@ -102,6 +111,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Last name',
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'otherName', array(
@@ -118,6 +128,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'description' => '(optional)',
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'birthDate', array(
@@ -135,6 +146,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'description' => '(optional)',
             'maxlength' => 10,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'ssn4', array(
@@ -157,11 +169,13 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Last four digits of SSN',
             'maxlength' => 4,
             'dimension' => 1,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('checkbox', 'married', array(
             'required' => true,
             'label' => 'Currently married',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'spouseName', array(
@@ -182,6 +196,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => "Spouse's name",
             'maxlength' => 30,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'spouseBirthDate', array(
@@ -199,6 +214,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'description' => '(optional)',
             'maxlength' => 10,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         // Additional information elements:
@@ -206,6 +222,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->addElement('checkbox', 'doNotHelp', array(
             'required' => true,
             'label' => 'Do not help',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'doNotHelpReason', array(
@@ -226,11 +243,13 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => '"Do not help" reason',
             'maxlength' => 100,
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('checkbox', 'veteran', array(
             'required' => true,
             'label' => 'Veteran',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('select', 'parish', array(
@@ -249,6 +268,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             ),
             'label' => 'Parish attended',
             'dimension' => 3,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         // Contact information elements:
@@ -256,7 +276,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->addElement('text', 'cellPhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
-                array('NotEmpty', true, array(
+				array('NotEmpty', true, array(
                     'type' => 'string',
                     'messages' => array('isEmpty' => ''),
                 )),
@@ -272,12 +292,13 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Cell phone',
             'maxlength' => 12,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'homePhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
-                array('NotEmpty', true, array(
+				array('NotEmpty', true, array(
                     'type' => 'string',
                     'messages' => array('isEmpty' => ''),
                 )),
@@ -293,12 +314,13 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Home phone',
             'maxlength' => 12,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'workPhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
-                array('NotEmpty', true, array(
+				array('NotEmpty', true, array(
                     'type' => 'string',
                     'messages' => array('isEmpty' => ''),
                 )),
@@ -306,7 +328,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                     'min' => 10,
                     'max' => 10,
                     'messages' => array(
-                        'stringLengthTooShort' => 'Work phone must be a ten digit number.',
+                         'stringLengthTooShort' => 'Work phone must be a ten digit number.',
                         'stringLengthTooLong' => 'Work phone must be a ten digit number.',
                     ),
                 )),
@@ -314,6 +336,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Work phone',
             'maxlength' => 12,
             'dimension' => 2,
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');

@@ -1,0 +1,84 @@
+
+<form action="<?= $this->escape($this->element->getAction()) ?>"
+      method="<?= $this->escape($this->element->getMethod()) ?>">
+
+<fieldset>
+    	<table>
+    		<tbody>
+    			<tr><td>
+				<?php echo $this->element->clientID ?>
+				</td><td>
+				<?php echo $this->element->doNotHelp ?>
+				</td><td>
+				<?php echo $this->element->doNotHelpReason ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->firstName ?>
+			    </td><td>
+			    <?php echo $this->element->lastName ?>
+			    </td><td>
+			    <?php echo $this->element->otherName ?>
+			    </td><td><tr><td>
+			    <?php echo $this->element->birthdate ?>
+			    </td><td>
+			    <?php echo $this->element->ssn4 ?>
+			    </td><td>
+			    <?php echo $this->element->veteranFlag ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->homePhone ?>
+			    </td><td>
+			    <?php echo $this->element->cellPhone ?>
+			    </td><td>
+			    <?php echo $this->element->workPhone ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->addressChange ?>
+			    </td><td>
+			    <?php echo $this->element->street ?>
+			    </td><td>
+			    <?php echo $this->element->apartment ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->city ?>
+			    </td><td>
+			    <?php echo $this->element->state ?>
+			    </td><td>
+			    <?php echo $this->element->zipcode ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->marriageStatus ?>
+			    </td><td>
+			    <?php echo $this->element->spouseFirstName ?>
+			    </td><td>
+			    <?php echo $this->element->spouseLastName ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->houseMemberFirst ?>
+			    </td><td>
+			    <?php echo $this->element->houseMemberLast ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->relationship ?>
+			    </td><td>
+			    <?php echo $this->element->houseMemberBirthdate ?>
+			    </td><td>
+			    <?php echo $this->element->dateLeft ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->resideParish ?>
+			    </td><td>
+			    <?php echo $this->element->memberParish ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->employer ?>
+			    </td><td>
+			    <?php echo $this->element->position ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->startDate ?>
+			    </td><td>
+			    <?php echo $this->element->endDate ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->createdDate ?>
+			    </td><td>
+			    <?php echo $this->element->createdUser ?>
+			    </td></tr><tr><td>
+			    <?php echo $this->element->editClient ?>
+			    </td></tr>
+		    </tbody>
+	    </table>
+</fieldset>
+
+<?php echo $this->element->submit ?>
+</form>
