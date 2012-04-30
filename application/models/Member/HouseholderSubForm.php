@@ -106,7 +106,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2',
+            'class' => 'span2 date',
         ));
 
         $this->addElement('text', 'departDate', array(
@@ -121,7 +121,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2',
+            'class' => 'span2 date',
         ));
     }
 

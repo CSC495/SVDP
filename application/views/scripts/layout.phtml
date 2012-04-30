@@ -14,10 +14,14 @@ $this->headTitle($this->pageTitle)
 
 // Use the main stylesheet.
 $this->headLink()->prependStylesheet($this->baseUrl('main.css'), 'all');
+$this->headLink()->prependStylesheet(
+    'http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/redmond/jquery-ui.css');
 
 // Include jQuery libraries.
 $this->headScript()->prependFile($this->baseUrl('main.js'));
-$this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js');
+$this->headScript()->prependFile(
+    'http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js');
+$this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.7.2.min.js');
 
 // Render <head> elements.
 echo $this->doctype(),    "\n";

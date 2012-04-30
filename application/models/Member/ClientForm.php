@@ -135,6 +135,7 @@ private $_PARISH_OPTIONS = array(
             'description' => '(optional)',
             'maxlength' => 10,
             'dimension' => 2,
+            'class' => 'date',
         ));
 
         $this->addElement('text', 'ssn4', array(
@@ -199,6 +200,7 @@ private $_PARISH_OPTIONS = array(
             'description' => '(optional)',
             'maxlength' => 10,
             'dimension' => 2,
+            'class' => 'date',
         ));
 
         // Additional information elements:
