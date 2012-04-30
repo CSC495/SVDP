@@ -295,7 +295,7 @@ class App_Service_Member
         return array(
             'street' => $addr->getStreet(),
             'apt' => $addr->getApt(),
-            'city' => $addr->getZip(),
+            'city' => $addr->getCity(),
             'state' => $addr->getState(),
             'zipcode' => $addr->getZip(),
             'reside_parish' => $addr->getParish(),
