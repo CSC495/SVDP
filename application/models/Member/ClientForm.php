@@ -274,6 +274,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Cell phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
         $this->addElement('text', 'homePhone', array(
@@ -295,6 +296,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Home phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
         $this->addElement('text', 'workPhone', array(
@@ -316,6 +318,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Work phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
         $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');

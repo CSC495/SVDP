@@ -141,6 +141,7 @@ function initEditClientForm() {
 
     update();
 
-    // Attach jQuery UI widgets.
+    // Attach jQuery UI widgets/plugin behavior.
     $('.date').datepicker();
+    $('.phone').mask('(999) 999-9999');
 }
