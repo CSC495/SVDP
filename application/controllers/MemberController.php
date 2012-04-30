@@ -180,7 +180,7 @@ class MemberController extends Zend_Controller_Action
         }
     }
 
-    public function caseAction()
+    public function editcaseAction()
     {
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_Member_CaseForm();
