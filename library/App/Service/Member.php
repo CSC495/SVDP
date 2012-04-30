@@ -123,6 +123,16 @@ class App_Service_Member
             $this->_db->insert('client', $this->disassembleClientModel($client));;
             $client->setId($this->_db->lastInsertId());
 
+            // There's just no helping some people...
+            if ($client->isDoNotHelp()) {
+                $this->_db->insert('do_not_help', array(
+                    'client_id' => $client->getId(),
+                    'create_user_id' => $client->getUserId(),
+                    'added_date' => $client->getCreatedDate(),
+                    'reason' => $client->getDoNotHelpReason(),
+                ));
+            }
+
             // If married, insert the new client's spouse.
             if ($client->isMarried()) {
                 $this->_db->insert('client', $this->disassembleClientModel($client->getSpouse()));
