@@ -115,13 +115,34 @@ class App_Service_Member
         return $this->buildEmployerModels($results);
     }
 
-    public function createClient($client) {
+    public function createClient($client, $householders, $employers) {
         $this->_db->beginTransaction();
 
         try {
+            // Insert the new client.
             $this->_db->insert('client', $this->disassembleClientModel($client));;
-
             $client->setId($this->_db->lastInsertId());
+
+            // If married, insert the new client's spouse.
+            if ($client->isMarried()) {
+                $this->_db->insert('client', $this->disassembleClientModel($client->getSpouse()));
+                $client->getSpouse()->setId($this->_db->lastInsertId());
+            }
+
+            // Insert the new client's address.
+            // XXX: Why does the `address` table even have a `client_id` column?
+            $addrData = $this->disassembleAddrModel($client->getCurrentAddr());
+            $addrData['client_id'] = $client->getId();
+            $this->_db->insert('address', $addrData);
+            $client->getCurrentAddr()->setId($this->_db->lastInsertId());
+
+            // Insert a household for the new client (and possibly his/her spouse).
+            $this->_db->insert('household', array(
+                'address_id' => $client->getCurrentAddr()->getId(),
+                'mainclient_id' => $client->getId(),
+                'spouse_id' => $client->isMarried() ? $client->getSpouse()->getId() : null,
+                'current_flag' => 1,
+            ));
 
             $this->_db->commit();
         } catch (Exception $ex) {
@@ -176,25 +197,6 @@ class App_Service_Member
         return $client;
     }
 
-    private function disassembleClientModel($client)
-    {
-        return array(
-            'created_user_id' => $client->getUserId(),
-            'first_name' => $client->getFirstName(),
-            'last_name' => $client->getLastName(),
-            'other_name' => $client->getOtherName(),
-            'marriage_status' => (int)$client->isMarried(),
-            'birthdate' => $client->getBirthDate(),
-            'ssn4' => $client->getSsn4(),
-            'cell_phone' => $client->getCellPhone(),
-            'home_phone' => $client->getHomePhone(),
-            'work_phone' => $client->getWorkPhone(),
-            'created_date' => $client->getCreatedDate(),
-            'member_parish' => $client->getParish(),
-            'veteran_flag' => (int)$client->isVeteran(),
-        );
-    }
-
     private function buildHouseholderModels($dbResults)
     {
         $householders = array();
@@ -232,5 +234,36 @@ class App_Service_Member
         }
 
         return $employers;
+    }
+
+    private function disassembleClientModel($client)
+    {
+        return array(
+            'created_user_id' => $client->getUserId(),
+            'first_name' => $client->getFirstName(),
+            'last_name' => $client->getLastName(),
+            'other_name' => $client->getOtherName(),
+            'marriage_status' => (int)$client->isMarried(),
+            'birthdate' => $client->getBirthDate(),
+            'ssn4' => $client->getSsn4(),
+            'cell_phone' => $client->getCellPhone(),
+            'home_phone' => $client->getHomePhone(),
+            'work_phone' => $client->getWorkPhone(),
+            'created_date' => $client->getCreatedDate(),
+            'member_parish' => $client->getParish(),
+            'veteran_flag' => (int)$client->isVeteran(),
+        );
+    }
+
+    private function disassembleAddrModel($addr)
+    {
+        return array(
+            'street' => $addr->getStreet(),
+            'apt' => $addr->getApt(),
+            'city' => $addr->getZip(),
+            'state' => $addr->getState(),
+            'zipcode' => $addr->getZip(),
+            'reside_parish' => $addr->getParish(),
+        );
     }
 }

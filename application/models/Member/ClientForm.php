@@ -370,7 +370,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $client = new Application_Model_Impl_Client();
         $client->setId($this->_id)
                ->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()))
-               ->setLastName(App_Formatting::emptyToNull($this->firstName->getValue()))
+               ->setLastName(App_Formatting::emptyToNull($this->lastName->getValue()))
                ->setOtherName(App_Formatting::emptyToNull($this->otherName->getValue()))
                ->setMarried($this->married->isChecked())
                ->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()))
@@ -381,6 +381,18 @@ class Application_Model_Member_ClientForm extends Zend_Form
                ->setParish(App_Formatting::emptyToNull($this->parish->getValue()))
                ->setVeteran($this->veteran->isChecked())
                ->setCurrentAddr($this->addr->getAddr());
+
+        if ($client->isMarried()) {
+            $spouse = new Application_Model_Impl_Client();
+            $spouse->setFirstName(App_Formatting::emptyToNull($this->spouseName->getValue()))
+                   ->setLastName($client->getLastName())
+                   ->setMarried(true)
+                   ->setBirthDate(App_Formatting::unformatDate($this->spouseBirthDate->getValue()))
+                   ->setHomePhone($client->getHomePhone())
+                   ->setParish($client->getParish());
+
+            $client->setSpouse($spouse);
+        }
 
         return $client;
     }
@@ -409,7 +421,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         }
     }
 
-    public function getHouseholders($householders)
+    public function getHouseholders()
     {
         $householders = array();
 
@@ -442,7 +454,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         );
     }
 
-    public function getEmployers($employers)
+    public function getEmployers()
     {
         $employers = array();
 

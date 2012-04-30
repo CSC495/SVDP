@@ -157,12 +157,21 @@ class MemberController extends Zend_Controller_Action
         // If we passed validation, insert or update the database as required.
         if ($this->_hasParam('id')) {
         } else {
-            $client = $this->view->form->getClient();
+            $client       = $this->view->form->getClient();
+            $householders = $this->view->form->getHouseholders();
+            $employers    = $this->view->form->getEmployers();
+
             $client
                 ->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id)
-                ->setCreatedDate(date('m/d/Y'));
+                ->setCreatedDate(date('Y-m-d'));
 
-            $client = $service->createClient($client);
+            if ($client->isMarried()) {
+                $client->getSpouse()
+                    ->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id)
+                    ->setCreatedDate(date('Y-m-d'));
+            }
+
+            $client = $service->createClient($client, $householders, $employers);
 
             $this->_helper->redirector('editclient', App_Resources::MEMBER, null, array(
                 'id' => $client->getId(),
