@@ -1,23 +1,33 @@
 <?php
 
 /**
- * Address form allowing the user to look up potential clients on a Google map.
+ * Sub form containing common address widgets.
  */
-class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizontal {
+class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Horizontal {
 
-    private $_showNewClientButton = false;
+    private $_PARISH_OPTIONS = array(
+        '' => '',
+        'St. Raphael' => 'St. Raphael',
+        'Holy Spirit' => 'Holy Spirit',
+        'St. Elizabeth Seton' => 'St. Elizabeth Seton',
+        'St. Thomas' => 'St. Thomas',
+        'SS. Peter & Paul' => 'SS. Peter & Paul',
+        'Other' => 'Other',
+    );
+
+    private $_hasParishField;
 
     /**
-     * Instantiates a new instance of the `Application_Model_Member_MapsForm` class.
+     * Instantiates a new instance of the `Application_Model_Member_AddressSubForm` class.
      */
-    public function __construct()
+    public function __construct($title, $hasParishField = false, $zipCodeRequired = false)
     {
         parent::__construct();
 
-        $baseUrl = new Zend_View_Helper_BaseUrl();
+        $this->_hasParishField = $hasParishField;
 
-        $this->setAction($baseUrl->baseUrl(App_Resources::MEMBER) . '/map')
-             ->setMethod('get');
+        $this->setIsArray(true)
+             ->setDecorators(array('FormElements'));
 
         $this->addElement('text', 'street', array(
             'required' => true,
@@ -103,7 +113,11 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
         ));
 
         $this->addElement('text', 'zip', array(
+            'required' => $zipCodeRequired,
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'messages' => array('isEmpty' => 'ZIP code must be present.'),
+                )),
                 array('Digits', true, array(
                     'messages' => array('notDigits' => 'ZIP code must be numeric.'),
                 )),
@@ -117,63 +131,36 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
                 )),
             ),
             'label' => 'ZIP code',
-            'description' => '(optional)',
+            'description' => $zipCodeRequired ? null : '(optional)',
             'maxLength' => 5,
             'dimension' => 1,
         ));
 
-        $this->addElement('submit', 'search', array(
-            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
-            'label' => 'Search',
-        ));
+        $elements = array('street', 'apt', 'city', 'state', 'zip');
 
-        $this->addElement('submit', 'newClient', array('label' => 'New Client'));
+        if ($hasParishField) {
+            $this->addElement('select', 'resideParish', array(
+                'multiOptions' => $this->_PARISH_OPTIONS,
+                'required' => true,
+                'validators' => array(
+                    array('NotEmpty', true, array(
+                        'type' => 'string',
+                        'messages' => array('isEmpty' => 'You must choose a parish name.'),
+                    )),
+                    array('InArray', true, array(
+                        'haystack' => array_keys($this->_PARISH_OPTIONS),
+                        'strict' => true,
+                        'messages' => array('notInArray' => 'You must choose a parish name.'),
+                    )),
+                ),
+                'label' => 'Parish of residence',
+                'dimension' => 3,
+            ));
 
-        $this->addDisplayGroup(
-            array('street', 'apt', 'city', 'state', 'zip'),
-            'fields',
-            array('legend' => "Enter a client's address.")
-        );
-
-        $this->addDisplayGroup(
-            array('search', 'newClient'),
-            'actions',
-            array('disableLoadDefaultDecorators' => true, 'decorators' => array('Actions'))
-        );
-    }
-
-    /**
-     * Renders the form, display the "New Client" button if and only if `showNewClientButton()` has
-     * been called.
-     *
-     * @param Zend_View_Interface $view
-     * @return string
-     */
-    public function render($view = null)
-    {
-        if (!$this->_showNewClientButton) {
-            $this->removeElement('newClient');
+            $elements[] = 'resideParish';
         }
 
-        return parent::render($view);
-    }
-
-    /**
-     * Enables displaying the "New Client" button.
-     */
-    public function showNewClientButton()
-    {
-        $this->_showNewClientButton = true;
-    }
-
-    /**
-     * Returns true if the request requires creation of a new client and false otherwise.
-     *
-     * @return bool
-     */
-    public function isNewClientRequest()
-    {
-        return $this->newClient->isChecked();
+        $this->addDisplayGroup($elements, 'addr', array('legend' => $title) );
     }
 
     /**
@@ -184,11 +171,14 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
     public function getAddr()
     {
         $addr = new Application_Model_Impl_Addr();
-        $addr->setStreet($this->street->getValue() !== '' ? $this->street->getValue() : null)
-             ->setApt($this->apt->getValue() !== '' ? $this->apt->getValue() : null)
-             ->setCity($this->city->getValue() !== '' ? $this->city->getValue() : null)
-             ->setState($this->state->getValue() !== '' ? $this->state->getValue() : null)
-             ->setZip($this->zip->getValue() !== '' ? $this->zip->getValue() : null);
+        $addr->setStreet(($this->street->getValue() !== '') ? $this->street->getValue() : null)
+             ->setApt(($this->apt->getValue() !== '') ? $this->apt->getValue() : null)
+             ->setCity(($this->city->getValue() !== '') ? $this->city->getValue() : null)
+             ->setState(($this->state->getValue() !== '') ? $this->state->getValue() : null)
+             ->setZip(($this->zip->getValue() !== '') ? $this->zip->getValue() : null)
+             ->setParish(($this->_hasParishField && $this->resideParish->getValue() !== '')
+                 ? $this->resideParish->getValue()
+                 : null);
         return $addr;
     }
 
@@ -196,7 +186,7 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
      * Sets the form's current contents based on the specified address model object.
      *
      * @param Application_Model_Impl_Addr $addr
-     * @return Application_Model_Member_MapsForm
+     * @return Application_Model_Member_MapForm
      */
     public function setAddr($addr)
     {
@@ -205,5 +195,8 @@ class Application_Model_Member_MapsForm extends Twitter_Bootstrap_Form_Horizonta
         $this->city->setValue($addr->getCity());
         $this->state->setValue($addr->getState());
         $this->zip->setValue($addr->getZip());
+        if ($this->_hasParishField) {
+            $this->resideParish->setValue($addr->getParish());
+        }
     }
 }
