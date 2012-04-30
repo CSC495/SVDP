@@ -31,4 +31,9 @@ class App_Formatting
     {
         return ($x !== '') ? $x : null;
     }
+
+    public static function isBlank($x)
+    {
+        return trim($x) === '';
+    }
 }
