@@ -2,8 +2,7 @@
 
 class Application_Model_Member_ClientForm extends Zend_Form
 {
-
-    private $_PARISH_OPTIONS = array(
+private $_PARISH_OPTIONS = array(
         '' => '',
         'St. Raphael' => 'St. Raphael',
         'Holy Spirit' => 'Holy Spirit',
