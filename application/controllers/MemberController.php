@@ -156,6 +156,7 @@ class MemberController extends Zend_Controller_Action
 
         // If we passed validation, insert or update the database as required.
         if ($this->_hasParam('id')) {
+            // TODO: Update existing client.
         } else {
             $client       = $this->view->form->getClient();
             $householders = $this->view->form->getHouseholders();

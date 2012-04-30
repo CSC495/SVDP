@@ -143,6 +143,11 @@ class App_Service_Member
                 'spouse_id' => $client->isMarried() ? $client->getSpouse()->getId() : null,
                 'current_flag' => 1,
             ));
+            $householdId = $this->_db->lastInsertId();
+
+            $this->createHouseholders($householdId, $householders);
+
+            $this->createEmployers($client->getId(), $employers);
 
             $this->_db->commit();
         } catch (Exception $ex) {
@@ -151,6 +156,26 @@ class App_Service_Member
         }
 
         return $client;
+    }
+
+    private function createHouseholders($householdId, $householders)
+    {
+        foreach ($householders as $householder) {
+            $householderData = $this->disassmebleHouseholderModel($householder);
+            $householderData['household_id'] = $householdId;
+
+            $this->_db->insert('hmember', $householderData);
+        }
+    }
+
+    private function createEmployers($clientId, $employers)
+    {
+        foreach ($employers as $employer) {
+            $employerData = $this->disassembleEmployerModel($employer);
+            $employerData['client_id'] = $clientId;
+
+            $this->_db->insert('employment', $employerData);
+        }
     }
 
     private function buildClientModel($dbResult)
@@ -264,6 +289,27 @@ class App_Service_Member
             'state' => $addr->getState(),
             'zipcode' => $addr->getZip(),
             'reside_parish' => $addr->getParish(),
+        );
+    }
+
+    private function disassmebleHouseholderModel($householder)
+    {
+        return array(
+            'first_name' => $householder->getFirstName(),
+            'last_name' => $householder->getLastName(),
+            'relationship' => $householder->getRelationship(),
+            'birthdate' => $householder->getBirthDate(),
+            'left_date' => $householder->getDepartDate(),
+        );
+    }
+
+    private function disassembleEmployerModel($employer)
+    {
+        return array(
+            'company' => $employer->getCompany(),
+            'position' => $employer->getPosition(),
+            'start_date' => $employer->getStartDate(),
+            'end_date' => $employer->getEndDate(),
         );
     }
 }
