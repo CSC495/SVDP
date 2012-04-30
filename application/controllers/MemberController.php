@@ -38,7 +38,7 @@ class MemberController extends Zend_Controller_Action
             $addr = $this->view->form->getAddr();
 
             $this->_helper->redirector(
-                'editclient',
+                'editClient',
                 App_Resources::MEMBER,
                 null,
                 array(
@@ -174,7 +174,7 @@ class MemberController extends Zend_Controller_Action
 
             $client = $service->createClient($client, $householders, $employers);
 
-            $this->_helper->redirector('editclient', App_Resources::MEMBER, null, array(
+            $this->_helper->redirector('editClient', App_Resources::MEMBER, null, array(
                 'id' => $client->getId(),
             ));
         }

@@ -23,7 +23,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
     private static function makeActionUrl($id)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
-        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editclient'
+        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editClient'
             . (($id !== null) ? '/id/' . urlencode($id) : ''));
     }
 
