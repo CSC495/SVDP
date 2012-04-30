@@ -9,6 +9,7 @@
  */
 class Application_Model_Impl_Addr
 {
+
     private $_id = null;
 
     private $_street = null;
@@ -20,6 +21,8 @@ class Application_Model_Impl_Addr
     private $_state = null;
 
     private $_zip = null;
+
+    private $_parish = null;
 
     /* Generic get/set methods: */
 
@@ -87,6 +90,17 @@ class Application_Model_Impl_Addr
     public function setZip($zip)
     {
         $this->_zip = $zip;
+        return $this;
+    }
+
+    public function getParish()
+    {
+        return $this->_parish;
+    }
+
+    public function setParish($parish)
+    {
+        $this->_parish = $parish;
         return $this;
     }
 
