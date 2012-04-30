@@ -46,7 +46,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             ->setDecorators(array(
                 'PrepareElements',
                 array('ViewScript', array(
-                    'viewScript' => 'form/editclient.phtml',
+                    'viewScript' => 'form/client-form.phtml',
                     'householdersSubForm' => &$this->_householdersSubForm,
                     'employersSubForm' => &$this->_employersSubForm,
                 )),
