@@ -113,3 +113,30 @@ function renderMap(clientCoords) {
         });
     });
 }
+
+function attachEditClientEvents() {
+    var marriedCheckbox = $('#married');
+    var doNotHelpCheckbox = $('#doNotHelp');
+
+    var memberSpouseDivs = $('.member-spouse');
+    var memberDoNotHelpDiv = $('.member-donothelp');
+
+    function update() {
+        if (marriedCheckbox.is(':checked')) {
+            memberSpouseDivs.removeClass('hide');
+        } else {
+            memberSpouseDivs.addClass('hide');
+        }
+
+        if (doNotHelpCheckbox.is(':checked')) {
+            memberDoNotHelpDiv.removeClass('invisible');
+        } else {
+            memberDoNotHelpDiv.addClass('invisible');
+        }
+    }
+
+    marriedCheckbox.click(update);
+    doNotHelpCheckbox.click(update);
+
+    update();
+}
