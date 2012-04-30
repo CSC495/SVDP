@@ -257,12 +257,16 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->addElement('text', 'cellPhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => ''),
+                )),
                 array('StringLength', true, array(
                     'min' => 10,
                     'max' => 10,
                     'messages' => array(
-                        'stringLengthTooShort' => 'Cell phone must be a ten digit phone number.',
-                        'stringLengthTooLong' => 'Cell phone must be a ten digit phone number.',
+                        'stringLengthTooShort' => 'Cell phone must be a ten digit number.',
+                        'stringLengthTooLong' => 'Cell phone must be a ten digit number.',
                     ),
                 )),
             ),
@@ -274,12 +278,16 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->addElement('text', 'homePhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => ''),
+                )),
                 array('StringLength', true, array(
                     'min' => 10,
                     'max' => 10,
                     'messages' => array(
-                        'stringLengthTooShort' => 'Home phone must be a ten digit phone number.',
-                        'stringLengthTooLong' => 'Home phone must be a ten digit phone number.',
+                        'stringLengthTooShort' => 'Home phone must be a ten digit number.',
+                        'stringLengthTooLong' => 'Home phone must be a ten digit number.',
                     ),
                 )),
             ),
@@ -291,12 +299,16 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->addElement('text', 'workPhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => ''),
+                )),
                 array('StringLength', true, array(
                     'min' => 10,
                     'max' => 10,
                     'messages' => array(
-                        'stringLengthTooShort' => 'Work phone must be a ten digit phone number.',
-                        'stringLengthTooLong' => 'Work phone must be a ten digit phone number.',
+                        'stringLengthTooShort' => 'Work phone must be a ten digit number.',
+                        'stringLengthTooLong' => 'Work phone must be a ten digit number.',
                     ),
                 )),
             ),
@@ -376,6 +388,16 @@ class Application_Model_Member_ClientForm extends Zend_Form
                     $employerId
                 );
             }
+        }
+
+        // XXX: This is kind of a hack, and it's slightly broken. We really should use a custom
+        // validator class for our "at least one of these fields is required" logic.
+        if (App_Formatting::isBlank($data['cellPhone'])
+            && App_Formatting::isBlank($data['homePhone'])
+            && App_Formatting::isBlank($data['workPhone'])) {
+            $this->cellPhone->setRequired(true);
+            $this->homePhone->setRequired(true);
+            $this->workPhone->setRequired(true);
         }
     }
 

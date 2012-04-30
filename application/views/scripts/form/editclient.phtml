@@ -1,3 +1,12 @@
+<?php
+function isMissingPhone($element)
+{
+    return $element->cellPhone->hasErrors()
+        && $element->cellPhone->getValue() === ''
+        && $element->homePhone->getValue() === ''
+        && $element->workPhone->getValue() === '';
+}
+?>
 <fieldset class=row-fluid>
     <legend>Personal information</legend>
 
@@ -31,7 +40,7 @@
     <div class=span6><?php echo $this->element->homePhone; ?></div>
 
     <div class=span6><?php echo $this->element->workPhone; ?></div>
-    <div class=span6><div class=control-group><div class=controls><p class=help-block>(at least one phone required)</p></div></div></div>
+    <div class=span6><div class="control-group<?php if (isMissingPhone($this->element)) { echo ' error'; } ?>"><div class=controls><p class=help-block>(at least one phone required)</p></div></div></div>
 </fieldset>
 
 <fieldset class=row-fluid>
