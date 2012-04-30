@@ -105,6 +105,9 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
         $this->addElement('text', 'zip', array(
             'required' => $zipCodeRequired,
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'messages' => array('isEmpty' => 'ZIP code must be present.'),
+                )),
                 array('Digits', true, array(
                     'messages' => array('notDigits' => 'ZIP code must be numeric.'),
                 )),
