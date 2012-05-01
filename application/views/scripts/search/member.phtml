@@ -3,7 +3,7 @@
 echo $this->form;
 
 if (isset($this->clients)) {
-    $addClientUrl = $this->baseUrl(App_Resources::MEMBER . '/addClient');
+    $addClientUrl = $this->baseUrl(App_Resources::MEMBER . '/editClient');
 
     if (empty($this->clients)) {
 ?>
@@ -22,10 +22,7 @@ echo $this->partialLoop('partial/searchResultClient.phtml', $this->clients);
 ?>
 </table>
 </div>
-<p>
-Client not listed?
-Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a new client</a>?
-</p>
+<p>Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a new client</a>?</p>
 <?php
     }
 }

@@ -32,7 +32,7 @@ class App_Service_Search
      * Retrieve a list of clients whose first or last names match the specified query.
      *
      * @param string $name
-     * @return Application_Model_Client[]
+     * @return Application_Model_Impl_Client[]
      */
     public function getClientsByName($name)
     {
@@ -48,7 +48,7 @@ class App_Service_Search
      * Retrieve a list of clients whose addresses match the specified query.
      *
      * @param string $addr
-     * @return Application_Model_Client[]
+     * @return Application_Model_Impl_Client[]
      */
     public function getClientsByAddr($addr)
     {
@@ -68,7 +68,7 @@ class App_Service_Search
      * Retrieve a list of clients whose cell, home, or work phone numbers match the specified query.
      *
      * @param string $phone
-     * @return Application_Model_Client[]
+     * @return Application_Model_Impl_Client[]
      */
     public function getClientsByPhone($phone)
     {
@@ -88,7 +88,7 @@ class App_Service_Search
      * Retrieve a list of open cases for the specified user.
      *
      * @param string $userId
-     * @return Application_Model_Case[]
+     * @return Application_Model_Impl_Case[]
      */
     public function getOpenCasesByUserId($userId)
     {
@@ -105,7 +105,7 @@ class App_Service_Search
     /**
      * Retrieve a list of currently open check requests.
      *
-     * @return Application_Model_CheckReq[]
+     * @return Application_Model_Impl_CheckReq[]
      */
     public function getOpenCheckReqs()
     {
@@ -121,7 +121,7 @@ class App_Service_Search
      * Retrieve a list of check request whose first or last client names match the specified query.
      *
      * @param string $name
-     * @return Application_Model_CheckReq[]
+     * @return Application_Model_Impl_CheckReq[]
      */
     public function getCheckReqsByClientName($name)
     {
@@ -139,7 +139,7 @@ class App_Service_Search
      * Retrieve a list of check requests whose client addresses match the specified query.
      *
      * @param string $addr
-     * @return Application_Model_CheckReq[]
+     * @return Application_Model_Impl_CheckReq[]
      */
     public function getCheckReqsByClientAddr($addr)
     {
@@ -161,7 +161,7 @@ class App_Service_Search
      * specified query.
      *
      * @param string $phone
-     * @return Application_Model_CheckReq[]
+     * @return Application_Model_Impl_CheckReq[]
      */
     public function getCheckReqsByClientPhone($phone)
     {
@@ -180,7 +180,7 @@ class App_Service_Search
      * Retrieve a list of check requests matching the specified client ID.
      *
      * @param string $clientId
-     * @return Application_Model_CheckReq[]
+     * @return Application_Model_Impl_CheckReq[]
      */
     public function getCheckReqsByClientId($clientId)
     {
@@ -195,7 +195,7 @@ class App_Service_Search
      * Retrieve a list of check requests matching the specified case ID.
      *
      * @param string $caseId
-     * @return Application_Model_CheckReq[]
+     * @return Application_Model_Impl_CheckReq[]
      */
     public function getCheckReqsByCaseId($caseId)
     {
@@ -232,7 +232,7 @@ class App_Service_Search
             ->joinLeft(
                 array('d' => 'do_not_help'),
                 'c.client_id = d.client_id',
-                array('do_not_help_client_id' => 'd.client_id')
+                array('do_not_help_reason' => 'd.reason')
             )
             ->where('h.current_flag = 1')
             ->order(array('c.last_name', 'c.first_name', 'c.client_id'));
@@ -309,7 +309,7 @@ class App_Service_Search
         $clients = array();
 
         foreach ($dbResults as $dbResult) {
-            $addr = new Application_Model_Addr();
+            $addr = new Application_Model_Impl_Addr();
             $addr
                 ->setId($dbResult['address_id'])
                 ->setStreet($dbResult['street'])
@@ -318,7 +318,7 @@ class App_Service_Search
                 ->setState($dbResult['state'])
                 ->setZip($dbResult['zipcode']);
 
-            $client = new Application_Model_Client();
+            $client = new Application_Model_Impl_Client();
             $client
                 ->setId($dbResult['client_id'])
                 ->setFirstName($dbResult['first_name'])
@@ -327,7 +327,7 @@ class App_Service_Search
                 ->setHomePhone($dbResult['home_phone'])
                 ->setWorkPhone($dbResult['work_phone'])
                 ->setCurrentAddr($addr)
-                ->setDoNotHelp($dbResult['do_not_help_client_id'] !== null);
+                ->setDoNotHelpReason($dbResult['do_not_help_reason']);
 
             $clients[] = $client;
         }
@@ -340,7 +340,7 @@ class App_Service_Search
         $cases = array();
 
         foreach ($dbResults as $dbResult) {
-            $client = new Application_Model_Client();
+            $client = new Application_Model_Impl_Client();
             $client
                 ->setId($dbResult['client_id'])
                 ->setFirstName($dbResult['first_name'])
@@ -349,7 +349,7 @@ class App_Service_Search
                 ->setHomePhone($dbResult['home_phone'])
                 ->setWorkPhone($dbResult['work_phone']);
 
-            $case = new Application_Model_Case();
+            $case = new Application_Model_Impl_Case();
             $case
                 ->setId($dbResult['case_id'])
                 ->setOpenedDate($dbResult['opened_date'])
@@ -369,7 +369,7 @@ class App_Service_Search
         $checkReqs = array();
 
         foreach ($dbResults as $dbResult) {
-            $client = new Application_Model_Client();
+            $client = new Application_Model_Impl_Client();
             $client
                 ->setId($dbResult['client_id'])
                 ->setFirstName($dbResult['first_name'])
@@ -378,7 +378,7 @@ class App_Service_Search
                 ->setHomePhone($dbResult['home_phone'])
                 ->setWorkPhone($dbResult['work_phone']);
 
-            $case = new Application_Model_Case();
+            $case = new Application_Model_Impl_Case();
             $case
                 ->setId($dbResult['case_id'])
                 ->setOpenedDate($dbResult['opened_date'])
@@ -386,7 +386,7 @@ class App_Service_Search
                 ->setTotalAmount($dbResult['amount'])
                 ->setClient($client);
 
-            $checkReq = new Application_Model_CheckReq();
+            $checkReq = new Application_Model_Impl_CheckReq();
             $checkReq
                 ->setId($dbResult['checkrequest_id'])
                 ->setRequestDate($dbResult['request_date'])

@@ -2,7 +2,7 @@
 
 class LoginController extends Zend_Controller_Action
 {
-    private $_timeout = 10; // Time out in minutes
+    private $_timeout = 1440; // Time out in minutes
     // Getting user info
     // $identity = Zend_Auth::getInstance()->getIdentity();
     // $identity->username;
@@ -30,6 +30,40 @@ class LoginController extends Zend_Controller_Action
     {
         $this->view->form = new Application_Model_Login_ForgotForm();
         $this->view->pageTitle = "Forgot Password";
+    }
+    
+    public function forgotprocessAction()
+    {
+        $request = $this->getRequest();
+
+        // If there isnt a post request go back to index
+        if( !$request->isPost() ){
+            return $this->_helper->redirector('login');
+        }
+        
+        // Get form data
+        $form = new Application_Model_Login_ForgotForm();
+        $form->populate($_POST);
+        
+        // Get user identity
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        
+        // find users info
+        $service = new App_Service_LoginService();
+        $user = $service->getUserInfo($identity->user_id);
+        
+        // generate passwordand send e-mail
+        if($user){
+            $mail = new Zend_Mail();
+            $mail->setBodyText('Here is your temporary password. You will be prompted to change it at next login.');
+            $mail->setFrom('SVDP@noreply.com', 'System');
+            $mail->setSubject('Temporary Password');
+            
+            $mail->send();
+            
+            // Update in db
+        }
+        
     }
     
     public function processAction()
@@ -61,7 +95,7 @@ class LoginController extends Zend_Controller_Action
         $password = $form->getValue('password');
 
         // Check password
-        if( !$this->isValidPassword($password) )
+        if( !$this->isValidPasswordFormat($password) )
         {
             $this->_redirect('/login/login/error_flag/TRUE');
         }
@@ -78,15 +112,17 @@ class LoginController extends Zend_Controller_Action
     
     protected function getAuthAdapter()
     {
+        $SALT = 'tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8';
         // Get the database adapter
         $db = Zend_Db_Table::getDefaultAdapter();
         $adapter = new Zend_Auth_Adapter_DbTable($db);
 
-        // Set the parameters
+        // Set the parameters, user must be active.
         $adapter
             ->setTableName('user')
             ->setIdentityColumn('user_id')
             ->setCredentialColumn('password')
+            ->setCredentialTreatment('? and active_flag="1"');
         ;
         return($adapter);
     }
@@ -113,21 +149,66 @@ class LoginController extends Zend_Controller_Action
         
         // Erase the password from the data to be stored with user
         $data = $authAdapter->getResultRowObject(null,'password');
+
         // Store the users data
         $auth->getStorage()->write($data);
         
         // Get the users identity
         $identity = Zend_Auth::getInstance()->getIdentity();
         // Set the identities role
-        $identity->role = $authAdapter->getResultRowObject('role')->role;
+        $identity->role = $data->role;
         
         // Set the time out length
         $authSession = new Zend_Session_Namespace('Zend_Auth');
         $authSession->setExpirationSeconds($this->_timeout * 60);
         
+        if($data->change_pswd == 1)
+        {
+            // Post to change password
+            return $this->_forward('changepwd','login');
+        }
         $this->forwardUser();
     }
     
+    /**
+     *  Interface for chaing a users password
+     */
+    protected function changepwdAction()
+    {
+        $request = $this->getRequest();
+        
+        if( !$request->isPost() ){
+            return $this->_helper->redirector('login');
+        }
+        
+        $this->view->form = new Application_Model_Login_ChangeForm();   
+    }
+    
+    /***
+     * Handles post from change of password and persists data
+     */
+    protected function processpwdAction()
+    {
+        $request = $this->getRequest();
+
+        // If there isnt a post request go back to index
+        if( !$request->isPost() ){
+            return $this->_helper->redirector('login');
+        }
+        $service = new App_Service_LoginService();
+        
+        $form = new Application_Model_Login_ChangeForm();
+        $form->populate($_POST);
+        $pwd = $form->getValue('password');
+       
+        
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        
+        $service = new App_Service_LoginService();
+        $service->updateUserPassword($identity->user_id,$pwd);
+        
+        $this->forwardUser();
+    }
     protected function forwardUser()
     {
         // If user does not have an identity return.
@@ -139,19 +220,19 @@ class LoginController extends Zend_Controller_Action
         switch( $identity->role)
         {
             case App_Roles::MEMBER:
-                $this->_helper->redirector('index','member');
+                $this->_helper->redirector('index',App_Resources::MEMBER);
                 break;
             case App_Roles::ADMIN:
-                $this->_helper->redirector('index','admin');
+                $this->_helper->redirector('index',App_Resources::ADMIN);
                 break;
             case App_Roles::TREASURER:
-                $this->_helper->redirector('index','treasurer');
+                $this->_helper->redirector('index',App_Resources::TREASURER);
                 break;
             default:
                 return;
         }
     }
-    protected function isValidPassword($password)
+    protected function isValidPasswordFormat($password)
     {
         // Check password. Rules..
         // One digit from 0-9

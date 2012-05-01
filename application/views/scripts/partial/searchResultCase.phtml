@@ -1,15 +1,15 @@
 <?php
 $rowStripeClass = ($this->partialCounter % 2 == 1) ? 'even' : 'odd';
-$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/client/id/'
+$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/editClient/id/'
     . urlencode($this->case->getClient()->getId()));
-$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/case/id/'
+$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/editCase/id/'
     . urlencode($this->case->getId()));
 
 echo $this->partial('partial/searchResultCommon.phtml', array(
     'rowStripeClass' => $rowStripeClass,
     'viewClientUrl' => $viewClientUrl,
     'gotoUrl' => $viewCaseUrl,
-    'gotoLabel' => 'case',
+    'gotoLabel' => 'Case',
     'client' => $this->case->getClient(),
 ));
 ?>
@@ -17,7 +17,7 @@ echo $this->partial('partial/searchResultCommon.phtml', array(
     <th class='search-cell first'>Case ID</th>
     <td class=search-cell><a href="<?php echo $this->escape($viewCaseUrl) ?>"><?php echo $this->escape($this->case->getId()); ?></a></td>
     <th class=search-cell>Date</th>
-    <td class=search-cell><?php echo $this->escape($this->case->getOpenedDate()); ?></td>
+    <td class=search-cell><?php echo $this->escape(App_Formatting::formatDate($this->case->getOpenedDate())); ?></td>
     <th class=search-cell>Status</th>
     <td class=search-cell><?php echo $this->escape($this->case->getStatus()); ?></td>
     <td rowspan=2 class='search-cell last'></td>
