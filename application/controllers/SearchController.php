@@ -46,6 +46,11 @@ class SearchController extends Zend_Controller_Action
             $service = new App_Service_Search();
 
             switch ($searchType) {
+                // Member "List All" requests retrieve a list of clients.
+                case Application_Model_Search_FormAbstract::TYPE_ALL:
+                    $this->view->clients = $service->getAllClients();
+                    break;
+
                 // Member searches by client name retrieve a list of clients.
                 case Application_Model_Search_FormAbstract::TYPE_CLIENT_NAME:
                     $this->view->clients = $service->getClientsByName($searchQuery);
@@ -87,6 +92,11 @@ class SearchController extends Zend_Controller_Action
             $service = new App_Service_Search();
 
             switch ($searchType) {
+                // Treasurer "List All" requests retrieve a list of check requests.
+                case Application_Model_Search_FormAbstract::TYPE_ALL:
+                    $this->view->checkReqs = $service->getAllCheckReqs();
+                    break;
+
                 // Treasurer searches by client name retrieve a list of check requests.
                 case Application_Model_Search_FormAbstract::TYPE_CLIENT_NAME:
                     $this->view->checkReqs = $service->getCheckReqsByClientName($searchQuery);
@@ -128,7 +138,7 @@ class SearchController extends Zend_Controller_Action
         $req  = $this->getRequest();
         $form = $this->view->form;
 
-        if (!$req->isGet() || !$req->getQuery('search')) {
+        if (!$req->isGet() || (!$req->getQuery('search') && !$req->getQuery('listAll'))) {
             return false;
         }
 

@@ -42,6 +42,7 @@ class App_Service_Member
                     'spouse_id' => 'c2.client_id',
                     'spouse_first_name' => 'c2.first_name',
                     'spouse_birthdate' => 'c2.birthdate',
+                    'spouse_ssn4' => 'c2.ssn4',
                 )
             )
             ->join(
@@ -204,7 +205,8 @@ class App_Service_Member
             $spouse = new Application_Model_Impl_Client();
             $spouse->setId($dbResult['spouse_id'])
                    ->setFirstName($dbResult['spouse_first_name'])
-                   ->setBirthDate($dbResult['spouse_birthdate']);
+                   ->setBirthDate($dbResult['spouse_birthdate'])
+                   ->setSsn4($dbResult['spouse_ssn4']);
         } else {
             $spouse = null;
         }
