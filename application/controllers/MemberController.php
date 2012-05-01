@@ -9,7 +9,7 @@ class MemberController extends Zend_Controller_Action
      * Home page action that lists open cases for the current member. Only a short summary shall be
      * displayed for each case.
      */
-    public function indexAction()
+    public function opencasesAction()
     {
         $this->view->pageTitle = "Open Cases";
 

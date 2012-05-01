@@ -31,6 +31,7 @@ class App_Acl extends Zend_Acl
         $this->add(new Zend_Acl_Resource(App_Resources::SEARCH));
         $this->add(new Zend_Acl_Resource(App_Resources::TREASURER));
         $this->add(new Zend_Acl_Resource(App_Resources::REPORT));
+        $this->add(new Zend_Acl_Resource(App_Resources::DOCUMENT));
     }
     // Create the various roles
     protected function createRoles()
@@ -66,6 +67,8 @@ class App_Acl extends Zend_Acl
             App_Resources::INDEX,
             App_Resources::MEMBER,
         ));
+        // Allow access to list action in document controller
+        $this->allow(App_Roles::MEMBER,App_Resources::DOCUMENT,'list');
     }
     protected function setTreasurerAccess()
     {
@@ -78,5 +81,7 @@ class App_Acl extends Zend_Acl
     {
         // Allow access to all actions in admin controller
         $this->allow(App_Roles::ADMIN,App_Resources::ADMIN);
+        // Allow access to all actions in document controller
+        $this->allow(App_Roles::GENERAL,App_Resources::DOCUMENT);
     }
 }

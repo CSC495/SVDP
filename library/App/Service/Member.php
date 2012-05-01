@@ -53,7 +53,7 @@ class App_Service_Member
 
     private function buildClientModel($dbResult)
     {
-        $addr = new Application_Model_Addr();
+        $addr = new Application_Model_Impl_Addr();
         $addr
             ->setId($dbResult['address_id'])
             ->setStreet($dbResult['street'])
@@ -62,7 +62,7 @@ class App_Service_Member
             ->setState($dbResult['state'])
             ->setZip($dbResult['zipcode']);
 
-        $client = new Application_Model_Client();
+        $client = new Application_Model_Impl_Client();
         $client
             ->setId($dbResult['client_id'])
             ->setUserId($dbResult['created_user_id'])
