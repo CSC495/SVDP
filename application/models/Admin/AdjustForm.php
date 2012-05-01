@@ -8,37 +8,50 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 		$this->setAttrib('id', 'adjust');
 		$this->setMethod('post');
 
-        $baseUrl = new Zend_View_Helper_BaseUrl();
+		$baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/admin/adjust'));
-		
+		$this->setDecorators(array(
+			array('ViewScript', array('viewScript' => 'admin/limitsViewScript.phtml'))
+		));	
 		// Input of total aid a client can recieve
 		$aid = $this->addElement('text', 'aid', array(
-                                   'filters'    => array('StringTrim', 'StringToLower'),
-                                  'validators' => array(
-				          'Alnum',
-		                        ),
-				   'required'   => true,
-				   'label'      => 'Total Recievable Aid:',
-				 ));
+			'required'   => true,
+			'label'      => 'Total Recievable Lifetime Aid:',
+			'class'      => 'input-small',
+		));
 		
+		// Input of funds for a particular case
+               $casefund = $this->addElement('text', 'casefund', array(
+                   'required'   => true,
+                   'label'      => 'Total Recievable Aid PER Case:',
+		   'class'      => 'input-small',
+               ));
+	       
                // Input of lifetime cases a client can have
                $lifetimecases = $this->addElement('text', 'lifetimecases', array(
-                   'filters'    => array('StringTrim'),
+                   'filters'    => array('Digits'),
+		   'validators' => array('Digits'),
                    'required'   => true,
-                   'label'      => 'Lifetime Cases:',
+                   'label'      => 'Lifetime Case Limit:',
+		   'class'      => 'input-small',
                ));
         
-		// Input of lifetime cases a client can have
+		// Input of yearly cases a client can have
                $yearlycases = $this->addElement('text', 'yearlycases', array(
-                   'filters'    => array('StringTrim'),
+                   'filters'    => array('Digits'),
+		   'validators' => array('Digits'),
                    'required'   => true,
-                   'label'      => 'Yearly Cases:',
+                   'label'      => 'Yearly Cases Limit:',
+		   'class'      => 'input-small',
                ));
                
                $adjust = $this->addElement('submit', 'adjust', array(
+		   'filters'    => array('Digits'),
+		   'validators' => array('Digits'),
                    'required' => false,
                    'ignore'   => true,
-                   'label'    => 'Adjust Client Limits',
+                   'label'    => 'Submit Changes',
+		   'class'    => 'btn',
                 ));
                
 	       $jsparam = 'javascript:return adjust_validation(this)';

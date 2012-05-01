@@ -1,8 +1,36 @@
 @charset "utf-8";
 
-/* Styles for map view*/
+/* Styles for map view: */
 
-#map { border: 1px solid black; width: 400px; height: 300px }
+#map {
+    height: 400px;
+}
+
+/* Styles for edit client/case views: */
+
+form.member fieldset.row-fluid {
+    max-width: 960px;
+}
+
+form.member .span6 {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+form.member table {
+    margin-bottom: 18px;
+    max-width: 960px;
+    width: 100%;
+}
+
+form.member th {
+  font-weight: normal;
+  vertical-align: bottom;
+}
+
+form.member td .control-group {
+    margin-bottom: 0;
+}
 
 /* Styles for search views: */
 
@@ -58,7 +86,15 @@ th.search-cell {
     width: 5%;
 }
 
-/* Base boostrap style */
+/* Patches to Bootstrap: */
+
+.hero-unit .help-block {
+    font-size: 13px;
+    line-height: 18px;
+}
+
+/* Base Bootstrap style: */
+
 /*!
  * Bootstrap v2.0.2
  *
