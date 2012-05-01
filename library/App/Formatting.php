@@ -4,6 +4,26 @@ class App_Formatting
 {
 
     /**
+     * Formats a user role constant from `App_Roles` into a user-friendly string. Unrecognized roles
+     * will be mapped to the empty string.
+     */
+    public static function formatRole($role) {
+        switch ($role) {
+        case App_Roles::MEMBER:
+            return 'Member';
+
+        case App_Roles::TREASURER:
+            return 'Treasurer';
+
+        case App_Roles::ADMIN:
+            return 'Admin';
+
+        default:
+            return '';
+        }
+    }
+
+    /**
      * Formats a 10-digit United States phone number.
      *
      * @param string $phone
