@@ -87,6 +87,9 @@ class MemberController extends Zend_Controller_Action
         $this->view->cases = $service->getOpenCasesByUserId($userId);
     }
 
+    /**
+     * Action that allows members to add new clients or edit data about existing clients.
+     */
     public function editclientAction()
     {
         $request = $this->getRequest();
@@ -180,9 +183,23 @@ class MemberController extends Zend_Controller_Action
         }
     }
 
+    /**
+     * Action that allows members to add new cases or edit data about existing cases.
+     */
     public function editcaseAction()
     {
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_Member_CaseForm();
+    }
+
+    public function contactsAction()
+    {
+        $this->view->pageTitle = 'Member Contact List';
+
+        // TODO: Eventually we should specialize this query to only list active members. (But should
+        // the specialized version go into the admin service or the member service?)
+        $service = new App_Service_AdminService();
+
+        $this->view->users = $service->getParishMembers();
     }
 }
