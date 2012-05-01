@@ -7,6 +7,7 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
 {
 
     /* Various types of searches that users can perform. */
+    const TYPE_ALL          = 'all';
     const TYPE_CLIENT_NAME  = 'clientName';
     const TYPE_CLIENT_PHONE = 'clientPhone';
     const TYPE_CLIENT_ADDR  = 'clientAddr';
@@ -68,6 +69,11 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
             'label' => 'Search',
         ));
 
+        $this->addElement('submit', 'listAll', array(
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_INFO,
+            'label' => 'List All',
+        ));
+
         // Populate search type dropdown.
         foreach($this->_types as $typeName => $typeInfo) {
             $this->type->addMultiOption($typeName, $typeInfo['label']);
@@ -82,6 +88,12 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
      */
     public function isValid($data)
     {
+        // If the request indicates that we should list all queries, don't perform any validation.
+        if (isset($data['listAll'])) {
+            $this->listAll->setValue(true);
+            return true;
+        }
+
         // If this type of search requires additional validation, add the requisite validators.
         if (isset($data['type']) && isset($this->_types[$data['type']])) {
             $typeInfo = $this->_types[$data['type']];
@@ -103,7 +115,7 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
      */
     public function getType()
     {
-        return $this->type->getValue();
+        return $this->listAll->isChecked() ? self::TYPE_ALL : $this->type->getValue();
     }
 
     /**
