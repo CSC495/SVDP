@@ -62,7 +62,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
                 )),
             ),
             'label' => 'Apartment #',
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxLength' => 30,
             'dimension' => 1,
         ));
@@ -131,7 +131,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
                 )),
             ),
             'label' => 'ZIP code',
-            'description' => $zipCodeRequired ? null : '(optional)',
+            'description' => $zipCodeRequired ? null : '(Optional)',
             'maxLength' => 5,
             'dimension' => 1,
         ));
