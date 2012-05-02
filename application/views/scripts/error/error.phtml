@@ -1,0 +1,10 @@
+<div class=page-header><h1><?php echo $this->escape($this->message); ?></h1></div>
+<p>Please contact the webmaster if this error persists.</p>
+<?php if (isset($this->exception)) { ?>
+<h2>Exception information</h2>
+<p><?php echo $this->escape($this->exception->getMessage()); ?></p>
+<h2>Stack trace</h2>
+<pre><?php echo $this->escape($this->exception->getTraceAsString()); ?></pre>
+<h2>Request Parameters:</h2>
+<pre><?php echo $this->escape(var_export($this->request->getParams(), true)) ?></pre>
+<?php } ?>
