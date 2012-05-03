@@ -243,7 +243,7 @@ class App_Service_Member
             $this->editEmployment($client->getEmployment(), $client->getId());
             
             //Update any changes to existing hmember records or create new ones
-            $this->editHouseHolders($client->getHouseMembers(), $this->getCurrentHousehold($client->getId()));
+            //$this->editHouseHolders($client->getHouseMembers(), $this->getCurrentHousehold($client->getId()));
             $this->_db->commit();
         }catch(Exception $ex){
             $this->_db->rollBack();
@@ -452,7 +452,7 @@ class App_Service_Member
                 ->from('household', 'household_id')
                 ->where('mainclient_id = ?', $clientId)
                 ->where('current_flag = ?', '1');
-        $results = $this->db->fetchRow($select);
+        $results = $this->_db->fetchRow($select);
         return $results['household_id'];
     }
     
@@ -461,7 +461,7 @@ class App_Service_Member
                 ->from('household', 'address_id')
                 ->where('mainclient_id = ?', $clientId)
                 ->where('current_flag = 1');
-        $results = $this->db->fetchRow($select);
+        $results = $this->_db->fetchRow($select);
         return $results['address_id'];
     }
     
@@ -470,7 +470,7 @@ class App_Service_Member
                     ->from('household', 'spouse_id')
                     ->where('mainclient_id = ?', $clientId)
                     ->where('current_flag = ?', '1');
-        $results = $this->db->fetchRow($select);
+        $results = $this->_db->fetchRow($select);
         if($results)
             return $results['spouse_id'];
         else
@@ -587,26 +587,36 @@ class App_Service_Member
         }
         $this->createHouseholders($clientId, $this->getCurrentHousehold());
     }
-    //TESTING COMMENT
+
     private function clientDivorce($clientId){
         $spouseId = $this->getSpouseId($clientId);
-        
         $newHouseId = $this->_db->lastInsertId('household');
+        
+        //Update spouse_id for client's new household
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
-        $change = array('spouse_id = ?', null);
+        $change = array('spouse_id' => NULL);
         $this->_db->update('household', $change, $where);
         
-        $this->createNewHousehold(null, $spouseId);
+        //Create new address & household for client's ex-spouse
+        $this->createNewAddress(array(), $spouseId);
+        $this->createNewHousehold($this->_db->lastInsertId('address'), $spouseId);
+        
+        //Update client's ex-spouse's marriage status
+        $where = $this->_db->quoteInto('client_id = ?', $spouseId);
+        $change = array('marriage_status' => '0');
+        $this->_db->update('client', $change, $where);
     }
     //Assumes $_spouse in Client is a Client object
     private function clientMarriage($client){
         $spouseData = $this->disassembleClientModel($client->getSpouse());
+        $spouseData['marriage_status'] = '1';
+        $spouseData['created_user_id'] = $client->getUserId();
         $this->_db->insert('client', $spouseData);
         
         $newHouseId = $this->_db->lastInsertId('household');
         $newSpouseId = $this->_db->lastInsertId('client');
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
-        $change = array('spouse_id = ?', $newSpouseId);
+        $change = array('spouse_id' => $newSpouseId);
         $this->_db->update('household', $change, $where);
     }
     
