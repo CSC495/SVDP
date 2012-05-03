@@ -587,7 +587,7 @@ class App_Service_Member
         }
         $this->createHouseholders($clientId, $this->getCurrentHousehold());
     }
-    
+    //TESTING COMMENT
     private function clientDivorce($clientId){
         $spouseId = $this->getSpouseId($clientId);
         
