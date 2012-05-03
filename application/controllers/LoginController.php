@@ -5,8 +5,9 @@ class LoginController extends Zend_Controller_Action
     private $_SALT = 'tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8';
     private $_timeout = 1440; // Time out in minutes
     // Getting user info
+
     // $identity = Zend_Auth::getInstance()->getIdentity();
-    // $identity->username;
+    // $identity->user_name;
     // $identity->role;
     //
     // Check for person
@@ -14,7 +15,7 @@ class LoginController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
-        $this->view->pageTitle = "Login Page";
+        //$this->view->pageTitle = "Login Page";
     }
     public function loginAction()
     {
@@ -128,7 +129,6 @@ class LoginController extends Zend_Controller_Action
         // Set the user inputed values
         $authAdapter
             ->setIdentity($userid)
-            //->setCredential( $password);
             ->setCredential( hash('SHA256', $this->_SALT . $password) );
         ;
         
@@ -170,8 +170,9 @@ class LoginController extends Zend_Controller_Action
      */
     protected function changepwdAction()
     {
+        $this->view->pageTitle = "Change Password";
         $request = $this->getRequest();
-        
+
         if( !$request->isPost() ){
             return $this->_helper->redirector('login');
         }
@@ -192,10 +193,16 @@ class LoginController extends Zend_Controller_Action
         }
         $service = new App_Service_LoginService();
         
+        
         $form = new Application_Model_Login_ChangeForm();
-        $form->populate($_POST);
+        
+        if( !$form->isValid($request->getPost()) )
+        {
+            // redirect and indicate error
+            return $this->_helper->redirector('changepwd');
+        }
+        
         $pwd = $form->getValue('password');
-       
         
         $identity = Zend_Auth::getInstance()->getIdentity();
         
@@ -211,6 +218,7 @@ class LoginController extends Zend_Controller_Action
             return;
         
         $identity = Zend_Auth::getInstance()->getIdentity();
+        
         //Redirect accordinly
         switch( $identity->role)
         {
