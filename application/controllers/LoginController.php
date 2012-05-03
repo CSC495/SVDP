@@ -128,8 +128,8 @@ class LoginController extends Zend_Controller_Action
         // Set the user inputed values
         $authAdapter
             ->setIdentity($userid)
-            ->setCredential( $password);
-            //->setCredential( hash('SHA256', $this->_SALT . $password) );
+            //->setCredential( $password);
+            ->setCredential( hash('SHA256', $this->_SALT . $password) );
         ;
         
         // Authenticate the user
