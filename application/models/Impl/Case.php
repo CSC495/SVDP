@@ -10,28 +10,50 @@
 class Application_Model_Impl_Case
 {
 
-    private $_id = null;
+    private $_caseId = null;
+    
+    private $_householdId = null;
+    
+    private $_openedUserId = null;
 
     private $_openedDate = null;
 
     private $_status = null;
-
-    private $_needList = null;
-
-    private $_totalAmount = null;
-
-    private $_client = null;
+    
+    //Array of CaseNeed objects
+    private $_caseNeeds = null;
+    
+    //Array of CaseVisit objects
+    private $_visits = null;
 
     /* Generic get/set methods: */
 
     public function getId()
     {
-        return $this->_id;
+        return $this->_caseId;
     }
 
     public function setId($id)
     {
-        $this->_id = $id;
+        $this->_caseId = $id;
+        return $this;
+    }
+    
+    public function getHouseholdId(){
+        return $this->_householdId;
+    }
+    
+    public function setHouseholdId(){
+        $this->_householdId;
+        return $this;
+    }
+    
+    public function getOpenedUserId(){
+        return $this->_openedUserId;
+    }
+    
+    public function setOpenedUserId($userid){
+        $this->_openedUserId = $userid;
         return $this;
     }
 
@@ -57,36 +79,23 @@ class Application_Model_Impl_Case
         return $this;
     }
 
-    public function getNeedList()
+    public function getCaseNeeds()
     {
-        return $this->_needList;
+        return $this->_caseNeeds;
     }
 
-    public function setNeedList($needList)
+    public function setCaseNeeds($needs)
     {
-        $this->_needList = $needList;
+        $this->_caseNeeds = $needs;
         return $this;
     }
-
-    public function getTotalAmount()
-    {
-        return $this->_totalAmount;
+    
+    public function getVisits(){
+        return $this->_visits;
     }
-
-    public function setTotalAmount($totalAmount)
-    {
-        $this->_totalAmount = $totalAmount;
-        return $this;
-    }
-
-    public function getClient()
-    {
-        return $this->_client;
-    }
-
-    public function setClient($client)
-    {
-        $this->_client = $client;
+    
+    public function setVisits($visits){
+        $this->_visits = $visits;
         return $this;
     }
 }
