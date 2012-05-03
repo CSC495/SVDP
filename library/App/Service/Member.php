@@ -115,7 +115,26 @@ class App_Service_Member
         $results = $this->_db->fetchAssoc($select);
         return $this->buildEmployerModels($results);
     }
-
+    
+    public function getCasesByClient($clientId){
+        $select = $this->db->select()
+			->from(array('cc' => 'client_case'),
+				     array('caseID' => 'cc.case_id',
+                                           'addByName' => 'cc.opened_user_id', 
+					   'dateRequested' => 'cc.opened_date',
+					   'status' => 'cc.status',
+					   'hours' => 'hours',
+					   'miles' => 'miles'))
+			->joinInner(array('h' => 'household'), 'cc.household_id = h.household_id')
+			->joinInner(array('c' => 'client'), 'c.client_id = h.mainclient_id')
+			->joinInner(array('cn' => 'case_need'), 'cc.case_id = cn.case_id')
+			->joinInner(array('u' => 'user'), 'u.user_id = cc.opened_user_id')
+			->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
+			->group('cc.case_id')
+			->where('c.client_id = ?', $client_id);
+		$results = $this->db->fetchAll($select);
+		return $this->BuildClientCases($results);
+    }
     public function createClient($client, $householders, $employers) {
         $this->_db->beginTransaction();
 
@@ -167,6 +186,69 @@ class App_Service_Member
         }
 
         return $client;
+    }
+    
+    public function createCase($case){
+        $this->_db->beginTransaction();
+        try{
+            $caseData = $this->disassembleCaseModel($case);
+            $this->_db->insert('client_case', $caseData);
+            $newCaseId = $this->_db->lastInsertId('client_case');
+            
+            $case->setCaseNeeds($this->insertNeeds($case->getCaseNeeds(), $newCaseId));
+            $case->setVisits($this->insertVisits($case->getVisits(), $newCaseId));
+            $this->_db->commit();
+            return $case;
+        }catch(Exception $ex){
+            $this->_db->rollBack();
+            throw $ex;
+        }
+    }
+    
+    public function editClient($client, $marriageFlag, $movingFlag){
+        $this->_db->beginTransaction();
+        try{
+            $clientData = $this->disassembleClientModel($client);
+            $addrData = $this->disassembleAddrModel($client->getAddress());
+            
+            //Update Client data in client table
+            $where = $this->_db->quoteInto('client_id = ?', $client->getId());
+            $this->_db->update('client', $clientData, $where);
+            
+            //If the client moved or had a change in marital status creates a new household, defaults
+            //with values of old household
+            if($marriageFlag || $movingFlag){
+                $this->createNewHousehold($this->getCurrentAddress($client->getId()), $client->getId());
+            }
+            
+            //If the client moved create new address; else edit the existing entry with submitted data
+            if($movingFlag)
+                $this->createNewAddress($addrData, $client->getId());
+            else
+                $this->editAddress($addrData, $this->getCurrentAddress($client->getId()));
+                
+            //If the client had a change in marital status they either got married or divorced
+            if($marriageFlag){
+                //Client got married, add thier spouse to client and new spouse id to household
+                if($client->isMarried())
+                    $this->clientMarriage($client);
+                //Client got divorced, change household to not married & create new household for spouse
+                else
+                    $this->clientDivorce($client->getId());
+            //Client did not have change in marital status, may have changed spouse's information
+            }else{
+                $this->editSpouse($client->getId(), $client->getSpouse());
+            }
+            //Update any changes to existing employment records or create new ones
+            $this->editEmployment($client->getEmployment(), $client->getId());
+            
+            //Update any changes to existing hmember records or create new ones
+            $this->editHouseHolders($client->getHouseMembers(), $this->getCurrentHousehold($client->getId()));
+            $this->_db->commit();
+        }catch(Exception $ex){
+            $this->_db->rollBack();
+            throw $ex;
+        }
     }
 
     private function createHouseholders($householdId, $householders)
@@ -272,6 +354,22 @@ class App_Service_Member
 
         return $employers;
     }
+    
+    private function buildCaseModels($results){
+        $cases = array();
+	foreach($results as $row){
+	    $case = new Application_Model_Impl_Case();
+	    $case
+                ->setId($results['caseID'])
+		->setOpenedDate($results['dateRequested'])
+                ->setStatus($results['status'])
+                ->setOpenedUserId($results['addByName'])
+                ->setVisits($this->getVisitsByCase($results['caseID']))
+                ->setCaseNeeds($this->getNeedsByCase($results['caseID']));
+	    $cases[] = $case;
+	}
+	return $cases;
+    }
 
     private function disassembleClientModel($client)
     {
@@ -289,6 +387,15 @@ class App_Service_Member
             'created_date' => $client->getCreatedDate(),
             'member_parish' => $client->getParish(),
             'veteran_flag' => (int)$client->isVeteran(),
+        );
+    }
+    
+    private function disassembleCaseModel($case){
+        return array(
+            'household_id' => $case->getHouseholdId(),
+            'opened_user_id' => $case->getOpenedUserId(),
+            'opened_date' => $case->getOpenedDate(),
+            'status' => $case->getStatus()
         );
     }
 
@@ -323,5 +430,222 @@ class App_Service_Member
             'start_date' => $employer->getStartDate(),
             'end_date' => $employer->getEndDate(),
         );
+    }
+    
+    private function disassembleCaseNeedModel($need){
+        return array(
+            'need' => $need->getNeed(),
+            'amount' => $need->getAmount(),
+        );
+    }
+    
+    private function disassembleCaseVisitModel($visit){
+        return array(
+            'visit_date' => $visit->getVisitDate(),
+            'miles' => $visit->getMiles(),
+            'hours' => $visit->getHours(),
+        );
+    }
+    
+    private function getCurrentHousehold($clientId){
+        $select = $this->_db->select()
+                ->from('household', 'household_id')
+                ->where('mainclient_id = ?', $clientId)
+                ->where('current_flag = ?', '1');
+        $results = $this->db->fetchRow($select);
+        return $results['household_id'];
+    }
+    
+    private function getCurrentAddress($clientId){
+        $select = $this->_db->select()
+                ->from('household', 'address_id')
+                ->where('mainclient_id = ?', $clientId)
+                ->where('current_flag = 1');
+        $results = $this->db->fetchRow($select);
+        return $results['address_id'];
+    }
+    
+    private function getSpouseId($clientId){
+        $select = $this->_db->select()
+                    ->from('household', 'spouse_id')
+                    ->where('mainclient_id = ?', $clientId)
+                    ->where('current_flag = ?', '1');
+        $results = $this->db->fetchRow($select);
+        if($results)
+            return $results['spouse_id'];
+        else
+            return null;
+    }
+    
+    private function getNeedsByCase($caseId){
+        $needs = array();
+        $select = $this->_db->select()
+                    ->from(array('cn' => 'case_need'),
+                           array('caseNeedId' => 'cn.caseneed_id',
+                           'need',
+                           'amount'))
+                    ->where('cn.case_id = ?', $caseId);
+        $results = $this->_db->fetchAll($select);
+        
+        foreach($results as $row){
+            $need = new Application_Model_Impl_CaseNeed();
+            $need->setCaseNeedId($row['caseNeedId']);
+            $need->setNeed($row['need']);
+            $need->setAmount($row['amount']);
+            $needs[] = $need;
+        }
+        return $needs;
+    }
+    
+    private function getVisitsByCase($caseId){
+        $visits = array();
+        $select = $this->_db->select()
+                ->from(array('cv' => 'case_visit'),
+                       array('visitId' => 'visit_id',
+                             'visitDate' => 'visit_date',
+                             'miles',
+                             'hours'))
+                ->where('cv.case_id = ?', $caseId);
+        $results = $this->_db->fetchAll($select);
+        
+        foreach($results as $row){
+            $visit = new Application_Model_Impl_CaseVisit();
+            $visit->setVisitId($row['visitId']);
+            $visit->setVisitDate($row['visitDate']);
+            $visit->setMiles($row['miles']);
+            $visit->setHours($row['hours']);
+            $visits[] = $visit;
+        }
+        return $visits;
+    }
+    //Creates a new address in database and changes new household address_id to id
+    //of new address
+    private function createNewAddress($addrData, $clientId){
+        $addrData['client_id'] = $clientId;
+        $this->_db->insert('address', $addrData);
+        
+        $newHouseId = $this->_db->lastInsertId('household');
+        $newAddId = $this->_db->lastInsertId('address');
+        
+        $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
+        $change = array('address_id' => $newAddId);
+        $this->_db->update('household', $change, $where);
+    }
+    
+    private function createNewHousehold($addressId, $clientId){
+        $spouseId = $this->getSpouseId($clientId);
+        
+        $where = $this->_db->quoteInto('mainclient_id = ?', $clientId);
+        $change = array('current_flag' => '0');
+        $this->_db->update('household', $change, $where);
+        $houseData = array(
+                    'address_id' => $addressId,
+                    'mainclient_id' => $clientId,
+                    'spouse_id' => $spouseId,
+                    'current_flag' => '1');
+        $this->_db->insert('household', $houseData);
+    }
+    
+    private function editAddress($addrData, $addrId){
+        $where = $this->_db->quoteInto('address_id = ?', $addrId);
+        $this->_db->update('address', $addrData, $where);
+    }
+    
+    private function editSpouse($clientId, $spouse){
+        $spouseId = $this->getSpouseId($clientId);
+        if($spouseId){
+            $spouseData = $this->disassembleClientModel($spouse);
+            $where = $this->_db->quoteInto('client_id = ?', $spouseId);
+            $this->_db->update('client', $spouseData, $where);
+        }
+    }
+    
+    private function editEmployment($employment, $clientId){
+        $newEmploy = array();
+        foreach($employment as $job){
+            if(!$job->getId()){
+                $newEmploy[] = $job;
+            }else{
+                $jobData = $this->disassembleEmployerModel($job);
+                $where = $this->_db->quoteInto('employment_id = ?', $job->getId());
+                $this->_db->update('employment', $jobData, $where);
+            }
+        }
+        $this->createEmployers($clientId, $newEmploy);
+    }
+    
+    private function editHouseHolders($householders, $clientId){
+        $newHolders = array();
+        foreach($householders as $holder){
+            if(!$holder->getId()){
+                $newHolders[] = $holder;
+            }else{
+                $holderData = $this->disassmebleHouseholderModel($holder);
+                $where = $this->_db->quoteInto('hmember_id = ?', $holder->getId());
+                $this->_db->update('hmember', $holderData, $where);
+            }
+        }
+        $this->createHouseholders($clientId, $this->getCurrentHousehold());
+    }
+    
+    private function clientDivorce($clientId){
+        $spouseId = $this->getSpouseId($clientId);
+        
+        $newHouseId = $this->_db->lastInsertId('household');
+        $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
+        $change = array('spouse_id = ?', null);
+        $this->_db->update('household', $change, $where);
+        
+        $this->createNewHousehold(null, $spouseId);
+    }
+    //Assumes $_spouse in Client is a Client object
+    private function clientMarriage($client){
+        $spouseData = $this->disassembleClientModel($client->getSpouse());
+        $this->_db->insert('client', $spouseData);
+        
+        $newHouseId = $this->_db->lastInsertId('household');
+        $newSpouseId = $this->_db->lastInsertId('client');
+        $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
+        $change = array('spouse_id = ?', $newSpouseId);
+        $this->_db->update('household', $change, $where);
+    }
+    
+    private function insertNeeds($needs, $caseId){
+        $newNeeds = array();
+        foreach($needs as $need){
+            $needData = $this->disassembleCaseNeedModel($need);
+            $needData['case_id'] = $caseId;
+            $this->_db->insert('case_need', $needData);
+            $need->setCaseNeedId($this->_db->lastInsertId('case_need'));
+            $newNeeds[] = $need;
+        }
+        return $newNeeds;
+    }
+    
+    private function insertVisits($visits, $caseId){
+        $newVisits = array();
+        foreach($visits as $visit){
+            $visitData = $this->disassembleCaseVisitModel($visit);
+            $visitData['case_id'] = $caseId;
+            $this->_db->insert('case_visit', $visitData);
+            
+            //Insert individual visitors in case_visitors table
+            $newVisitId = $this->_db->lastInsertId('case_visit');
+            $this->insertVisitors($visit->getVisitors(), $newVisitId);
+            
+            $visit->setVisitId($newVisitId);
+            $newVisits[] = $visit;
+        }
+        return $newVisits;
+    }
+    
+    private function insertVisitors($visitors, $visitId){
+        foreach($visitors as $visitor){
+            $visitorData = array(
+                'visit_id' => $visitId,
+                'user_id' => $visitor->getUserId(),
+            );
+            $this->_db->insert('case_visitors', $visitorData);
+        }
     }
 }
