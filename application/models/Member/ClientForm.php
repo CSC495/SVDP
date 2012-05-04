@@ -2,6 +2,7 @@
 
 class Application_Model_Member_ClientForm extends Zend_Form
 {
+
 	private $_PARISH_OPTIONS = array(
         '' => '',
         'St. Raphael' => 'St. Raphael',
@@ -349,7 +350,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'class' => 'phone',
         ));
 
-        $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');
+        $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
 
         // Householder sub form and elements:
 
