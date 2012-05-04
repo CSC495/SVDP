@@ -122,6 +122,7 @@ class AdminController extends Zend_Controller_Action
         $service = new App_Service_AdminService();
         $this->view->users = $service->getParishMembers();
     }
+    
     // displays view for creating new member
     public function newAction()
     {
@@ -142,8 +143,8 @@ class AdminController extends Zend_Controller_Action
         $userId = $request->getParam('id');
         
         // If theres no param go back to index
-        if($userId == "")
-            $this->_helper->redirector('index','admin');  
+        if(!$userId)
+           return $this->_helper->redirector('index'); 
         
         // Get the users data
         $service = new App_Service_AdminService();
