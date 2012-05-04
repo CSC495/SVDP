@@ -22,16 +22,13 @@ class App_Controller_Plugin_AuthPlugin extends Zend_Controller_Plugin_Abstract
     */
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        $loginController = 'login';
-        $loginAction     = 'process';
-
         $auth = Zend_Auth::getInstance();
         // Check if user has not logged in
         if (!$auth->hasIdentity()
-                && $request->getControllerName() != $loginController
-                && $request->getActionName()     != $loginAction) {
+                && $request->getControllerName() != App_Resources::LOGIN
+                && $request->getActionName()     != 'process') {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('Redirector');
-            $redirector->gotoSimpleAndExit($loginAction, $loginController);
+            $redirector->gotoSimpleAndExit('process', App_Resources::LOGIN);
         }
 
         // User is logged in or on login page.

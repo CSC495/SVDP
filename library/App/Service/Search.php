@@ -29,6 +29,16 @@ class App_Service_Search
     /* Client search methods: */
 
     /**
+     * Retrieve a list of all clients.
+     *
+     * @return Application_Model_Impl_Client[]
+     */
+    public function getAllClients()
+    {
+        return $this->buildClientModels($this->_db->fetchAssoc($this->initClientSelect()));
+    }
+
+    /**
      * Retrieve a list of clients whose first or last names match the specified query.
      *
      * @param string $name
@@ -53,13 +63,13 @@ class App_Service_Search
     public function getClientsByAddr($addr)
     {
         $likeAddr = '%' . App_Escaping::escapeLike($addr) . '%';
-        $select  = $this->initClientSelect()
+        $select   = $this->initClientSelect()
             ->where(
                 'a.street LIKE ? OR a.apt LIKE ? OR a.city LIKE ? OR a.state LIKE ?'
                     . ' OR a.zipcode LIKE ?',
                 $likeAddr, $likeAddr, $likeAddr, $likeAddr, $likeAddr
             );
-        $results = $this->_db->fetchAssoc($select);
+        $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildClientModels($results);
     }
@@ -72,12 +82,13 @@ class App_Service_Search
      */
     public function getClientsByPhone($phone)
     {
-        $select  = $this->initClientSelect()
+        $likePhone = '%' . App_Escaping::escapeLike($phone) . '%';
+        $select    = $this->initClientSelect()
             ->where(
-                'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ?',
-                $phone, $phone, $phone
+                'c.cell_phone LIKE ? OR c.home_phone LIKE ? OR c.work_phone LIKE ?',
+                $likePhone, $likePhone, $likePhone
             );
-        $results = $this->_db->fetchAssoc($select);
+        $results   = $this->_db->fetchAssoc($select);
 
         return $this->buildClientModels($results);
     }
@@ -101,6 +112,16 @@ class App_Service_Search
     }
 
     /* Check request search methods: */
+
+    /**
+     * Retrieve a list of all check requests.
+     *
+     * @return Application_Model_Impl_CheckReq[]
+     */
+    public function getAllCheckReqs()
+    {
+        return $this->buildCheckReqModels($this->_db->fetchAssoc($this->initCheckReqSelect()));
+    }
 
     /**
      * Retrieve a list of currently open check requests.
@@ -165,11 +186,12 @@ class App_Service_Search
      */
     public function getCheckReqsByClientPhone($phone)
     {
+        $likePhone = '%' . App_Escaping::escapeLike($phone) . '%';
         $select  = $this->initCheckReqSelect()
             ->where(
-                'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ? OR c2.cell_phone = ?'
-                    . ' OR c2.home_phone = ? OR c2.work_phone = ?',
-                $phone, $phone, $phone, $phone, $phone, $phone
+                'c.cell_phone LIKE ? OR c.home_phone LIKE ? OR c.work_phone LIKE ?'
+                    . ' OR c2.cell_phone LIKE ? OR c2.home_phone = ? OR c2.work_phone = ?',
+                $likePhone, $likePhone, $likePhone, $likePhone, $likePhone, $likePhone
             );
         $results = $this->_db->fetchAssoc($select);
 

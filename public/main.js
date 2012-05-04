@@ -433,15 +433,16 @@ function renderMap(clientCoords) {
     });
 }
 
-function attachEditClientEvents() {
-    var marriedCheckbox = $('#married');
+function initEditClientForm() {
+    // Attach event handlers.
+    var maritalStatusDropbox = $('#maritalStatus');
     var doNotHelpCheckbox = $('#doNotHelp');
 
     var memberSpouseDivs = $('.member-spouse');
     var memberDoNotHelpDiv = $('.member-donothelp');
 
     function update() {
-        if (marriedCheckbox.is(':checked')) {
+        if (maritalStatusDropbox.val() == 'Married') {
             memberSpouseDivs.removeClass('hide');
         } else {
             memberSpouseDivs.addClass('hide');
@@ -454,8 +455,12 @@ function attachEditClientEvents() {
         }
     }
 
-    marriedCheckbox.click(update);
+    maritalStatusDropbox.change(update);
     doNotHelpCheckbox.click(update);
 
     update();
+
+    // Attach jQuery UI widgets/plugin behavior.
+    $('.date').datepicker();
+    $('.phone').mask('(999) 999-9999');
 }
