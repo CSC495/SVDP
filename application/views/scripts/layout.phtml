@@ -35,15 +35,7 @@ echo $this->headScript(), "\n";
 $auth = Zend_Auth::getInstance();
 $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 ?>
-<header>
-    <!--<h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>-->
-    <style type="text/css">
-     
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-</header>
+
 <div class="row">
 	<div class="span3">
         <a href="<?php echo $this->escape($this->baseUrl(''))?>">

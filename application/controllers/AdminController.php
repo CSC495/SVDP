@@ -52,7 +52,10 @@ class AdminController extends Zend_Controller_Action
         
         // Get the form and populate it
         $form = new Application_Model_Admin_AdjustForm();
-        $form->populate($_POST);
+        
+        if( !$form->isValid($request->getPost()) ){
+            //Redirect and indicate errors   
+        }
         
         // Get Form Values
         $lifetimeLimit = $form->getValue('aid');
