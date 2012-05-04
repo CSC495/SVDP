@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
+class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
 
     public function __construct()
     {
@@ -31,7 +31,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             ),
         ));
 
-        $this->addElement('text', 'firstName', array(
+        $this->addElement('text', 'company', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -40,9 +40,9 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                     'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
                 array('StringLength', true, array(
-                    'max' => 30,
+                    'max' => 50,
                     'messages' => array(
-                        'stringLengthTooLong' => 'Must not be more than 30 characters.',
+                        'stringLengthTooLong' => 'Must not be more than 50 characters.',
                     ),
                 )),
             ),
@@ -52,11 +52,12 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
             ),
-            'maxlength' => 30,
+            'maxlength' => 50,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
-        $this->addElement('text', 'lastName', array(
+        $this->addElement('text', 'position', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -65,17 +66,18 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                     'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
                 array('StringLength', true, array(
-                    'max' => 30,
+                    'max' => 50,
                     'messages' => array(
-                        'stringLengthTooLong' => 'Must not be more than 30 characters.',
+                        'stringLengthTooLong' => 'Must not be more than 50 characters.',
                     ),
                 )),
             ),
-            'maxlength' => 30,
+            'maxlength' => 50,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
-        $this->addElement('text', 'relationship', array(
+        $this->addElement('text', 'startDate', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -83,18 +85,20 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
-                array('StringLength', true, array(
-                    'max' => 30,
+                array('Date', true, array(
+                    'format' => 'MM/dd/yyyy',
                     'messages' => array(
-                        'stringLengthTooLong' => 'Must not be more than 30 characters.',
+                        'dateInvalidDate' => 'Must be properly formatted.',
+                        'dateFalseFormat' => 'Must be a valid date.',
                     ),
                 )),
             ),
-            'maxlength' => 30,
+            'maxlength' => 10,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),        		
         ));
 
-        $this->addElement('text', 'birthDate', array(
+        $this->addElement('text', 'endDate', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 array('Date', true, array(
@@ -106,45 +110,29 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2 date',
-        ));
-
-        $this->addElement('text', 'departDate', array(
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('Date', true, array(
-                    'format' => 'MM/dd/yyyy',
-                    'messages' => array(
-                        'dateInvalidDate' => 'Must be properly formatted.',
-                        'dateFalseFormat' => 'Must be a valid date.',
-                    ),
-                )),
-            ),
-            'maxlength' => 10,
-            'class' => 'span2 date',
+            'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
     }
 
-    public function getHouseholder()
+    public function getEmployer()
     {
-        $householder = new Application_Model_Impl_Householder();
-        $householder->setId(App_Formatting::emptyToNull($this->id->getValue()));
-        $householder->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()));
-        $householder->setLastName(App_Formatting::emptyToNull($this->lastName->getValue()));
-        $householder->setRelationship(App_Formatting::emptyToNull($this->relationship->getValue()));
-        $householder->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()));
-        $householder->setDepartDate(App_Formatting::unformatDate($this->departDate->getValue()));
+        $employer = new Application_Model_Impl_Employer();
+        $employer->setId(App_Formatting::emptyToNull($this->id->getValue()));
+        $employer->setCompany(App_Formatting::emptyToNull($this->company->getValue()));
+        $employer->setPosition(App_Formatting::emptyToNull($this->position->getValue()));
+        $employer->setStartDate(App_Formatting::unformatDate($this->startDate->getValue()));
+        $employer->setEndDate(App_Formatting::unformatDate($this->endDate->getValue()));
 
-        return $householder;
+        return $employer;
     }
 
-    public function setHouseholder($householder)
+    public function setEmployer($employer)
     {
-        $this->id->setValue($householder->getId());
-        $this->firstName->setValue($householder->getFirstName());
-        $this->lastName->setValue($householder->getLastName());
-        $this->relationship->setValue($householder->getRelationship());
-        $this->birthDate->setValue(App_Formatting::formatDate($householder->getBirthDate()));
-        $this->departDate->setValue(App_Formatting::formatDate($householder->getDepartDate()));
+        $this->id->setValue($employer->getId());
+        $this->company->setValue($employer->getCompany());
+        $this->position->setValue($employer->getPosition());
+        $this->startDate->setValue(App_Formatting::formatDate($employer->getStartDate()));
+        $this->endDate->setValue(App_Formatting::formatDate($employer->getEndDate()));
     }
 }

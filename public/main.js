@@ -114,7 +114,8 @@ function renderMap(clientCoords) {
     });
 }
 
-function attachEditClientEvents() {
+function initEditClientForm() {
+    // Attach event handlers.
     var marriedCheckbox = $('#married');
     var doNotHelpCheckbox = $('#doNotHelp');
 
@@ -139,4 +140,8 @@ function attachEditClientEvents() {
     doNotHelpCheckbox.click(update);
 
     update();
+
+    // Attach jQuery UI widgets/plugin behavior.
+    $('.date').datepicker();
+    $('.phone').mask('(999) 999-9999');
 }

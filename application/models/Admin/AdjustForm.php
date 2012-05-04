@@ -15,39 +15,39 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 		));	
 		// Input of total aid a client can recieve
 		$aid = $this->addElement('text', 'aid', array(
-			'required'   => true,
+			'filters'    => array( new App_Filter_Money() ),
+			'validators' => array('Float','Int'),
+			'required'   => false,
 			'label'      => 'Total Recievable Lifetime Aid:',
 			'class'      => 'input-small',
 		));
 		
 		// Input of funds for a particular case
                $casefund = $this->addElement('text', 'casefund', array(
-                   'required'   => true,
-                   'label'      => 'Total Recievable Aid PER Case:',
-		   'class'      => 'input-small',
+			'filters'    => array( new App_Filter_Money() ),
+			'validators' => array('Float','Int'),
+			'required'   => false,
+			'label'      => 'Total Recievable Aid PER Case:',
+			'class'      => 'input-small',
                ));
 	       
                // Input of lifetime cases a client can have
                $lifetimecases = $this->addElement('text', 'lifetimecases', array(
-                   'filters'    => array('Digits'),
 		   'validators' => array('Digits'),
-                   'required'   => true,
+                   'required'   => false,
                    'label'      => 'Lifetime Case Limit:',
 		   'class'      => 'input-small',
                ));
         
 		// Input of yearly cases a client can have
                $yearlycases = $this->addElement('text', 'yearlycases', array(
-                   'filters'    => array('Digits'),
 		   'validators' => array('Digits'),
-                   'required'   => true,
+                   'required'   => false,
                    'label'      => 'Yearly Cases Limit:',
 		   'class'      => 'input-small',
                ));
                
                $adjust = $this->addElement('submit', 'adjust', array(
-		   'filters'    => array('Digits'),
-		   'validators' => array('Digits'),
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Submit Changes',
