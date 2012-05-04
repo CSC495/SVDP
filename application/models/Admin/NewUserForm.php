@@ -77,7 +77,7 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Add New Contact',
-		   'class'    => 'btn-success',
+		   'class'    => 'btn-success btn',
                 ));
                
 	}
