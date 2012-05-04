@@ -8,7 +8,7 @@ function isMissingPhone($element)
 }
 ?>
 <fieldset class=row-fluid>
-    <legend>Personal information</legend>
+    <legend>Personal information:</legend>
 
     <div class=span6><?php echo $this->element->firstName; ?></div>
     <div class=span6><?php echo $this->element->lastName; ?></div>
@@ -17,10 +17,11 @@ function isMissingPhone($element)
     <div class=span6><?php echo $this->element->birthDate; ?></div>
 
     <div class=span6><?php echo $this->element->ssn4; ?></div>
-    <div class=span6><?php echo $this->element->married; ?></div>
+    <div class=span6><?php echo $this->element->maritalStatus; ?></div>
 
     <div class="span6 member-spouse"><?php echo $this->element->spouseName; ?></div>
     <div class="span6 member-spouse"><?php echo $this->element->spouseBirthDate; ?></div>
+    <div class="span6 member-spouse"><?php echo $this->element->spouseSsn4; ?></div>
 </fieldset>
 
 <fieldset class=row-fluid>
@@ -60,13 +61,13 @@ function isMissingPhone($element)
     <legend>Household members:</legend>
 
     <?php if ($this->householdersSubForm->getSubForms()) { ?>
-    <table class=table>
+    <table class="table table-striped">
         <tr>
             <th>First name</th>
             <th>Last name</th>
             <th>Relationship</th>
-            <th>Birth date<br>(optional)</th>
-            <th>Departure date<br>(optional)</th>
+            <th>Birth date<br>(Optional)</th>
+            <th>Departure date<br>(Optional)</th>
         </tr>
         <?php echo $this->householdersSubForm; ?>
     </table>
@@ -81,12 +82,12 @@ function isMissingPhone($element)
     <legend>Employment status:</legend>
 
     <?php if ($this->employersSubForm->getSubForms()) { ?>
-    <table class=table>
+    <table class="table table-striped">
         <tr>
             <th>Company</th>
             <th>Position</th>
             <th>Start date</th>
-            <th>End date<br>(optional)</th>
+            <th>End date<br>(Optional)</th>
         </tr>
         <?php echo $this->employersSubForm; ?>
     </table>

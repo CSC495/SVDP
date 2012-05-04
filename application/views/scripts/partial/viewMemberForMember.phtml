@@ -1,0 +1,8 @@
+<?php
+$rowStripeClass = ($this->partialCounter % 2 == 1) ? 'even' : 'odd';
+
+echo $this->partial('partial/viewMemberCommon.phtml', array(
+    'rowStripeClass' => $rowStripeClass,
+    'showEditBtn' => false,
+    'user' => $this->user,
+));
