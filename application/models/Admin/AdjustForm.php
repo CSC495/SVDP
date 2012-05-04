@@ -51,7 +51,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Submit Changes',
-		   'class'    => 'btn',
+		   'class'    => 'btn btn-success',
                 ));
                
 	       $jsparam = 'javascript:return adjust_validation(this)';

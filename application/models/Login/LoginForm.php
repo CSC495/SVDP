@@ -34,14 +34,14 @@ class Application_Model_Login_LoginForm extends Zend_Form
                    'required' => false,
                    'ignore'   => true,
                    'label'    => '        Login        ',
-		   'class'    => 'btn-success',
+		   'class'    => 'btn-success btn',
                 ));
                
                 $forgot = $this->addElement('submit','forgot', array(
                     'required' => false,
                     'ignore' => true,
                     'label' => 'Forgot Password',
-		    'class' => 'btn-info',
+		    'class' => 'btn-info btn',
                 ));
 	}
 }

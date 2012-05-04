@@ -47,7 +47,7 @@ class Application_Model_Impl_Document
     
     public function setInternal($value)
     {
-        $this->_internal == $value;
+        $this->_internal = $value;
         return $this;
     }
 }

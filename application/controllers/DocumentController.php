@@ -10,7 +10,27 @@ class DocumentController extends Zend_Controller_Action
     // Lists the documents
     public function listAction()
     {
-        $this->view->pageTitle = "Document Controller";
+        $this->view->pageTitle = "Document List";
+        
+        $service = new App_Service_DocumentService();
+        $this->view->docs = $service->getDocuments();
+    }
+    
+    // Edit an existing document
+    public function editAction()
+    {
+        $this->view->pageTitle = "Document Modify Member";
+        
+        // Get request and passed parameter
+        $request = $this->getRequest();
+        $docId = $request->getParam('id');
+        
+        // If theres no param go back to index
+        if(!$docId)
+            return $this->_helper->redirector('login');
+        
+        $this->view->form = new Application_Model_Document_EditForm ();
+        
     }
     
     // Upload a new document
