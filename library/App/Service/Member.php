@@ -218,7 +218,7 @@ class App_Service_Member
             ->setFirstName($dbResult['first_name'])
             ->setLastName($dbResult['last_name'])
             ->setOtherName($dbResult['other_name'])
-            ->setMarried($dbResult['marriage_status'])
+            ->setMaritalStatus($dbResult['marriage_status'])
             ->setBirthDate($dbResult['birthdate'])
             ->setSsn4($dbResult['ssn4'])
             ->setCellPhone($dbResult['cell_phone'])
@@ -280,7 +280,7 @@ class App_Service_Member
             'first_name' => $client->getFirstName(),
             'last_name' => $client->getLastName(),
             'other_name' => $client->getOtherName(),
-            'marriage_status' => (int)$client->isMarried(),
+            'marriage_status' => $client->getMaritalStatus(),
             'birthdate' => $client->getBirthDate(),
             'ssn4' => $client->getSsn4(),
             'cell_phone' => $client->getCellPhone(),

@@ -116,14 +116,14 @@ function renderMap(clientCoords) {
 
 function initEditClientForm() {
     // Attach event handlers.
-    var marriedCheckbox = $('#married');
+    var maritalStatusDropbox = $('#maritalStatus');
     var doNotHelpCheckbox = $('#doNotHelp');
 
     var memberSpouseDivs = $('.member-spouse');
     var memberDoNotHelpDiv = $('.member-donothelp');
 
     function update() {
-        if (marriedCheckbox.is(':checked')) {
+        if (maritalStatusDropbox.val() == 'Married') {
             memberSpouseDivs.removeClass('hide');
         } else {
             memberSpouseDivs.addClass('hide');
@@ -136,7 +136,7 @@ function initEditClientForm() {
         }
     }
 
-    marriedCheckbox.click(update);
+    maritalStatusDropbox.change(update);
     doNotHelpCheckbox.click(update);
 
     update();
