@@ -42,6 +42,7 @@ class App_Service_Member
                     'spouse_id' => 'c2.client_id',
                     'spouse_first_name' => 'c2.first_name',
                     'spouse_birthdate' => 'c2.birthdate',
+                    'spouse_ssn4' => 'c2.ssn4',
                 )
             )
             ->join(
@@ -204,7 +205,8 @@ class App_Service_Member
             $spouse = new Application_Model_Impl_Client();
             $spouse->setId($dbResult['spouse_id'])
                    ->setFirstName($dbResult['spouse_first_name'])
-                   ->setBirthDate($dbResult['spouse_birthdate']);
+                   ->setBirthDate($dbResult['spouse_birthdate'])
+                   ->setSsn4($dbResult['spouse_ssn4']);
         } else {
             $spouse = null;
         }
@@ -216,7 +218,7 @@ class App_Service_Member
             ->setFirstName($dbResult['first_name'])
             ->setLastName($dbResult['last_name'])
             ->setOtherName($dbResult['other_name'])
-            ->setMarried($dbResult['marriage_status'])
+            ->setMaritalStatus($dbResult['marriage_status'])
             ->setBirthDate($dbResult['birthdate'])
             ->setSsn4($dbResult['ssn4'])
             ->setCellPhone($dbResult['cell_phone'])
@@ -278,7 +280,7 @@ class App_Service_Member
             'first_name' => $client->getFirstName(),
             'last_name' => $client->getLastName(),
             'other_name' => $client->getOtherName(),
-            'marriage_status' => (int)$client->isMarried(),
+            'marriage_status' => $client->getMaritalStatus(),
             'birthdate' => $client->getBirthDate(),
             'ssn4' => $client->getSsn4(),
             'cell_phone' => $client->getCellPhone(),

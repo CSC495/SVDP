@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS case_need;
 DROP TABLE IF EXISTS fund_limit;
 
 CREATE TABLE user(
-     user_id VARCHAR(30),
+     user_id VARCHAR(30) NOT NULL,
      password VARCHAR(256),
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
@@ -45,7 +45,7 @@ CREATE TABLE client(
 	first_name VARCHAR(30),
 	last_name VARCHAR(30),
 	other_name VARCHAR(30),
-	marriage_status TINYINT(1),
+	marriage_status VARCHAR(15),
 	birthdate DATE,
 	ssn4 INT,
 	cell_phone CHAR(10),
@@ -232,3 +232,11 @@ CREATE TABLE schedule(
 	FOREIGN KEY (user_id) REFERENCES user(user_id)
 ) ENGINE = InnoDB;
 
+CREATE TABLE documents(
+	doc_id INT,
+	filename VARCHAR(50),
+	url VARCHAR(50),
+	PRIMARY KEY (doc_id)
+) ENGINE = InnoDB;
+
+	

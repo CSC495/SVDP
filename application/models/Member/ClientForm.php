@@ -2,6 +2,16 @@
 
 class Application_Model_Member_ClientForm extends Zend_Form
 {
+
+    private $_MARRIAGE_OPTIONS = array(
+        '' => '',
+        'Single' => 'Single',
+        'Married' => 'Married',
+        'Divorced' => 'Divorced',
+        'Separated' => 'Separated',
+        'Other' => 'Other',
+    );
+
 	private $_PARISH_OPTIONS = array(
         '' => '',
         'St. Raphael' => 'St. Raphael',
@@ -115,7 +125,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 )),
             ),
             'label' => 'Other name',
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
@@ -132,9 +142,10 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 )),
             ),
             'label' => 'Birth date',
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxlength' => 10,
             'dimension' => 2,
+            'class' => 'date',
         ));
 
         $this->addElement('text', 'ssn4', array(
@@ -144,6 +155,9 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 array('NotEmpty', true, array(
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must be four digits.'),
+                )),
+                array('Digits', true, array(
+                    'messages' => array('notDigits' => 'Must be four digits.'),
                 )),
                 array('StringLength', true, array(
                     'min' => 4,
@@ -159,9 +173,22 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'dimension' => 1,
         ));
 
-        $this->addElement('checkbox', 'married', array(
+        $this->addElement('select', 'maritalStatus', array(
+            'multiOptions' => $this->_MARRIAGE_OPTIONS,
             'required' => true,
-            'label' => 'Currently married',
+            'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'You must choose a marital status.'),
+                )),
+                array('InArray', true, array(
+                    'haystack' => array_keys($this->_MARRIAGE_OPTIONS),
+                    'strict' => true,
+                    'messages' => array('notInArray' => 'You must choose a marital status.'),
+                )),
+            ),
+            'label' => 'Marital status',
+            'dimension' => 2,
         ));
 
         $this->addElement('text', 'spouseName', array(
@@ -196,9 +223,35 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 )),
             ),
             'label' => "Spouse's birth date",
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxlength' => 10,
             'dimension' => 2,
+            'class' => 'date',
+        ));
+
+        $this->addElement('text', 'spouseSsn4', array(
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'Must be four digits.'),
+                )),
+                array('Digits', true, array(
+                    'messages' => array('notDigits' => 'Must be four digits.'),
+                )),
+                array('StringLength', true, array(
+                    'min' => 4,
+                    'max' => 4,
+                    'messages' => array(
+                        'stringLengthTooShort' => 'Must be four digits.',
+                        'stringLengthTooLong' => 'Must be four digits.',
+                    ),
+                )),
+            ),
+            'label' => "Last four digits of spouse's SSN",
+            'description' => '(Optional)',
+            'maxlength' => 4,
+            'dimension' => 1,
         ));
 
         // Additional information elements:
@@ -272,6 +325,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Cell phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
         $this->addElement('text', 'homePhone', array(
@@ -293,6 +347,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Home phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
         $this->addElement('text', 'workPhone', array(
@@ -314,9 +369,10 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Work phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
-        $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');
+        $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
 
         // Householder sub form and elements:
 
@@ -367,7 +423,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
 
     public function prevalidate($data)
     {
-        if (isset($data['married']) && $data['married']) {
+        if (isset($data['maritalStatus']) && $data['maritalStatus'] === 'Married') {
             $this->spouseName->setRequired(true);
         }
 
@@ -407,7 +463,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                ->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()))
                ->setLastName(App_Formatting::emptyToNull($this->lastName->getValue()))
                ->setOtherName(App_Formatting::emptyToNull($this->otherName->getValue()))
-               ->setMarried($this->married->isChecked())
+               ->setMaritalStatus(App_Formatting::emptyToNull($this->maritalStatus->getValue()))
                ->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()))
                ->setSsn4(App_Formatting::emptyToNull($this->ssn4->getValue()))
                ->setCellPhone(App_Formatting::emptyToNull($this->cellPhone->getValue()))
@@ -424,8 +480,9 @@ class Application_Model_Member_ClientForm extends Zend_Form
             $spouse = new Application_Model_Impl_Client();
             $spouse->setFirstName(App_Formatting::emptyToNull($this->spouseName->getValue()))
                    ->setLastName($client->getLastName())
-                   ->setMarried(true)
+                   ->setMaritalStatus($client->getMaritalStatus())
                    ->setBirthDate(App_Formatting::unformatDate($this->spouseBirthDate->getValue()))
+                   ->setSsn4(App_Formatting::emptyToNull($this->spouseSsn4->getValue()))
                    ->setHomePhone($client->getHomePhone())
                    ->setParish($client->getParish());
 
@@ -440,7 +497,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->firstName->setValue($client->getFirstName());
         $this->lastName->setValue($client->getLastName());
         $this->otherName->setValue($client->getOtherName());
-        $this->married->setChecked($client->isMarried());
+        $this->maritalStatus->setValue($client->getMaritalStatus());
         $this->birthDate->setValue(App_Formatting::formatDate($client->getBirthDate()));
         $this->ssn4->setValue($client->getSsn4());
         $this->doNotHelp->setChecked($client->isDoNotHelp());
@@ -456,6 +513,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             $spouse = $client->getSpouse();
             $this->spouseName->setValue($spouse->getFirstName());
             $this->spouseBirthDate->setValue(App_Formatting::formatDate($spouse->getBirthDate()));
+            $this->spouseSsn4->setValue($spouse->getSsn4());
         }
     }
 
