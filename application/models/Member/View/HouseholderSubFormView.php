@@ -54,6 +54,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             ),
             'maxlength' => 30,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),        		
         ));
 
         $this->addElement('text', 'lastName', array(
@@ -73,6 +74,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             ),
             'maxlength' => 30,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),        		
         ));
 
         $this->addElement('text', 'relationship', array(
@@ -92,6 +94,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             ),
             'maxlength' => 30,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'birthDate', array(
@@ -106,7 +109,8 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2 date',
+            'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'departDate', array(
@@ -121,7 +125,8 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2 date',
+            'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
     }
 

@@ -37,8 +37,9 @@ class Application_Model_Admin_ModifyUserForm extends Zend_Form
         
 		// User e-mail
                $email = $this->addElement('text', 'email', array(
-                   'required'   => true,
-                   'label'      => 'E-Mail:',
+			'validators' => array('Email'),
+			'required'   => true,
+			'label'      => 'E-Mail:',
                ));
                
                // User cell phone
@@ -56,9 +57,9 @@ class Application_Model_Admin_ModifyUserForm extends Zend_Form
                // Users role
                $role = $this->addElement('select','role',array(
 			'label' => 'Role:',
-			'multiOptions' => array ( 'M'   => 'Member',
-						  'T'   => 'Treasurer',
-						  'A'   => 'Admin',)
+			'multiOptions' => array ( App_Roles::MEMBER      => 'Member',
+						  App_Roles::TREASURER   => 'Treasurer',
+						  App_Roles::ADMIN       => 'Admin',)
 			,));
                
                // Users status
