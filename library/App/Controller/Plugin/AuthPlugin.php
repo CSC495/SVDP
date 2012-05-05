@@ -26,9 +26,9 @@ class App_Controller_Plugin_AuthPlugin extends Zend_Controller_Plugin_Abstract
         // Check if user has not logged in
         if (!$auth->hasIdentity()
                 && $request->getControllerName() != App_Resources::LOGIN
-                && $request->getActionName()     != 'process') {
+                && $request->getActionName()     != 'login') {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('Redirector');
-            $redirector->gotoSimpleAndExit('process', App_Resources::LOGIN);
+            $redirector->gotoSimpleAndExit('login', App_Resources::LOGIN);
         }
 
         // User is logged in or on login page.

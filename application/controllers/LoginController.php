@@ -34,19 +34,52 @@ class LoginController extends Zend_Controller_Action
     }
     
     /**
-     * Handles the interface for presenting a user with a form to login
+     * Handles interface for presenting user with login form as well as login logic
      *
      * @return void
      */
     public function loginAction()
     {
+        $request = $this->getRequest();
+        
         // Forwards the user if they are already logged on
         $this->forwardUser();
-        
+
         // Set page variables
-        $this->view->error_flag = $this->getRequest()->getParam('error_flag');
+        $this->view->error_flag = $request->getParam('error_flag');
+
         $this->view->form = new Application_Model_Login_LoginForm();
         $this->view->pageTitle = "Login Page";
+        
+        // If values have not been posted back return and render view
+        if( !$request->isPost() )
+            return;
+
+        // Get form and validate it
+        $form = $this->view->form;
+        $form->populate($_POST);
+
+        // Check if the password forgot button was pressed
+        if($form->forgot->isChecked()){
+            return $this->_helper->redirector(
+                                              'forgot',
+                                              App_Resources::LOGIN,
+                                              null,
+                                              array('prev' => 'login'));
+        }
+
+        // Validate the fields on the form
+        if( !$form->isValid( $request->getPost() ) ){
+            // Redirect to login page and set error flag
+            return;
+        }
+        
+        // Get user name and pass
+        $userid = $form->getValue('username');
+        $password = $form->getValue('password');
+
+        // Try to authenticate the user
+        $this->authenticate($userid, $password);
     }
     
     /**
@@ -56,37 +89,28 @@ class LoginController extends Zend_Controller_Action
      */
     public function forgotAction()
     {
-        // Set page variables
-        $this->view->error_flag = $this->getRequest()->getParam('error_flag');
-
-        $this->view->form = new Application_Model_Login_ForgotForm();
-
-        $this->view->pageTitle = "Forgot Password";
-    }
-    
-    /**
-     * Contains the logic for sending a user their lost password
-     *
-     * @usedby Application_Model_Login_ForgotForm
-     * 
-     * @return void
-     */
-    public function forgotprocessAction()
-    {
         $request = $this->getRequest();
+        
+        // Set page variables
+        $this->view->form = new Application_Model_Login_ForgotForm();
+        $this->view->pageTitle = "Forgot Password";
 
-        // If there isnt a post request go back to index
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('login');
+        // If the previous page was login, then render the view
+        if( $this->_hasParam('prev') && $this->_getParam('prev') == 'login'){
+            return;
         }
         
-        // Get form data and check that it is valid
-        $form = new Application_Model_Login_ForgotForm();
-        
-        if( !$form->isValid( $_POST ))
+        // If this isn't a post, return to index
+        if(!$request->isPost())
         {
-            // Redirect to login page and set error flag
-            $this->_redirect('/login/forgot/error_flag/TRUE');
+            $this->_helper->redirector('index');
+        }
+        
+        // Check if the form is valid.
+        if( !$this->view->form->isValid( $_POST ))
+        {
+            // Render view with error
+            return;
         }
         
         // find users info
@@ -108,43 +132,6 @@ class LoginController extends Zend_Controller_Action
         return $this->_helper->redirector('login');
     }
     
-    /**
-     * Handles the data submitted by the user to login
-     *
-     * @usedby Application_Model_Login_LoginForm
-     * @return void
-     */
-    public function processAction()
-    {
-        $request = $this->getRequest();
-
-        // If there isnt a post request go back to index
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('login');
-        }
-        
-        // Get form and validate it
-        $form = new Application_Model_Login_LoginForm();
-        $form->populate($_POST);
-
-        // Check if the password forgot button was pressed
-        if($form->forgot->isChecked()){
-            $this->_helper->redirector('forgot','login');
-        }
-
-        // Validate the fields on the form
-        if( !$form->isValid( $request->getPost() ) ){
-            // Redirect to login page and set error flag
-            $this->_redirect('/login/login/error_flag/TRUE');
-        }
-        
-        // Get user name and pass
-        $userid = $form->getValue('username');
-        $password = $form->getValue('password');
-
-        // Try to authenticate the user
-        $this->authenticate($userid, $password);
-    }
     /**
      * Handles the logic for logging a user out
      *
@@ -256,6 +243,10 @@ class LoginController extends Zend_Controller_Action
      */
     protected function processchangeAction()
     {
+        $this->view->pageTitle = "Change Password";
+        $this->view->form = new Application_Model_Login_ChangeForm();
+        $this->render('login/change',null,true);
+        
         $request = $this->getRequest();
 
         // If there isnt a post request go back to index
