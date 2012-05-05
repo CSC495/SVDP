@@ -10,37 +10,6 @@ class MemberController extends Zend_Controller_Action
      */
     public function indexAction()
     {
-	$memberService = new App_Service_Member();
-	$client = new Application_Model_Impl_Client();
-	$spouse = new Application_Model_Impl_Client();
-	$address = new Application_Model_Impl_Addr();
-	//TEST CLIENT
-	$client->setUserId('asmith');
-	$client->setId('1');
-		$client->setFirstName('TestFirst');
-		$client->setLastName('TestLast');
-		$client->setOtherName('TestOther');
-		$client->setMarried('0');
-		$client->setBirthDate('2000-12-12');
-		$client->setSsn4('3333');
-		$client->setCellPhone('5555555555');
-		$client->setHomePhone('4444444444');
-		$client->setWorkPhone('3333333333');
-		$client->setCreatedDate('2012-4-28');
-		$client->setParish('St.Vincent DePaul');
-		$client->setVeteran('1');
-		
-		$spouse->setFirstName('TESTspouseFIRST');
-		$spouse->setLastName('TESTspouseLAST');
-		
-		$address->setStreet('123 TestStreetName');
-		$address->setCity('Test');
-		$address->setState('IL');
-		$address->setZip('60540');
-		$address->setParish('St. Vincint DePaul');
-		$client->setAddress($address);
-		$client->setSpouse($spouse);
-	$memberService->editClient($client, '1', '1');
         $this->_helper->redirector('map');
     }
 

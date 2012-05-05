@@ -40,7 +40,7 @@ class Application_Model_Impl_Client
 
     private $_spouse = null;
 
-    private $_address = null;
+    private $_currentAddr = null;
 
     private $_doNotHelpReason = null;
     
@@ -215,14 +215,14 @@ class Application_Model_Impl_Client
         return $this;
     }
 
-    public function getAddress()
+    public function getCurrentAddr()
     {
-        return $this->_address;
+        return $this->_currentAddr;
     }
 
-    public function setAddress($address)
+    public function setCurrentAddr($currentAddr)
     {
-        $this->_address = $address;
+        $this->_currentAddr = $currentAddr;
         return $this;
     }
 
