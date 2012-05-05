@@ -9,10 +9,10 @@ class Application_Model_Login_ChangeForm extends Zend_Form
 		$this->setMethod('post');
 
         $baseUrl = new Zend_View_Helper_BaseUrl();
-		$this->setAction($baseUrl->baseUrl('/login/processchange'));
+		$this->setAction($baseUrl->baseUrl('/login/change'));
 		
 		// Password must be minimum of 8 characters and contain 1 digit
-		$password = $this->addElement('text', 'password', array(
+		$password = $this->addElement('password', 'password', array(
 				'validators' => array( new App_Validate_Password() ),
 				'required'   => true,
 				'filters'   => array('stringTrim'),
@@ -20,7 +20,7 @@ class Application_Model_Login_ChangeForm extends Zend_Form
 		));
 	
 		// verify the users input
-		$verify = $this->addElement('text', 'verify',array(
+		$verify = $this->addElement('password', 'verify',array(
 				'validators' => array( new App_Validate_Password() ),
 				'required'   => true,
 				'filters'   => array('stringTrim'),
