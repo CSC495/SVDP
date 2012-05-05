@@ -3,7 +3,8 @@
 /**
  * Sub form containing common address widgets.
  */
-class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Horizontal {
+class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizontal
+{
 
     private $_PARISH_OPTIONS = array(
         '' => '',
@@ -18,7 +19,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
     private $_hasParishField;
 
     /**
-     * Instantiates a new instance of the `Application_Model_Member_AddressSubForm` class.
+     * Instantiates a new instance of the `Application_Model_Member_AddrSubForm` class.
      */
     public function __construct($title, $hasParishField = false, $zipCodeRequired = false)
     {
@@ -62,7 +63,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
                 )),
             ),
             'label' => 'Apartment #',
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxLength' => 30,
             'dimension' => 1,
         ));
@@ -131,7 +132,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
                 )),
             ),
             'label' => 'ZIP code',
-            'description' => $zipCodeRequired ? null : '(optional)',
+            'description' => $zipCodeRequired ? null : '(Optional)',
             'maxLength' => 5,
             'dimension' => 1,
         ));
