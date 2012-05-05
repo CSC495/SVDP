@@ -10,7 +10,7 @@
 class Application_Model_Impl_Case
 {
 
-    private $_caseId = null;
+    private $_id = null;
     
     private $_householdId = null;
     
@@ -20,22 +20,27 @@ class Application_Model_Impl_Case
 
     private $_status = null;
     
+    private $_totalAmount = null;
+    
     //Array of CaseNeed objects
-    private $_caseNeeds = null;
+    private $_needList = null;
     
     //Array of CaseVisit objects
     private $_visits = null;
+    
+    //Client object?
+    private $_client = null;
 
     /* Generic get/set methods: */
 
     public function getId()
     {
-        return $this->_caseId;
+        return $this->_id;
     }
 
     public function setId($id)
     {
-        $this->_caseId = $id;
+        $this->_id = $id;
         return $this;
     }
     
@@ -79,14 +84,14 @@ class Application_Model_Impl_Case
         return $this;
     }
 
-    public function getCaseNeeds()
+    public function getNeedList()
     {
-        return $this->_caseNeeds;
+        return $this->_needList;
     }
 
-    public function setCaseNeeds($needs)
+    public function setNeedList($needList)
     {
-        $this->_caseNeeds = $needs;
+        $this->_needList = $needList;
         return $this;
     }
     
@@ -96,6 +101,24 @@ class Application_Model_Impl_Case
     
     public function setVisits($visits){
         $this->_visits = $visits;
+        return $this;
+    }
+    
+    public function getTotalAmount(){
+        return $this->_totalAmount;
+    }
+    
+    public function setTotalAmount($totalAmount){
+        $this->_totalAmount = $totalAmount;
+        return $this;
+    }
+    
+    public function getClient(){
+        return $this->_client;
+    }
+    
+    public function setClient($client){
+        $this->_client = $client;
         return $this;
     }
 }

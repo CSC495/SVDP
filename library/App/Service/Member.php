@@ -195,7 +195,7 @@ class App_Service_Member
             $this->_db->insert('client_case', $caseData);
             $newCaseId = $this->_db->lastInsertId('client_case');
             
-            $case->setCaseNeeds($this->insertNeeds($case->getCaseNeeds(), $newCaseId));
+            $case->setCaseNeeds($this->insertNeeds($case->getNeedList(), $newCaseId));
             $case->setVisits($this->insertVisits($case->getVisits(), $newCaseId));
             $this->_db->commit();
             return $case;
@@ -209,7 +209,7 @@ class App_Service_Member
         $this->_db->beginTransaction();
         try{
             $clientData = $this->disassembleClientModel($client);
-            $addrData = $this->disassembleAddrModel($client->getAddress());
+            $addrData = $this->disassembleAddrModel($client->getCurrentAddr());
             
             //Update Client data in client table
             $where = $this->_db->quoteInto('client_id = ?', $client->getId());
@@ -518,14 +518,15 @@ class App_Service_Member
         }
         return $visits;
     }
-    //Creates a new address in database and changes new household address_id to id
+    //Creates a new address in database and changes the household address_id to id
     //of new address
     private function createNewAddress($addrData, $clientId){
+        $newHouseId = $this->_db->lastInsertId();
+        
         $addrData['client_id'] = $clientId;
         $this->_db->insert('address', $addrData);
         
-        $newHouseId = $this->_db->lastInsertId('household');
-        $newAddId = $this->_db->lastInsertId('address');
+        $newAddId = $this->_db->lastInsertId();
         
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
         $change = array('address_id' => $newAddId);
@@ -544,6 +545,7 @@ class App_Service_Member
                     'spouse_id' => $spouseId,
                     'current_flag' => '1');
         $this->_db->insert('household', $houseData);
+        return $this->_db->lastInsertId();
     }
     
     private function editAddress($addrData, $addrId){
@@ -590,31 +592,33 @@ class App_Service_Member
 
     private function clientDivorce($clientId){
         $spouseId = $this->getSpouseId($clientId);
-        $newHouseId = $this->_db->lastInsertId('household');
+        $newHouseId = $this->getCurrentHousehold($clientId);
         
         //Update spouse_id for client's new household
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
         $change = array('spouse_id' => NULL);
         $this->_db->update('household', $change, $where);
         
-        //Create new address & household for client's ex-spouse
-        $this->createNewAddress(array(), $spouseId);
-        $this->createNewHousehold($this->_db->lastInsertId('address'), $spouseId);
-        
         //Update client's ex-spouse's marriage status
         $where = $this->_db->quoteInto('client_id = ?', $spouseId);
         $change = array('marriage_status' => '0');
         $this->_db->update('client', $change, $where);
+        
+        //Create new address & household for client's ex-spouse
+        $this->createNewHousehold(NULL, $spouseId);
+        $this->createNewAddress(array(), $spouseId);
     }
     //Assumes $_spouse in Client is a Client object
     private function clientMarriage($client){
+        //Insert the client's spouse in client table
         $spouseData = $this->disassembleClientModel($client->getSpouse());
         $spouseData['marriage_status'] = '1';
         $spouseData['created_user_id'] = $client->getUserId();
         $this->_db->insert('client', $spouseData);
+        $newSpouseId = $this->_db->lastInsertId();
         
-        $newHouseId = $this->_db->lastInsertId('household');
-        $newSpouseId = $this->_db->lastInsertId('client');
+        //Update client's household to include spouse
+        $newHouseId = $this->getCurrentHousehold($client->getId());
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
         $change = array('spouse_id' => $newSpouseId);
         $this->_db->update('household', $change, $where);
