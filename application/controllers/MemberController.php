@@ -6,7 +6,7 @@ class MemberController extends Zend_Controller_Action
 {
 
     /**
-     * Home page action: currently just redirects to the map search screen.
+     * Home page action: just redirects to the map search screen.
      */
     public function indexAction()
     {
@@ -85,6 +85,59 @@ class MemberController extends Zend_Controller_Action
         $service           = new App_Service_Search();
         $userId            = Zend_Auth::getInstance()->getIdentity()->user_id;
         $this->view->cases = $service->getOpenCasesByUserId($userId);
+    }
+
+    /**
+     * Action that lists contacts for parish members.
+     */
+    public function contactsAction()
+    {
+        $this->view->pageTitle = 'Member Contact List';
+
+        $service = new App_Service_AdminService();
+
+        $this->view->users = $service->getParishMembers();
+    }
+
+    /**
+     * Action that allows members to edit the parish schedule.
+     */
+    public function editscheduleAction()
+    {
+        $this->view->pageTitle = 'Edit Schedule';
+
+        $request = $this->getRequest();
+        $service = new App_Service_Member();
+
+        $users = $service->getActiveMembers();
+
+        foreach ($users as &$user) {
+            $user = $user->getFirstName() . ' ' . $user->getLastName();
+        }
+        unset($user);
+
+        $this->view->form = new Application_Model_Member_ScheduleForm(array('' => '') + $users);
+
+        if (!$request->isPost()) {
+            // If this isn't a POST request, fill the form from existing entries.
+            $this->view->form->scheduleRecordList->setRecords($service->getScheduleEntries());
+            return;
+        }
+
+        // Repopulate the form with POST data.
+        $data = $request->getPost();
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        if ($this->view->form->scheduleRecordList->handleAddRemoveRecords($data)
+                || !$this->view->form->isValid($data)) {
+            // If the user just added or removed a schedule entry, then we're done. Do likewise for
+            // validation errors.
+            return;
+        }
+
+        // Handle added, modified, and deleted records.
+        print_r($this->view->form->scheduleRecordList->getRemovedRecords());
     }
 
     /**
@@ -190,14 +243,5 @@ class MemberController extends Zend_Controller_Action
     {
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_Member_CaseForm();
-    }
-
-    public function contactsAction()
-    {
-        $this->view->pageTitle = 'Member Contact List';
-
-        $service = new App_Service_AdminService();
-
-        $this->view->users = $service->getParishMembers();
     }
 }
