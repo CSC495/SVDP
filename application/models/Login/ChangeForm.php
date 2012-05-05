@@ -11,14 +11,21 @@ class Application_Model_Login_ChangeForm extends Zend_Form
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/login/processpwd'));
 		
-		// Username must consist of letters only
-		//          must be between 5 and 20 characters
+		// Password must be minimum of 8 characters and contain 1 digit
 		$password = $this->addElement('text', 'password', array(
-				   'required'   => true,
-				   'label'      => 'New Password:',
-				 ));
-    
-               $submit = $this->addElement('submit', 'submit', array(
+				'validators' => array( new App_Validate_Password() ),
+				'required'   => true,
+				'label'      => 'New Password:',
+		));
+	
+		// verify the users input
+		$verify = $this->addElement('text', 'verify',array(
+				'validators' => array( new App_Validate_Password() ),
+				'required'   => true,
+				'label'      => 'Verify Password:',
+		));
+		
+                $submit = $this->addElement('submit', 'submit', array(
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Submit',

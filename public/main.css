@@ -1,5 +1,11 @@
 @charset "utf-8";
 
+/* Layour Styles */
+
+.sidebar-nav {
+    padding: 9px 0;
+}
+
 /* Styles for map view: */
 
 #map {
@@ -24,7 +30,6 @@ form.member table {
 }
 
 form.member th {
-  font-weight: normal;
   vertical-align: bottom;
 }
 

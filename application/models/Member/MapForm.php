@@ -3,7 +3,8 @@
 /**
  * Address form allowing the user to look up potential clients on a Google map.
  */
-class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal {
+class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
+{
 
     private $_showNewClientButton = false;
 
@@ -20,7 +21,7 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
              ->setMethod('get');
 
         $this->addSubForm(
-            new Application_Model_Member_AddressSubForm("Enter a client's address."),
+            new Application_Model_Member_AddrSubForm("Enter a client's address."),
             'addr'
         );
 
