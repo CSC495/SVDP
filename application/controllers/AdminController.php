@@ -14,32 +14,6 @@ class AdminController extends Zend_Controller_Action
         $this->view->pageTitle = "Admin Controller";
     }
     
-    // Processes the users selection of what page to navigate to next
-    public function processAction()
-    {
-        $request = $this->getRequest();
-        
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('index');
-        }
-
-        // Get the form and populate it
-        $form = new Application_Model_Admin_AdminForm();
-        $form->populate($_POST);
-        
-        // Check if user wants to view user info
-        if( $form->user->isChecked() ){
-            $this->_helper->redirector('members','admin');
-        }
-        
-        // Check if user wants to adjust limits
-        if( $form->adjust->isChecked() ){
-            $this->_helper->redirector('limits','admin');
-        }
-        
-        $this->_helper->redirector('index','admin');
-        
-    }
     // Displays view for modifying limits
     public function adjustAction()
     {
