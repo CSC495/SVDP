@@ -18,8 +18,6 @@ class App_Validate_Password extends Zend_Validate_Abstract
     
     public function isValid($value)
     {
-        var_dump("password");
-        
         $this->_setValue($value);
         
         // Check if the password is less than the minimum length
@@ -33,5 +31,7 @@ class App_Validate_Password extends Zend_Validate_Abstract
             $this->_error(self::MSG_DIGIT);
             return false;
         }
+        
+        return true;
     }
 }

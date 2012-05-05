@@ -214,11 +214,31 @@ class LoginController extends Zend_Controller_Action
         // Check if user needs password change. If so forward to change
         if($data->change_pswd == 1)
         {
-            // Post to change password
-            return $this->_forward('change','login');
+            return $this->_helper->redirector('change',App_Resources::LOGIN);
         }
         
         $this->forwardUser();
+    }
+    
+    /**
+     * Displays simple view informing users password has been changed
+     *
+     * @usedby LoginController::changeAction()
+     * @return void
+     */
+    protected function changedAction()
+    {
+        $request = $this->getRequest();
+        
+        if( !$request->isPost() )
+        {
+            $this->_helper->redirector('index');
+        }
+        
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+        $this->getResponse()->setHeader('Refresh', '3; URL=' . $baseUrl->baseUrl(App_Resources::INDEX));
+        
+        $this->view->pageTitle = "Password Changed";
     }
     
     /**
@@ -229,55 +249,47 @@ class LoginController extends Zend_Controller_Action
      */
     protected function changeAction()
     {
-        $this->view->error_flag = $this->getRequest()->getParam('error_flag');
-        
-        $this->view->pageTitle = "Change Password";
-        $this->view->form = new Application_Model_Login_ChangeForm();   
-    }
-    
-    /**
-     * Handles logic of changing a users password
-     *
-     * @usedby Application_Model_Login_ChangeForm
-     * @return void
-     */
-    protected function processchangeAction()
-    {
-        $this->view->pageTitle = "Change Password";
-        $this->view->form = new Application_Model_Login_ChangeForm();
-        $this->render('login/change',null,true);
-        
         $request = $this->getRequest();
-
-        // If there isnt a post request go back to index
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('login');
+        
+        // Verify a user didn't manually navigate here when password doesn't
+        // need to be changed.
+        if( !Zend_Auth::getInstance()->getIdentity()->change_pswd )
+        {
+            $this->_helper->redirector('index');
         }
         
-        $form = new Application_Model_Login_ChangeForm();
-        
+        $this->view->error_flag = $this->getRequest()->getParam('error_flag');
+        $this->view->pageTitle = "Change Password";
+        $form = new Application_Model_Login_ChangeForm();  
+        $this->view->form = $form;
+
+        // If not postback render view
+        if( !$request->isPost() )
+            return;
+
+        //Post back, check form
         if( !$form->isValid($request->getPost()) )
         {
-            // redirect and indicate error
-            $this->_redirect('login/change/error_flag/TRUE');
+            return;
         }
-        
+
         $pwd = $form->getValue('password');
         $vpwd = $form->getValue('verify');
-        
+
         // Ensure passwords match
         if( strcmp($pwd,$vpwd) )
         {
-            // redirect and indicate error
-            $this->_redirect('login/change/error_flag/TRUE');
+            $form->verify->addError('Passwords don\'t match.');
+            return;
         }
-        $identity = Zend_Auth::getInstance()->getIdentity();
-        
+
+        $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
-        $service->updateUserPassword($identity->user_id,$pwd);
+        $service->updateUserPassword($identity->user_id,hash('SHA256', $this->_SALT . $pwd));
         
-        $this->forwardUser();
+        $this->_forward('changed');
     }
+    
     /**
      * Handles forwarding a user to the correct landing page
      *

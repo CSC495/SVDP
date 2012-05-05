@@ -24,10 +24,10 @@ class Application_Model_Login_ForgotForm extends Twitter_BootStrap_Form_Vertical
 			'label'      => 'Username:',
 			'validators' => array(
 				array('NotEmpty', true, array(
-			'type' => 'string',
-			'messages' => array('isEmpty' => 'Field is required.')))),
+					'type' => 'string',
+					'messages' => array('isEmpty' => 'Field is required.')))),
                 ));
-		
+
 		$this->addDisplayGroup(array('username'), 'id', null);
 
 		$this->addElement('submit','submit', array(
