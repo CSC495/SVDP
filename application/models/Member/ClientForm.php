@@ -2,6 +2,16 @@
 
 class Application_Model_Member_ClientForm extends Zend_Form
 {
+
+    private $_MARRIAGE_OPTIONS = array(
+        '' => '',
+        'Single' => 'Single',
+        'Married' => 'Married',
+        'Divorced' => 'Divorced',
+        'Separated' => 'Separated',
+        'Other' => 'Other',
+    );
+
 	private $_PARISH_OPTIONS = array(
         '' => '',
         'St. Raphael' => 'St. Raphael',
@@ -163,9 +173,22 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'dimension' => 1,
         ));
 
-        $this->addElement('checkbox', 'married', array(
+        $this->addElement('select', 'maritalStatus', array(
+            'multiOptions' => $this->_MARRIAGE_OPTIONS,
             'required' => true,
-            'label' => 'Currently married',
+            'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'You must choose a marital status.'),
+                )),
+                array('InArray', true, array(
+                    'haystack' => array_keys($this->_MARRIAGE_OPTIONS),
+                    'strict' => true,
+                    'messages' => array('notInArray' => 'You must choose a marital status.'),
+                )),
+            ),
+            'label' => 'Marital status',
+            'dimension' => 2,
         ));
 
         $this->addElement('text', 'spouseName', array(
@@ -349,7 +372,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'class' => 'phone',
         ));
 
-        $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');
+        $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
 
         // Householder sub form and elements:
 
@@ -400,7 +423,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
 
     public function prevalidate($data)
     {
-        if (isset($data['married']) && $data['married']) {
+        if (isset($data['maritalStatus']) && $data['maritalStatus'] === 'Married') {
             $this->spouseName->setRequired(true);
         }
 
@@ -440,7 +463,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                ->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()))
                ->setLastName(App_Formatting::emptyToNull($this->lastName->getValue()))
                ->setOtherName(App_Formatting::emptyToNull($this->otherName->getValue()))
-               ->setMarried($this->married->isChecked())
+               ->setMaritalStatus(App_Formatting::emptyToNull($this->maritalStatus->getValue()))
                ->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()))
                ->setSsn4(App_Formatting::emptyToNull($this->ssn4->getValue()))
                ->setCellPhone(App_Formatting::emptyToNull($this->cellPhone->getValue()))
@@ -457,7 +480,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             $spouse = new Application_Model_Impl_Client();
             $spouse->setFirstName(App_Formatting::emptyToNull($this->spouseName->getValue()))
                    ->setLastName($client->getLastName())
-                   ->setMarried(true)
+                   ->setMaritalStatus($client->getMaritalStatus())
                    ->setBirthDate(App_Formatting::unformatDate($this->spouseBirthDate->getValue()))
                    ->setSsn4(App_Formatting::emptyToNull($this->spouseSsn4->getValue()))
                    ->setHomePhone($client->getHomePhone())
@@ -474,7 +497,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->firstName->setValue($client->getFirstName());
         $this->lastName->setValue($client->getLastName());
         $this->otherName->setValue($client->getOtherName());
-        $this->married->setChecked($client->isMarried());
+        $this->maritalStatus->setValue($client->getMaritalStatus());
         $this->birthDate->setValue(App_Formatting::formatDate($client->getBirthDate()));
         $this->ssn4->setValue($client->getSsn4());
         $this->doNotHelp->setChecked($client->isDoNotHelp());

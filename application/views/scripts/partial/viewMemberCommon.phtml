@@ -10,9 +10,9 @@
 </tr>
 <tr class='search-result <?php echo $this->rowStripeClass; ?>'>
     <th class='search-cell bot first'>Cell Phone</th>
-    <td class='search-cell bot'><?php echo $this->escape($this->user->getCellPhone()); ?></td>
+    <td class='search-cell bot'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getCellPhone())); ?></td>
     <th class='search-cell bot'>Home Phone</th>
-    <td class='search-cell bot'><?php echo $this->escape($this->user->getHomePhone()); ?></td>
+    <td class='search-cell bot'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getHomePhone())); ?></td>
     <th class='search-cell bot'>Role</th>
     <td class='search-cell bot'><?php echo $this->escape(App_Formatting::formatRole($this->user->getRole())); ?></td>
     <td class="search-cell last"><?php if (!$this->user->isActive()) { ?><span class="label label-important">Inactive</span><?php } ?></td>
