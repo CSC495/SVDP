@@ -17,7 +17,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 		$aid = $this->addElement('text', 'aid', array(
 			'filters'    => array( new App_Filter_Money() ),
 			'validators' => array('Float','Int'),
-			'required'   => false,
+			'required'   => true,
 			'label'      => 'Total Recievable Lifetime Aid:',
 			'class'      => 'input-small',
 		));
@@ -26,7 +26,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
                $casefund = $this->addElement('text', 'casefund', array(
 			'filters'    => array( new App_Filter_Money() ),
 			'validators' => array('Float','Int'),
-			'required'   => false,
+			'required'   => true,
 			'label'      => 'Total Recievable Aid PER Case:',
 			'class'      => 'input-small',
                ));
@@ -34,7 +34,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
                // Input of lifetime cases a client can have
                $lifetimecases = $this->addElement('text', 'lifetimecases', array(
 		   'validators' => array('Digits'),
-                   'required'   => false,
+                   'required'   => true,
                    'label'      => 'Lifetime Case Limit:',
 		   'class'      => 'input-small',
                ));
@@ -42,7 +42,7 @@ class Application_Model_Admin_AdjustForm extends Zend_Form
 		// Input of yearly cases a client can have
                $yearlycases = $this->addElement('text', 'yearlycases', array(
 		   'validators' => array('Digits'),
-                   'required'   => false,
+                   'required'   => true,
                    'label'      => 'Yearly Cases Limit:',
 		   'class'      => 'input-small',
                ));
