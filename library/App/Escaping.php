@@ -12,6 +12,8 @@ class App_Escaping
      * Escapes wildcards in SQL LIKE expressions. This shouldn't have any immediate security
      * benefit, but it prevents users from being exposed to potentially confusing behavior.
      *
+     * Note: Wildcards supported are specific to MySQL.
+     *
      * @param string $what The string to escape.
      *
      * @return string The escaped string.

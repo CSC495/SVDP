@@ -1,2 +1,52 @@
 <?php
-    echo "This is where the documents go";
+
+$auth = Zend_Auth::getInstance();
+
+if($auth->hasIdentity())
+{
+    $role = $auth->getIdentity()->role;
+    
+    if ($role === App_Roles::ADMIN)
+        $this->pView = 'partial/viewDocForAdmin.phtml';
+    else
+        $this->pView = 'partial/viewDocForMember.phtml';
+   
+} ?>
+
+<div class="well">
+<fieldset>
+    <legend>SVDP Documents</legend>
+        
+    <table>
+    
+    <?php
+    foreach($this->docs as $doc){
+        echo $this->partial($this->pView, array(
+            'doc' => $doc,
+            'internal' => true,));
+    }
+    ?>
+
+    </table>
+</fieldset>
+</div>
+
+<div class="well">
+<fieldset>
+    <legend>External Documents</legend>
+        
+    <table>
+    <?php
+    foreach($this->docs as $doc){
+        echo $this->partial($this->pView, array(
+            'doc' => $doc,
+            'internal' => false,));
+    }
+    ?>
+    
+    </table>
+</fieldset>
+</div>
+
+<?php if($role === App_Roles::ADMIN) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/upload') . ">Add new document</a>"; }?>
+

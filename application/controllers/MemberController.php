@@ -196,8 +196,6 @@ class MemberController extends Zend_Controller_Action
     {
         $this->view->pageTitle = 'Member Contact List';
 
-        // TODO: Eventually we should specialize this query to only list active members. (But should
-        // the specialized version go into the admin service or the member service?)
         $service = new App_Service_AdminService();
 
         $this->view->users = $service->getParishMembers();
