@@ -1,5 +1,15 @@
+<h4>Enter the user name associated with your account below.</h4>
+
 <?php
 
-echo "Enter the account number associated with your account.<br />";
-echo "Your password will be e-mailed to you shortly.";
 echo $this->form;
+
+?>
+
+<?php if($this->error_flag){ ?>
+<span class="span3">
+    <div class="alert alert-error row">
+        Username is required.
+    </div>
+</span>
+<?php } ?>
