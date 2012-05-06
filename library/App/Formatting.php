@@ -31,6 +31,9 @@ class App_Formatting
      */
     public static function formatPhone($phone)
     {
+        if($phone === null || $phone === '')
+            return '';
+        
         $phone1 = substr($phone, 0, 3);
         $phone2 = substr($phone, 3, 3);
         $phone3 = substr($phone, 6, 4);

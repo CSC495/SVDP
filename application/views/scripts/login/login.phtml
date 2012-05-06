@@ -1,6 +1,11 @@
+
 <?php
 echo $this->form;
 
-if($this->error_flag){
-    echo "<error>" . "Invalid username or password" . "</error>";
-}
+if($this->error_flag){ ?>
+<span class="span3">
+    <div class="alert alert-error row">
+        Invalid username or password
+    </div>
+</span>
+<?php } ?>

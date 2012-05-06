@@ -1,5 +1,5 @@
 <?php
-class Application_Model_Admin_NewUserForm extends Zend_Form
+class Application_Model_Admin_NewUserForm extends Twitter_BootStrap_Form_Horizontal
 {
 	
 	public function __construct($options = null){
@@ -7,68 +7,86 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
 		$this->setName('new');
 		$this->setAttrib('id', 'new');
 		$this->setMethod('post');
-
-        $baseUrl = new Zend_View_Helper_BaseUrl();
-		$this->setAction($baseUrl->baseUrl('/admin/newmember'));
+		$baseUrl = new Zend_View_Helper_BaseUrl();
+		$this->setAction($baseUrl->baseUrl('/admin/new'));
 		$this->setDecorators(array(
 			array('ViewScript',array('viewScript' => 'admin/newViewScript.phtml'))
 		));
 		
-		// The memebrs name
+		$this->addElementPrefixPath(
+			'Twitter_Bootstrap_Form_Decorator',
+			'Twitter/Bootstrap/Form/Decorator',
+			'decorator'
+		);
+		
+		$this->setElementDecorators(array(
+			'FieldSize',
+			'ViewHelper',
+			'Addon',
+			'ElementErrors',
+			array('Description', array('class' => 'help-block')),
+			array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
+			array('Label', array('class' => 'control-label')),
+			'Wrapper',
+		));
+		
+		// The memebers name
 		$firstname = $this->addElement('text', 'firstname', array(
-                                   'filters'    => array('StringTrim', 'StringToLower'),
+                                   'filters'    => array('StringTrim'),
 				   'required'   => true,
 				   'label'      => 'First Name:',
 				 ));
 		
 		// The memebrs name
 		$lastname = $this->addElement('text', 'lastname', array(
-                                   'filters'    => array('StringTrim', 'StringToLower'),
+                                   'filters'    => array('StringTrim'),
 				   'required'   => true,
 				   'label'      => 'Last Name:',
 				 ));
 		
-		// Members phone type
-		$phonetype = $this->addElement('select','phonetype',array(
-			'label' => 'Primary Phone Type:',
-			'multiOptions' => array ( 'home'    => 'Home',
-						  'cell'     => 'Cell',
-						  'work' => 'Work',)
-			,));
-		
                 // Members phone number
-                $phone = $this->addElement('text', 'phone', array(
-                   'filters'    => array('StringTrim'),
-                   'required'   => true,
-                   'label'      => 'Primary Phone Number:',
+                $home = $this->addElement('text', 'home', array(
+                   'filters'    => array('StringTrim','Digits'),
+                   'required'   => false,
+                   'label'      => 'Home Phone:',
+		   'validators' => array(
+			array('StringLength', true, array(
+				'min' => 10,
+				'max' => 11,
+				'messages' => array(
+				'stringLengthTooShort' => 'Phone number must be 10 digits.',
+				'stringLengthTooLong' => 'Phone number cannot be longer than 11 digits.',
+                    )))),
                 ));
         
-		// Memebrs other phone
-		$otherphonetype = $this->addElement('select','otherphonetype',array(
-			'label' => 'Other Phone Type:',
-			'multiOptions' => array ( 'home'    => 'Home',
-						  'cell'     => 'Cell',
-						  'work' => 'Work',)
-			,));
-		
 		// Members other phone
-		$otherphone = $this->addElement('text', 'otherphone', array(
-                   'filters'    => array('StringTrim'),
-                   'required'   => true,
-                   'label'      => 'Other Phone Number:',
+		$cell = $this->addElement('text', 'cell', array(
+                   'filters'    => array('StringTrim','Digits'),
+                   'required'   => false,
+                   'label'      => 'Cell Phone:',
+		   'validators' => array(
+			array('StringLength', true, array(
+				'min' => 10,
+				'max' => 11,
+				'messages' => array(
+				'stringLengthTooShort' => 'Phone number must be 10 digits.',
+				'stringLengthTooLong' => 'Phone number cannot be longer than 11 digits.',
+                    )))),
                 ));
 		
 		// IMemebers e-mail
                 $email = $this->addElement('text', 'email', array(
-                   'filters'    => array('StringTrim'),
-                   'required'   => true,
-                   'label'      => 'Email:',
+			'filters'    => array('StringTrim'),
+			'validators' => array('EmailAddress'),
+			'required'   => true,
+			'label'      => 'Email:',
                 ));
                
 	        // Type of memebr
-                $type = $this->addElement('select','type',array(
+                $role = $this->addElement('select','role',array(
 			'label' => 'Member Type:',
-			'multiOptions' => array ( App_Roles::MEMBER    => 'Member',
+			'value' => App_Roles::MEMBER,
+			'multiOptions' => array ( 'M'   => 'Member',
 						  App_Roles::ADMIN     => 'Admin',
 						  App_Roles::TREASURER => 'Treasurer',)
 			,));
@@ -77,7 +95,8 @@ class Application_Model_Admin_NewUserForm extends Zend_Form
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Add New Contact',
-		   'class'    => 'btn-success btn',
+                   'class'    => 'btn btn-success',
+		   'decorators' => array('ViewHelper'),
                 ));
                
 	}
