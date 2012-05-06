@@ -142,6 +142,39 @@ class App_Service_Member
         return $this->buildScheduleEntryModels($results);
     }
 
+    public function changeScheduleEntry($scheduleEntry)
+    {
+        if ($scheduleEntry->getId() === null) {
+            $this->_db->insert('schedule', $this->disassembleScheduleEntryModel($scheduleEntry));
+            $scheduleEntry->setId($this->_db->lastInsertId());
+        } else {
+            $this->_db->update(
+                'schedule',
+                $this->disassembleScheduleEntryModel($scheduleEntry),
+                $this->_db->quoteInto('week_id = ?', $scheduleEntry->getId())
+            );
+        }
+
+        return $scheduleEntry;
+    }
+
+    public function removeScheduleEntries($scheduleEntries)
+    {
+        if (!$scheduleEntries) {
+            return;
+        }
+
+        $scheduleEntryIds = array();
+        foreach ($scheduleEntries as $scheduleEntry) {
+            $scheduleEntryIds[] = $scheduleEntry->getId();
+        }
+
+        $this->_db->delete('schedule', $this->_db->quoteInto(
+            'week_id IN (?)',
+            $scheduleEntryIds
+        ));
+    }
+
     public function createClient($client, $householders, $employers)
     {
         $this->_db->beginTransaction();
@@ -386,6 +419,15 @@ class App_Service_Member
             'position' => $employer->getPosition(),
             'start_date' => $employer->getStartDate(),
             'end_date' => $employer->getEndDate(),
+        );
+    }
+
+    private function disassembleScheduleEntryModel($scheduleEntry)
+    {
+        return array(
+            'week_id' => $scheduleEntry->getId(),
+            'start_date' => $scheduleEntry->getStartDate(),
+            'user_id' => $scheduleEntry->getUser()->getUserId(),
         );
     }
 }

@@ -129,14 +129,19 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
-        if ($this->view->form->scheduleRecordList->handleAddRemoveRecords($data)
+        if ($this->view->form->handleAddRemoveEntries($data)
                 || !$this->view->form->isValid($data)) {
             // If the user just added or removed a schedule entry, then we're done. Do likewise for
             // validation errors.
             return;
         }
 
-        // TODO: Handle added, modified, and deleted records.
+        // Handle added, modified, and deleted schedule entries.
+        foreach ($this->view->form->getChangedEntries() as $changedEntry) {
+            $service->changeScheduleEntry($changedEntry);
+        }
+        $service->removeScheduleEntries($this->view->form->getRemovedEntries());
+        $this->_helper->redirector('editSchedule');
     }
 
     /**

@@ -36,4 +36,19 @@ class Application_Model_Member_ScheduleForm extends Zend_Form
     {
         $this->scheduleRecordList->preValidate($data);
     }
+
+    public function handleAddRemoveEntries($data)
+    {
+        return $this->scheduleRecordList->handleAddRemoveRecords($data);
+    }
+
+    public function getChangedEntries()
+    {
+        return $this->scheduleRecordList->getChangedRecords();
+    }
+
+    public function getRemovedEntries()
+    {
+        return $this->scheduleRecordList->getRemovedRecords();
+    }
 }

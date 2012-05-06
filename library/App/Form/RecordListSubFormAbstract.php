@@ -153,27 +153,12 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         return false;
     }
 
-    public function getAddedRecords()
-    {
-        $addedRecords = array();
-
-        foreach ($this->_recordsSubForm->getSubForms() as $recordName => $recordSubForm) {
-            if ($recordSubForm->id->getValue() === '') {
-                $addedRecords[$recordName] = $this->getRecord($recordSubForm);
-            }
-        }
-
-        return $addedRecords;
-    }
-
     public function getChangedRecords()
     {
         $changedRecords = array();
 
         foreach ($this->_recordsSubForm->getSubForms() as $recordName => $recordSubForm) {
-            if ($recordSubForm->id->getValue() !== '') {
-                $changedRecords[$recordName] = $this->getRecord($recordSubForm);
-            }
+            $changedRecords[$recordName] = $this->getRecord($recordSubForm);
         }
 
         return $changedRecords;
