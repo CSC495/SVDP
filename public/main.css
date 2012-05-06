@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-/* Layour Styles */
+/* Styles for layout: */
 
 .sidebar-nav {
     padding: 9px 0;
@@ -12,29 +12,27 @@
     height: 400px;
 }
 
-/* Styles for edit client/case views: */
+/* Styles for two column horizontal forms: */
 
-form.member fieldset.row-fluid {
+form.twocol fieldset.row-fluid {
     max-width: 960px;
 }
 
-form.member .span6 {
+form.twocol .span6 {
     margin-left: 0 !important;
     padding-left: 0 !important;
 }
 
-form.member table {
-    margin-bottom: 18px;
-    max-width: 960px;
-    width: 100%;
+/* Styles for remove buttons in horizontal form tables: */
+
+td.remove {
+    width: 3ex;
 }
 
-form.member th {
-  vertical-align: bottom;
-}
-
-form.member td .control-group {
-    margin-bottom: 0;
+input.remove {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 16px;
 }
 
 /* Styles for search views: */
@@ -96,6 +94,20 @@ th.search-cell {
 .hero-unit .help-block {
     font-size: 13px;
     line-height: 18px;
+}
+
+form.form-horizontal table {
+    margin-bottom: 18px;
+    max-width: 960px;
+    width: 100%;
+}
+
+form.form-horizontal th {
+    vertical-align: bottom;
+}
+
+form.form-horizontal td .control-group {
+    margin-bottom: 0;
 }
 
 /* Base Bootstrap style: */
