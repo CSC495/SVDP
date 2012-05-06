@@ -48,8 +48,8 @@ class Application_Model_Impl_Case
         return $this->_householdId;
     }
     
-    public function setHouseholdId(){
-        $this->_householdId;
+    public function setHouseholdId($householdId){
+        $this->_householdId = $householdId;
         return $this;
     }
     

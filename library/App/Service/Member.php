@@ -193,10 +193,10 @@ class App_Service_Member
         try{
             $caseData = $this->disassembleCaseModel($case);
             $this->_db->insert('client_case', $caseData);
-            $newCaseId = $this->_db->lastInsertId('client_case');
+            $case->setId($this->_db->lastInsertId());
             
-            $case->setCaseNeeds($this->insertNeeds($case->getNeedList(), $newCaseId));
-            $case->setVisits($this->insertVisits($case->getVisits(), $newCaseId));
+            $case = $this->insertNeeds($case);
+            $case = $this->insertVisits($case);
             $this->_db->commit();
             return $case;
         }catch(Exception $ex){
@@ -624,19 +624,26 @@ class App_Service_Member
         $this->_db->update('household', $change, $where);
     }
     
-    private function insertNeeds($needs, $caseId){
+    private function insertNeeds($case){
+        $needs = $case->getNeedList();
+        $caseId = $case->getId();
         $newNeeds = array();
         foreach($needs as $need){
             $needData = $this->disassembleCaseNeedModel($need);
             $needData['case_id'] = $caseId;
+            $totalAmount += $needData['amount'];
             $this->_db->insert('case_need', $needData);
-            $need->setCaseNeedId($this->_db->lastInsertId('case_need'));
+            $need->setCaseNeedId($this->_db->lastInsertId());
             $newNeeds[] = $need;
         }
-        return $newNeeds;
+        $case->setTotalAmount($totalAmount);
+        $case->setNeedList($newNeeds);
+        return $case;
     }
     
-    private function insertVisits($visits, $caseId){
+    private function insertVisits($case){
+        $visits = $case->getVisits();
+        $caseId = $case->getId();
         $newVisits = array();
         foreach($visits as $visit){
             $visitData = $this->disassembleCaseVisitModel($visit);
@@ -644,13 +651,14 @@ class App_Service_Member
             $this->_db->insert('case_visit', $visitData);
             
             //Insert individual visitors in case_visitors table
-            $newVisitId = $this->_db->lastInsertId('case_visit');
+            $newVisitId = $this->_db->lastInsertId();
             $this->insertVisitors($visit->getVisitors(), $newVisitId);
             
             $visit->setVisitId($newVisitId);
             $newVisits[] = $visit;
         }
-        return $newVisits;
+        $case->setVisits($newVisits);
+        return $case;
     }
     
     private function insertVisitors($visitors, $visitId){

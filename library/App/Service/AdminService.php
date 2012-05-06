@@ -19,6 +19,13 @@ class App_Service_AdminService {
         return $this->buildParishParams($results);
     }
     
+    public function getUserById($userId){
+	$select = $this->_db->select()
+		->from('user')
+		->where('user_id = ?', $userId);
+	$results = $this->_db->fetchRow($select);
+	return $this->buildUserModel($results);
+    }
     /****
      *  Function creates a Parish funds object from the result set
      */
@@ -38,35 +45,42 @@ class App_Service_AdminService {
      */
     public function updateParishParams($params)
     {
-        $data = array('available_funds'  => $params->getAvailableFunds(),
-                      'year_limit'       => $params->getYearlyLimit(),
-                      'lifetime_limit'   => $params->getLifeTimeLimit(),
-                      'case_limit'       => $params->getCaseLimit(),
-                      'casefund_limit'   => $params->getCaseFundLimit());
+        $data = $this->disassembleParishParams($params);
         $this->_db->update('parish_funds',$data,'1');
     }
     
+    public function updateParishMember($user){
+	$userData = $this->disassembleParishParams($user);
+	$where = $this->_db->quoteInto('user_id = ?', $user->getId());
+	$this->_db->update('user', $userData, $where);
+    }
+    
+    public function updateUserPassword($userId, $newPass){
+	$change = array(
+		    'password' => $newPass,
+		    'change_pswd' => '0');
+	$where = $this->_db->quoteInto('user_id = ?', $userId);
+	$this->_db->update('user', $change, $where);
+    }
     /***
      *  Function gets an array of all the 
      */
     public function getParishMembers()
     {
-        $select = $this->_db->select()->from('user');
-        
-        $results = $this->_db->fetchAll($select);
-        
-        return $this->buildMemeberList($results);
+        $select = $this->_db->select()
+		->from('user')
+		->order('first_name ASC');
+	$results = $this->_db->fetchAll($select);
+	return $this->buildMemeberList($results);
     }
     
     /**
      *  Function builds an array of all memebers of the parish
      *  from a row set
      */
-    private function buildMemeberList($rowset)
-    {
-        $list = array();
-        
-        foreach($rowset as $row)
+    private function buildMemeberList($results){
+        $users = array();
+        foreach($results as $row)
         {
             $user = new Application_Model_Impl_User();
             $user
@@ -79,10 +93,22 @@ class App_Service_AdminService {
                 ->setRole($row['role'])
                 ->setActive($row['active_flag']);
                 
-            array_push($list,$user);
+            $users[] = $user;
         }
-        
-        return($list);
+        return $users;
+    }
+    
+    public function buildUserModel($results){
+	$user = Application_Model_Impl_User();
+	$user->setUserId($results['user_id']);
+	$user->setFirstName($results['first_name']);
+	$user->setLastName($results['last_name']);
+	$user->setEmail($results['email']);
+	$user->setCellPhone($results['cell_phone']);
+	$user->setHomePhone($results['home_phone']);
+	$user->setRole($results['role']);
+	$user->setActive($results['active_flag']);
+	return $user;
     }
     
     /****
@@ -120,7 +146,7 @@ class App_Service_AdminService {
         
         $this->_db->update('user',$data,"user_id ='" . $user->getUserId() . "'");
     }
-    
+
     /*****
      *  Resets a users password
      */
@@ -162,4 +188,23 @@ class App_Service_AdminService {
         return($user);
     }
     
+    private function disassembleParishParams($params){
+	$paramData = array(
+		    'year_limit' => $params->getYearlyLimit(),
+                    'lifetime_limit' => $params->getLifeTimeLimit(),
+                    'case_limit' => $params->getCaseLimit(),
+                    'casefund_limit' => $params->getCaseFundLimit());
+	return $paramData;
+    }
+    
+    public function disassembleUserModel($user){
+	$userData = array(
+		    'first_name' => $user->getFirstName(),
+		    'last_name' => $user->getLastName(),
+		    'email' => $user->geEmail(),
+		    'cell_phone' => $user->getCellPhone(),
+		    'home_phone' => $user->getHomePhone(),
+		    'role' => $user->getRole(),
+		    'active_flag' => $user->getActive());
+    }
 }
