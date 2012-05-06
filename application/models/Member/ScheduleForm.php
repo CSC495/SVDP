@@ -1,24 +1,22 @@
 <?php
 
-class Application_Model_Member_ScheduleForm extends Zend_Form
+class Application_Model_Member_ScheduleForm extends Twitter_Bootstrap_Form_Horizontal
 {
 
     public function __construct($users)
     {
-        parent::__construct();
-
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
-        $this
-            ->setAction($baseUrl->baseUrl(App_Resources::MEMBER) . '/editSchedule')
-            ->setMethod('post')
-            ->setDecorators(array(
+        parent::__construct(array(
+            'action' => $baseUrl->baseUrl(App_Resources::MEMBER) . '/editSchedule',
+            'method' => 'post',
+            'decorators' => array(
                 'PrepareElements',
-                array('ViewScript', array(
-                    'viewScript' => 'form/schedule-form.phtml',
-                )),
-                array('form', array('class' => 'member form-horizontal')),
-            ));
+                array('ViewScript', array('viewScript' => 'form/schedule-form.phtml')),
+                'Form',
+            ),
+            'class' => 'member form-horizontal',
+        ));
 
         $this->addSubForm(
             new Application_Model_Member_ScheduleRecordListSubForm($users),
@@ -50,5 +48,10 @@ class Application_Model_Member_ScheduleForm extends Zend_Form
     public function getRemovedEntries()
     {
         return $this->scheduleRecordList->getRemovedRecords();
+    }
+
+    public function setEntries($entries)
+    {
+        $this->scheduleRecordList->setRecords($entries);
     }
 }

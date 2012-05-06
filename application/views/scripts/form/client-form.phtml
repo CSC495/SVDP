@@ -57,46 +57,9 @@ function isMissingPhone($element)
     <div class=span6><?php echo $this->element->addr->resideParish; ?></div>
 </fieldset>
 
-<fieldset>
-    <legend>Household members:</legend>
+<?php echo $this->element->householderRecordList; ?>
 
-    <?php if ($this->householdersSubForm->getSubForms()) { ?>
-    <table class="table table-striped">
-        <tr>
-            <th>First name</th>
-            <th>Last name</th>
-            <th>Relationship</th>
-            <th>Birth date<br>(Optional)</th>
-            <th>Departure date<br>(Optional)</th>
-        </tr>
-        <?php echo $this->householdersSubForm; ?>
-    </table>
-    <?php } else { ?>
-    <div class=control-group><div class=controls><p class=help-block>No household members listed.</p></div></div>
-    <?php } ?>
-
-    <div class=control-group><div class=controls><?php echo $this->element->newHouseholder; ?></div></div>
-</fieldset>
-
-<fieldset>
-    <legend>Employment status:</legend>
-
-    <?php if ($this->employersSubForm->getSubForms()) { ?>
-    <table class="table table-striped">
-        <tr>
-            <th>Company</th>
-            <th>Position</th>
-            <th>Start date</th>
-            <th>End date<br>(Optional)</th>
-        </tr>
-        <?php echo $this->employersSubForm; ?>
-    </table>
-    <?php } else { ?>
-    <div class=control-group><div class=controls><p class=help-block>No employers listed.</p></div></div>
-    <?php } ?>
-
-    <div class=control-group><div class=controls><?php echo $this->element->newEmployer; ?></div></div>
-</fieldset>
+<?php echo $this->element->employerRecordList; ?>
 
 <div class=form-actions>
     <?php echo $this->element->submit; ?>

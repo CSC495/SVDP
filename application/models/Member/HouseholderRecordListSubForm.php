@@ -1,37 +1,35 @@
 <?php
 
-class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
+class Application_Model_Member_HouseholderRecordListSubForm
+    extends App_Form_RecordListSubFormAbstract {
 
     public function __construct()
     {
-        parent::__construct();
-
-        $this->addElementPrefixPath(
-            'Twitter_Bootstrap_Form_Decorator',
-            'Twitter/Bootstrap/Form/Decorator',
-            'decorator'
-        );
-
-        $this->setDecorators(array(
-            'FormElements',
-            array('HtmlTag', array('tag' => 'tr')),
+        parent::__construct(array(
+            'namespace' => 'householder',
+            'labels' => array(
+                'First Name',
+                'Last Name',
+                'Relationship',
+                'Birth Date (Optional)',
+                'Departure Date (Optional)',
+            ),
+            'legend' => 'Household members:',
+            'addRecordMsg' => 'Add Another Household Member',
+            'noRecordsMsg' => 'No household members listed.',
         ));
+    }
 
-        $this->setElementDecorators(array(
-            'ViewHelper',
-            'ElementErrors',
-            'Wrapper',
-            array('HtmlTag', array('tag'  => 'td')),
-        ));
-
-        $this->addElement('hidden', 'id', array(
+    protected function initSubForm($householderSubForm)
+    {
+        $householderSubForm->addElement('hidden', 'id', array(
             'decorators' => array(
                 'ViewHelper',
                 array('HtmlTag', array('tag' => 'td', 'openOnly' => true)),
             ),
         ));
 
-        $this->addElement('text', 'firstName', array(
+        $householderSubForm->addElement('text', 'firstName', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -56,7 +54,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             'class' => 'span2',
         ));
 
-        $this->addElement('text', 'lastName', array(
+        $householderSubForm->addElement('text', 'lastName', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -75,7 +73,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             'class' => 'span2',
         ));
 
-        $this->addElement('text', 'relationship', array(
+        $householderSubForm->addElement('text', 'relationship', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -94,7 +92,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             'class' => 'span2',
         ));
 
-        $this->addElement('text', 'birthDate', array(
+        $householderSubForm->addElement('text', 'birthDate', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 array('Date', true, array(
@@ -109,7 +107,7 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             'class' => 'span2 date',
         ));
 
-        $this->addElement('text', 'departDate', array(
+        $householderSubForm->addElement('text', 'departDate', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 array('Date', true, array(
@@ -125,26 +123,33 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
         ));
     }
 
-    public function getHouseholder()
+    protected function getRecord($householderSubForm)
     {
         $householder = new Application_Model_Impl_Householder();
-        $householder->setId(App_Formatting::emptyToNull($this->id->getValue()));
-        $householder->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()));
-        $householder->setLastName(App_Formatting::emptyToNull($this->lastName->getValue()));
-        $householder->setRelationship(App_Formatting::emptyToNull($this->relationship->getValue()));
-        $householder->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()));
-        $householder->setDepartDate(App_Formatting::unformatDate($this->departDate->getValue()));
+        $householder->setId(App_Formatting::emptyToNull($householderSubForm->id->getValue()));
+        $householder->setFirstName(
+            App_Formatting::emptyToNull($householderSubForm->firstName->getValue()));
+        $householder->setLastName(
+            App_Formatting::emptyToNull($householderSubForm->lastName->getValue()));
+        $householder->setRelationship(
+            App_Formatting::emptyToNull($householderSubForm->relationship->getValue()));
+        $householder->setBirthDate(
+            App_Formatting::unformatDate($householderSubForm->birthDate->getValue()));
+        $householder->setDepartDate(
+            App_Formatting::unformatDate($householderSubForm->departDate->getValue()));
 
         return $householder;
     }
 
-    public function setHouseholder($householder)
+    protected function setRecord($householderSubForm, $householder)
     {
-        $this->id->setValue($householder->getId());
-        $this->firstName->setValue($householder->getFirstName());
-        $this->lastName->setValue($householder->getLastName());
-        $this->relationship->setValue($householder->getRelationship());
-        $this->birthDate->setValue(App_Formatting::formatDate($householder->getBirthDate()));
-        $this->departDate->setValue(App_Formatting::formatDate($householder->getDepartDate()));
+        $householderSubForm->id->setValue($householder->getId());
+        $householderSubForm->firstName->setValue($householder->getFirstName());
+        $householderSubForm->lastName->setValue($householder->getLastName());
+        $householderSubForm->relationship->setValue($householder->getRelationship());
+        $householderSubForm->birthDate->setValue(
+            App_Formatting::formatDate($householder->getBirthDate()));
+        $householderSubForm->departDate->setValue(
+            App_Formatting::formatDate($householder->getDepartDate()));
     }
 }
