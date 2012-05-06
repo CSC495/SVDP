@@ -15,7 +15,6 @@ class Application_Model_Member_ScheduleForm extends Twitter_Bootstrap_Form_Horiz
                 array('ViewScript', array('viewScript' => 'form/schedule-form.phtml')),
                 'Form',
             ),
-            'class' => 'member form-horizontal',
         ));
 
         $this->addSubForm(

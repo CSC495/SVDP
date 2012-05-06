@@ -9,7 +9,7 @@ class Application_Model_Login_LoginForm extends Zend_Form
 		$this->setMethod('post');
 
         $baseUrl = new Zend_View_Helper_BaseUrl();
-		$this->setAction($baseUrl->baseUrl('/login/process'));
+		$this->setAction($baseUrl->baseUrl('/login/login'));
 		$this->setDecorators(array(
 			array('ViewScript', array('viewScript' => 'login/loginViewScript.phtml'))
 		));	
@@ -29,6 +29,10 @@ class Application_Model_Login_LoginForm extends Zend_Form
 		   'class'      => 'input-large',
                ));
         
+		// Hidden element so next page knows referer
+		$prev = $this->addElement('hidden','prev', array(
+			'value' => 'login'
+		));
 		
                $login = $this->addElement('submit', 'login', array(
                    'required' => false,

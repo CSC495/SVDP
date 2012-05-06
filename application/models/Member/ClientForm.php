@@ -44,7 +44,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 array('ViewScript', array('viewScript' => 'form/client-form.phtml')),
                 'Form',
             ),
-            'class' => 'member form-horizontal',
+            'class' => 'form-horizontal twocol',
         ));
 
         // Personal information elements:

@@ -214,7 +214,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                 'ViewHelper',
                 array('HtmlTag', array('tag' => 'td', 'class' => 'remove')),
             ),
-            'class' => 'btn btn-danger',
+            'class' => 'btn btn-danger remove',
         ));
 
         return $recordSubForm;
