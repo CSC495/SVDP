@@ -14,43 +14,62 @@ class AdminController extends Zend_Controller_Action
         $this->view->pageTitle = "Admin Controller";
     }
     
+    private function initAdjustmentForm($form)
+    {
+        $config = Zend_Registry::get('config');
+
+        // TODO set default values
+        $form->aid->setValue("$" . $config->getLifeTimeLimit());
+        $form->casefund->setValue("$" .$config->getCaseFundLimit());
+        $form->lifetimecases->setValue($config->getCaseLimit());
+        $form->yearlycases->setValue($config->getYearlyLimit());
+        
+        $this->view->headScript()->appendFile($this->view->baseUrl('admin.js'));
+        $this->view->headScript()->appendFile($this->view->baseUrl('utility.js'));
+    }
     // Displays view for modifying limits
     public function adjustAction()
     {
         $request = $this->getRequest();
         
-        // Verify Post
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('index');
-        }
+        $this->view->pageTitle = "Admin Limit Adjustments";
         
-        // Get the form and populate it
         $form = new Application_Model_Admin_AdjustForm();
+        $this->view->form = $form;
         
-        if( !$form->isValid($request->getPost()) ){
-            //Redirect and indicate errors   
+        // Check the form if post
+        if( $request->isPost() ){
+            return $this->handleAdjustmentForm($form);
         }
-        
-        // Get Form Values
-        $lifetimeLimit = $form->getValue('aid');
-        $yearlyLimit = $form->getValue('yearlycases');
-        $lifetimeCases = $form->getValue('lifetimecases');
-        $caseFund = $form->getValue('casefund');
-        
-        //TODO: Persist the data to database.
-        $config = Zend_Registry::get('config');
-        $config->setYearlyLimit($yearlyLimit);
-        $config->setLifeTimeLimit($lifetimeLimit);
-        $config->setCaseLimit($lifetimeCases);
-        $config->setCaseFundLimit($caseFund);
-        
-        $service = new App_Service_AdminService();
-        $service->updateParishParams($config);
-        //
-        
-        $this->_helper->redirector('index','admin');   
+        else
+            $this->initAdjustmentForm($form);
+            
+        return;
     }
     
+    private function handleAdjustmentForm($form)
+    {
+        if( $form->isValid($_POST))
+        {
+            // Get Form Values
+            $lifetimeLimit = $form->getValue('aid');
+            $yearlyLimit = $form->getValue('yearlycases');
+            $lifetimeCases = $form->getValue('lifetimecases');
+            $caseFund = $form->getValue('casefund');
+            
+            //TODO: Persist the data to database.
+            $config = Zend_Registry::get('config');
+            $config->setYearlyLimit($yearlyLimit);
+            $config->setLifeTimeLimit($lifetimeLimit);
+            $config->setCaseLimit($lifetimeCases);
+            $config->setCaseFundLimit($caseFund);
+            
+            $service = new App_Service_AdminService();
+            $service->updateParishParams($config);
+        
+            $this->_helper->redirector('index','admin');
+        }
+    }
     // Handles serverside creation of a new Member
     public function newmemberAction()
     {
@@ -66,26 +85,6 @@ class AdminController extends Zend_Controller_Action
         
         // Get form values
         return $this->_helper->redirector('index');
-    }
-    
-    // Displays view for modiying limits
-    public function limitsAction()
-    {
-        $this->view->pageTitle = "Admin Limit Adjustments";
-        $this->view->form = new Application_Model_Admin_AdjustForm();
-        
-        $config = Zend_Registry::get('config');
-
-        // TODO set default values
-        $this->view->form->aid->setValue("$" . $config->getLifeTimeLimit());
-        $this->view->form->casefund->setValue("$" .$config->getCaseFundLimit());
-        $this->view->form->lifetimecases->setValue($config->getCaseLimit());
-        $this->view->form->yearlycases->setValue($config->getYearlyLimit());
-        
-
-        $this->view->headScript()->appendFile($this->view->baseUrl('admin.js'));
-        $this->view->headScript()->appendFile($this->view->baseUrl('utility.js'));
-        
     }
     
     // Displays all member information
