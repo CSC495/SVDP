@@ -120,7 +120,7 @@ class MemberController extends Zend_Controller_Action
 
         if (!$request->isPost()) {
             // If this isn't a POST request, fill the form from existing entries.
-            $this->view->form->scheduleRecordList->setRecords($service->getScheduleEntries());
+            $this->view->form->setEntries($service->getScheduleEntries());
             return;
         }
 
@@ -198,19 +198,11 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
-        // Handles requests to add new householders or employers.
-        if ($this->view->form->isAddHouseholderRequest($data)) {
-            $this->view->form->addHouseholder();
-            return;
-        }
-
-        if ($this->view->form->isAddEmployerRequest($data)) {
-            $this->view->form->addEmployer();
-            return;
-        }
-
         // If the user just submitted the form, make some validation goodness happen.
-        if (!$this->view->form->isValid($data)) {
+        // If the user requested that we add or remove a household member or employer, or if form
+        // validation failed, then we're done here.
+        if ($this->view->form->handleAddRemoveRecords($data)
+                || !$this->view->form->isValid($data)) {
             return;
         }
 
@@ -219,8 +211,8 @@ class MemberController extends Zend_Controller_Action
             // TODO: Update existing client.
         } else {
             $client       = $this->view->form->getClient();
-            $householders = $this->view->form->getHouseholders();
-            $employers    = $this->view->form->getEmployers();
+            $householders = $this->view->form->getChangedHouseholders();
+            $employers    = $this->view->form->getChangedEmployers();
 
             $client
                 ->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id)
