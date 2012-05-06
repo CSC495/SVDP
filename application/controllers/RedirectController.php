@@ -42,10 +42,9 @@ class RedirectController extends Zend_Controller_Action
         
         $this->view->message = $message;
         $this->view->controller = $controller;
-        $this->view->timeout = $timeout;
         $this->view->action = $action;
         
         $baseUrl = new Zend_View_Helper_BaseUrl();
-        $this->getResponse()->setHeader('Refresh', '3; URL=' . $baseUrl->baseUrl($controller) . '/' . $action);
+        $this->getResponse()->setHeader('Refresh', $timeout . '; URL=' . $baseUrl->baseUrl($controller) . '/' . $action);
     }
 }
