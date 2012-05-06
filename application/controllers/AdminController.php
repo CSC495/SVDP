@@ -1,9 +1,7 @@
 <?php
 
 class AdminController extends Zend_Controller_Action
-{
-    private $_SALT = 'tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8';
-    
+{  
     public function init()
     {
         /* Initialize action controller here */
@@ -147,7 +145,7 @@ class AdminController extends Zend_Controller_Action
         $password = App_Password::generatePassword(10);
 
         $service = new App_Service_AdminService();
-        $service->createParishMemeber($user,hash('SHA256', $this->_SALT . $password));
+        $service->createParishMemeber($user,hash('SHA256', App_Password::saltIt($password)));
         
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
