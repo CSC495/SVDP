@@ -95,8 +95,8 @@ class App_Service_AdminService {
                         'first_name'  => $user->getFirstName(),
                         'last_name'   => $user->getLastName(),
                         'email'       => $user->getEmail(),
-                        'cell_phone'  => $user->getCellPhone(),
-                        'home_phone'  => $user->getHomePhone(),
+                        'cell_phone'  => App_Formatting::emptyToNull($user->getCellPhone()),
+                        'home_phone'  => App_Formatting::emptyToNull($user->getHomePhone()),
                         'role'        => $user->getRole(),
                         'change_pswd' => 1,
                         'active_flag' => 1,
@@ -113,8 +113,8 @@ class App_Service_AdminService {
                         'first_name'  => $user->getFirstName(),
                         'last_name'   => $user->getLastName(),
                         'email'       => $user->getEmail(),
-                        'cell_phone'  => $user->getCellPhone(),
-                        'home_phone'  => $user->getHomePhone(),
+                        'cell_phone'  => App_Formatting::emptyToNull($user->getCellPhone()),
+                        'home_phone'  => App_Formatting::emptyToNull($user->getHomePhone()),
                         'role'        => $user->getRole(),
                         'active_flag' => $user->getActive());
         
@@ -161,4 +161,5 @@ class App_Service_AdminService {
         
         return($user);
     }
+    
 }

@@ -1,15 +1,17 @@
 <?php if ($this->role === App_Roles::ADMIN) { ?>
 <a href="<?php echo $this->escape($this->baseUrl('/admin/members')); ?>" class="btn btn-primary btn-large">Manage Members</a>
-<a href="<?php echo $this->escape($this->baseUrl('/admin/limits')); ?>" class="btn btn-primary btn-large">Adjust Client Limits</a>
+<a href="<?php echo $this->escape($this->baseUrl('/admin/adjust')); ?>" class="btn btn-primary btn-large">Adjust Limits</a>
 <a href="<?php echo $this->escape($this->baseUrl('/document/list')); ?>" class="btn btn-primary btn-large">Documents</a>
 <?php } else if ($this->role === App_Roles::MEMBER) { ?>
 <a href="<?php echo $this->escape($this->baseUrl('/member/map')); ?>" class="btn btn-primary btn-large">Maps</a>
 <a href="<?php echo $this->escape($this->baseUrl('/search/member')); ?>" class="btn btn-primary btn-large">Search</a>
 <a href="<?php echo $this->escape($this->baseUrl('/member/openCases')); ?>" class="btn btn-primary btn-large">Open Cases</a>
-<a href="<?php echo $this->escape($this->baseUrl('/document/list')); ?>" class="btn btn-primary btn-large">Documents</a>
+<a href="<?php echo $this->escape($this->baseUrl('/member/editSchedule')); ?>" class="btn btn-primary btn-large">Edit Schedule</a>
 <a href="<?php echo $this->escape($this->baseUrl('/report')); ?>" class="btn btn-primary btn-large">Reports</a>
-<a href="<?php echo $this->escape($this->baseUrl('/member/contacts')); ?>" class="btn btn-primary btn-large">Contact List</a>
+<a href="<?php echo $this->escape($this->baseUrl('/member/contacts')); ?>" class="btn btn-primary btn-large">Contacts</a>
+<a href="<?php echo $this->escape($this->baseUrl('/document/list')); ?>" class="btn btn-primary btn-large">Documents</a>
 <?php } else if ($this->role === App_Roles::TREASURER) { ?>
 <a href="<?php echo $this->escape($this->baseUrl('/treasurer')); ?>" class="btn btn-primary btn-large">Open Check Requests</a>
 <a href="<?php echo $this->escape($this->baseUrl('/search/treasurer')); ?>" class="btn btn-primary btn-large">Search</a>
+<a href="<?php echo $this->escape($this->baseUrl('/document/list')); ?>" class="btn btn-primary btn-large">Documents</a>
 <?php } ?>
