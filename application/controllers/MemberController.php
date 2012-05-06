@@ -136,8 +136,7 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
-        // Handle added, modified, and deleted records.
-        print_r($this->view->form->scheduleRecordList->getRemovedRecords());
+        // TODO: Handle added, modified, and deleted records.
     }
 
     /**

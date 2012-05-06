@@ -224,7 +224,11 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         $this->initSubForm($recordSubForm);
 
         $recordSubForm->addElement('submit', 'remove', array(
-            'label' => 'X',
+            'label' => '×',
+            'decorators' => array(
+                'ViewHelper',
+                array('HtmlTag', array('tag' => 'td', 'class' => 'remove')),
+            ),
             'class' => 'btn btn-danger',
         ));
 
