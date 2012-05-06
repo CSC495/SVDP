@@ -18,6 +18,17 @@ class Application_Model_Login_ForgotForm extends Twitter_BootStrap_Form_Vertical
 		$baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/login/forgot'));
 		
+		$this->setElementDecorators(array(
+			'FieldSize',
+			'ViewHelper',
+			'Addon',
+			'ElementErrors',
+			array('Description', array('class' => 'help-block')),
+			array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
+			array('Label', array('class' => 'control-label')),
+			'Wrapper',
+		));
+		
 		$this->addElement('text','username',array(
 			'required'   => true,
 			'filters'    => array('stringTrim'),

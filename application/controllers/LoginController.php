@@ -221,27 +221,6 @@ class LoginController extends Zend_Controller_Action
     }
     
     /**
-     * Displays simple view informing users password has been changed
-     *
-     * @usedby LoginController::changeAction()
-     * @return void
-     */
-    protected function changedAction()
-    {
-        $request = $this->getRequest();
-        
-        if( !$request->isPost() )
-        {
-            $this->_helper->redirector('index');
-        }
-        
-        $baseUrl = new Zend_View_Helper_BaseUrl();
-        $this->getResponse()->setHeader('Refresh', '3; URL=' . $baseUrl->baseUrl(App_Resources::INDEX));
-        
-        $this->view->pageTitle = "Password Changed";
-    }
-    
-    /**
      * Handles creation of view to change password
      *
      * @usedby Application_Model_Login_LoginForm
@@ -287,7 +266,11 @@ class LoginController extends Zend_Controller_Action
         $service = new App_Service_LoginService();
         $service->updateUserPassword($identity->user_id,hash('SHA256', $this->_SALT . $pwd));
         
-        $this->_forward('changed');
+        $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Your password has been changed succefully!',
+                               'time' => 5,
+                               'controller' => App_Resources::INDEX,
+                               'action' => 'index'));
     }
     
     /**
