@@ -1,6 +1,6 @@
 @charset "utf-8";
 
-/* Layour Styles */
+/* Styles for layout: */
 
 .sidebar-nav {
     padding: 9px 0;
@@ -12,7 +12,7 @@
     height: 400px;
 }
 
-/* Styles for edit client/case views: */
+/* Styles for member edit forms: */
 
 form.member fieldset.row-fluid {
     max-width: 960px;
@@ -30,7 +30,18 @@ form.member table {
 }
 
 form.member th {
-  vertical-align: bottom;
+    vertical-align: bottom;
+}
+
+form.member .remove {
+    width: 3ex;
+}
+
+
+form.member .remove input {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 16px;
 }
 
 form.member td .control-group {
