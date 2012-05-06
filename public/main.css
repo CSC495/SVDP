@@ -14,26 +14,26 @@
 
 /* Styles for edit client/case views: */
 
-form.member fieldset.row-fluid {
+form.twocol fieldset.row-fluid {
     max-width: 960px;
 }
 
-form.member .span6 {
+form.twocol .span6 {
     margin-left: 0 !important;
     padding-left: 0 !important;
 }
 
-form.member table {
+form.twocol table {
     margin-bottom: 18px;
     max-width: 960px;
     width: 100%;
 }
 
-form.member th {
+form.twocol th {
   vertical-align: bottom;
 }
 
-form.member td .control-group {
+form.twocol td .control-group {
     margin-bottom: 0;
 }
 

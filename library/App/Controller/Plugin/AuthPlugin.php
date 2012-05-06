@@ -35,7 +35,6 @@ class App_Controller_Plugin_AuthPlugin extends Zend_Controller_Plugin_Abstract
         if ($auth->hasIdentity()) {
             // Get users identity
             $identity = $auth->getIdentity();
-    
             // Send user to change password page if change is required
             if( $identity->change_pswd
                     && ($request->getControllerName() !== App_Resources::LOGIN

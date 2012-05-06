@@ -2,6 +2,8 @@
 
 class AdminController extends Zend_Controller_Action
 {
+    private $_SALT = 'tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8';
+    
     public function init()
     {
         /* Initialize action controller here */
@@ -19,7 +21,7 @@ class AdminController extends Zend_Controller_Action
         $config = Zend_Registry::get('config');
 
         // TODO set default values
-        $form->aid->setValue("$" . $config->getLifeTimeLimit());
+        $form->aid->setValue($config->getLifeTimeLimit());
         $form->casefund->setValue("$" .$config->getCaseFundLimit());
         $form->lifetimecases->setValue($config->getCaseLimit());
         $form->yearlycases->setValue($config->getYearlyLimit());
@@ -67,26 +69,15 @@ class AdminController extends Zend_Controller_Action
             $service = new App_Service_AdminService();
             $service->updateParishParams($config);
         
-            $this->_helper->redirector('index','admin');
+            // Redirect user
+        $this->_forward('index', App_Resources::REDIRECT, null,
+                    Array( 'msg' => 'Limits have been adjusted successfully!',
+                           'time' => 1,
+                           'controller' => App_Resources::ADMIN,
+                           'action' => 'members'));
         }
     }
-    // Handles serverside creation of a new Member
-    public function newmemberAction()
-    {
-        $request = $this->getRequest();
-        
-        // Verify Post
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('index');
-        }
-        
-        $form = new Application_Model_Admin_NewUserForm();
-        $form->populate($_POST);
-        
-        // Get form values
-        return $this->_helper->redirector('index');
-    }
-    
+
     // Displays all member information
     public function membersAction()
     {
@@ -99,13 +90,72 @@ class AdminController extends Zend_Controller_Action
     // displays view for creating new member
     public function newAction()
     {
+        $request = $this->getRequest();
+        
+        $form = new Application_Model_Admin_NewUserForm();
         $this->view->pageTitle = "Admin New Member Contact";
-        $this->view->form = new Application_Model_Admin_NewUserForm();
+        $this->view->form = $form;
 
         $this->view->headScript()->appendFile($this->view->baseUrl('admin.js'));
         $this->view->headScript()->appendFile($this->view->baseUrl('utility.js'));
+        
+        
+        // Verify Post
+        if( $request->isPost() ){
+            $this->handleNewForm($form);
+        }
+        
     }
-    
+
+    private function handleNewForm($form)
+    {
+        $form->populate($_POST);
+        
+        $error = false;
+        if(!$form->isValid($_POST))
+            $error = true;
+            
+
+        // Check to ensure atleast one phone number was provided
+        if($form->getValue('cell') === null && $form->getValue('home') === null)
+        {
+            $form->cell->addError('');
+            $form->home->addError('Either cell or home phone must be provided');
+            
+            $error = true;
+        }
+            
+        // If theres an error return
+        if($error)
+            return;
+        
+        $user = new Application_Model_Impl_User();
+        $user
+            ->setFirstName($form->getValue('firstname'))
+            ->setLastName($form->getValue('lastname'))
+            ->setEmail($form->getValue('email'))
+            ->setCellPhone($form->getValue('cell'))
+            ->setHomePhone($form->getValue('home'))
+            ->setRole($form->getValue('role'))
+            ->setActive(1); // Default user to active
+
+        $userName = substr($user->getFirstName(),0,1);
+        $userName = $userName . $user->getLastName();
+        $userName = strtolower($userName);
+        $user->setUserId($userName);
+
+        $password = App_Password::generatePassword(10);
+
+        $service = new App_Service_AdminService();
+        $service->createParishMemeber($user,hash('SHA256', $this->_SALT . $password));
+        
+        // Redirect user
+        $this->_forward('index', App_Resources::REDIRECT, null,
+                    Array( 'msg' => 'Member added successfully!',
+                           'time' => 3,
+                           'controller' => App_Resources::ADMIN,
+                           'action' => 'members'));
+    }
     // Display for modifying a users information
     public function modifyAction()
     {
@@ -113,45 +163,64 @@ class AdminController extends Zend_Controller_Action
         
         // Get request and passed parameter
         $request = $this->getRequest();
-        $userId = $request->getParam('id');
         
-        // If theres no param go back to index
-        if(!$userId)
-           return $this->_helper->redirector('index'); 
+        $form = new Application_Model_Admin_ModifyUserForm();
+        // Handle display of form
+        if( $request->isGet() && $this->_hasParam('id') )
+        {
+            $userId = $request->getParam('id');
         
-        // Get the users data
-        $service = new App_Service_AdminService();
-        $user = $service->getUserInfo($userId);
         
-        $this->view->form = new Application_Model_Admin_ModifyUserForm();
+            // Get the users data
+            $service = new App_Service_AdminService();
+            $user = $service->getUserInfo($userId);
         
-        // Set form default values
-        $this->view->form->userid->setValue($user->getUserId());
-        $this->view->form->firstname->setValue($user->getFirstName());
-        $this->view->form->lastname->setValue($user->getLastName());
-        $this->view->form->email->setValue($user->getEmail());
-        $this->view->form->cell->setValue($user->getCellPhone());
-        $this->view->form->home->setValue($user->getHomePhone());
-        $this->view->form->role->setValue($user->getRole());
-        $this->view->form->status->setValue($user->getActive());
-         
-    }
-    
-    // Handles submission of user modify form
-    public function modifyprocAction()
-    {
-        $request = $this->getRequest();
+            $this->view->form = $form;
         
-        // Verify Post
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('index');
+            // Set form default values
+            $this->view->form->userid->setValue($user->getUserId());
+            $this->view->form->firstname->setValue($user->getFirstName());
+            $this->view->form->lastname->setValue($user->getLastName());
+            $this->view->form->email->setValue($user->getEmail());
+            $this->view->form->cell->setValue($user->getCellPhone());
+            $this->view->form->home->setValue($user->getHomePhone());
+            $this->view->form->role->setValue($user->getRole());
+            $this->view->form->status->setValue($user->getActive());
+            
+            return;
+        }
+        elseif( $request->isPost())
+        {
+            $this->handleModifyForm($form);
+            $this->view->form = $form;
+            return;
         }
         
-        // Get form values
-        $form = new Application_Model_Admin_ModifyUserForm();
-        $form->populate($_POST);
+        return $this->_helper->redirector('index'); 
+    }
+    
+    // Validates and checks the modify member form and persists data
+    private function handleModifyForm($form)
+    {
+        $error = false;
+        // return if the form is not valid
+        if( !$form->isValid($_POST) )
+            $error = true;
+
+        // Check to ensure atleast one phone number was provided
+        if($form->getValue('cell') === null && $form->getValue('home') === null)
+        {
+            $form->cell->addError('');
+            $form->home->addError('Either cell or home phone must be provided');
+            
+            $error = true;
+        }
         
-        // Update in database
+        // Return if there were any errors
+        if($error)
+            return $error;
+        
+        // Everything is good update in database
         $service = new App_Service_AdminService();
         
         $user = new Application_Model_Impl_User();
@@ -166,6 +235,12 @@ class AdminController extends Zend_Controller_Action
             ->setActive($form->getValue('status'));
         
         $service->updateUserInformation($user);
-        return $this->_helper->redirector('index');
+        
+        $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Member Data Updated Successfully!',
+                               'time' => 3,
+                               'controller' => App_Resources::ADMIN,
+                               'action' => 'members'));
+        
     }
 }
