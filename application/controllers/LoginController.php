@@ -212,10 +212,10 @@ class LoginController extends Zend_Controller_Action
         $authSession->setExpirationSeconds($this->_timeout * 60);
         
         // Check if user needs password change. If so forward to change
-        if($data->change_pswd == 1)
-        {
-            return $this->_helper->redirector('change',App_Resources::LOGIN);
-        }
+        //if($data->change_pswd == 1)
+        //{
+        //    return $this->_helper->redirector('change',App_Resources::LOGIN);
+        //}
         
         $this->forwardUser();
     }
@@ -244,14 +244,15 @@ class LoginController extends Zend_Controller_Action
 
         // If not postback render view
         if( !$request->isPost() )
+        {
             return;
+        }
 
         //Post back, check form
         if( !$form->isValid($request->getPost()) )
         {
             return;
         }
-
         $pwd = $form->getValue('password');
         $vpwd = $form->getValue('verify');
 
@@ -265,9 +266,10 @@ class LoginController extends Zend_Controller_Action
         $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
         $service->updateUserPassword($identity->user_id,hash('SHA256', $this->_SALT . $pwd));
+        $identity->change_pswd = 0;
         
         $this->_forward('index', App_Resources::REDIRECT, null,
-                        Array( 'msg' => 'Your password has been changed succefully!',
+                        Array( 'msg' => 'Your password has been changed successfully!',
                                'time' => 5,
                                'controller' => App_Resources::INDEX,
                                'action' => 'index'));
