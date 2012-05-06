@@ -3,12 +3,6 @@
 class LoginController extends Zend_Controller_Action
 {
     /**
-     * salt to be added to the passwords
-     * @var string
-     */
-    private $_SALT = 'tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8';
-    
-    /**
      * Time out for users session in minutes
      * @var int
      */
@@ -180,7 +174,7 @@ class LoginController extends Zend_Controller_Action
         // Set the user inputed values
         $authAdapter
             ->setIdentity($userid)
-            ->setCredential( hash('SHA256', $this->_SALT . $password) );
+            ->setCredential( hash('SHA256', App_Password::saltIt($password)) );
         ;
         
         // Authenticate the user
@@ -265,7 +259,7 @@ class LoginController extends Zend_Controller_Action
 
         $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
-        $service->updateUserPassword($identity->user_id,hash('SHA256', $this->_SALT . $pwd));
+        $service->updateUserPassword($identity->user_id,hash('SHA256', App_Password::saltIt($pwd)));
         $identity->change_pswd = 0;
         
         $this->_forward('index', App_Resources::REDIRECT, null,

@@ -29,4 +29,13 @@ class App_Password
         
         return $pass;
     }
+    
+    public static function saltIt($string)
+    {
+        $salt = 'tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8';
+        
+        $new = $salt . $string;
+        
+        return $new;
+    }
 }
