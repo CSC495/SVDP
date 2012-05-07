@@ -42,13 +42,12 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
             <img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0" hspace="25" vspace="20"/>
         </a>
 	</div>
-	<div class="span9" >
+	<div class="span10" >
 	<ul class="unstyled" style="padding-top: 75px">
     
 		<li><h1>St. Vincent de Paul </h1>
 		<li><div class="nav nav-tabs nav-stacked">
             <?php echo $this->partial("partial/navigation.phtml", array('role' => $role)); ?>
-			<a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>" class="btn btn-primary btn-large">Logout</a>
         </div></li>
 	</ul>
 	</div>
