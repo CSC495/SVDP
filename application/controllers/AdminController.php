@@ -5,13 +5,6 @@ class AdminController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
-        $loginService = new App_Service_LoginService();
-        $document = new Application_Model_Impl_Document();
-        $document->setName('NEW_TEST_NAME');
-        $document->setUrl('TEST_URL');
-        $document->setInternal('0');
-        
-        $loginService->deleteDocument('1');
         $this->view->pageTitle = "Admin Controller";
     }
     
