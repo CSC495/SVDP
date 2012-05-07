@@ -113,9 +113,8 @@ class AdminController extends Zend_Controller_Action
         if(!$form->isValid($_POST))
             $error = true;
             
-
         // Check to ensure atleast one phone number was provided
-        if($form->getValue('cell') === null && $form->getValue('home') === null)
+        if($form->getValue('cell') === '' && $form->getValue('home') === '')
         {
             $form->cell->addError('');
             $form->home->addError('Either cell or home phone must be provided');
