@@ -14,8 +14,31 @@ class DocumentController extends Zend_Controller_Action
         
         $service = new App_Service_DocumentService();
         $this->view->docs = $service->getDocuments();
+        
+        $this->setPartial();
+ 
     }
     
+    // Determines the partial to use
+    private function setPartial()
+    {
+        $auth = Zend_Auth::getInstance();
+
+        if($auth->hasIdentity())
+        {
+            $role = $auth->getIdentity()->role;
+            
+            if ($role === App_Roles::ADMIN)
+            {
+                $this->view->pView = 'partial/viewDocForAdmin.phtml';
+                $this->view->add = true;
+            }
+            else
+            {
+                $this->view->pView = 'partial/viewDocForMember.phtml';
+            }
+        }
+    } 
     // Edit an existing document
     public function editAction()
     {

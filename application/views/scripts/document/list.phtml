@@ -1,18 +1,3 @@
-<?php
-
-$auth = Zend_Auth::getInstance();
-
-if($auth->hasIdentity())
-{
-    $role = $auth->getIdentity()->role;
-    
-    if ($role === App_Roles::ADMIN)
-        $this->pView = 'partial/viewDocForAdmin.phtml';
-    else
-        $this->pView = 'partial/viewDocForMember.phtml';
-   
-} ?>
-
 <div class="well">
 <fieldset>
     <legend>SVDP Documents</legend>
@@ -48,5 +33,5 @@ if($auth->hasIdentity())
 </fieldset>
 </div>
 
-<?php if($role === App_Roles::ADMIN) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/upload') . ">Add new document</a>"; }?>
+<?php if($this->add) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/upload') . ">Add new document</a>"; }?>
 
