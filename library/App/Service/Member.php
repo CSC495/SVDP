@@ -133,7 +133,7 @@ class App_Service_Member
 			->group('cc.case_id')
 			->where('c.client_id = ?', $client_id);
 		$results = $this->db->fetchAll($select);
-		return $this->BuildClientCases($results);
+		return $this->buildCaseModels($results);
     }
     public function createClient($client, $householders, $employers) {
         $this->_db->beginTransaction();
