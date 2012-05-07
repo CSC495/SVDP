@@ -1,13 +1,16 @@
 <p>Viewing user information</p>
 
+
+<div class="search-results">
+    <table class="search-results">
     
-<table>
+    <?php
+    $this->partialLoop()->setObjectKey('user');
+    echo $this->partialLoop('partial/viewMemberForAdmin.phtml', $this->users);
+    ?>
+    
+    </table>
+</div>
 
-<?php
-$this->partialLoop()->setObjectKey('user');
-echo $this->partialLoop('partial/viewMemberForAdmin.phtml', $this->users);
-?>
-
-</table>
-
+<br />
 <a href='<?php echo $this->baseUrl('/admin/new');?>'>Add new member</a>
