@@ -48,6 +48,7 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 		<li><h1>St. Vincent de Paul </h1>
 		<li><div class="nav nav-tabs nav-stacked">
             <?php echo $this->partial("partial/navigation.phtml", array('role' => $role)); ?>
+			<a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>" class="btn btn-primary btn-large">Logout</a>
         </div></li>
 	</ul>
 	</div>
