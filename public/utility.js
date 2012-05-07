@@ -1,5 +1,5 @@
 function isInteger(num){
-    return(num % 1 == 0);
+    return typeof n === 'number' && parseFloat(n) == parseInt(n) && !isNaN(n);
 }
 
 function isMoney(str){
