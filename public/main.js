@@ -459,8 +459,12 @@ function initEditClientForm() {
     doNotHelpCheckbox.click(update);
 
     update();
+}
 
+function initUiWidgets() {
     // Attach jQuery UI widgets/plugin behavior.
     $('.date').datepicker();
     $('.phone').mask('(999) 999-9999');
 }
+
+$(initUiWidgets);

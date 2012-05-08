@@ -2,7 +2,8 @@
 
 This software contains the following third party software.  All authors retain their own copyright.
 
-    Amazon SES Zend Mail Transport
+####Amazon SES Zend Mail Transport
+
 	Copyright 2011 Christopher Valles
     The New BSD License
 	Redistribution and use in source and binary forms, with or without
@@ -27,7 +28,8 @@ This software contains the following third party software.  All authors retain t
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	Bootstrap
+####Bootstrap
+
 	Copyright 2012 Twitter, Inc.
 	Apache 2.0 License
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,3 +44,35 @@ This software contains the following third party software.  All authors retain t
    	See the License for the specific language governing permissions and
    	limitations under the License.
 
+####Masked Input plugin for jQuery
+
+    Copyright 2007-2011 Josh Bush
+    MIT License
+
+    Permission is hereby granted, free of charge, to any person
+    obtaining a copy of this software and associated documentation
+    files (the "Software"), to deal in the Software without
+    restriction, including without limitation the rights to use,
+    copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following
+    conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+    OTHER DEALINGS IN THE SOFTWARE.
+
+####Zend_Form Decorators for Twitter's Bootstrap
+
+    Copyright 2012 Christian Soronellas
+    [Exact license undecided, but will be open source]
+
+    This library can be used for commercial use with no restrictions. I'll add a license terms.
