@@ -225,7 +225,7 @@ CREATE TABLE parish_funds(
 ) ENGINE = InnoDB;
 
 CREATE TABLE schedule(
-	week_id INT NOT NULL AUTO_INCREMENT,
+	week_id INT,
 	start_date DATE,
 	user_id VARCHAR(30),
 	PRIMARY KEY (week_id),
@@ -233,8 +233,9 @@ CREATE TABLE schedule(
 ) ENGINE = InnoDB;
 
 CREATE TABLE documents(
-	doc_id INT,
+	doc_id INT NOT NULL AUTO_INCREMENT,
 	filename VARCHAR(50),
 	url VARCHAR(50),
+	internal_flag TINYINT(1),
 	PRIMARY KEY (doc_id)
 ) ENGINE = InnoDB;
