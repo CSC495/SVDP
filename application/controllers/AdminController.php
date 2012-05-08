@@ -5,35 +5,6 @@ class AdminController extends Zend_Controller_Action
     public function init()
     {
         /* Initialize action controller here */
-        $memberService = new App_Service_Member();
-        $testRequest = new Application_Model_Impl_CheckReq();
-        $testUser = new Application_Model_Impl_User();
-        $address = new Application_Model_Impl_Addr();
-        
-        $address->setStreet('123 TestStreetName');
-	$address->setCity('Test');
-        $address->setState('IL');
-        $address->setZip('60540');
-        
-        $testUser->setUserId('badams');
-        $testRequest->setId('1');
-        $testRequest->setCaseNeedId('1');
-        $testRequest->setRequestDate('2012-12-12');
-        $testRequest->setCase('1');
-        $testRequest->setUser($testUser);
-        $testRequest->setAmount('2000');
-        $testRequest->setComment('TEST COMMENT');
-        $testRequest->setSigneeUser($testUser);
-        $testRequest->setCheckNumber('11111111');
-        $testRequest->setIssueDate('2012-12-12');
-        $testRequest->setAccountNumber('123456789');
-        $testRequest->setPayeeName('TEST COMPANY');
-        $testRequest->setAddress($address);
-        $testRequest->setPhone('2171234567');
-        $testRequest->setContactFirstName('TEST FNAME');
-        $testRequest->setContactLastName('TEST LNAME');
-        
-        $memberService->editCheckRequest($testRequest);
         $this->view->pageTitle = "Admin Controller";
     }
     
