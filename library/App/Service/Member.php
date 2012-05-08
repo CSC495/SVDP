@@ -205,6 +205,20 @@ class App_Service_Member
         }
     }
     
+    public function createCheckRequest($request){
+        $this->_db->beginTransaction();
+        try{
+            $reqData = $this->disassembleCheckRequestModel($request);
+            $this->_db->insert('check_request', $reqData);
+            $request->setId($this->_db->lastInsertId());
+            $this->_db->commit();
+            return $request;
+        }catch(Exception $ex){
+            $this->_db->rollBack();
+            throw $ex;
+        }
+    }
+    
     public function editClient($client, $marriageFlag, $movingFlag){
         $this->_db->beginTransaction();
         try{
@@ -249,6 +263,26 @@ class App_Service_Member
             $this->_db->rollBack();
             throw $ex;
         }
+    }
+    
+    public function editCase($case){
+        $caseData = $this->disassembleCaseModel($case);
+        $caseData['case_id'] = $case->getId();
+        $where = $this->_db->quoteInto('case_id = ?', $case->getId());
+        $this->_db->update('client_case', $caseData, $where);
+        
+        //Update case needs
+        $case = $this->insertNeeds($case);
+        
+        //Update case visits
+        $this->insertVisits($case);
+        return $case;
+    }
+    
+    public function editCheckRequest($request){
+        $reqData = $this->disassembleCheckRequestModel($request);
+        $where = $this->_db->quoteInto('checkrequest_id = ?', $request->getId());
+        $this->_db->update('check_request', $reqData, $where);
     }
 
     private function createHouseholders($householdId, $householders)
@@ -447,6 +481,28 @@ class App_Service_Member
         );
     }
     
+    private function disassembleCheckRequestModel($request){
+        return array(
+            'caseneed_id' => $request->getCaseNeedId(),
+            'user_id' => $request->getSigneeUser()->getUserId(),
+            'request_date' => $request->getRequestDate(),
+            'amount' => $request->getAmount(),
+            'comment' => $request->getComment(),
+            'signee_userid' => $request->getSigneeUser()->getUserId(),
+            'check_number' => $request->getCheckNumber(),
+            'issue_date' => $request->getIssueDate(),
+            'account_number' => $request->getAccountNumber(),
+            'payee_name' => $request->getPayeeName(),
+            'street' => $request->getAddress()->getStreet(),
+            'city' => $request->getAddress()->getCity(),
+            'state' => $request->getAddress()->getState(),
+            'zipcode' => $request->getAddress()->getZip(),
+            'phone' => $request->getPhone(),
+            'contact_fname' => $request->getContactFirstName(),
+            'contact_lname' => $request->getContactLastName()
+        );
+    }
+    
     private function getCurrentHousehold($clientId){
         $select = $this->_db->select()
                 ->from('household', 'household_id')
@@ -628,13 +684,20 @@ class App_Service_Member
         $needs = $case->getNeedList();
         $caseId = $case->getId();
         $newNeeds = array();
+        $totalAmount = 0;
         foreach($needs as $need){
             $needData = $this->disassembleCaseNeedModel($need);
-            $needData['case_id'] = $caseId;
-            $totalAmount += $needData['amount'];
-            $this->_db->insert('case_need', $needData);
-            $need->setCaseNeedId($this->_db->lastInsertId());
-            $newNeeds[] = $need;
+            if($need->getCaseNeedId()){
+                $this->updateCaseNeed($needData, $need->getCaseNeedId());
+                $totalAmount += $needData['amount'];
+                $newNeeds[] = $need;
+            }else{
+                $needData['case_id'] = $caseId;
+                $totalAmount += $needData['amount'];
+                $this->_db->insert('case_need', $needData);
+                $need->setCaseNeedId($this->_db->lastInsertId());
+                $newNeeds[] = $need;
+            }
         }
         $case->setTotalAmount($totalAmount);
         $case->setNeedList($newNeeds);
@@ -647,15 +710,20 @@ class App_Service_Member
         $newVisits = array();
         foreach($visits as $visit){
             $visitData = $this->disassembleCaseVisitModel($visit);
-            $visitData['case_id'] = $caseId;
-            $this->_db->insert('case_visit', $visitData);
+            if($visit->getVisitId()){
+                $this->updateCaseVisit($visitData, $visit->getVisitId());
+                $newVisits[] = $visit;
+            }else{
+                $visitData['case_id'] = $caseId;
+                $this->_db->insert('case_visit', $visitData);
             
-            //Insert individual visitors in case_visitors table
-            $newVisitId = $this->_db->lastInsertId();
-            $this->insertVisitors($visit->getVisitors(), $newVisitId);
+                //Insert individual visitors in case_visitors table
+                $newVisitId = $this->_db->lastInsertId();
+                $this->insertVisitors($visit->getVisitors(), $newVisitId);
             
-            $visit->setVisitId($newVisitId);
-            $newVisits[] = $visit;
+                $visit->setVisitId($newVisitId);
+                $newVisits[] = $visit;
+            }
         }
         $case->setVisits($newVisits);
         return $case;
@@ -669,5 +737,15 @@ class App_Service_Member
             );
             $this->_db->insert('case_visitors', $visitorData);
         }
+    }
+    
+    private function updateCaseNeed($needData, $needId){
+        $where = $this->_db->quoteInto('caseneed_id = ?', $needId);
+        $this->_db->update('case_need', $needData, $where);
+    }
+    
+    private function updateCaseVisit($visitData, $visitId){
+        $where = $this->_db->quoteInto('visit_id = ?', $visitId);
+        $this->_db->update('case_visit', $visitData, $where);
     }
 }
