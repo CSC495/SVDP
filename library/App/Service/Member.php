@@ -280,7 +280,7 @@ class App_Service_Member
         }
     }
     
-    public function editClient($client, $marriageFlag, $movingFlag){
+    public function editClient($client, $marriageStatus, $movingFlag){
         $this->_db->beginTransaction();
         try{
             $clientData = $this->disassembleClientModel($client);
@@ -292,7 +292,7 @@ class App_Service_Member
             
             //If the client moved or had a change in marital status creates a new household, defaults
             //with values of old household
-            if($marriageFlag || $movingFlag){
+            if($marriageStatus || $movingFlag){
                 $this->createNewHousehold($this->getCurrentAddress($client->getId()), $client->getId());
             }
             
@@ -303,7 +303,7 @@ class App_Service_Member
                 $this->editAddress($addrData, $this->getCurrentAddress($client->getId()));
                 
             //If the client had a change in marital status they either got married or divorced
-            if($marriageFlag){
+            if($marriageStatus){
                 //Client got married, add thier spouse to client and new spouse id to household
                 if($client->isMarried())
                     $this->clientMarriage($client);
@@ -755,7 +755,7 @@ class App_Service_Member
         
         //Update client's ex-spouse's marriage status
         $where = $this->_db->quoteInto('client_id = ?', $spouseId);
-        $change = array('marriage_status' => '0');
+        $change = array('marriage_status' => 'Divorced');
         $this->_db->update('client', $change, $where);
         
         //Create new address & household for client's ex-spouse
@@ -766,7 +766,7 @@ class App_Service_Member
     private function clientMarriage($client){
         //Insert the client's spouse in client table
         $spouseData = $this->disassembleClientModel($client->getSpouse());
-        $spouseData['marriage_status'] = '1';
+        $spouseData['marriage_status'] = 'Married';
         $spouseData['created_user_id'] = $client->getUserId();
         $this->_db->insert('client', $spouseData);
         $newSpouseId = $this->_db->lastInsertId();
