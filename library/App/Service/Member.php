@@ -115,7 +115,6 @@ class App_Service_Member
         $results = $this->_db->fetchAssoc($select);
         return $this->buildEmployerModels($results);
     }
-<<<<<<< HEAD
     
     public function getCasesByClient($clientId){
         $select = $this->db->select()
@@ -136,8 +135,6 @@ class App_Service_Member
 		$results = $this->db->fetchAll($select);
 		return $this->buildCaseModels($results);
     }
-    public function createClient($client, $householders, $employers) {
-=======
 
     public function getActiveMembers()
     {
@@ -200,7 +197,6 @@ class App_Service_Member
 
     public function createClient($client, $householders, $employers)
     {
->>>>>>> f31643a8f97073c907466a2cc624efe62c0120e1
         $this->_db->beginTransaction();
 
         try {
