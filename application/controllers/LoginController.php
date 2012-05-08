@@ -264,7 +264,7 @@ class LoginController extends Zend_Controller_Action
         
         $this->_forward('index', App_Resources::REDIRECT, null,
                         Array( 'msg' => 'Your password has been changed successfully!',
-                               'time' => 5,
+                               'time' => 3,
                                'controller' => App_Resources::INDEX,
                                'action' => 'index'));
     }
