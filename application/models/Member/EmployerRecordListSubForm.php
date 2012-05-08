@@ -1,37 +1,34 @@
 <?php
 
-class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
+class Application_Model_Member_EmployerRecordListSubForm
+    extends App_Form_RecordListSubFormAbstract {
 
     public function __construct()
     {
-        parent::__construct();
-
-        $this->addElementPrefixPath(
-            'Twitter_Bootstrap_Form_Decorator',
-            'Twitter/Bootstrap/Form/Decorator',
-            'decorator'
-        );
-
-        $this->setDecorators(array(
-            'FormElements',
-            array('HtmlTag', array('tag' => 'tr')),
+        parent::__construct(array(
+            'namespace' => 'employer',
+            'labels' => array(
+                'Company',
+                'Position',
+                'Start Date',
+                'End Date (Optional)',
+            ),
+            'legend' => 'Employment status:',
+            'addRecordMsg' => 'Add Another Employment',
+            'noRecordsMsg' => 'No employers listed.',
         ));
+    }
 
-        $this->setElementDecorators(array(
-            'ViewHelper',
-            'ElementErrors',
-            'Wrapper',
-            array('HtmlTag', array('tag'  => 'td')),
-        ));
-
-        $this->addElement('hidden', 'id', array(
+    protected function initSubForm($employerSubForm)
+    {
+        $employerSubForm->addElement('hidden', 'id', array(
             'decorators' => array(
                 'ViewHelper',
                 array('HtmlTag', array('tag' => 'td', 'openOnly' => true)),
             ),
         ));
 
-        $this->addElement('text', 'company', array(
+        $employerSubForm->addElement('text', 'company', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -56,7 +53,7 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
             'class' => 'span2',
         ));
 
-        $this->addElement('text', 'position', array(
+        $employerSubForm->addElement('text', 'position', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -75,7 +72,7 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
             'class' => 'span2',
         ));
 
-        $this->addElement('text', 'startDate', array(
+        $employerSubForm->addElement('text', 'startDate', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -95,7 +92,7 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
             'class' => 'span2 date',
         ));
 
-        $this->addElement('text', 'endDate', array(
+        $employerSubForm->addElement('text', 'endDate', array(
             'filters' => array('StringTrim'),
             'validators' => array(
                 array('Date', true, array(
@@ -111,24 +108,26 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
         ));
     }
 
-    public function getEmployer()
+    protected function getRecord($employerSubForm)
     {
         $employer = new Application_Model_Impl_Employer();
-        $employer->setId(App_Formatting::emptyToNull($this->id->getValue()));
-        $employer->setCompany(App_Formatting::emptyToNull($this->company->getValue()));
-        $employer->setPosition(App_Formatting::emptyToNull($this->position->getValue()));
-        $employer->setStartDate(App_Formatting::unformatDate($this->startDate->getValue()));
-        $employer->setEndDate(App_Formatting::unformatDate($this->endDate->getValue()));
+        $employer->setId(App_Formatting::emptyToNull($employerSubForm->id->getValue()));
+        $employer->setCompany(App_Formatting::emptyToNull($employerSubForm->company->getValue()));
+        $employer->setPosition(App_Formatting::emptyToNull($employerSubForm->position->getValue()));
+        $employer->setStartDate(
+            App_Formatting::unformatDate($employerSubForm->startDate->getValue()));
+        $employer->setEndDate(App_Formatting::unformatDate($employerSubForm->endDate->getValue()));
 
         return $employer;
     }
 
-    public function setEmployer($employer)
+    protected function setRecord($employerSubForm, $employer)
     {
-        $this->id->setValue($employer->getId());
-        $this->company->setValue($employer->getCompany());
-        $this->position->setValue($employer->getPosition());
-        $this->startDate->setValue(App_Formatting::formatDate($employer->getStartDate()));
-        $this->endDate->setValue(App_Formatting::formatDate($employer->getEndDate()));
+        $employerSubForm->id->setValue($employer->getId());
+        $employerSubForm->company->setValue($employer->getCompany());
+        $employerSubForm->position->setValue($employer->getPosition());
+        $employerSubForm->startDate->setValue(
+            App_Formatting::formatDate($employer->getStartDate()));
+        $employerSubForm->endDate->setValue(App_Formatting::formatDate($employer->getEndDate()));
     }
 }

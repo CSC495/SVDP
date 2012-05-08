@@ -115,6 +115,7 @@ class App_Service_Member
         $results = $this->_db->fetchAssoc($select);
         return $this->buildEmployerModels($results);
     }
+<<<<<<< HEAD
     
     public function getCasesByClient($clientId){
         $select = $this->db->select()
@@ -136,6 +137,70 @@ class App_Service_Member
 		return $this->buildCaseModels($results);
     }
     public function createClient($client, $householders, $employers) {
+=======
+
+    public function getActiveMembers()
+    {
+        $select = $this->_db->select()
+            ->from(array('u' => 'user'), array(
+                'u.user_id',
+                'u.first_name',
+                'u.last_name',
+            ))
+            ->where('u.active_flag = ?', 1)
+            ->where('u.role = ?', 'M')
+            ->order(array('u.last_name', 'u.first_name', 'u.user_id'));
+
+        $results = $this->_db->fetchAssoc($select);
+        return $this->buildUserModels($results);
+    }
+
+    public function getScheduleEntries()
+    {
+        $select = $this->_db->select()
+            ->from(array('s' => 'schedule'), array('s.week_id', 's.start_date', 's.user_id'))
+            ->order('s.start_date', 's.user_id', 's.week_id');
+
+        $results = $this->_db->fetchAssoc($select);
+        return $this->buildScheduleEntryModels($results);
+    }
+
+    public function changeScheduleEntry($scheduleEntry)
+    {
+        if ($scheduleEntry->getId() === null) {
+            $this->_db->insert('schedule', $this->disassembleScheduleEntryModel($scheduleEntry));
+            $scheduleEntry->setId($this->_db->lastInsertId());
+        } else {
+            $this->_db->update(
+                'schedule',
+                $this->disassembleScheduleEntryModel($scheduleEntry),
+                $this->_db->quoteInto('week_id = ?', $scheduleEntry->getId())
+            );
+        }
+
+        return $scheduleEntry;
+    }
+
+    public function removeScheduleEntries($scheduleEntries)
+    {
+        if (!$scheduleEntries) {
+            return;
+        }
+
+        $scheduleEntryIds = array();
+        foreach ($scheduleEntries as $scheduleEntry) {
+            $scheduleEntryIds[] = $scheduleEntry->getId();
+        }
+
+        $this->_db->delete('schedule', $this->_db->quoteInto(
+            'week_id IN (?)',
+            $scheduleEntryIds
+        ));
+    }
+
+    public function createClient($client, $householders, $employers)
+    {
+>>>>>>> f31643a8f97073c907466a2cc624efe62c0120e1
         $this->_db->beginTransaction();
 
         try {
@@ -364,7 +429,7 @@ class App_Service_Member
                 ->setBirthDate($dbResult['birthdate'])
                 ->setDepartDate($dbResult['left_date']);
 
-            $householders[] = $householder;
+            $householders[$dbResult['hmember_id']] = $householder;
         }
 
         return $householders;
@@ -383,7 +448,7 @@ class App_Service_Member
                 ->setStartDate($dbResult['start_date'])
                 ->setEndDate($dbResult['end_date']);
 
-            $employers[] = $employer;
+            $employers[$dbResult['employment_id']] = $employer;
         }
 
         return $employers;
@@ -403,6 +468,43 @@ class App_Service_Member
 	    $cases[] = $case;
 	}
 	return $cases;
+    }
+
+    private function buildUserModels($dbResults)
+    {
+        $users = array();
+
+        foreach ($dbResults as $dbResult) {
+            $user = new Application_Model_Impl_User();
+            $user
+                ->setUserId($dbResult['user_id'])
+                ->setFirstName($dbResult['first_name'])
+                ->setLastName($dbResult['last_name']);
+
+            $users[$dbResult['user_id']] = $user;
+        }
+
+        return $users;
+    }
+
+    private function buildScheduleEntryModels($dbResults)
+    {
+        $scheduleEntries = array();
+
+        foreach ($dbResults as $dbResult) {
+            $user = new Application_Model_Impl_User();
+            $user->setUserId($dbResult['user_id']);
+
+            $scheduleEntry = new Application_Model_Impl_ScheduleEntry();
+            $scheduleEntry
+                ->setId($dbResult['week_id'])
+                ->setStartDate($dbResult['start_date'])
+                ->setUser($user);
+
+            $scheduleEntries[$dbResult['week_id']] = $scheduleEntry;
+        }
+
+        return $scheduleEntries;
     }
 
     private function disassembleClientModel($client)
@@ -465,7 +567,7 @@ class App_Service_Member
             'end_date' => $employer->getEndDate(),
         );
     }
-    
+
     private function disassembleCaseNeedModel($need){
         return array(
             'need' => $need->getNeed(),
@@ -747,5 +849,14 @@ class App_Service_Member
     private function updateCaseVisit($visitData, $visitId){
         $where = $this->_db->quoteInto('visit_id = ?', $visitId);
         $this->_db->update('case_visit', $visitData, $where);
+    }
+
+    private function disassembleScheduleEntryModel($scheduleEntry)
+    {
+        return array(
+            'week_id' => $scheduleEntry->getId(),
+            'start_date' => $scheduleEntry->getStartDate(),
+            'user_id' => $scheduleEntry->getUser()->getUserId(),
+        );
     }
 }

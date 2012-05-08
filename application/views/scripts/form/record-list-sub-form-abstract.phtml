@@ -1,0 +1,22 @@
+<fieldset>
+    <legend><?php echo $this->escape($this->legendMsg); ?></legend>
+
+    <?php echo $this->removedRecordsField; ?>
+    <?php echo $this->removedRecordsHashField; ?>
+
+    <?php if ($this->recordsSubForm->getSubForms()) { ?>
+    <table class="table table-striped">
+        <tr>
+            <?php foreach ($this->labels as $label) { ?>
+            <th><?php echo $this->escape($label); ?></th>
+            <?php } ?>
+            <th class=remove></th>
+        </tr>
+        <?php echo $this->recordsSubForm; ?>
+    </table>
+    <?php } else { ?>
+    <div class=control-group><div class=controls><p class=help-block><?php echo $this->escape($this->noRecordsMsg); ?></p></div></div>
+    <?php } ?>
+
+    <div class=control-group><div class=controls><?php echo $this->addRecordBtn; ?></div></div>
+</fieldset>

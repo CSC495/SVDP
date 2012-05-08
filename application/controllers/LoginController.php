@@ -2,59 +2,116 @@
 
 class LoginController extends Zend_Controller_Action
 {
-    private $_SALT = 'tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8';
-    private $_timeout = 1440; // Time out in minutes
+    /**
+     * Time out for users session in minutes
+     * @var int
+     */
+    private $_timeout = 60;
     // Getting user info
-
     // $identity = Zend_Auth::getInstance()->getIdentity();
     // $identity->user_name;
     // $identity->role;
     //
-    // Check for person
+    // Check if identity exists
     // Zend_Auth::getInstance()->hasIdentity();
+    
+    /**
+     * Initializes the login controller
+     *
+     * 
+     * @return void
+     */
     public function init()
     {
         /* Initialize action controller here */
         //$this->view->pageTitle = "Login Page";
     }
+    
+    /**
+     * Handles interface for presenting user with login form as well as login logic
+     *
+     * @return void
+     */
     public function loginAction()
     {
+        $request = $this->getRequest();
+        
         // Forwards the user if they are already logged on
         $this->forwardUser();
-        
+
         // Set page variables
-        $this->view->error_flag = $this->getRequest()->getParam('error_flag');
+        $this->view->error_flag = $request->getParam('error_flag');
+
         $this->view->form = new Application_Model_Login_LoginForm();
         $this->view->pageTitle = "Login Page";
-    }
-    
-    public function forgotAction()
-    {
-        $this->view->form = new Application_Model_Login_ForgotForm();
-        $this->view->pageTitle = "Forgot Password";
-    }
-    
-    public function forgotprocessAction()
-    {
-        $request = $this->getRequest();
+        
+        // If values have not been posted back return and render view
+        if( !$request->isPost() )
+            return;
 
-        // If there isnt a post request go back to index
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('login');
+        // Get form and validate it
+        $form = $this->view->form;
+        $form->populate($_POST);
+
+        // Check if the password forgot button was pressed
+        if($form->forgot->isChecked()){
+            return $this->_helper->redirector(
+                                              'forgot',
+                                              App_Resources::LOGIN,
+                                              null,
+                                              array('prev' => 'login'));
+        }
+
+        // Validate the fields on the form
+        if( !$form->isValid( $request->getPost() ) ){
+            // Redirect to login page and set error flag
+            return;
         }
         
-        // Get form data
-        $form = new Application_Model_Login_ForgotForm();
-        $form->populate($_POST);
+        // Get user name and pass
+        $userid = $form->getValue('username');
+        $password = $form->getValue('password');
+
+        // Try to authenticate the user
+        $this->authenticate($userid, $password);
+    }
+    
+    /**
+     * Handles the interface for presenting a user with a form to reset password
+     *
+     * @return void
+     */
+    public function forgotAction()
+    {
+        $request = $this->getRequest();
         
-        // Get user identity
-        $identity = Zend_Auth::getInstance()->getIdentity();
+        // Set page variables
+        $this->view->form = new Application_Model_Login_ForgotForm();
+        $this->view->pageTitle = "Forgot Password";
+
+        // If the previous page was login, then render the view
+        if( $this->_hasParam('prev') && $this->_getParam('prev') == 'login'){
+            return;
+        }
+        
+        // If this isn't a post, return to index
+        if(!$request->isPost())
+        {
+            $this->_helper->redirector('index');
+        }
+        
+        // Check if the form is valid.
+        if( !$this->view->form->isValid( $_POST ))
+        {
+            // Render view with error
+            return;
+        }
         
         // find users info
         $service = new App_Service_LoginService();
         $user = $service->getUserInfo($identity->user_id);
         
-        // generate passwordand send e-mail
+        // generate password and send e-mail if the account exists
         if($user){
             $mail = new Zend_Mail();
             $mail->setBodyText('Here is your temporary password. You will be prompted to change it at next login.');
@@ -63,49 +120,29 @@ class LoginController extends Zend_Controller_Action
             
             $mail->send();
             
-            // Update in db
+            // Update DB with temp password
         }
         
+        return $this->_helper->redirector('login');
     }
     
-    public function processAction()
-    {
-        $request = $this->getRequest();
-
-        // If there isnt a post request go back to index
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('login');
-        }
-        
-        // Get form and validate it
-        $form = new Application_Model_Login_LoginForm();
-        $form->populate($_POST);
-
-        // Check if the password forgot button was pressed
-        if($form->forgot->isChecked()){
-            $this->_helper->redirector('forgot','login');
-        }
-
-        // Validate username and password for matching criteria
-        if( !$form->isValid( $request->getPost() ) ){
-            // Redirect to login page and set error flag
-            $this->_redirect('/login/login/error_flag/TRUE');
-        }
-        
-        // Get user name and pass
-        $userid = $form->getValue('username');
-        $password = $form->getValue('password');
-
-        $this->authenticate($userid, $password);
-    }
-    
+    /**
+     * Handles the logic for logging a user out
+     *
+     * @return void
+     */
     public function logoutAction()
     {
         // Clear credentials and redirect to login form.
         Zend_Auth::getInstance()->clearIdentity();
         $this->_helper->redirector('index');
     }
-    
+    /**
+     * Handles the configuration of the authentication adapter
+     *
+     * @usedby LoginController::process()
+     * @return void
+     */
     protected function getAuthAdapter()
     {
         // Get the database adapter
@@ -121,6 +158,14 @@ class LoginController extends Zend_Controller_Action
         ;
         return($adapter);
     }
+    /**
+     * Handles the authentication of a user
+     *
+     * @usedby LoginController::processAction()
+     * @param string $userid
+     * @param string $password
+     * @return void
+     */
     protected function authenticate($userid, $password)
     {
         $auth = Zend_Auth::getInstance();
@@ -129,7 +174,7 @@ class LoginController extends Zend_Controller_Action
         // Set the user inputed values
         $authAdapter
             ->setIdentity($userid)
-            ->setCredential( hash('SHA256', $this->_SALT . $password) );
+            ->setCredential( hash('SHA256', App_Password::saltIt($password)) );
         ;
         
         // Authenticate the user
@@ -150,67 +195,85 @@ class LoginController extends Zend_Controller_Action
         
         // Get the users identity
         $identity = Zend_Auth::getInstance()->getIdentity();
-        // Set the identities role
-        $identity->role = $data->role;
+        
+        // Set the identities role. This is strange.. It should already be set
+        // but for some reason the first request sent will not contain the role
+        // and will cause an error
+        //$identity->role = $data->role;
         
         // Set the time out length
         $authSession = new Zend_Session_Namespace('Zend_Auth');
         $authSession->setExpirationSeconds($this->_timeout * 60);
         
-        if($data->change_pswd == 1)
-        {
-            // Post to change password
-            return $this->_forward('changepwd','login');
-        }
+        // Check if user needs password change. If so forward to change
+        //if($data->change_pswd == 1)
+        //{
+        //    return $this->_helper->redirector('change',App_Resources::LOGIN);
+        //}
+        
         $this->forwardUser();
     }
     
     /**
-     *  Interface for chaing a users password
+     * Handles creation of view to change password
+     *
+     * @usedby Application_Model_Login_LoginForm
+     * @return void
      */
-    protected function changepwdAction()
+    protected function changeAction()
     {
+        $request = $this->getRequest();
+        
+        // Verify a user didn't manually navigate here when password doesn't
+        // need to be changed.
+        if( !Zend_Auth::getInstance()->getIdentity()->change_pswd )
+        {
+            $this->_helper->redirector('index');
+        }
+        
+        $this->view->error_flag = $this->getRequest()->getParam('error_flag');
         $this->view->pageTitle = "Change Password";
-        $request = $this->getRequest();
+        $form = new Application_Model_Login_ChangeForm();  
+        $this->view->form = $form;
 
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('login');
+        // If not postback render view
+        if( !$request->isPost() )
+        {
+            return;
         }
-        
-        $this->view->form = new Application_Model_Login_ChangeForm();   
-    }
-    
-    /***
-     * Handles post from change of password and persists data
-     */
-    protected function processpwdAction()
-    {
-        $request = $this->getRequest();
 
-        // If there isnt a post request go back to index
-        if( !$request->isPost() ){
-            return $this->_helper->redirector('login');
-        }
-        $service = new App_Service_LoginService();
-        
-        
-        $form = new Application_Model_Login_ChangeForm();
-        
+        //Post back, check form
         if( !$form->isValid($request->getPost()) )
         {
-            // redirect and indicate error
-            return $this->_helper->redirector('changepwd');
+            return;
         }
-        
         $pwd = $form->getValue('password');
-        
-        $identity = Zend_Auth::getInstance()->getIdentity();
-        
+        $vpwd = $form->getValue('verify');
+
+        // Ensure passwords match
+        if( strcmp($pwd,$vpwd) )
+        {
+            $form->verify->addError('Passwords don\'t match.');
+            return;
+        }
+
+        $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
-        $service->updateUserPassword($identity->user_id,$pwd);
+        $service->updateUserPassword($identity->user_id,hash('SHA256', App_Password::saltIt($pwd)));
+        $identity->change_pswd = 0;
         
-        $this->forwardUser();
+        $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Your password has been changed successfully!',
+                               'time' => 5,
+                               'controller' => App_Resources::INDEX,
+                               'action' => 'index'));
     }
+    
+    /**
+     * Handles forwarding a user to the correct landing page
+     *
+     * @return void
+     */
     protected function forwardUser()
     {
         // If user does not have an identity return.

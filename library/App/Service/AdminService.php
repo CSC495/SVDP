@@ -127,15 +127,32 @@ class App_Service_AdminService {
                         'first_name'  => $user->getFirstName(),
                         'last_name'   => $user->getLastName(),
                         'email'       => $user->getEmail(),
-                        'cell_phone'  => $user->getCellPhone(),
-                        'home_phone'  => $user->getHomePhone(),
+                        'cell_phone'  => App_Formatting::emptyToNull($user->getCellPhone()),
+                        'home_phone'  => App_Formatting::emptyToNull($user->getHomePhone()),
                         'role'        => $user->getRole(),
                         'change_pswd' => 1,
                         'active_flag' => 1,
                         );
         $result = $this->_db->insert('user',$params);
     }
-
+    
+    /***
+     *  Updates a users information
+     */
+    public function updateUserInformation($user)
+    {
+        $data = array(  
+                        'first_name'  => $user->getFirstName(),
+                        'last_name'   => $user->getLastName(),
+                        'email'       => $user->getEmail(),
+                        'cell_phone'  => App_Formatting::emptyToNull($user->getCellPhone()),
+                        'home_phone'  => App_Formatting::emptyToNull($user->getHomePhone()),
+                        'role'        => $user->getRole(),
+                        'active_flag' => $user->getActive());
+        
+        $this->_db->update('user',$data,"user_id ='" . $user->getUserId() . "'");
+    }
+    
     /*****
      *  Resets a users password
      */
