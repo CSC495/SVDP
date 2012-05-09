@@ -32,6 +32,7 @@ class App_Acl extends Zend_Acl
         $this->add(new Zend_Acl_Resource(App_Resources::TREASURER));
         $this->add(new Zend_Acl_Resource(App_Resources::REPORT));
         $this->add(new Zend_Acl_Resource(App_Resources::DOCUMENT));
+        $this->add(new Zend_Acl_Resource(App_Resources::REDIRECT));
     }
     // Create the various roles
     protected function createRoles()
@@ -56,6 +57,7 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::GENERAL,App_Resources::LOGIN);
         $this->allow(App_Roles::GENERAL,App_Resources::INDEX);
         $this->allow(App_Roles::GENERAL,App_Resources::ERROR);
+        $this->allow(App_Roles::GENERAL,App_Resources::REDIRECT);
     }
     protected function setMemberAccess()
     {

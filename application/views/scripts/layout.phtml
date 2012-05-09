@@ -35,22 +35,14 @@ echo $this->headScript(), "\n";
 $auth = Zend_Auth::getInstance();
 $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 ?>
-<header>
-    <!--<h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>-->
-    <style type="text/css">
-     
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-</header>
+
 <div class="row">
 	<div class="span3">
         <a href="<?php echo $this->escape($this->baseUrl(''))?>">
             <img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0" hspace="25" vspace="20"/>
         </a>
 	</div>
-	<div class="span8" >
+	<div class="span10" >
 	<ul class="unstyled" style="padding-top: 75px">
     
 		<li><h1>St. Vincent de Paul </h1>
