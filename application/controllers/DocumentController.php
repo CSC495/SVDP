@@ -36,6 +36,7 @@ class DocumentController extends Zend_Controller_Action
             else
             {
                 $this->view->pView = 'partial/viewDocForMember.phtml';
+                $this->view->add = false;
             }
         }
     } 
