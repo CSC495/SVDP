@@ -3,13 +3,12 @@
       method="<?php echo $this->escape($this->element->getMethod()) ?>">
 
 <fieldset>
-    <legend>Login</legend>
+    <legend>Welcome! Please Login.</legend>
     
     <?php echo $this->element->username ?>
     <?php echo $this->element->password ?>
 
 </fieldset>
-
 <table>
     <tr>
         <td>
@@ -20,5 +19,5 @@
         </td>
     </tr>
 </table>
-
+    <?php echo $this->element->prev ?>
 </form>
