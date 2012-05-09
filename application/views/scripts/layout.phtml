@@ -58,15 +58,39 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               
-			  <li class="nav-header">Balance</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+			   <li class="nav-header">Current Funds</li>
+              <?php
+					$aService = new App_Service_AdminService();
+					$this->funds = $aService->getParishParams()->getAvailableFunds();
+					$this->nfunds = number_format($this->funds, 2, '.', ',');
+			  ?>
+			  <p style=" text-indent:10px; ">$<?php echo $this->nfunds ?></p>
 
-              <li class="nav-header">Schedule</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+             <li class="nav-header">Schedule</li>
+              <?php
+					$mService = new App_Service_Member();
+					$this->schedule = $mService->getScheduleEntries();
+					$aService = new App_Service_AdminService();
+					
+					
+					foreach($this->schedule as $s){
+						$this->id = $s->getUser()->getUserId();
+						$this->user = $aService->getUserInfo($this->id);
+						$this->fname = $this->user->getFirstName();
+						$this->lname = $this->user->getLastName();
+						$this->name = $this->fname." ".$this->lname;
+						if (strlen($this->name) > 18) {
+							$this->name = substr($this->name,0,18)."...";
+						} 
+						
+						$this->strDate = strtotime($s->getStartDate());
+						$this->sDate = date( 'm-d-Y', $this->strDate );
+						
+			  ?>		
+						<p style="width:200px;">Week of <?php echo $this->sDate?></p>
+						<p style="width:150px; text-indent:10px;"><?php echo substr($this->name,0, 21);?></p>
+			  <?php } ?>
+			  
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
