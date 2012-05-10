@@ -96,7 +96,7 @@ class MemberController extends Zend_Controller_Action
 
         $service = new App_Service_AdminService();
 
-        $this->view->users = $service->getParishMembers();
+        $this->view->users = $service->getAllUsers();
     }
 
     /**
