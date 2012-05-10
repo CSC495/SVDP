@@ -7,13 +7,13 @@ class ReportController extends Zend_Controller_Action
     {
         $this->view->pageTitle = "Report Controller";
         
-        $sessionNamespace = new Zend_Session_Namespace();
+        //$sessionNamespace = new Zend_Session_Namespace();
     }
 
     public function indexAction()
     {
         $this->view->pageTitle = "Report Controller";
-         $this->view->form = new Application_Model_reportForm(); 
+         $this->view->form = new Application_Model_Report_reportForm(); 
     }
      public function processAction(){
    	$request = $this->getRequest();
@@ -24,9 +24,9 @@ class ReportController extends Zend_Controller_Action
         }
         
         // Get our form and validate it
-        $form = new Application_Model_reportForm();
+        $form = new Application_Model_Report_reportForm(); 
        
-        $sessionNamespace = new Zend_Session_Namespace();
+        //$sessionNamespace = new Zend_Session_Namespace();
         $valid = true;
  	
 	$this->view->error_flag = FALSE;
@@ -50,16 +50,16 @@ class ReportController extends Zend_Controller_Action
     }
     public function clientinfoAction(){
 	$this->view->pageTitle = "Client Information Report"; 
-	$sessionNamespace = new Zend_Session_Namespace();
-        $this->view->form = new Application_Model_clientReport(); 
+	//$sessionNamespace = new Zend_Session_Namespace();
+        $this->view->form = new Application_Model_Report_clientReport(); 
     }
     public function ocactivitiesAction(){
 	$this->view->pageTitle = "On Call Activities Report"; 
     }
     public function reimburseformAction(){
 	$this->view->pageTitle = "Reimbursement Report"; 
-	$sessionNamespace = new Zend_Session_Namespace();
-        $this->view->form = new Application_Model_clientReport(); 
+	//$sessionNamespace = new Zend_Session_Namespace();
+        $this->view->form = new Application_Model_Report_reimbursementReport(); 
     }
 
 }
