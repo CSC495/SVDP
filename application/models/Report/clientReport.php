@@ -1,5 +1,5 @@
 <?php
-class Application_Model_clientReport extends Zend_Form
+class Application_Model_Report_clientReport extends Zend_Form
 {
 	
 	public function __construct($options = null){
