@@ -1,5 +1,5 @@
 <?php
-class Application_Model_Admin_AdjustForm extends Twitter_BootStrap_Form_Vertical
+class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 {
 	
 	public function __construct($options = null){
