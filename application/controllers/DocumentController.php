@@ -60,7 +60,9 @@ class DocumentController extends Zend_Controller_Action
     // Upload a new document
     public function uploadAction()
     {
+        $this->view->pageTitle = "Upload Document";
         
+        $this->view->form = new Application_Model_Document_UploadForm();
     }
     
     // Delete an exisiting document
