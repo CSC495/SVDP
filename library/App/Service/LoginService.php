@@ -7,9 +7,11 @@ class App_Service_LoginService {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
 
-    public function updateUserPassword($userId, $password){ 
-        //Salting goes here when it is to be implemented
-	$hashPass =  hash('SHA256', $password);
+    public function updateUserPassword($userId, $password){
+        $shaker = new App_Password();
+        //salt the password
+        $saltedPass = $shaker->saltIt($password);
+	$hashPass =  hash('SHA256', $saltedPass);
 	$change = array(
 		    'password' => $hashPass,
 		    'change_pswd' => '0');
@@ -60,6 +62,22 @@ class App_Service_LoginService {
             ->setIdentity($userId)
             ->setCredential( hash('SHA256', App_Password::saltIt($password)) );
         return $adapter;
+    }
+    
+    //Returns the number of admin users
+    public function getNumAdmins(){
+        $select = $this->_db->select()
+                ->from('user', array('numAdmins' => 'COUNT(*)'))
+                ->where('role = ?', 'A');
+        $result = $this->_db->fetchRow($select);
+        return $result['numAdmins'];
+    }
+    
+    //UNDER CONSTRUCTION
+    public function getNextIdNum($userId){
+        $select = $this->_db->select()
+                ->from('user', 'user_id');
+                
     }
     
     /***
