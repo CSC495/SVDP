@@ -81,17 +81,7 @@ class App_Service_AdminService {
         $users = array();
         foreach($results as $row)
         {
-            $user = new Application_Model_Impl_User();
-            $user
-                ->setUserId($row['user_id'])
-                ->setFirstName($row['first_name'])
-                ->setLastName($row['last_name'])
-                ->setEmail($row['email'])
-                ->setCellPhone($row['cell_phone'])
-                ->setHomePhone($row['home_phone'])
-                ->setRole($row['role'])
-                ->setActive($row['active_flag']);
-                
+            $user = $this->buildUserModel($row);        
             $users[] = $user;
         }
         return $users;
@@ -164,24 +154,6 @@ class App_Service_AdminService {
         $this->_db->update('user',$data,"user_id ='" . $userId ."'");
     }
     
-    /***
-     * Build User object from row result
-     */
-    private function buildMemeber($row)
-    {
-        $user = new Application_Model_Impl_User();
-        $user
-            ->setUserId($row['user_id'])
-            ->setFirstName($row['first_name'])
-            ->setLastName($row['last_name'])
-            ->setEmail($row['email'])
-            ->setCellPhone($row['cell_phone'])
-            ->setHomePhone($row['home_phone'])
-            ->setRole($row['role'])
-            ->setActive($row['active_flag']);
-        
-        return($user);
-    }
     
     private function disassembleParishParams($params){
 	$paramData = array(

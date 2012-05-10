@@ -75,7 +75,7 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 					
 					foreach($this->schedule as $s){
 						$this->id = $s->getUser()->getUserId();
-						$this->user = $aService->getUserInfo($this->id);
+						$this->user = $aService->getUserById($this->id);
 						$this->fname = $this->user->getFirstName();
 						$this->lname = $this->user->getLastName();
 						$this->name = $this->fname." ".$this->lname;
