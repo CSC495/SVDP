@@ -1,5 +1,5 @@
 <?php
-class Application_Model_Admin_NewUserForm extends Twitter_BootStrap_Form_Horizontal
+class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizontal
 {
 	
 	public function __construct($options = null){
