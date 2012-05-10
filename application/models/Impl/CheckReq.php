@@ -51,6 +51,15 @@ class Application_Model_Impl_CheckReq
         $this->_caseneedId = $id;
         return $this;
     }
+    
+    public function getUser(){
+        return $this->_user;
+    }
+    
+    public function setUser($user){
+        $this->_user = $user;
+        return $this;
+    }
 
     public function getRequestDate()
     {
@@ -74,14 +83,6 @@ class Application_Model_Impl_CheckReq
         return $this;
     }
     
-    public function getUser(){
-        return $this->_user;
-    }
-    
-    public function setUser($user){
-        $this->_user = $user;
-        return $this;
-    }
     
     public function getAmount(){
         return $this->_amount;
