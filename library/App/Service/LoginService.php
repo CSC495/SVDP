@@ -9,7 +9,7 @@ class App_Service_LoginService {
 
     public function updateUserPassword($userId, $password){ 
         //Salting goes here when it is to be implemented
-	$hashPass =  hash('SHA256', $newPass);
+	$hashPass =  hash('SHA256', $password);
 	$change = array(
 		    'password' => $hashPass,
 		    'change_pswd' => '0');
@@ -43,6 +43,23 @@ class App_Service_LoginService {
     public function deleteDocument($id){
         $where = $this->_db->quoteInto('doc_id = ?', $id);
         $this->_db->delete('documents', $where);
+    }
+    
+    public function getAuthAdapter($userId, $password){
+        // Get the database adapter
+        $db = Zend_Db_Table::getDefaultAdapter();
+        $adapter = new Zend_Auth_Adapter_DbTable($db);
+
+        // Set the parameters, user must be active.
+        $adapter
+            ->setTableName('user')
+            ->setIdentityColumn('user_id')
+            ->setCredentialColumn('password')
+            ->setCredentialTreatment('? and active_flag="1"');
+        $adapter
+            ->setIdentity($userId)
+            ->setCredential( hash('SHA256', App_Password::saltIt($password)) );
+        return $adapter;
     }
     
     /***
