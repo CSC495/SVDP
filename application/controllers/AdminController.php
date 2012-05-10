@@ -68,11 +68,11 @@ class AdminController extends Zend_Controller_Action
             $service->updateParishParams($config);
         
             // Redirect user
-        $this->_forward('index', App_Resources::REDIRECT, null,
+            $this->_forward('index', App_Resources::REDIRECT, null,
                     Array( 'msg' => 'Limits have been adjusted successfully!',
-                           'time' => 1,
+                           'time' => 3,
                            'controller' => App_Resources::ADMIN,
-                           'action' => 'members'));
+                           'action' => 'index'));
         }
     }
 
@@ -82,7 +82,7 @@ class AdminController extends Zend_Controller_Action
         $this->view->pageTitle = "Admin Viewing Users";
         
         $service = new App_Service_AdminService();
-        $this->view->users = $service->getParishMembers();
+        $this->view->users = $service->getAllUsers();
     }
     
     // displays view for creating new member
@@ -144,7 +144,7 @@ class AdminController extends Zend_Controller_Action
         $password = App_Password::generatePassword(10);
 
         $service = new App_Service_AdminService();
-        $service->createParishMemeber($user,hash('SHA256', App_Password::saltIt($password)));
+        $service->createParishMemeber($user,$password);
         
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,

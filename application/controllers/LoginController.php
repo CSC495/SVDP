@@ -109,23 +109,38 @@ class LoginController extends Zend_Controller_Action
         
         // find users info
         $service = new App_Service_LoginService();
-        $user = $service->getUserInfo($identity->user_id);
+        $username = $this->view->form->getValue('username');
+        
+        $user = $service->getUserInfo($username);
         
         // generate password and send e-mail if the account exists
         if($user){
-            $mail = new Zend_Mail();
-            $mail->setBodyText('Here is your temporary password. You will be prompted to change it at next login.');
-            $mail->setFrom('SVDP@noreply.com', 'System');
-            $mail->setSubject('Temporary Password');
-            
-            $mail->send();
+            $password = App_Password::generatePassword(10);
+            $service->updateUserPassword($username,$password);
+
+            //$config = array('auth' => 'login',
+            //                'username' => 'AKIAI32KNSM26FVLWN4A',
+            //                'password' => 'AgdK1TjaLRqJr4Zh3NiiInn18QyZV7nLowNhhbWoWc6O');
+            //
+            //$transport = new Zend_Mail_Transport_Smtp('https://email.us-east-1.amazonaws.com', $config);
+            ////https://email.us-east-1.amazonaws.com
+            //$mail = new Zend_Mail();
+            //$mail->addHeader('Date', gmdate('D, d M Y H:i:s O'));
+            //$mail->addHeader('X-Amzn-Authorization' => )
+            //$mail->setBodyText('Here is your temporary password. You will be prompted to change it at next login. ' . $password );
+            //$mail->setFrom('SVDP@noreply.com', 'System');
+            //$mail->addTo('bagura@noctrl.edu','ben');
+            //$mail->setSubject('Temporary Password');
+            ////var_dump($mail);
+            ////exit();
+            //$mail->send($transport);
             
             // Update DB with temp password
         }
         
         return $this->_helper->redirector('login');
     }
-    
+
     /**
      * Handles the logic for logging a user out
      *
@@ -259,7 +274,7 @@ class LoginController extends Zend_Controller_Action
 
         $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
-        $service->updateUserPassword($identity->user_id,hash('SHA256', App_Password::saltIt($pwd)));
+        $service->updateUserPassword($pwd);
         $identity->change_pswd = 0;
         
         $this->_forward('index', App_Resources::REDIRECT, null,

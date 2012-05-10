@@ -9,7 +9,7 @@ class App_Service_LoginService {
 
     public function updateUserPassword($userId, $password){ 
         //Salting goes here when it is to be implemented
-	$hashPass =  hash('SHA256', $newPass);
+	$hashPass =  hash('SHA256', App_Password::saltIt($password));
 	$change = array(
 		    'password' => $hashPass,
 		    'change_pswd' => '0');

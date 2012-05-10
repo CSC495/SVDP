@@ -57,7 +57,7 @@ class App_Service_AdminService {
     
     public function updateUserPassword($userId, $newPass){
 	//Salting goes here when it is to be implemented
-	$hashPass =  hash('SHA256', $newPass);
+	$hashPass =  hash('SHA256', App_Password::saltIt($newPass));
 	$change = array(
 		    'password' => $hashPass,
 		    'change_pswd' => '0');
@@ -102,7 +102,7 @@ class App_Service_AdminService {
     
     public function createUser($user, $password){
 	$userData = $this->disassembleUserModel($user);
-	$hashPass =  hash('SHA256', $password);
+	$hashPass =  hash('SHA256', App_Password::saltIt($password));
 	$userData['password'] = $hashPass;
 	$userData['change_pswd'] = '1';
 	$this->_db->insert('user', $userData);
