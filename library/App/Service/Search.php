@@ -29,6 +29,16 @@ class App_Service_Search
     /* Client search methods: */
 
     /**
+     * Retrieve a list of all clients.
+     *
+     * @return Application_Model_Impl_Client[]
+     */
+    public function getAllClients()
+    {
+        return $this->buildClientModels($this->_db->fetchAssoc($this->initClientSelect()));
+    }
+
+    /**
      * Retrieve a list of clients whose first or last names match the specified query.
      *
      * @param string $name
@@ -101,6 +111,16 @@ class App_Service_Search
     }
 
     /* Check request search methods: */
+
+    /**
+     * Retrieve a list of all check requests.
+     *
+     * @return Application_Model_Impl_CheckReq[]
+     */
+    public function getAllCheckReqs()
+    {
+        return $this->buildCheckReqModels($this->_db->fetchAssoc($this->initCheckReqSelect()));
+    }
 
     /**
      * Retrieve a list of currently open check requests.

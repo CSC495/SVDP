@@ -206,6 +206,31 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'class' => 'date',
         ));
 
+        $this->addElement('text', 'spouseSsn4', array(
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'Must be four digits.'),
+                )),
+                array('Digits', true, array(
+                    'messages' => array('notDigits' => 'Must be four digits.'),
+                )),
+                array('StringLength', true, array(
+                    'min' => 4,
+                    'max' => 4,
+                    'messages' => array(
+                        'stringLengthTooShort' => 'Must be four digits.',
+                        'stringLengthTooLong' => 'Must be four digits.',
+                    ),
+                )),
+            ),
+            'label' => "Last four digits of spouse's SSN",
+            'description' => '(Optional)',
+            'maxlength' => 4,
+            'dimension' => 1,
+        ));
+
         // Additional information elements:
 
         $this->addElement('checkbox', 'doNotHelp', array(
@@ -434,6 +459,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                    ->setLastName($client->getLastName())
                    ->setMarried(true)
                    ->setBirthDate(App_Formatting::unformatDate($this->spouseBirthDate->getValue()))
+                   ->setSsn4(App_Formatting::emptyToNull($this->spouseSsn4->getValue()))
                    ->setHomePhone($client->getHomePhone())
                    ->setParish($client->getParish());
 
@@ -464,6 +490,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
             $spouse = $client->getSpouse();
             $this->spouseName->setValue($spouse->getFirstName());
             $this->spouseBirthDate->setValue(App_Formatting::formatDate($spouse->getBirthDate()));
+            $this->spouseSsn4->setValue($spouse->getSsn4());
         }
     }
 
