@@ -11,12 +11,12 @@ class App_Service_LoginService {
         $shaker = new App_Password();
         //salt the password
         $saltedPass = $shaker->saltIt($password);
-	$hashPass =  hash('SHA256', $saltedPass);
-	$change = array(
-		    'password' => $hashPass,
-		    'change_pswd' => '0');
-	$where = $this->_db->quoteInto('user_id = ?', $userId);
-	$this->_db->update('user', $change, $where);
+        $hashPass =  hash('SHA256', $saltedPass);
+        $change = array(
+                'password' => $hashPass,
+                'change_pswd' => '0');
+        $where = $this->_db->quoteInto('user_id = ?', $userId);
+        $this->_db->update('user', $change, $where);
     }
     
     public function updateDocument($id, $doc){
