@@ -51,7 +51,6 @@ class Twitter_Bootstrap_View_Helper_FormFile extends Zend_View_Helper_FormFile
         if (($this->view instanceof Zend_View_Abstract) && !$this->view->doctype()->isXhtml()) {
             $endTag= '>';
         }
-
         // build the element
         $xhtml = '<input type="file"'
                 . ' name="' . $this->view->escape($name) . '"'
@@ -59,7 +58,6 @@ class Twitter_Bootstrap_View_Helper_FormFile extends Zend_View_Helper_FormFile
                 . $disabled
                 . $this->_htmlAttribs($attribs)
                 . $endTag;
-
         return $xhtml;
     }
 }

@@ -3,3 +3,4 @@
 /.buildpath
 /.project
 .env
+/application/uploads/
