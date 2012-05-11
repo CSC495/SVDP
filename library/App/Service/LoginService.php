@@ -68,16 +68,33 @@ class App_Service_LoginService {
     public function getNumAdmins(){
         $select = $this->_db->select()
                 ->from('user', array('numAdmins' => 'COUNT(*)'))
-                ->where('role = ?', 'A');
+                ->where('role = ?', 'A')
+                ->order();
         $result = $this->_db->fetchRow($select);
         return $result['numAdmins'];
     }
     
-    //UNDER CONSTRUCTION
+    //Given a new user id will return null if the id is not already
+    //in the database, if present will return the next available
+    //number to append after the id
     public function getNextIdNum($userId){
+        $idLen = strlen($userId);
         $select = $this->_db->select()
-                ->from('user', 'user_id');
-                
+                ->from('user', 'user_id')
+                ->where('user_id LIKE ?', $userId.'%')
+                ->orWhere('user_id = ?', $userId)
+                ->order('user_id DESC');
+        $results = $this->_db->fetchAll($select);
+        if($results){
+            foreach($results as $row){
+                $sub = substr($row['user_id'], $idLen);
+                if(is_numeric($sub) || $sub == null)
+                    return (intval($sub) + 1);
+            }
+            return null;
+        }else{
+            return null;
+        }
     }
     
     /***
