@@ -3,7 +3,7 @@
 
 <tr class='search-result'>
     <td class='search-cell'><a href="<?php echo $this->escape($this->doc->getUrl())?>"> <?php echo $this->escape($this->doc->getName())?></a></th>
-    <td class='search-cell last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->baseUrl(App_Resources::DOCUMENT .'/edit/id/' . urlencode($this->doc->getId())); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
+    <td class='search-cell last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->baseUrl(App_Resources::DOCUMENT .'/delete/id/' . urlencode($this->doc->getId())); ?>" class='btn btn-mini btn-danger'>Delete</a><?php } ?></td>
 </tr>
 
 <?php } ?>
