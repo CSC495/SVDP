@@ -150,14 +150,6 @@ class DocumentController extends Zend_Controller_Action
     // Delete an exisiting document
     public function deleteAction()
     {
-        
-    }
-    
-    // Edits an internal document
-    public function editlocAction()
-    {
-        $this->view->pageTitle = "Edit SVDP Doc";
-        
         // Get request and passed parameter
         $request = $this->getRequest();
         $docId = $request->getParam('id');
@@ -165,9 +157,49 @@ class DocumentController extends Zend_Controller_Action
         // If theres no param go back to index
         if(!$docId)
             return $this->_helper->redirector('index');
+            
+        $service = new App_Service_DocumentService();
+        $doc = $service->getDocument($docId);
         
-        $this->view->form = new Application_Model_Document_EditForm ();
+        if($doc)
+        {
+            if($doc->isInternal())
+                $this->removeInternal($doc);
+            else
+                $this->removeExternal($doc);    
+        }
+        
+        return $this->_helper->redirector('index');
     }
     
-    // Edits an external doc
+    private function removeExternal($doc)
+    {
+        $service = new App_Service_DocumentService();
+        
+        $service->deleteDocument($doc);
+        
+        $this->_forward('index', App_Resources::REDIRECT, null,
+                Array( 'msg' => 'Document Deleted Successfully',
+                       'time' => 3,
+                       'controller' => App_Resources::DOCUMENT,
+                       'action' => 'list'));
+    }
+    
+    private function removeInternal($doc)
+    {
+        $file = APPLICATION_PATH . DIRECTORY_SEPARATOR . uploads . DIRECTORY_SEPARATOR . $doc->getUrl();
+
+        unlink($file);
+        
+        $service = new App_Service_DocumentService();
+        
+        $service->deleteDocument($doc);
+        
+        $this->_forward('index', App_Resources::REDIRECT, null,
+                Array( 'msg' => 'Document Deleted Successfully',
+                       'time' => 3,
+                       'controller' => App_Resources::DOCUMENT,
+                       'action' => 'list'));
+    }
+
 }
