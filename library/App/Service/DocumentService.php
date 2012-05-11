@@ -60,7 +60,13 @@ class App_Service_DocumentService {
                 
         return($doc);
     }
-    
+    // temp
+    public function deleteDocument($doc)
+    {
+        $result = $this->_db->delete('documents','doc_id =' . $doc->getId());
+        
+        return $result;
+    }
     /***
      * Updates information about a particular document
      */

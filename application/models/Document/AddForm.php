@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Vertical {
+class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical {
 
     public function __construct()
     {
@@ -8,11 +8,11 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
 
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
-        $this->setAction($baseUrl->baseUrl(App_Resources::DOCUMENT) . '/upload')
+        $this->setAction($baseUrl->baseUrl(App_Resources::DOCUMENT) . '/add')
              ->setMethod('post');
         $this->setAttrib('class','twocol form-horizontal');
         $this->setDecorators(array(
-			array('ViewScript', array('viewScript' => 'document/uploadViewScript.phtml'))
+			array('ViewScript', array('viewScript' => 'document/addViewScript.phtml'))
 		));
              
         $this->addElementPrefixPath(
@@ -35,24 +35,21 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
         $this->addElement('text', 'name', array(
             'required' => true,
             'filters' => array('StringTrim'),
+            'label'   => 'Name:',
             ));
           
-        $url = $this->addElement('file', 'url', array(
+        $url = $this->addElement('text', 'url', array(
             'required' => true,
             'filters' => array('StringTrim'),
-            'label'  => 'Url:',
-            'decorators' => array('File'),
-            'destination' => APPLICATION_PATH . '\\uploads\\',
+            'label'   => 'Url:',
+            'validators' => array('Hostname'),
         ));
         
-        $this->addElement('hidden', 'err', array(
-            'required' => false,
-        ));
-        
+
         $this->addElement('submit', 'submit', array(
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
             'decorators' => array('ViewHelper'),
-            'label'      => 'Upload',
+            'label'      => 'Add Document',
             'ignore'     => true
         ));
 
