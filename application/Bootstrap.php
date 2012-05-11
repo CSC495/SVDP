@@ -27,5 +27,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $params = $service->getParishParams();
         Zend_Registry::set('config', $params);
     }
+
+	protected function _initAWSParams()
+	{
+		Zend_Registry::set('AWS_ACCESS_KEY_ID',getenv('AWS_ACCESS_KEY_ID'));
+		Zend_Registry::set('AWS_SECRET_ACCESS_KEY',getenv('AWS_SECRET_ACCESS_KEY'));
+	}
 }
 
