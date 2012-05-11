@@ -156,7 +156,7 @@ class App_Service_Member
             ))
             ->where('u.active_flag = ?', 1)
             ->where('u.role = ?', 'M')
-            ->order(array('u.last_name', 'u.first_name', 'u.user_id'));
+            ->order(array('u.first_name', 'u.last_name', 'u.user_id'));
 
         $results = $this->_db->fetchAssoc($select);
         return $this->buildUserModels($results);
