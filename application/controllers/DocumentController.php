@@ -168,8 +168,10 @@ class DocumentController extends Zend_Controller_Action
             else
                 $this->removeExternal($doc);    
         }
+        else
+            return $this->_helper->redirector('index');
+            
         
-        return $this->_helper->redirector('index');
     }
     
     private function removeExternal($doc)
@@ -178,28 +180,20 @@ class DocumentController extends Zend_Controller_Action
         
         $service->deleteDocument($doc);
         
-        $this->_forward('index', App_Resources::REDIRECT, null,
-                Array( 'msg' => 'Document Deleted Successfully',
-                       'time' => 3,
-                       'controller' => App_Resources::DOCUMENT,
-                       'action' => 'list'));
+        return $this->_helper->redirector('list',App_Resources::DOCUMENT);
     }
     
     private function removeInternal($doc)
     {
-        $file = APPLICATION_PATH . DIRECTORY_SEPARATOR . uploads . DIRECTORY_SEPARATOR . $doc->getUrl();
+        $file = APPLICATION_PATH . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $doc->getUrl();
 
         unlink($file);
         
         $service = new App_Service_DocumentService();
         
         $service->deleteDocument($doc);
-        
-        $this->_forward('index', App_Resources::REDIRECT, null,
-                Array( 'msg' => 'Document Deleted Successfully',
-                       'time' => 3,
-                       'controller' => App_Resources::DOCUMENT,
-                       'action' => 'list'));
+
+        return $this->_helper->redirector('list',App_Resources::DOCUMENT);
     }
 
 }
