@@ -1,5 +1,5 @@
 <?php
-class Application_Model_Report_reportForm extends Twitter_BootStrap_Form_Vertical
+class Application_Model_Report_reportForm extends Twitter_Bootstrap_Form_Vertical
 {
 	
 	public function __construct($options = null){
