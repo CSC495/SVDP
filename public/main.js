@@ -325,8 +325,8 @@ function renderMap(centerCoords, clientCoords) {
                             + $('<p/>').text(parishInfo.parishName).html()
                             + ' parish boundaries.';
             } else {
-                alertMsg = 'This address lies outside the parish boundaries.'
-                         + ' Refer client to ' + $('<p/>').text(parishInfo.parishName).html() + ':'
+                alertMsg = 'This address lies outside parish boundaries.'
+                         + ' Refer to ' + $('<p/>').text(parishInfo.parishName).html() + ':'
                          + ' ' + $('<p/>').text(parishInfo.parishPhone).html() + '.';
             }
 
@@ -335,7 +335,7 @@ function renderMap(centerCoords, clientCoords) {
     });
 
     if (!inParish) {
-        alertMsg = 'This address lies outside the parish boundaries.'
+        alertMsg = 'This address lies outside parish boundaries.'
                  + ' Only allow under special circumstances.';
 
         $('#addr-resideParish').val('Other');
