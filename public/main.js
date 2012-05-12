@@ -1,4 +1,4 @@
-function renderMap(clientCoords) {
+function renderMap(centerCoords, clientCoords) {
     // Declare the vertices of a polygon demarcating the parish's boundaries.
     var parishes = {
         stRaphael: {
@@ -276,7 +276,7 @@ function renderMap(clientCoords) {
                 new google.maps.LatLng(41.805901, -88.111122),
                 new google.maps.LatLng(41.806419, -88.156998)
             ],
-            parishName: 'SS. Peter &amp; Paul',
+            parishName: 'SS. Peter & Paul',
             parishPhone: '(630) 718-2127'
         }
     };
@@ -286,7 +286,7 @@ function renderMap(clientCoords) {
 
     var map = new google.maps.Map(mapElem, {
         zoom: 11,
-        center: clientCoords,
+        center: centerCoords,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
@@ -305,28 +305,40 @@ function renderMap(clientCoords) {
         });
     });
 
+    // If there isn't a client location yet, we're done.
+    if (!clientCoords) {
+        return;
+    }
+
     // Check in which parish's district (if any) the prospective client lives.
     var inParish    = false;
     var inStRaphael = false;
 
     $.each(polygons, function(parishId, polygon) {
         if (google.maps.geometry.poly.containsLocation(clientCoords, polygon)) {
-            inParish = true;
+            inParish   = true;
+            parishInfo = parishes[parishId];
 
             if (parishId == 'stRaphael') {
                 inStRaphael = true;
-                alertMsg    = 'This address lies within the parish boundaries.';
+                alertMsg    = 'This address lies within '
+                            + $('<p/>').text(parishInfo.parishName).html()
+                            + ' parish boundaries.';
             } else {
                 alertMsg = 'This address lies outside the parish boundaries.'
-                         + ' Refer client to ' + parishes[parishId].parishName + ':'
-                         + ' ' + parishes[parishId].parishPhone + '.';
+                         + ' Refer client to ' + $('<p/>').text(parishInfo.parishName).html() + ':'
+                         + ' ' + $('<p/>').text(parishInfo.parishPhone).html() + '.';
             }
+
+            $('#addr-resideParish').val(parishInfo.parishName);
         }
     });
 
     if (!inParish) {
         alertMsg = 'This address lies outside the parish boundaries.'
                  + ' Only allow under special circumstances.';
+
+        $('#addr-resideParish').val('None');
     }
 
     // Update the UI based on the client's locations in relation the various parishes.
