@@ -338,7 +338,7 @@ function renderMap(centerCoords, clientCoords) {
         alertMsg = 'This address lies outside the parish boundaries.'
                  + ' Only allow under special circumstances.';
 
-        $('#addr-resideParish').val('None');
+        $('#addr-resideParish').val('Other');
     }
 
     // Update the UI based on the client's locations in relation the various parishes.
