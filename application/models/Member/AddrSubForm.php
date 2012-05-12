@@ -159,6 +159,10 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
             ));
 
             $elements[] = 'resideParish';
+        } else {
+            $this->addElement('hidden', 'resideParish', array(
+                'decorators' => array('ViewHelper'),
+            ));
         }
 
         $this->addDisplayGroup($elements, 'addr', array('legend' => $title) );
@@ -172,14 +176,15 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
     public function getAddr()
     {
         $addr = new Application_Model_Impl_Addr();
-        $addr->setStreet(($this->street->getValue() !== '') ? $this->street->getValue() : null)
-             ->setApt(($this->apt->getValue() !== '') ? $this->apt->getValue() : null)
-             ->setCity(($this->city->getValue() !== '') ? $this->city->getValue() : null)
-             ->setState(($this->state->getValue() !== '') ? $this->state->getValue() : null)
-             ->setZip(($this->zip->getValue() !== '') ? $this->zip->getValue() : null)
-             ->setParish(($this->_hasParishField && $this->resideParish->getValue() !== '')
-                 ? $this->resideParish->getValue()
-                 : null);
+        $addr
+            ->setStreet(($this->street->getValue() !== '') ? $this->street->getValue() : null)
+            ->setApt(($this->apt->getValue() !== '') ? $this->apt->getValue() : null)
+            ->setCity(($this->city->getValue() !== '') ? $this->city->getValue() : null)
+            ->setState(($this->state->getValue() !== '') ? $this->state->getValue() : null)
+            ->setZip(($this->zip->getValue() !== '') ? $this->zip->getValue() : null)
+            ->setParish(($this->resideParish->getValue() !== '')
+                ? $this->resideParish->getValue()
+                : null);
         return $addr;
     }
 
@@ -196,8 +201,6 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
         $this->city->setValue($addr->getCity());
         $this->state->setValue($addr->getState());
         $this->zip->setValue($addr->getZip());
-        if ($this->_hasParishField) {
-            $this->resideParish->setValue($addr->getParish());
-        }
+        $this->resideParish->setValue($addr->getParish());
     }
 }

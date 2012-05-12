@@ -1,22 +1,26 @@
 <?php
-if (isset($this->latitude) && isset($this->longitude)) {
-    $this->headScript()->captureStart();
-?>
-$(function() {
-    renderMap(new google.maps.LatLng(<?php echo Zend_Json::encode($this->latitude); ?>, <?php echo Zend_Json::encode($this->longitude); ?>));
-});
-<?php
-    $this->headScript()->captureEnd();
+if (isset($this->latitude, $this->longitude)) {
+    $clientCoordsJs = 'new google.maps.LatLng('
+        . Zend_Json::encode($this->latitude) . ', ' . Zend_Json::encode($this->longitude) . ')';
+    $centerCoordsJs = $clientCoordsJs;
+} else {
+    $centerCoordsJs = 'new google.maps.LatLng(41.736205, -88.147425)';
 }
 ?>
+<?php $this->headScript()->captureStart(); ?>
+$(function() {
+<?php if (isset($clientCoordsJs)) { ?>
+    renderMap(<?php echo $centerCoordsJs; ?>, <?php echo $clientCoordsJs; ?>);
+<?php } else { ?>
+    renderMap(<?php echo $centerCoordsJs; ?>, null);
+<?php } ?>
+});
+<?php $this->headScript()->captureEnd(); ?>
 <div class=row-fluid>
     <div class=span6>
     <?php echo $this->form; ?>
     </div>
-
-    <?php if (isset($this->latitude) && isset($this->longitude)) { ?>
     <div class=span6><div class=well><div id=map>
         <noscript><p>JavaScript must be enabled to display maps.</p></noscript>
     </div></div></div>
-    <?php } ?>
 </div>

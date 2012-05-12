@@ -56,11 +56,17 @@ class App_Service_DocumentService {
                 ->setId($row['doc_id'])
                 ->setUrl($row['url'])
                 ->setName($row['filename'])
-                ->setInternal($row['internal']);
+                ->setInternal($row['internal_flag']);
                 
         return($doc);
     }
-    
+    // temp
+    public function deleteDocument($doc)
+    {
+        $result = $this->_db->delete('documents','doc_id =' . $doc->getId());
+        
+        return $result;
+    }
     /***
      * Updates information about a particular document
      */
@@ -69,7 +75,7 @@ class App_Service_DocumentService {
         $data = array(  
                         'filename'    => $doc->getName(),
                         'url'         => $doc->getUrl(),
-                        'internal'    => $doc->isInternal());
+                        'internal_flag'    => $doc->isInternal());
         $where = "doc_id = " . $doc->getId();
         
         $this->_db->update('documents',$data,$where);
@@ -83,8 +89,7 @@ class App_Service_DocumentService {
         $data = array(  'doc_id'      => null,
                         'filename'    => $doc->getName(),
                         'url'         => $doc->getUrl(),
-                        'internal'    => $doc->isInternal());
-        
+                        'internal_flag'    => $doc->isInternal());
         $this->_db->insert('documents',$data);
     }
 }

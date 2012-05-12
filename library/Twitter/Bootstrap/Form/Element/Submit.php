@@ -56,7 +56,6 @@ class Twitter_Bootstrap_Form_Element_Submit extends Zend_Form_Element_Submit
         }
 
         $this->setAttrib('class', implode(' ', $classes));
-
         parent::__construct($spec, $options);
     }
 }
