@@ -43,6 +43,10 @@ class Application_Model_Impl_Client
     private $_currentAddr = null;
 
     private $_doNotHelpReason = null;
+    
+    private $_employment = null;
+    
+    private $_hmembers = null;
 
     /* Generic get/set methods: */
 
@@ -230,6 +234,24 @@ class Application_Model_Impl_Client
     public function setDoNotHelpReason($doNotHelpReason)
     {
         $this->_doNotHelpReason = $doNotHelpReason;
+        return $this;
+    }
+    
+    public function getEmployment(){
+        return $this->_employment;
+    }
+    
+    public function setEmployment($employ){
+        $this->_employment = $employ;
+        return $this;
+    }
+    
+    public function getHouseMembers(){
+        return $this->_hmembers;
+    }
+    
+    public function setHouseMembers($hmembers){
+        $this->_hmembers = $hmembers;
         return $this;
     }
 
