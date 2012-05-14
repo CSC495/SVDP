@@ -16,4 +16,10 @@ class TreasurerController extends Zend_Controller_Action
         $service               = new App_Service_Search();
         $this->view->checkReqs = $service->getOpenCheckReqs();
     }
+	
+	public function updatefundsAction()
+	{
+		$this->view->pageTitle = "Update Current Funds";
+		
+	}
 }
