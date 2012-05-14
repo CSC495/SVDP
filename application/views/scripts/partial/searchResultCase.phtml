@@ -1,8 +1,8 @@
 <?php
 $rowStripeClass = ($this->partialCounter % 2 == 1) ? 'even' : 'odd';
-$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/editClient/id/'
+$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
     . urlencode($this->case->getClient()->getId()));
-$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/editCase/id/'
+$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/viewCase/id/'
     . urlencode($this->case->getId()));
 
 echo $this->partial('partial/searchResultCommon.phtml', array(
