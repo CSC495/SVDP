@@ -1,6 +1,6 @@
 <tr class='search-result <?php echo $this->rowStripeClass; ?>'>
     <th class='search-cell top first name'>Name</th>
-    <td class='search-cell top'><?php echo $this->escape($this->user->getFirstName()) . " " . $this->escape($this->user->getLastName()); ?></td>
+    <td class='search-cell top'><?php echo $this->escape($this->user->getFullName()); ?></td>
     <th class='search-cell top id'>User Id</th>
     <td class='search-cell top'><?php echo $this->escape($this->user->getUserId()); ?></td>
     <th class='search-cell top'>E-Mail</th>

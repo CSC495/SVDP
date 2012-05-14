@@ -166,21 +166,7 @@ class LoginController extends Zend_Controller_Action
      * @usedby LoginController::process()
      * @return void
      */
-    protected function getAuthAdapter()
-    {
-        // Get the database adapter
-        $db = Zend_Db_Table::getDefaultAdapter();
-        $adapter = new Zend_Auth_Adapter_DbTable($db);
-
-        // Set the parameters, user must be active.
-        $adapter
-            ->setTableName('user')
-            ->setIdentityColumn('user_id')
-            ->setCredentialColumn('password')
-            ->setCredentialTreatment('? and active_flag="1"');
-        ;
-        return($adapter);
-    }
+    
     /**
      * Handles the authentication of a user
      *
@@ -189,16 +175,13 @@ class LoginController extends Zend_Controller_Action
      * @param string $password
      * @return void
      */
+    //PASS THESE PARAMS IN SERVICE
     protected function authenticate($userid, $password)
     {
         $auth = Zend_Auth::getInstance();
-        $authAdapter = $this->getAuthAdapter();
         
-        // Set the user inputed values
-        $authAdapter
-            ->setIdentity($userid)
-            ->setCredential( hash('SHA256', App_Password::saltIt($password)) );
-        ;
+        $loginService = new App_Service_LoginService();
+        $authAdapter = $loginService->getAuthAdapter($userid, $password);
         
         // Authenticate the user
         $result = $auth->authenticate($authAdapter);
