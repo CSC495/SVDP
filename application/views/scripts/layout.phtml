@@ -40,8 +40,7 @@ $config = Zend_Registry::get('config');
 $funds  = App_Formatting::formatCurrency($config->getAvailableFunds());
 
 // Fetch user schedule for sidebar.
-$service         = new App_Service_GeneralService();
-$scheduleEntries = $service->getScheduleEntries();
+$scheduleEntries = Zend_Registry::get('schedule');
 ?>
 <div class=row>
     <div class=span3>
