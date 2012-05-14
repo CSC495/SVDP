@@ -155,12 +155,12 @@ class AdminController extends Zend_Controller_Action
         ));
         
         $mail->setBodyHtml('You have been added to the SVDP organization. '
-                           . 'You may log in with the username: <b>' . $user->user_id . '</b>' .
+                           . 'You may log in with the username: <b>' . $userName . '</b>' .
                            '<br/>password: <b>' . $password . '</b>' . '</br></br> Please note ' .
                            'you will be required to change your password on first login.');
         
-        $mail->setFrom('svdp@noreply.com', 'System');
-        $mail->addTo($user->email);
+        $mail->setFrom('bagura@noctrl.edu', 'System');
+        $mail->addTo('bagura@noctrl.edu');
         $mail->setSubject('SVDP Password Reset');
         try{
             $mail->send($transport);
@@ -175,7 +175,7 @@ class AdminController extends Zend_Controller_Action
                     Array( 'msg' => 'Member added successfully!',
                            'time' => 3,
                            'controller' => App_Resources::ADMIN,
-                           'action' => 'members'));
+                           'action' => 'users'));
     }
     // Display for modifying a users information
     public function modifyAction()
@@ -194,7 +194,7 @@ class AdminController extends Zend_Controller_Action
         
             // Get the users data
             $service = new App_Service_AdminService();
-            $user = $service->getUserInfo($userId);
+            $user = $service->getUserById($userId);
         
             $this->view->form = $form;
         
