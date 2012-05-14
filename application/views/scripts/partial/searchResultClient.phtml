@@ -1,6 +1,6 @@
 <?php
 $rowStripeClass = ($this->partialCounter % 2 == 1) ? 'even' : 'odd';
-$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/editClient/id/'
+$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
     . urlencode($this->client->getId()));
 
 echo $this->partial('partial/searchResultCommon.phtml', array(
