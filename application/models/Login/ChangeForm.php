@@ -8,7 +8,7 @@ class Application_Model_Login_ChangeForm extends Zend_Form
 		$this->setAttrib('id', 'change');
 		$this->setMethod('post');
 
-        $baseUrl = new Zend_View_Helper_BaseUrl();
+                $baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/login/change'));
 		
 		// Password must be minimum of 8 characters and contain 1 digit
