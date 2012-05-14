@@ -1,0 +1,61 @@
+
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod()) ?>">
+
+<fieldset>
+    <legend>Edit User</legend>
+    
+    <table>
+        <tr>
+            <td>
+                <?php echo $this->element->userid ?>
+            </td>
+            
+            <td>
+                <?php echo $this->element->role ?>
+            </td>
+            
+            <td >
+                <?php echo $this->element->status ?>
+            </td>
+            <td>
+                
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>
+                <?php echo $this->element->firstname ?>
+            </td>
+            <td>
+                <?php echo $this->element->lastname ?>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>
+                <?php echo $this->element->email ?>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td>
+                <?php echo $this->element->home ?>
+            </td>
+            <td>
+                <?php echo $this->element->cell ?>
+            </td>
+            <td>
+                
+            </td>
+        </tr>
+        
+    </table>
+
+</fieldset>
+    
+    <?php echo $this->element->submit ?>
+</form>

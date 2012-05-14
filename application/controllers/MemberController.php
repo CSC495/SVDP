@@ -6,7 +6,7 @@ class MemberController extends Zend_Controller_Action
 {
 
     /**
-     * Home page action: currently just redirects to the map search screen.
+     * Home page action: just redirects to the map search screen.
      */
     public function indexAction()
     {
@@ -38,7 +38,7 @@ class MemberController extends Zend_Controller_Action
             $addr = $this->view->form->getAddr();
 
             $this->_helper->redirector(
-                'editclient',
+                'editClient',
                 App_Resources::MEMBER,
                 null,
                 array(
@@ -87,6 +87,66 @@ class MemberController extends Zend_Controller_Action
         $this->view->cases = $service->getOpenCasesByUserId($userId);
     }
 
+    /**
+     * Action that lists contacts for parish members.
+     */
+    public function contactsAction()
+    {
+        $this->view->pageTitle = 'Member Contact List';
+
+        $service = new App_Service_AdminService();
+
+        $this->view->users = $service->getAllUsers();
+    }
+
+    /**
+     * Action that allows members to edit the parish schedule.
+     */
+    public function editscheduleAction()
+    {
+        $this->view->pageTitle = 'Edit Schedule';
+
+        $request = $this->getRequest();
+        $service = new App_Service_Member();
+
+        $users = $service->getActiveMembers();
+
+        foreach ($users as &$user) {
+            $user = $user->getFirstName() . ' ' . $user->getLastName();
+        }
+        unset($user);
+
+        $this->view->form = new Application_Model_Member_ScheduleForm(array('' => '') + $users);
+
+        if (!$request->isPost()) {
+            // If this isn't a POST request, fill the form from existing entries.
+            $this->view->form->setEntries($service->getScheduleEntries());
+            return;
+        }
+
+        // Repopulate the form with POST data.
+        $data = $request->getPost();
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        if ($this->view->form->handleAddRemoveEntries($data)
+                || !$this->view->form->isValid($data)) {
+            // If the user just added or removed a schedule entry, then we're done. Do likewise for
+            // validation errors.
+            return;
+        }
+
+        // Handle added, modified, and deleted schedule entries.
+        foreach ($this->view->form->getChangedEntries() as $changedEntry) {
+            $service->changeScheduleEntry($changedEntry);
+        }
+        $service->removeScheduleEntries($this->view->form->getRemovedEntries());
+        $this->_helper->redirector('editSchedule');
+    }
+
+    /**
+     * Action that allows members to add new clients or edit data about existing clients.
+     */
     public function editclientAction()
     {
         $request = $this->getRequest();
@@ -138,28 +198,21 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
-        // Handles requests to add new householders or employers.
-        if ($this->view->form->isAddHouseholderRequest($data)) {
-            $this->view->form->addHouseholder();
-            return;
-        }
-
-        if ($this->view->form->isAddEmployerRequest($data)) {
-            $this->view->form->addEmployer();
-            return;
-        }
-
         // If the user just submitted the form, make some validation goodness happen.
-        if (!$this->view->form->isValid($data)) {
+        // If the user requested that we add or remove a household member or employer, or if form
+        // validation failed, then we're done here.
+        if ($this->view->form->handleAddRemoveRecords($data)
+                || !$this->view->form->isValid($data)) {
             return;
         }
 
         // If we passed validation, insert or update the database as required.
         if ($this->_hasParam('id')) {
+            // TODO: Update existing client.
         } else {
             $client       = $this->view->form->getClient();
-            $householders = $this->view->form->getHouseholders();
-            $employers    = $this->view->form->getEmployers();
+            $householders = $this->view->form->getChangedHouseholders();
+            $employers    = $this->view->form->getChangedEmployers();
 
             $client
                 ->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id)
@@ -173,13 +226,16 @@ class MemberController extends Zend_Controller_Action
 
             $client = $service->createClient($client, $householders, $employers);
 
-            $this->_helper->redirector('editclient', App_Resources::MEMBER, null, array(
+            $this->_helper->redirector('editClient', App_Resources::MEMBER, null, array(
                 'id' => $client->getId(),
             ));
         }
     }
 
-    public function caseAction()
+    /**
+     * Action that allows members to add new cases or edit data about existing cases.
+     */
+    public function editcaseAction()
     {
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_Member_CaseForm();

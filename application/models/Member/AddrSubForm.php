@@ -3,12 +3,23 @@
 /**
  * Sub form containing common address widgets.
  */
-class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Horizontal {
+class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizontal
+{
+
+    private $_PARISH_OPTIONS = array(
+        '' => '',
+        'St. Raphael' => 'St. Raphael',
+        'Holy Spirit' => 'Holy Spirit',
+        'St. Elizabeth Seton' => 'St. Elizabeth Seton',
+        'St. Thomas' => 'St. Thomas',
+        'SS. Peter & Paul' => 'SS. Peter & Paul',
+        'Other' => 'Other',
+    );
 
     private $_hasParishField;
 
     /**
-     * Instantiates a new instance of the `Application_Model_Member_AddressSubForm` class.
+     * Instantiates a new instance of the `Application_Model_Member_AddrSubForm` class.
      */
     public function __construct($title, $hasParishField = false, $zipCodeRequired = false)
     {
@@ -52,7 +63,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
                 )),
             ),
             'label' => 'Apartment #',
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxLength' => 30,
             'dimension' => 1,
         ));
@@ -105,6 +116,9 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
         $this->addElement('text', 'zip', array(
             'required' => $zipCodeRequired,
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'messages' => array('isEmpty' => 'ZIP code must be present.'),
+                )),
                 array('Digits', true, array(
                     'messages' => array('notDigits' => 'ZIP code must be numeric.'),
                 )),
@@ -118,7 +132,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
                 )),
             ),
             'label' => 'ZIP code',
-            'description' => $zipCodeRequired ? null : '(optional)',
+            'description' => $zipCodeRequired ? null : '(Optional)',
             'maxLength' => 5,
             'dimension' => 1,
         ));
@@ -126,24 +140,21 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
         $elements = array('street', 'apt', 'city', 'state', 'zip');
 
         if ($hasParishField) {
-            $this->addElement('text', 'resideParish', array(
+            $this->addElement('select', 'resideParish', array(
+                'multiOptions' => $this->_PARISH_OPTIONS,
                 'required' => true,
-                'filters' => array('StringTrim'),
                 'validators' => array(
                     array('NotEmpty', true, array(
                         'type' => 'string',
-                        'messages' => array('isEmpty' => 'You must enter a parish name.'),
+                        'messages' => array('isEmpty' => 'You must choose a parish name.'),
                     )),
-                    array('StringLength', true, array(
-                        'max' => 50,
-                        'messages' => array(
-                            'stringLengthTooLong'
-                            => 'Parish name must be shorter than 50 characters.',
-                        ),
+                    array('InArray', true, array(
+                        'haystack' => array_keys($this->_PARISH_OPTIONS),
+                        'strict' => true,
+                        'messages' => array('notInArray' => 'You must choose a parish name.'),
                     )),
                 ),
                 'label' => 'Parish of residence',
-                'maxLength' => 50,
                 'dimension' => 3,
             ));
 

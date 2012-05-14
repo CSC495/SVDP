@@ -6,6 +6,12 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
     {
         parent::__construct();
 
+        $this->addElementPrefixPath(
+            'Twitter_Bootstrap_Form_Decorator',
+            'Twitter/Bootstrap/Form/Decorator',
+            'decorator'
+        );
+
         $this->setDecorators(array(
             'FormElements',
             array('HtmlTag', array('tag' => 'tr')),
@@ -13,6 +19,8 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
 
         $this->setElementDecorators(array(
             'ViewHelper',
+            'ElementErrors',
+            'Wrapper',
             array('HtmlTag', array('tag'  => 'td')),
         ));
 
@@ -29,21 +37,24 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a company name.'),
+                    'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
                 array('StringLength', true, array(
                     'max' => 50,
                     'messages' => array(
-                        'stringLengthTooLong' => 'Company name must be shorter than 50 characters.',
+                        'stringLengthTooLong' => 'Must not be more than 50 characters.',
                     ),
                 )),
             ),
             'decorators' => array(
                 'ViewHelper',
+                'ElementErrors',
+                'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
             ),
             'maxlength' => 50,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'position', array(
@@ -52,33 +63,39 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a position.'),
+                    'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
                 array('StringLength', true, array(
                     'max' => 50,
                     'messages' => array(
-                        'stringLengthTooLong' => 'Position must be shorter than 50 characters.',
+                        'stringLengthTooLong' => 'Must not be more than 50 characters.',
                     ),
                 )),
             ),
             'maxlength' => 50,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'startDate', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'Must not be empty.'),
+                )),
                 array('Date', true, array(
                     'format' => 'MM/dd/yyyy',
                     'messages' => array(
-                        'dateInvalidDate' => 'Start date must be properly formatted.',
-                        'dateFalseFormat' => 'Start date must be a valid date.',
+                        'dateInvalidDate' => 'Must be properly formatted.',
+                        'dateFalseFormat' => 'Must be a valid date.',
                     ),
                 )),
             ),
             'maxlength' => 10,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),        		
         ));
 
         $this->addElement('text', 'endDate', array(
@@ -87,13 +104,14 @@ class Application_Model_Member_EmployerSubForm extends Zend_Form_SubForm {
                 array('Date', true, array(
                     'format' => 'MM/dd/yyyy',
                     'messages' => array(
-                        'dateInvalidDate' => 'End date must be properly formatted.',
-                        'dateFalseFormat' => 'End date must be a valid date.',
+                        'dateInvalidDate' => 'Must be properly formatted.',
+                        'dateFalseFormat' => 'Must be a valid date.',
                     ),
                 )),
             ),
             'maxlength' => 10,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
     }
 

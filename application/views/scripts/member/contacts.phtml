@@ -1,0 +1,10 @@
+<p>View member contact information.</p>
+
+<div class=search-results>
+<table class=search-results>
+<?php
+$this->partialLoop()->setObjectKey('user');
+echo $this->partialLoop('partial/viewMemberForMember.phtml', $this->users);
+?>
+</table>
+</div>

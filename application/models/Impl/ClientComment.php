@@ -1,6 +1,6 @@
 <?php
 
-class App_Models_Impl_ClientComment
+class Application_Model_Impl_ClientComment
 {
     private $_commentId;
     
@@ -21,11 +21,31 @@ class App_Models_Impl_ClientComment
         $this->_commentId = $commentId;
     }
     
-    // Magical php getter
-    public function __get($property){
-        if(property_exists($this, $property)){
-            return $this->$property;
-        }
+    
+    // Getters, possibly replace with 'unsafe' magical getter??
+    public function getId()
+    {
+        return $this->_commentId;
+    }
+
+    public function getClientId()
+    {
+        return $this->_clientId;
+    }
+    
+    public function getUserId()
+    {
+        return $this->_userId;
+    }
+    
+    public function getCommentDate()
+    {
+        return $this->_commentDate;
+    }
+    
+    public function getCommentId()
+    {
+        return $this->_comment;
     }
     
 }

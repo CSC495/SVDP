@@ -14,10 +14,15 @@ $this->headTitle($this->pageTitle)
 
 // Use the main stylesheet.
 $this->headLink()->prependStylesheet($this->baseUrl('main.css'), 'all');
+$this->headLink()->prependStylesheet(
+    'http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/redmond/jquery-ui.css');
 
 // Include jQuery libraries.
 $this->headScript()->prependFile($this->baseUrl('main.js'));
-$this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js');
+$this->headScript()->prependFile($this->baseUrl('jquery.maskedinput-1.3.min.js'));
+$this->headScript()->prependFile(
+    'http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/jquery-ui.min.js');
+$this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.7.2.min.js');
 
 // Render <head> elements.
 echo $this->doctype(),    "\n";
@@ -30,22 +35,14 @@ echo $this->headScript(), "\n";
 $auth = Zend_Auth::getInstance();
 $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 ?>
-<header>
-    <!--<h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>-->
-    <style type="text/css">
-     
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-</header>
+
 <div class="row">
 	<div class="span3">
         <a href="<?php echo $this->escape($this->baseUrl(''))?>">
-            <img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0"/>
+            <img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0" hspace="25" vspace="20"/>
         </a>
 	</div>
-	<div class="span8" >
+	<div class="span10" >
 	<ul class="unstyled" style="padding-top: 75px">
     
 		<li><h1>St. Vincent de Paul </h1>
@@ -61,15 +58,39 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               
-			  <li class="nav-header">Balance</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+			   <li class="nav-header">Current Funds</li>
+              <?php
+					$aService = new App_Service_AdminService();
+					$this->funds = $aService->getParishParams()->getAvailableFunds();
+					$this->nfunds = number_format($this->funds, 2, '.', ',');
+			  ?>
+			  <p style=" text-indent:10px; ">$<?php echo $this->nfunds ?></p>
 
-              <li class="nav-header">Schedule</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+             <li class="nav-header">Schedule</li>
+              <?php
+					$mService = new App_Service_Member();
+					$this->schedule = $mService->getScheduleEntries();
+					$aService = new App_Service_AdminService();
+					
+					
+					foreach($this->schedule as $s){
+						$this->id = $s->getUser()->getUserId();
+						$this->user = $aService->getUserById($this->id);
+						$this->fname = $this->user->getFirstName();
+						$this->lname = $this->user->getLastName();
+						$this->name = $this->fname." ".$this->lname;
+						if (strlen($this->name) > 18) {
+							$this->name = substr($this->name,0,18)."...";
+						} 
+						
+						$this->strDate = strtotime($s->getStartDate());
+						$this->sDate = date( 'm-d-Y', $this->strDate );
+						
+			  ?>		
+						<p style="width:200px;">Week of <?php echo $this->sDate?></p>
+						<p style="width:150px; text-indent:10px;"><?php echo substr($this->name,0, 21);?></p>
+			  <?php } ?>
+			  
             </ul>
           </div><!--/.well -->
         </div><!--/span-->

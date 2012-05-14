@@ -1,33 +1,50 @@
 <?php
-class Application_Model_Login_ForgotForm extends Zend_Form
+class Application_Model_Login_ForgotForm extends Twitter_BootStrap_Form_Vertical
 {
-	
 	public function __construct($options = null){
+		
 		parent::__construct($options);
+		
+		$this->addElementPrefixPath(
+			'Twitter_Bootstrap_Form_Decorator',
+			'Twitter/Bootstrap/Form/Decorator',
+			'decorator'
+		);
+		
 		$this->setName('forgot');
 		$this->setAttrib('id', 'forgot');
 		$this->setMethod('post');
 
-        $baseUrl = new Zend_View_Helper_BaseUrl();
+		$baseUrl = new Zend_View_Helper_BaseUrl();
 		$this->setAction($baseUrl->baseUrl('/login/forgot'));
 		
-		// Username must consist of letters only
-		//          must be between 5 and 20 characters
-		$username = $this->addElement('text', 'username', array(
-                                   'filters'    => array('StringTrim', 'StringToLower'),
-                                  'validators' => array(
-				          'Alnum',
-                                  array('StringLength', false, array(1, 20)),
-		                        ),
-				   'required'   => true,
-				   'label'      => 'Username:',
-				 ));
-
-               $login = $this->addElement('submit', 'proceed', array(
-                   'required' => false,
-                   'ignore'   => true,
-                   'label'    => 'E-mail Password',
+		$this->setElementDecorators(array(
+			'FieldSize',
+			'ViewHelper',
+			'Addon',
+			'ElementErrors',
+			array('Description', array('class' => 'help-block')),
+			array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
+			array('Label', array('class' => 'control-label')),
+			'Wrapper',
+		));
+		
+		$this->addElement('text','username',array(
+			'required'   => true,
+			'filters'    => array('stringTrim'),
+			'label'      => 'Username:',
+			'validators' => array(
+				array('NotEmpty', true, array(
+					'type' => 'string',
+					'messages' => array('isEmpty' => 'Field is required.')))),
                 ));
-               
+
+		$this->addDisplayGroup(array('username'), 'id', null);
+
+		$this->addElement('submit','submit', array(
+			'buttonType'  => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
+			'label'       => 'Send E-Mail',
+			'decorators' => array('ViewHelper'),
+		));
 	}
 }

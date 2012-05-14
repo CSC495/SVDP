@@ -1,56 +1,51 @@
 <?php
 
-class Application_Model_Member_ClientForm extends Zend_Form
+class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizontal
 {
 
+    private $_MARRIAGE_OPTIONS = array(
+        '' => '',
+        'Single' => 'Single',
+        'Married' => 'Married',
+        'Divorced' => 'Divorced',
+        'Separated' => 'Separated',
+        'Other' => 'Other',
+    );
+
+	private $_PARISH_OPTIONS = array(
+        '' => '',
+        'St. Raphael' => 'St. Raphael',
+        'Holy Spirit' => 'Holy Spirit',
+        'St. Elizabeth Seton' => 'St. Elizabeth Seton',
+        'St. Thomas' => 'St. Thomas',
+        'SS. Peter & Paul' => 'SS. Peter & Paul',
+        'Other' => 'Other',
+        'None' => 'None',
+    );
+
     private $_id;
-
-    private $_householdersSubForm;
-
-    private $_employersSubForm;
 
     private static function makeActionUrl($id)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
-        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editclient'
+        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editClient'
             . (($id !== null) ? '/id/' . urlencode($id) : ''));
     }
 
     public function __construct($id = null)
     {
         $this->_id = $id;
-        $this->_householdersSubForm = new Zend_Form_SubForm();
-        $this->_employersSubForm = new Zend_Form_SubForm();
 
-        parent::__construct();
-
-        $this
-            ->addElementPrefixPath(
-                'Twitter_Bootstrap_Form_Decorator',
-                'Twitter/Bootstrap/Form/Decorator',
-                'decorator'
-            )
-            ->setAction(self::makeActionUrl($id))
-            ->setMethod('post')
-            ->setDecorators(array(
+        parent::__construct(array(
+            'action' => self::makeActionUrl($id),
+            'method' => 'post',
+            'decorators' => array(
                 'PrepareElements',
-                array('ViewScript', array(
-                    'viewScript' => 'form/editclient.phtml',
-                    'householdersSubForm' => &$this->_householdersSubForm,
-                    'employersSubForm' => &$this->_employersSubForm,
-                )),
-                array('Form', array('class' => 'member form-horizontal')),
-            ))
-            ->setElementDecorators(array(
-                'FieldSize',
-                'ViewHelper',
-                'Addon',
-                'ElementErrors',
-                array('Description', array('class' => 'help-block')),
-                array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
-                array('Label', array('class' => 'control-label')),
-                'Wrapper',
-            ));
+                array('ViewScript', array('viewScript' => 'form/client-form.phtml')),
+                'Form',
+            ),
+            'class' => 'form-horizontal twocol',
+        ));
 
         // Personal information elements:
 
@@ -105,7 +100,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 )),
             ),
             'label' => 'Other name',
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
@@ -122,9 +117,10 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 )),
             ),
             'label' => 'Birth date',
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxlength' => 10,
             'dimension' => 2,
+            'class' => 'date',
         ));
 
         $this->addElement('text', 'ssn4', array(
@@ -134,6 +130,9 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 array('NotEmpty', true, array(
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must be four digits.'),
+                )),
+                array('Digits', true, array(
+                    'messages' => array('notDigits' => 'Must be four digits.'),
                 )),
                 array('StringLength', true, array(
                     'min' => 4,
@@ -149,9 +148,22 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'dimension' => 1,
         ));
 
-        $this->addElement('checkbox', 'married', array(
+        $this->addElement('select', 'maritalStatus', array(
+            'multiOptions' => $this->_MARRIAGE_OPTIONS,
             'required' => true,
-            'label' => 'Currently married',
+            'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'You must choose a marital status.'),
+                )),
+                array('InArray', true, array(
+                    'haystack' => array_keys($this->_MARRIAGE_OPTIONS),
+                    'strict' => true,
+                    'messages' => array('notInArray' => 'You must choose a marital status.'),
+                )),
+            ),
+            'label' => 'Marital status',
+            'dimension' => 2,
         ));
 
         $this->addElement('text', 'spouseName', array(
@@ -159,12 +171,13 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a first name.'),
+                    'messages' => array('isEmpty' => "You must enter a spouse's first name."),
                 )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
-                        'stringLengthTooLong' => 'First name must be shorter than 30 characters.',
+                        'stringLengthTooLong'
+                            => "Spouse's first name must be shorter than 30 characters.",
                     ),
                 )),
             ),
@@ -185,9 +198,35 @@ class Application_Model_Member_ClientForm extends Zend_Form
                 )),
             ),
             'label' => "Spouse's birth date",
-            'description' => '(optional)',
+            'description' => '(Optional)',
             'maxlength' => 10,
             'dimension' => 2,
+            'class' => 'date',
+        ));
+
+        $this->addElement('text', 'spouseSsn4', array(
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'Must be four digits.'),
+                )),
+                array('Digits', true, array(
+                    'messages' => array('notDigits' => 'Must be four digits.'),
+                )),
+                array('StringLength', true, array(
+                    'min' => 4,
+                    'max' => 4,
+                    'messages' => array(
+                        'stringLengthTooShort' => 'Must be four digits.',
+                        'stringLengthTooLong' => 'Must be four digits.',
+                    ),
+                )),
+            ),
+            'label' => "Last four digits of spouse's SSN",
+            'description' => '(Optional)',
+            'maxlength' => 4,
+            'dimension' => 1,
         ));
 
         // Additional information elements:
@@ -222,23 +261,21 @@ class Application_Model_Member_ClientForm extends Zend_Form
             'label' => 'Veteran',
         ));
 
-        $this->addElement('text', 'parish', array(
+        $this->addElement('select', 'parish', array(
+            'multiOptions' => $this->_PARISH_OPTIONS,
             'required' => true,
-            'filters' => array('StringTrim'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a parish name.'),
+                    'messages' => array('isEmpty' => 'You must choose a parish name.'),
                 )),
-                array('StringLength', true, array(
-                    'max' => 50,
-                    'messages' => array(
-                        'stringLengthTooLong' => 'Parish name must be shorter than 50 characters.',
-                    ),
+                array('InArray', true, array(
+                    'haystack' => array_keys($this->_PARISH_OPTIONS),
+                    'strict' => true,
+                    'messages' => array('notInArray' => 'You must choose a parish name.'),
                 )),
             ),
             'label' => 'Parish attended',
-            'maxlength' => 50,
             'dimension' => 3,
         ));
 
@@ -247,83 +284,84 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->addElement('text', 'cellPhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => ''),
+                )),
                 array('StringLength', true, array(
                     'min' => 10,
                     'max' => 10,
                     'messages' => array(
-                        'stringLengthTooShort' => 'Cell phone must be a ten digit phone number.',
-                        'stringLengthTooLong' => 'Cell phone must be a ten digit phone number.',
+                        'stringLengthTooShort' => 'Cell phone must be a ten digit number.',
+                        'stringLengthTooLong' => 'Cell phone must be a ten digit number.',
                     ),
                 )),
             ),
             'label' => 'Cell phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
         $this->addElement('text', 'homePhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => ''),
+                )),
                 array('StringLength', true, array(
                     'min' => 10,
                     'max' => 10,
                     'messages' => array(
-                        'stringLengthTooShort' => 'Home phone must be a ten digit phone number.',
-                        'stringLengthTooLong' => 'Home phone must be a ten digit phone number.',
+                        'stringLengthTooShort' => 'Home phone must be a ten digit number.',
+                        'stringLengthTooLong' => 'Home phone must be a ten digit number.',
                     ),
                 )),
             ),
             'label' => 'Home phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
         $this->addElement('text', 'workPhone', array(
             'filters' => array('StringTrim', 'Digits'),
             'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => ''),
+                )),
                 array('StringLength', true, array(
                     'min' => 10,
                     'max' => 10,
                     'messages' => array(
-                        'stringLengthTooShort' => 'Work phone must be a ten digit phone number.',
-                        'stringLengthTooLong' => 'Work phone must be a ten digit phone number.',
+                        'stringLengthTooShort' => 'Work phone must be a ten digit number.',
+                        'stringLengthTooLong' => 'Work phone must be a ten digit number.',
                     ),
                 )),
             ),
             'label' => 'Work phone',
             'maxlength' => 12,
             'dimension' => 2,
+            'class' => 'phone',
         ));
 
-        $this->addSubForm(new Application_Model_Member_AddressSubForm(null, true, true), 'addr');
+        $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
 
-        // Householder sub form and elements:
+        // Householders sub form:
 
-        $this->_householdersSubForm
-            ->setDecorators(array('FormElements'))
-            ->setElementDecorators(array('ViewHelper'));
+        $this->addSubForm(
+            new Application_Model_Member_HouseholderRecordListSubForm(),
+            'householderRecordList'
+        );
 
-        $this->addSubForm($this->_householdersSubForm, 'householders');
+        // Employers sub form:
 
-        $this->addElement('submit', 'newHouseholder', array(
-            'label' => 'Add Another Member',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-info',
-        ));
-
-        // Employer sub form and elements:
-
-        $this->_employersSubForm
-            ->setDecorators(array('FormElements'))
-            ->setElementDecorators(array('ViewHelper'));
-
-        $this->addSubForm($this->_employersSubForm, 'employers');
-
-        $this->addElement('submit', 'newEmployer', array(
-            'label' => 'Add Another Employer',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-info',
-        ));
+        $this->addSubForm(
+            new Application_Model_Member_EmployerRecordListSubForm(),
+            'employerRecordList'
+        );
 
         // Primary form actions:
 
@@ -334,35 +372,30 @@ class Application_Model_Member_ClientForm extends Zend_Form
         ));
     }
 
-    public function isAddHouseholderRequest($data)
+    public function preValidate($data)
     {
-        return isset($data['newHouseholder']);
-    }
-
-    public function isAddEmployerRequest($data)
-    {
-        return isset($data['newEmployer']);
-    }
-
-    public function prevalidate($data)
-    {
-        if (isset($data['householders'])) {
-            foreach ($data['householders'] as $householderId => $householderData) {
-                $this->_householdersSubForm->addSubForm(
-                    new Application_Model_Member_HouseholderSubForm(),
-                    $householderId
-                );
-            }
+        if (isset($data['maritalStatus']) && $data['maritalStatus'] === 'Married') {
+            $this->spouseName->setRequired(true);
         }
 
-        if (isset($data['employers'])) {
-            foreach ($data['employers'] as $employerId => $employerData) {
-                $this->_employersSubForm->addSubForm(
-                    new Application_Model_Member_EmployerSubForm(),
-                    $employerId
-                );
-            }
+        // XXX: This is kind of a hack, and it's slightly broken. We really should use a custom
+        // validator class for our "at least one of these fields is required" logic.
+        if (App_Formatting::isBlank($data['cellPhone'])
+            && App_Formatting::isBlank($data['homePhone'])
+            && App_Formatting::isBlank($data['workPhone'])) {
+            $this->cellPhone->setRequired(true);
+            $this->homePhone->setRequired(true);
+            $this->workPhone->setRequired(true);
         }
+
+        $this->householderRecordList->preValidate($data);
+        $this->employerRecordList->preValidate($data);
+    }
+
+    public function handleAddRemoveRecords($data)
+    {
+        return $this->householderRecordList->handleAddRemoveRecords($data)
+            || $this->employerRecordList->handleAddRemoveRecords($data);
     }
 
     public function getClient()
@@ -372,7 +405,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
                ->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()))
                ->setLastName(App_Formatting::emptyToNull($this->lastName->getValue()))
                ->setOtherName(App_Formatting::emptyToNull($this->otherName->getValue()))
-               ->setMarried($this->married->isChecked())
+               ->setMaritalStatus(App_Formatting::emptyToNull($this->maritalStatus->getValue()))
                ->setBirthDate(App_Formatting::unformatDate($this->birthDate->getValue()))
                ->setSsn4(App_Formatting::emptyToNull($this->ssn4->getValue()))
                ->setCellPhone(App_Formatting::emptyToNull($this->cellPhone->getValue()))
@@ -380,14 +413,18 @@ class Application_Model_Member_ClientForm extends Zend_Form
                ->setWorkPhone(App_Formatting::emptyToNull($this->workPhone->getValue()))
                ->setParish(App_Formatting::emptyToNull($this->parish->getValue()))
                ->setVeteran($this->veteran->isChecked())
-               ->setCurrentAddr($this->addr->getAddr());
+               ->setCurrentAddr($this->addr->getAddr())
+               ->setDoNotHelpReason($this->doNotHelp->isChecked()
+                   ? App_Formatting::emptyToNull($this->doNotHelpReason->getValue())
+                   : null);
 
         if ($client->isMarried()) {
             $spouse = new Application_Model_Impl_Client();
             $spouse->setFirstName(App_Formatting::emptyToNull($this->spouseName->getValue()))
                    ->setLastName($client->getLastName())
-                   ->setMarried(true)
+                   ->setMaritalStatus($client->getMaritalStatus())
                    ->setBirthDate(App_Formatting::unformatDate($this->spouseBirthDate->getValue()))
+                   ->setSsn4(App_Formatting::emptyToNull($this->spouseSsn4->getValue()))
                    ->setHomePhone($client->getHomePhone())
                    ->setParish($client->getParish());
 
@@ -402,7 +439,7 @@ class Application_Model_Member_ClientForm extends Zend_Form
         $this->firstName->setValue($client->getFirstName());
         $this->lastName->setValue($client->getLastName());
         $this->otherName->setValue($client->getOtherName());
-        $this->married->setChecked($client->isMarried());
+        $this->maritalStatus->setValue($client->getMaritalStatus());
         $this->birthDate->setValue(App_Formatting::formatDate($client->getBirthDate()));
         $this->ssn4->setValue($client->getSsn4());
         $this->doNotHelp->setChecked($client->isDoNotHelp());
@@ -418,72 +455,37 @@ class Application_Model_Member_ClientForm extends Zend_Form
             $spouse = $client->getSpouse();
             $this->spouseName->setValue($spouse->getFirstName());
             $this->spouseBirthDate->setValue(App_Formatting::formatDate($spouse->getBirthDate()));
+            $this->spouseSsn4->setValue($spouse->getSsn4());
         }
     }
 
-    public function getHouseholders()
+    public function getRemovedHouseholders()
     {
-        $householders = array();
+        return $tihs->householderRecordList->getRemovedRecords();
+    }
 
-        foreach ($this->_householdersSubForm->getSubForms() as $householderSubForm) {
-            $householders[] = $householderSubForm->getHouseholder();
-        }
-
-        return $householders;
+    public function getChangedHouseholders()
+    {
+        return $this->householderRecordList->getChangedRecords();
     }
 
     public function setHouseholders($householders)
     {
-        $this->_householdersSubForm->clearSubForms();
-
-        $i = 0;
-
-        foreach ($householders as $householder) {
-            $householderSubForm = new Application_Model_Member_HouseholderSubForm();
-            $householderSubForm->setHouseholder($householder);
-
-            $this->_householdersSubForm->addSubForm($householderSubForm, $i++);
-        }
+        $this->householderRecordList->setRecords($householders);
     }
 
-    public function addHouseholder()
+    public function getRemovedEmployers()
     {
-        $this->_householdersSubForm->addSubForm(
-            new Application_Model_Member_HouseholderSubForm(),
-            count($this->_householdersSubForm->getSubForms())
-        );
+        return $this->employerRecordList->getRemovedEmployers();
     }
 
-    public function getEmployers()
+    public function getChangedEmployers()
     {
-        $employers = array();
-
-        foreach ($this->_employersSubForm->getSubForms() as $employerSubForm) {
-            $employers[] = $employerSubForm->getEmployer();
-        }
-
-        return $employers;
+        return $this->employerRecordList->getChangedRecords();
     }
 
     public function setEmployers($employers)
     {
-        $this->_employersSubForm->clearSubForms();
-
-        $i = 0;
-
-        foreach ($employers as $employer) {
-            $employerSubForm = new Application_Model_Member_EmployerSubForm();
-            $employerSubForm->setEmployer($employer);
-
-            $this->_employersSubForm->addSubForm($employerSubForm, $i++);
-        }
-    }
-
-    public function addEmployer()
-    {
-        $this->_employersSubForm->addSubForm(
-            new Application_Model_Member_EmployerSubForm(),
-            count($this->_employersSubForm->getSubForms())
-        );
+        $this->employerRecordList->setRecords($employers);
     }
 }

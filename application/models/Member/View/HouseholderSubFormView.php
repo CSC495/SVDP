@@ -6,6 +6,12 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
     {
         parent::__construct();
 
+        $this->addElementPrefixPath(
+            'Twitter_Bootstrap_Form_Decorator',
+            'Twitter/Bootstrap/Form/Decorator',
+            'decorator'
+        );
+
         $this->setDecorators(array(
             'FormElements',
             array('HtmlTag', array('tag' => 'tr')),
@@ -13,6 +19,8 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
 
         $this->setElementDecorators(array(
             'ViewHelper',
+            'ElementErrors',
+            'Wrapper',
             array('HtmlTag', array('tag'  => 'td')),
         ));
 
@@ -29,21 +37,24 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a first name.'),
+                    'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
-                        'stringLengthTooLong' => 'First name must be shorter than 30 characters.',
+                        'stringLengthTooLong' => 'Must not be more than 30 characters.',
                     ),
                 )),
             ),
             'decorators' => array(
                 'ViewHelper',
+                'ElementErrors',
+                'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
             ),
             'maxlength' => 30,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),        		
         ));
 
         $this->addElement('text', 'lastName', array(
@@ -52,17 +63,18 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a last name.'),
+                    'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
-                        'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
+                        'stringLengthTooLong' => 'Must not be more than 30 characters.',
                     ),
                 )),
             ),
             'maxlength' => 30,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),        		
         ));
 
         $this->addElement('text', 'relationship', array(
@@ -71,17 +83,18 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a relationship.'),
+                    'messages' => array('isEmpty' => 'Must not be empty.'),
                 )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
-                        'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
+                        'stringLengthTooLong' => 'Must not be more than 30 characters.',
                     ),
                 )),
             ),
             'maxlength' => 30,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'birthDate', array(
@@ -90,13 +103,14 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 array('Date', true, array(
                     'format' => 'MM/dd/yyyy',
                     'messages' => array(
-                        'dateInvalidDate' => 'Birth date must be properly formatted.',
-                        'dateFalseFormat' => 'Birth date must be a valid date.',
+                        'dateInvalidDate' => 'Must be properly formatted.',
+                        'dateFalseFormat' => 'Must be a valid date.',
                     ),
                 )),
             ),
             'maxlength' => 10,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
 
         $this->addElement('text', 'departDate', array(
@@ -105,13 +119,14 @@ class Application_Model_Member_HouseholderSubForm extends Zend_Form_SubForm {
                 array('Date', true, array(
                     'format' => 'MM/dd/yyyy',
                     'messages' => array(
-                        'dateInvalidDate' => 'Departure date must be properly formatted.',
-                        'dateFalseFormat' => 'Departure date must be a valid date.',
+                        'dateInvalidDate' => 'Must be properly formatted.',
+                        'dateFalseFormat' => 'Must be a valid date.',
                     ),
                 )),
             ),
             'maxlength' => 10,
             'class' => 'span2',
+        	'attribs'    => array('disabled' => 'disabled'),
         ));
     }
 

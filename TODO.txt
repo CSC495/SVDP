@@ -1,19 +1,12 @@
 Admin Controller
 ------------------------
-Add partials for display user information in table
+Fix partials for display of user information in table
 Interface for modifying user information
-Server Side persist fund change
-Set default values of Fund adjustment form with Database Values
+Generate new password and user id for new user creation and e-mail temp password
+
 
 Login Controller
 ------------------------
-Add script to e-mail user password
-
-
-Database/Services
--------------------------
-Query to update any value from parish_funds table;
-Query to access all data from parish_funds table;
-Query to display all member information (Name, phone #'s, e-mail, member, role)
-Query to create a new member (initializes Forgot Password to true)
-Query to update a memebers password and update forgot password to true.
+On password change, Generate new temp password and e-mail temp password
+On forgot password, Generate new temp password and e-mail temp password
+Integrate Zend-SES bridge

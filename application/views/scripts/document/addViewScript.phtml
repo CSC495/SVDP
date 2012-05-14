@@ -1,0 +1,24 @@
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod())?>">
+
+<fieldset>
+    <legend>Add External Document</legend>
+    
+    <table>
+    <tr>
+        <td>
+            <?php echo $this->element->name ?>
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <?php echo $this->element->url ?>
+        </td>
+        
+    </tr>
+    
+    </table>
+</fieldset>
+    <br/>
+    <?php echo $this->element->submit ?>
