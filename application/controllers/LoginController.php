@@ -117,25 +117,33 @@ class LoginController extends Zend_Controller_Action
         if($user){
             $password = App_Password::generatePassword(10);
             $service->updateUserPassword($username,$password);
-
-            //$config = array('auth' => 'login',
-            //                'username' => 'AKIAI32KNSM26FVLWN4A',
-            //                'password' => 'AgdK1TjaLRqJr4Zh3NiiInn18QyZV7nLowNhhbWoWc6O');
-            //
-            //$transport = new Zend_Mail_Transport_Smtp('https://email.us-east-1.amazonaws.com', $config);
-            ////https://email.us-east-1.amazonaws.com
-            //$mail = new Zend_Mail();
-            //$mail->addHeader('Date', gmdate('D, d M Y H:i:s O'));
-            //$mail->addHeader('X-Amzn-Authorization' => )
-            //$mail->setBodyText('Here is your temporary password. You will be prompted to change it at next login. ' . $password );
-            //$mail->setFrom('SVDP@noreply.com', 'System');
-            //$mail->addTo('bagura@noctrl.edu','ben');
-            //$mail->setSubject('Temporary Password');
-            ////var_dump($mail);
-            ////exit();
-            //$mail->send($transport);
+            
+            $mail = new Zend_Mail('utf-8');
+            $transport = new App_Mail_Transport_AmazonSES(
+            array(
+                'accessKey' => $_ENV["AWSPUB"],
+                'privateKey' => $_ENV["AWSPVT"]
+            ));
+            
+            $mail->setBodyText('Here is your temporary password...');
+            $mail->setBodyHtml('Here is your temporary password. You will be required '
+                               . 'to changed it on your next login.' .
+                               '<br/><b>' . $password . '</b>');
+            $mail->setFrom('bagura@noctrl.edu', 'System');
+            $mail->addTo('bagura@noctrl.edu');
+            $mail->setSubject('SVDP Password Reset');
+            try{
+                $mail->send($transport);
+            }
+            catch(Exception $e)
+            {
+                var_dump($e);
+                exit();
+            }
             
             // Update DB with temp password
+            $admin = new App_Service_AdminService();
+            $admin->resetUserPassword($username,$password);
         }
         
         return $this->_helper->redirector('login');
@@ -211,20 +219,9 @@ class LoginController extends Zend_Controller_Action
         // Get the users identity
         $identity = Zend_Auth::getInstance()->getIdentity();
         
-        // Set the identities role. This is strange.. It should already be set
-        // but for some reason the first request sent will not contain the role
-        // and will cause an error
-        //$identity->role = $data->role;
-        
         // Set the time out length
         $authSession = new Zend_Session_Namespace('Zend_Auth');
         $authSession->setExpirationSeconds($this->_timeout * 60);
-        
-        // Check if user needs password change. If so forward to change
-        //if($data->change_pswd == 1)
-        //{
-        //    return $this->_helper->redirector('change',App_Resources::LOGIN);
-        //}
         
         $this->forwardUser();
     }
