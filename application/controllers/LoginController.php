@@ -125,7 +125,6 @@ class LoginController extends Zend_Controller_Action
                 'privateKey' => $_ENV["AWSPVT"]
             ));
             
-            $mail->setBodyText('Here is your temporary password...');
             $mail->setBodyHtml('Here is your temporary password. You will be required '
                                . 'to changed it on your next login.' .
                                '<br/><b>' . $password . '</b>');

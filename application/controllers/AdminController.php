@@ -77,7 +77,7 @@ class AdminController extends Zend_Controller_Action
     }
 
     // Displays all member information
-    public function membersAction()
+    public function usersAction()
     {
         $this->view->pageTitle = "Admin Viewing Users";
         
@@ -145,7 +145,31 @@ class AdminController extends Zend_Controller_Action
 
         $service = new App_Service_AdminService();
         $service->createParishMemeber($user,$password);
+     
+        // Send email for enw user
+        $mail = new Zend_Mail('utf-8');
+        $transport = new App_Mail_Transport_AmazonSES(
+        array(
+            'accessKey' => $_ENV["AWSPUB"],
+            'privateKey' => $_ENV["AWSPVT"]
+        ));
         
+        $mail->setBodyHtml('You have been added to the SVDP organization. '
+                           . 'You may log in with the username: <b>' . $user->user_id . '</b>' .
+                           '<br/>password: <b>' . $password . '</b>' . '</br></br> Please note ' .
+                           'you will be required to change your password on first login.');
+        
+        $mail->setFrom('svdp@noreply.com', 'System');
+        $mail->addTo($user->email);
+        $mail->setSubject('SVDP Password Reset');
+        try{
+            $mail->send($transport);
+        }
+        catch(Exception $e)
+        {
+            var_dump($e);
+            exit();
+        }   
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
                     Array( 'msg' => 'Member added successfully!',
