@@ -40,17 +40,8 @@ $config = Zend_Registry::get('config');
 $funds  = App_Formatting::formatCurrency($config->getAvailableFunds());
 
 // Fetch user schedule for sidebar.
-$memberService   = new App_Service_Member();
-$adminService    = new App_Service_AdminService();
-$scheduleEntries = $memberService->getScheduleEntries();
-
-foreach ($scheduleEntries as &$scheduleEntry) {
-    // XXX: This is rather inefficient, and it breaks encapsulation by accessing controller-specific
-    // service objects from the layout script. There really ought to be a layout service containing
-    // a single DB-access method that retrieves all necessary schedule data in a single query.
-    $scheduleEntry->setUser($adminService->getUserById($scheduleEntry->getUser()->getUserId()));
-}
-unset($scheduleEntry);
+$service         = new App_Service_GeneralService();
+$scheduleEntries = $service->getScheduleEntries();
 ?>
 <div class=row>
     <div class=span3>
