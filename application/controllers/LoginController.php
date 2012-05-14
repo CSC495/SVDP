@@ -128,8 +128,8 @@ class LoginController extends Zend_Controller_Action
             $mail->setBodyHtml('Here is your temporary password. You will be required '
                                . 'to changed it on your next login.' .
                                '<br/><b>' . $password . '</b>');
-            $mail->setFrom('svdp@noreply.com', 'System');
-            $mail->addTo($user->email);
+            $mail->setFrom('bagura@noctrl.edu', 'System');
+            $mail->addTo('bagura@noctrl.edu');
             $mail->setSubject('SVDP Password Reset');
             try{
                 $mail->send($transport);
@@ -143,6 +143,12 @@ class LoginController extends Zend_Controller_Action
             // Update DB with temp password
             $admin = new App_Service_AdminService();
             $admin->resetUserPassword($username,$password);
+            
+            $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Your password will be emailed to you shortly.',
+                               'time' => 3,
+                               'controller' => App_Resources::INDEX,
+                               'action' => 'index'));
         }
         
         return $this->_helper->redirector('login');
@@ -253,7 +259,7 @@ class LoginController extends Zend_Controller_Action
 
         $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
-        $service->updateUserPassword($pwd);
+        $service->updateUserPassword($identity->user_id,$pwd);
         $identity->change_pswd = 0;
         
         $this->_forward('index', App_Resources::REDIRECT, null,
