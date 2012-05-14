@@ -71,6 +71,7 @@ unset($scheduleEntry);
         <div class=span2>
             <div class="well sidebar-nav">
                 <ul class="nav nav-list">
+                <?php if ($auth->hasIdentity()){ ?>
                     <li class=nav-header>Current Funds</li>
                     <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
 
@@ -81,6 +82,7 @@ unset($scheduleEntry);
                     <?php } ?>
 
                 </ul>
+                <?php } ?>
             </div><!--/.well -->
         </div><!--/span-->
 
