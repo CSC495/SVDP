@@ -14,7 +14,7 @@ class App_Service_GeneralService {
         $select = $this->_db->select()
             ->from(array('s' => 'schedule'), array('s.week_id', 's.start_date', 's.user_id'))
             ->order('s.start_date', 's.user_id', 's.week_id')
-            ->limitPage(0, 3);
+            ->limitPage(0, 12);
 
         $results = $this->_db->fetchAssoc($select);
         return $this->buildScheduleEntryModels($results);
