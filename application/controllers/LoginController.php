@@ -274,7 +274,7 @@ class LoginController extends Zend_Controller_Action
 
         $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
-        $service->updateUserPassword($pwd);
+        $service->updateUserPassword($identity->user_id,$pwd);
         $identity->change_pswd = 0;
         
         $this->_forward('index', App_Resources::REDIRECT, null,
