@@ -129,8 +129,8 @@ class LoginController extends Zend_Controller_Action
             $mail->setBodyHtml('Here is your temporary password. You will be required '
                                . 'to changed it on your next login.' .
                                '<br/><b>' . $password . '</b>');
-            $mail->setFrom('bagura@noctrl.edu', 'System');
-            $mail->addTo('bagura@noctrl.edu');
+            $mail->setFrom('svdp@noreply.com', 'System');
+            $mail->addTo($user->email);
             $mail->setSubject('SVDP Password Reset');
             try{
                 $mail->send($transport);
