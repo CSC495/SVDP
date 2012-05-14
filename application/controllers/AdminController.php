@@ -136,14 +136,24 @@ class AdminController extends Zend_Controller_Action
             ->setRole($form->getValue('role'))
             ->setActive(1); // Default user to active
 
+        $this->createUser($user);
+    }
+    
+    //  Handles persistance and email generation for new user creation
+    private function createUser($user)
+    {
+        $service = new App_Service_AdminService();
+        
+        // Generate the user name
         $userName = substr($user->getFirstName(),0,1);
         $userName = $userName . $user->getLastName();
         $userName = strtolower($userName);
+        $userName = $userName . $service->getNextIdNum($userName);
+        // Store user name
         $user->setUserId($userName);
-
+        
+        // Generate user password and create user
         $password = App_Password::generatePassword(10);
-
-        $service = new App_Service_AdminService();
         $service->createParishMemeber($user,$password);
      
         // Send email for enw user
@@ -177,6 +187,7 @@ class AdminController extends Zend_Controller_Action
                            'controller' => App_Resources::ADMIN,
                            'action' => 'users'));
     }
+    
     // Display for modifying a users information
     public function modifyAction()
     {
