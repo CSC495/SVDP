@@ -1,10 +1,3 @@
-// Include Utility JS library
-var script = document.createElement('script');
-script.type = 'text/javascript';
-script.src = '/SVDP/public/utility.js';
-var content = document.getElementById('head');
-document.getElementById('head').appendChild(script);
-
 function validate_new(myform){
 
 }
