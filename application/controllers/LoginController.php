@@ -128,14 +128,9 @@ class LoginController extends Zend_Controller_Action
             $mail->setFrom('bagura@noctrl.edu', 'System');
             $mail->addTo('bagura@noctrl.edu');
             $mail->setSubject('SVDP Password Reset');
-            try{
-                $mail->send($transport);
-            }
-            catch(Exception $e)
-            {
-                var_dump($e);
-                exit();
-            }
+            
+            $mail->send($transport);
+
             
             // Update DB with temp password
             $admin = new App_Service_AdminService();
