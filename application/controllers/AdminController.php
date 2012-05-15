@@ -173,14 +173,9 @@ class AdminController extends Zend_Controller_Action
         $mail->setFrom('bagura@noctrl.edu', 'System');
         $mail->addTo('bagura@noctrl.edu');
         $mail->setSubject('SVDP Account Created');
-        try{
-            $mail->send($transport);
-        }
-        catch(Exception $e)
-        {
-            var_dump($e);
-            exit();
-        }   
+
+        $mail->send($transport);
+
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
                     Array( 'msg' => 'Member added successfully!',
