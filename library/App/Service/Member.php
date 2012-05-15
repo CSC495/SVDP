@@ -73,6 +73,29 @@ class App_Service_Member
         return $this->buildClientModel($results);
     }
 
+    // Given a case ID, return a Case object populated with all relevant data.
+    public function getCaseById($caseId)
+    {
+        $select = $this->_db->select()
+            ->from(array('s' => 'client_case'), array(
+                'caseID' => 's.case_id',
+                'addByName' => 's.opened_user_id',
+                'dateRequested' => 's.opened_date',
+                'status' => 's.status',
+            ))
+            ->join(
+                array('h' => 'household'),
+                's.household_id = h.household_id',
+                array(
+                    'clientID' => 'h.mainclient_id',
+                )
+            )
+            ->where('s.case_id = ?', $caseId);
+
+        $results = $this->_db->fetchRow($select);
+        return $this->buildCaseModel($results);
+    }
+
     //Given a client_id returns an array of Householder objects populated with information
     //of each household member
     public function getHouseholdersByClientId($clientId)
@@ -202,6 +225,50 @@ class App_Service_Member
                 ->where('caseneed_id = ?', $needId);
         $results = $this->_db->fetchRow($select);
         return $this->buildCheckRequestModel($results);
+    }
+    
+    //Fetches an array of populated CaseNeed objects relevant to the given case
+    public function getNeedsByCase($caseId){
+        $needs = array();
+        $select = $this->_db->select()
+                    ->from(array('cn' => 'case_need'),
+                           array('caseNeedId' => 'cn.caseneed_id',
+                           'need',
+                           'amount'))
+                    ->where('cn.case_id = ?', $caseId);
+        $results = $this->_db->fetchAll($select);
+        
+        foreach($results as $row){
+            $need = new Application_Model_Impl_CaseNeed();
+            $need->setId($row['caseNeedId']);
+            $need->setNeed($row['need']);
+            $need->setAmount($row['amount']);
+            $needs[] = $need;
+        }
+        return $needs;
+    }
+    
+    //Fetches an array of populated CaseVisit objects relevant to the given case
+    public function getVisitsByCase($caseId){
+        $visits = array();
+        $select = $this->_db->select()
+                ->from(array('cv' => 'case_visit'),
+                       array('visitId' => 'visit_id',
+                             'visitDate' => 'visit_date',
+                             'miles',
+                             'hours'))
+                ->where('cv.case_id = ?', $caseId);
+        $results = $this->_db->fetchAll($select);
+        
+        foreach($results as $row){
+            $visit = new Application_Model_Impl_CaseVisit();
+            $visit->setVisitId($row['visitId']);
+            $visit->setVisitDate($row['visitDate']);
+            $visit->setMiles($row['miles']);
+            $visit->setHours($row['hours']);
+            $visits[] = $visit;
+        }
+        return $visits;
     }
     
     /****** PUBLIC CREATE/INSERT QUERIES ******/
@@ -450,50 +517,6 @@ class App_Service_Member
         else
             return null;
     }
-    
-    //Fetches an array of populated CaseNeed objects relevant to the given case
-    private function getNeedsByCase($caseId){
-        $needs = array();
-        $select = $this->_db->select()
-                    ->from(array('cn' => 'case_need'),
-                           array('caseNeedId' => 'cn.caseneed_id',
-                           'need',
-                           'amount'))
-                    ->where('cn.case_id = ?', $caseId);
-        $results = $this->_db->fetchAll($select);
-        
-        foreach($results as $row){
-            $need = new Application_Model_Impl_CaseNeed();
-            $need->setCaseNeedId($row['caseNeedId']);
-            $need->setNeed($row['need']);
-            $need->setAmount($row['amount']);
-            $needs[] = $need;
-        }
-        return $needs;
-    }
-    
-    //Fethces an array of populated CaseVisit objects relevant to the given case
-    private function getVisitsByCase($caseId){
-        $visits = array();
-        $select = $this->_db->select()
-                ->from(array('cv' => 'case_visit'),
-                       array('visitId' => 'visit_id',
-                             'visitDate' => 'visit_date',
-                             'miles',
-                             'hours'))
-                ->where('cv.case_id = ?', $caseId);
-        $results = $this->_db->fetchAll($select);
-        
-        foreach($results as $row){
-            $visit = new Application_Model_Impl_CaseVisit();
-            $visit->setVisitId($row['visitId']);
-            $visit->setVisitDate($row['visitDate']);
-            $visit->setMiles($row['miles']);
-            $visit->setHours($row['hours']);
-            $visits[] = $visit;
-        }
-        return $visits;
-    }
 
     /****** PRIVATE CREATE/INSERT QUERIES  ******/
     
@@ -561,15 +584,15 @@ class App_Service_Member
         $totalAmount = 0;
         foreach($needs as $need){
             $needData = $this->disassembleCaseNeedModel($need);
-            if($need->getCaseNeedId()){
-                $this->updateCaseNeed($needData, $need->getCaseNeedId());
+            if($need->getId()){
+                $this->updateCaseNeed($needData, $need->getId());
                 $totalAmount += $needData['amount'];
                 $newNeeds[] = $need;
             }else{
                 $needData['case_id'] = $caseId;
                 $totalAmount += $needData['amount'];
                 $this->_db->insert('case_need', $needData);
-                $need->setCaseNeedId($this->_db->lastInsertId());
+                $need->setId($this->_db->lastInsertId());
                 $newNeeds[] = $need;
             }
         }
@@ -808,21 +831,27 @@ class App_Service_Member
 
         return $employers;
     }
-    
-    private function buildCaseModels($results){
+
+    private function buildCaseModels($results)
+    {
         $cases = array();
-	foreach($results as $row){
-	    $case = new Application_Model_Impl_Case();
-	    $case
-                ->setId($results['caseID'])
-		->setOpenedDate($results['dateRequested'])
-                ->setStatus($results['status'])
-                ->setOpenedUserId($results['addByName'])
-                ->setVisits($this->getVisitsByCase($results['caseID']))
-                ->setCaseNeeds($this->getNeedsByCase($results['caseID']));
-	    $cases[] = $case;
-	}
-	return $cases;
+        foreach ($results as $id => $result) {
+            $cases[$id] = $this->buildCaseModel($result);
+        }
+        return $cases;
+    }
+
+    private function buildCaseModel($result){
+        $case = new Application_Model_Impl_Case();
+        $case
+            ->setId($result['caseID'])
+            ->setOpenedDate($result['dateRequested'])
+            ->setStatus($result['status'])
+            ->setOpenedUserId($result['addByName'])
+            ->setClient($this->getClientById($result['clientID']))
+            ->setVisits($this->getVisitsByCase($result['caseID']))
+            ->setNeedList($this->getNeedsByCase($result['caseID']));
+        return $case;
     }
 
     private function buildUserModels($dbResults)
