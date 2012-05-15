@@ -84,7 +84,7 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
                
 	        // Type of memebr
                 $role = $this->addElement('select','role',array(
-			'label' => 'Member Type:',
+			'label' => 'User Type:',
 			'value' => App_Roles::MEMBER,
 			'multiOptions' => array ( 'M'   => 'Member',
 						  App_Roles::ADMIN     => 'Admin',
@@ -94,7 +94,7 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
                 $adjust = $this->addElement('submit', 'submit', array(
                    'required' => false,
                    'ignore'   => true,
-                   'label'    => 'Add New Contact',
+                   'label'    => 'Add New User',
                    'class'    => 'btn btn-success',
 		   'decorators' => array('ViewHelper'),
                 ));
