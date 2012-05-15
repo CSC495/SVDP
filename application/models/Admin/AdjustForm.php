@@ -39,7 +39,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 							    'messages' => array('notFloat' =>
 								'Value is not valid dollar amount'),))),
 			'required'   => true,
-			'label'      => 'Total Recievable Lifetime Aid:',
+			'label'      => 'Total Receivable Lifetime Aid:',
 			'class'      => 'input-small',
 			'prepend'    => '$',
 		));
@@ -52,7 +52,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 							    'messages' => array('notFloat' =>
 								'Value is not valid dollar amount'),))),
 			'required'   => true,
-			'label'      => 'Total Recievable Aid Per Case:',
+			'label'      => 'Total Receivable Aid Per Case:',
 			'class'      => 'input-small',
 			'prepend'    => '$',
                ));
