@@ -137,10 +137,16 @@ class DocumentController extends Zend_Controller_Action
             
             $base = new Zend_View_Helper_BaseUrl();
             $filename = APPLICATION_PATH . '/uploads/' . $doc->getUrl();
+            
+            // Get mime
+            $mime = App_MimeConverter::getMimeType($filename);
+            //var_dump($mime);
+            //exit();
+            
             //$modified = new Zend_Date(filemtime($filename));
             $this->getResponse()
                 //->setHeader('Last-Modified',$modified->toString(Zend_Date::RFC_1123))
-                //->setHeader('Content-Type', 'image/jpeg')
+                ->setHeader('Content-Type', $mime)
                 ->setHeader('Expires', '', true)
                 //->setHeader('Cache-Control', 'public', true)
                 //->setHeader('Cache-Control', 'max-age=3800')

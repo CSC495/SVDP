@@ -1,5 +1,4 @@
 <?php
-    $cur = $this->user->getFirstName()[0];
     $cur = substr($this->user->getFirstName(),0,1);
     if($this->last !== $cur ) {
         echo '<a name="' . $cur . '"></a>';
