@@ -21,7 +21,11 @@ class MemberController extends Zend_Controller_Action
         $this->view->pageTitle = 'Maps';
         $this->view->form = new Application_Model_Member_MapForm();
 
-        // If we don't have any GET parameters, display the form but not the map.
+        // Load the Google Maps JavaScript API.
+        $this->view->headScript()->appendFile(
+            'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry');
+
+        // If we don't have any GET parameters, display the form but don't look up any coordinates.
         $request = $this->getRequest();
 
         if (!$request->getQuery('search') && !$request->getQuery('newClient')) {
@@ -47,19 +51,21 @@ class MemberController extends Zend_Controller_Action
                     'city' => $addr->getCity(),
                     'state' => $addr->getState(),
                     'zip' => $addr->getZip(),
+                    'parish' => $addr->getParish(),
                 )
             );
         }
 
-        // If we got this far, the address seems (vaguely) legit, and so we can fetch geolocation
-        // data.
+        // If we got this far, the address seems (vaguely) legit, and so we can get geocoding data.
         $service = new App_Service_Map($this->view->form->getAddr());
 
         // Respond to geocoding errors.
         if ($service->hasErrorMsg()) {
             $this->_helper->flashMessenger($service->getErrorMsg());
             return;
-        } else if (!$service->hasResult()) {
+        }
+
+        if (!$service->hasResult()) {
             $this->_helper->flashMessenger('No results were found for that address.');
             return;
         }
@@ -69,9 +75,6 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->setAddr($service->getAddr());
         $this->view->latitude = $service->getLatitude();
         $this->view->longitude = $service->getLongitude();
-
-        $this->view->headScript()->appendFile(
-            'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry');
     }
 
     /**
@@ -96,7 +99,7 @@ class MemberController extends Zend_Controller_Action
 
         $service = new App_Service_AdminService();
 
-        $this->view->users = $service->getParishMembers();
+        $this->view->users = $service->getAllUsers();
     }
 
     /**
@@ -174,11 +177,13 @@ class MemberController extends Zend_Controller_Action
                     && $this->_hasParam('state')) {
                 // Using address information from map action.
                 $addr = new Application_Model_Impl_Addr();
-                $addr->setStreet($this->_getParam('street'))
-                     ->setApt($this->_getParam('apt') !== '' ? $this->_getParam('apt') : null)
-                     ->setCity($this->_getParam('city'))
-                     ->setState($this->_getParam('state'))
-                     ->setZip($this->_getParam('zip') !== '' ? $this->_getParam('zip') : null);
+                $addr
+                    ->setStreet($this->_getParam('street'))
+                    ->setApt(App_Formatting::emptyToNull($this->_getParam('apt')))
+                    ->setCity($this->_getParam('city'))
+                    ->setState($this->_getParam('state'))
+                    ->setZip(App_Formatting::emptyToNull($this->_getParam('zip')))
+                    ->setParish(App_Formatting::emptyToNull($this->_getParam('parish')));
 
                 $client = new Application_Model_Impl_Client();
                 $client->setCurrentAddr($addr);

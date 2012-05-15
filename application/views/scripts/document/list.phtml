@@ -15,7 +15,8 @@
     </table>
 </fieldset>
 </div>
-
+<?php if($this->add) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/upload') . ">Upload New SVDP Document</a>"; }?>
+<br/><br/>
 <div class="well">
 <fieldset>
     <legend>External Documents</legend>
@@ -33,5 +34,5 @@
 </fieldset>
 </div>
 
-<?php if($this->add) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/upload') . ">Add new document</a>"; }?>
+<?php if($this->add) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/add') . ">Add New External Document</a>"; }?>
 

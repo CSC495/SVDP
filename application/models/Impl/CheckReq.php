@@ -14,11 +14,11 @@ class Application_Model_Impl_CheckReq
     private $_requestDate = null;
     //Case id, not object
     private $_case = null;
-    //User object
+    //User object or id depending on use
     private $_user = null;
     private $_amount = null;
     private $_comment = null;
-    //User object
+    //User object or id depending on use
     private $_signeeUser = null;
     private $_checkNumber = null;
     private $_issueDate = null;
@@ -51,6 +51,15 @@ class Application_Model_Impl_CheckReq
         $this->_caseneedId = $id;
         return $this;
     }
+    
+    public function getUser(){
+        return $this->_user;
+    }
+    
+    public function setUser($user){
+        $this->_user = $user;
+        return $this;
+    }
 
     public function getRequestDate()
     {
@@ -74,14 +83,6 @@ class Application_Model_Impl_CheckReq
         return $this;
     }
     
-    public function getUser(){
-        return $this->_user;
-    }
-    
-    public function setUser($user){
-        $this->_user = $user;
-        return $this;
-    }
     
     public function getAmount(){
         return $this->_amount;
