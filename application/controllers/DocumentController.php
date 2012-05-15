@@ -146,7 +146,7 @@ class DocumentController extends Zend_Controller_Action
                 ->setHeader('Last-Modified',$modified->toString(Zend_Date::RFC_1123))
                 ->setHeader('Content-Type', $mime)
                 ->setHeader('Expires', '', true)
-                ->setHeader('Cache-Control', 'public', true)
+                ->setHeader('Cache-Control', 'private', true)
                 ->setHeader('Cache-Control', 'max-age=3800')
                 ->setHeader('Pragma', '', true);
             readfile($filename);
