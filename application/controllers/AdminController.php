@@ -128,14 +128,13 @@ class AdminController extends Zend_Controller_Action
         
         $user = new Application_Model_Impl_User();
         $user
-            ->setFirstName($form->getValue('firstname'))
-            ->setLastName($form->getValue('lastname'))
+            ->setFirstName(ucfirst($form->getValue('firstname')))
+            ->setLastName(ucfirst($form->getValue('lastname')))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))
             ->setRole($form->getValue('role'))
             ->setActive(1); // Default user to active
-
         $this->createUser($user);
     }
     
