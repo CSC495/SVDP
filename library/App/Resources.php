@@ -11,4 +11,5 @@ class App_Resources
     const REPORT    = 'report';
     const SEARCH    = 'search';
     const TREASURER = 'treasurer';
+    const REDIRECT  = 'redirect';
 }

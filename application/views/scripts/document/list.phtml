@@ -1,2 +1,38 @@
-<?php
-    echo "This is where the documents go";
+<div class="well">
+<fieldset>
+    <legend>SVDP Documents</legend>
+        
+    <table>
+    
+    <?php
+    foreach($this->docs as $doc){
+        echo $this->partial($this->pView, array(
+            'doc' => $doc,
+            'internal' => true,));
+    }
+    ?>
+
+    </table>
+</fieldset>
+</div>
+<?php if($this->add) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/upload') . ">Upload New SVDP Document</a>"; }?>
+<br/><br/>
+<div class="well">
+<fieldset>
+    <legend>External Documents</legend>
+        
+    <table>
+    <?php
+    foreach($this->docs as $doc){
+        echo $this->partial($this->pView, array(
+            'doc' => $doc,
+            'internal' => false,));
+    }
+    ?>
+    
+    </table>
+</fieldset>
+</div>
+
+<?php if($this->add) { echo "<a href=" . $this->baseUrl(App_Resources::DOCUMENT . '/add') . ">Add New External Document</a>"; }?>
+

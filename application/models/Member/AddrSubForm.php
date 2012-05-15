@@ -3,7 +3,8 @@
 /**
  * Sub form containing common address widgets.
  */
-class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Horizontal {
+class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizontal
+{
 
     private $_PARISH_OPTIONS = array(
         '' => '',
@@ -18,7 +19,7 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
     private $_hasParishField;
 
     /**
-     * Instantiates a new instance of the `Application_Model_Member_AddressSubForm` class.
+     * Instantiates a new instance of the `Application_Model_Member_AddrSubForm` class.
      */
     public function __construct($title, $hasParishField = false, $zipCodeRequired = false)
     {
@@ -158,6 +159,10 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
             ));
 
             $elements[] = 'resideParish';
+        } else {
+            $this->addElement('hidden', 'resideParish', array(
+                'decorators' => array('ViewHelper'),
+            ));
         }
 
         $this->addDisplayGroup($elements, 'addr', array('legend' => $title) );
@@ -171,14 +176,15 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
     public function getAddr()
     {
         $addr = new Application_Model_Impl_Addr();
-        $addr->setStreet(($this->street->getValue() !== '') ? $this->street->getValue() : null)
-             ->setApt(($this->apt->getValue() !== '') ? $this->apt->getValue() : null)
-             ->setCity(($this->city->getValue() !== '') ? $this->city->getValue() : null)
-             ->setState(($this->state->getValue() !== '') ? $this->state->getValue() : null)
-             ->setZip(($this->zip->getValue() !== '') ? $this->zip->getValue() : null)
-             ->setParish(($this->_hasParishField && $this->resideParish->getValue() !== '')
-                 ? $this->resideParish->getValue()
-                 : null);
+        $addr
+            ->setStreet(($this->street->getValue() !== '') ? $this->street->getValue() : null)
+            ->setApt(($this->apt->getValue() !== '') ? $this->apt->getValue() : null)
+            ->setCity(($this->city->getValue() !== '') ? $this->city->getValue() : null)
+            ->setState(($this->state->getValue() !== '') ? $this->state->getValue() : null)
+            ->setZip(($this->zip->getValue() !== '') ? $this->zip->getValue() : null)
+            ->setParish(($this->resideParish->getValue() !== '')
+                ? $this->resideParish->getValue()
+                : null);
         return $addr;
     }
 
@@ -195,8 +201,6 @@ class Application_Model_Member_AddressSubForm extends Twitter_Bootstrap_Form_Hor
         $this->city->setValue($addr->getCity());
         $this->state->setValue($addr->getState());
         $this->zip->setValue($addr->getZip());
-        if ($this->_hasParishField) {
-            $this->resideParish->setValue($addr->getParish());
-        }
+        $this->resideParish->setValue($addr->getParish());
     }
 }

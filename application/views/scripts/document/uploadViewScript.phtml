@@ -1,0 +1,32 @@
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod())?>"
+      enctype="multipart/form-data">
+
+<fieldset>
+    <legend>Upload Document</legend>
+    
+    <table>
+    <tr>
+        <td>
+            Name:
+        </td>
+        <td>
+            <?php echo $this->element->name ?>
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            File Location:&nbsp
+        </td>
+        <td>
+            <?php echo $this->element->url ?>
+        </td>
+        
+    </tr>
+    
+    </table>
+</fieldset>
+    <br/>
+    <?php echo $this->element->submit ?>
+    <?php echo $this->element->err ?>

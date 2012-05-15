@@ -9,3 +9,4 @@ Login Controller
 ------------------------
 On password change, Generate new temp password and e-mail temp password
 On forgot password, Generate new temp password and e-mail temp password
+Integrate Zend-SES bridge

@@ -20,7 +20,7 @@ class Application_Model_Impl_Client
 
     private $_otherName = null;
 
-    private $_married = null;
+    private $_maritalStatus = null;
 
     private $_birthDate = null;
 
@@ -43,6 +43,10 @@ class Application_Model_Impl_Client
     private $_currentAddr = null;
 
     private $_doNotHelpReason = null;
+    
+    private $_employment = null;
+    
+    private $_hmembers = null;
 
     /* Generic get/set methods: */
 
@@ -101,14 +105,14 @@ class Application_Model_Impl_Client
         return $this;
     }
 
-    public function isMarried()
+    public function getMaritalStatus()
     {
-        return $this->_married;
+        return $this->_maritalStatus;
     }
 
-    public function setMarried($married)
+    public function setMaritalStatus($maritalStatus)
     {
-        $this->_married = $married;
+        $this->_maritalStatus = $maritalStatus;
         return $this;
     }
 
@@ -232,6 +236,24 @@ class Application_Model_Impl_Client
         $this->_doNotHelpReason = $doNotHelpReason;
         return $this;
     }
+    
+    public function getEmployment(){
+        return $this->_employment;
+    }
+    
+    public function setEmployment($employ){
+        $this->_employment = $employ;
+        return $this;
+    }
+    
+    public function getHouseMembers(){
+        return $this->_hmembers;
+    }
+    
+    public function setHouseMembers($hmembers){
+        $this->_hmembers = $hmembers;
+        return $this;
+    }
 
     /* Less generic helper methods: */
 
@@ -303,7 +325,19 @@ class Application_Model_Impl_Client
     }
 
     /**
+     * Returns true if the client's marital status is "Married" and false otherwise.
+     *
+     * @return bool
+     */
+    public function isMarried()
+    {
+        return $this->_maritalStatus === 'Married';
+    }
+
+    /**
      * Returns true if the client has a "do not help" reason set and false otherwise.
+     *
+     * @return bool
      */
     public function isDoNotHelp()
     {
