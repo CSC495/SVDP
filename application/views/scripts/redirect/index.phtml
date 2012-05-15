@@ -1,0 +1,6 @@
+<?php $baseUrl = new Zend_View_Helper_BaseUrl();
+      $url = $baseUrl->baseUrl($this->controller) . '/' . $this->action; ?>
+
+<h3><?php echo $this->message ?></h3>
+
+Click <a href='<?php echo $url ?>'>here</a> if you are not redirected automatically.

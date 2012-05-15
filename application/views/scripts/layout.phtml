@@ -35,22 +35,14 @@ echo $this->headScript(), "\n";
 $auth = Zend_Auth::getInstance();
 $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 ?>
-<header>
-    <!--<h1>Society of St. Vincent de Paul :: <?php echo $this->escape($this->pageTitle); ?></h1>-->
-    <style type="text/css">
-     
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-</header>
+
 <div class="row">
 	<div class="span3">
         <a href="<?php echo $this->escape($this->baseUrl(''))?>">
             <img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0" hspace="25" vspace="20"/>
         </a>
 	</div>
-	<div class="span8" >
+	<div class="span10" >
 	<ul class="unstyled" style="padding-top: 75px">
     
 		<li><h1>St. Vincent de Paul </h1>
@@ -62,23 +54,72 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 	</div>
 <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span2">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-              
-			  <li class="nav-header">Balance</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
+		
+			<div class="span2">
+			  <div class="well sidebar-nav">
+				<ul class="nav nav-list">
+				  
+				   <li class="nav-header">Current Funds</li>
+				  <?php
+						if($role !== App_Roles::GENERAL){
+							$aService = new App_Service_AdminService();
+							$this->funds = $aService->getParishParams()->getAvailableFunds();
+							$this->nfunds = number_format($this->funds, 2, '.', ',');
+				  ?>		<p style=" text-indent:10px; ">$<?php echo $this->nfunds ?></p>
+				  <?php
+						} else{
+							echo "";
+						}
+				  ?>
+				  
 
-              <li class="nav-header">Schedule</li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-              <li><a href="#">Link</a></li>
-            </ul>
-          </div><!--/.well -->
-        </div><!--/span-->
-
+				 <li class="nav-header">Schedule</li>
+				  <?php
+					if($role !== App_Roles::GENERAL){
+						$gService = new App_Service_GeneralService();
+						$this->schedule = $gService->getScheduleEntries();
+						$aService = new App_Service_AdminService();
+						
+						
+						foreach($this->schedule as $s){
+							$this->id = $s->getUser()->getUserId();
+							$this->user = $aService->getUserInfo($this->id);
+							$this->fname = $this->user->getFirstName();
+							$this->lname = $this->user->getLastName();
+							$this->name = $this->fname." ".$this->lname;
+							if (strlen($this->name) > 18) {
+								$this->name = substr($this->name,0,18)."...";
+							} 
+							
+							$this->strDate = strtotime($s->getStartDate());
+							$this->sDate = date( 'm-d-Y', $this->strDate );
+							
+				  ?>		
+							<p style="width:200px;">Week of <?php echo $this->sDate?></p>
+							<p style="width:150px; text-indent:10px;"><?php echo substr($this->name,0, 21);?></p>
+				  <?php 
+						} 
+					} else {
+						echo "";
+					}
+				  ?>
+				  
+				  <li class="nav-header">Quick Links</li>
+					<?php if($role !== App_Roles::GENERAL){ ?>
+					<a href="www.dupagepads.org">PADS</a><br>
+					<a href="www.napervillecares.org">NaperCARES</a><br>
+					<a href="url">Salvation Army</a><br>
+					<a href="www.loaves-fishes.org">Loaves & Fishes</a><br>
+					<a href="www.sharingconnections.org">Sharing Connections</a><br>
+					<a href="www.samaritancenter.org">Samaritan Interfaith</a><br>
+					<a href="www.napervilletownship.com">LIHeap</a><br>
+					SVDP Thrift Stores<br>
+					<?php } ?>
+					
+				</ul>
+			  </div><!--/.well -->
+			</div><!--/span-->
+		
         <div class="span10" id="zendcontent">
           <div class="hero-unit">
             <div id=content>
