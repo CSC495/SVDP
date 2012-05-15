@@ -109,17 +109,15 @@ class LoginController extends Zend_Controller_Action
         $username = $this->view->form->getValue('username');
         
         $user = $service->getUserInfo($username);
-        
         // generate password and send e-mail if the account exists
         if($user){
             $password = App_Password::generatePassword(10);
-            $service->updateUserPassword($username,$password);
-            
+
             $mail = new Zend_Mail('utf-8');
             $transport = new App_Mail_Transport_AmazonSES(
             array(
-                'accessKey' => $_ENV["AWSPUB"],
-                'privateKey' => $_ENV["AWSPVT"]
+                'accessKey' => $_ENV["AWS_ACCESS_KEY_ID"],
+                'privateKey' => $_ENV["AWS_SECRET_ACCESS_KEY"]
             ));
             
             $mail->setBodyHtml('Here is your temporary password. You will be required '
