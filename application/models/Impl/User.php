@@ -112,4 +112,15 @@ class Application_Model_Impl_User
             return 0;
         return $this->_active;
     }
+
+    public function getFullName()
+    {
+        if ($this->_firstName === null) {
+            return (string) $this->_lastName;
+        }
+        if ($this->_lastName === null) {
+            return (string) $this->_firstName;
+        }
+        return $this->_firstName . ' ' . $this->_lastName;
+    }
 }

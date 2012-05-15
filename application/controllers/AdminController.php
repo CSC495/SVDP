@@ -77,7 +77,7 @@ class AdminController extends Zend_Controller_Action
     }
 
     // Displays all member information
-    public function membersAction()
+    public function usersAction()
     {
         $this->view->pageTitle = "Admin Viewing Users";
         
@@ -136,23 +136,58 @@ class AdminController extends Zend_Controller_Action
             ->setRole($form->getValue('role'))
             ->setActive(1); // Default user to active
 
+        $this->createUser($user);
+    }
+    
+    //  Handles persistance and email generation for new user creation
+    private function createUser($user)
+    {
+        $service = new App_Service_AdminService();
+        
+        // Generate the user name
         $userName = substr($user->getFirstName(),0,1);
         $userName = $userName . $user->getLastName();
         $userName = strtolower($userName);
+        $userName = $userName . $service->getNextIdNum($userName);
+        // Store user name
         $user->setUserId($userName);
-
-        $password = App_Password::generatePassword(10);
-
-        $service = new App_Service_AdminService();
-        $service->createParishMemeber($user,$password);
         
+        // Generate user password and create user
+        $password = App_Password::generatePassword(10);
+        $service->createParishMemeber($user,$password);
+     
+        // Send email for enw user
+        $mail = new Zend_Mail('utf-8');
+        $transport = new App_Mail_Transport_AmazonSES(
+        array(
+            'accessKey' => $_ENV["AWSPUB"],
+            'privateKey' => $_ENV["AWSPVT"]
+        ));
+        
+        $mail->setBodyHtml('You have been added to the SVDP organization. '
+                           . 'You may log in with the username: <b>' . $userName . '</b>' .
+                           '<br/>password: <b>' . $password . '</b>' . '</br></br> Please note ' .
+                           'you will be required to change your password on first login.');
+        
+        $mail->setFrom('bagura@noctrl.edu', 'System');
+        $mail->addTo('bagura@noctrl.edu');
+        $mail->setSubject('SVDP Password Reset');
+        try{
+            $mail->send($transport);
+        }
+        catch(Exception $e)
+        {
+            var_dump($e);
+            exit();
+        }   
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
                     Array( 'msg' => 'Member added successfully!',
                            'time' => 3,
                            'controller' => App_Resources::ADMIN,
-                           'action' => 'members'));
+                           'action' => 'users'));
     }
+    
     // Display for modifying a users information
     public function modifyAction()
     {
@@ -170,7 +205,7 @@ class AdminController extends Zend_Controller_Action
         
             // Get the users data
             $service = new App_Service_AdminService();
-            $user = $service->getUserInfo($userId);
+            $user = $service->getUserById($userId);
         
             $this->view->form = $form;
         

@@ -1,0 +1,44 @@
+<div class="row">
+    <p>Viewing user information</p>
+</div>
+
+<div class="row">
+    <div class="span9">
+        <h5>
+            Jump to:
+            <?php foreach(range('A', 'Z') as $letter){
+                echo '<a href="#' . $letter . '">' . $letter . '</a>&nbsp'; 
+            } ?>
+        </h5>
+    </div>
+    <div class="span2">
+        <a href='<?php echo $this->baseUrl('/admin/new');?>'>Add new user</a>
+    </div>
+</div>
+
+<div class="search-results">
+    <table class="search-results">
+    
+    <?php
+    $this->partialLoop()->setObjectKey('user');
+    echo $this->partialLoop('partial/viewMemberForAdmin.phtml', $this->users);
+    ?>
+    
+    </table>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="span9">
+        <h5>
+            Jump to:
+            <?php foreach(range('A', 'Z') as $letter){
+                echo '<a href="#' . $letter . '">' . $letter . '</a>&nbsp'; 
+            } ?>
+        </h5>
+    </div>
+    <div class="span2">
+        <a href='<?php echo $this->baseUrl('/admin/new');?>'>Add new user</a>
+    </div>
+</div>

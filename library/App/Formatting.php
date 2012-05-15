@@ -40,6 +40,17 @@ class App_Formatting
         return sprintf('(%s) %s-%s', $phone1, $phone2, $phone3);
     }
 
+    /**
+     * Formats a United States dollar amount.
+     *
+     * @param float $amount
+     * @return string
+     */
+    public static function formatCurrency($amount)
+    {
+        return '$' . number_format($amount, 2);
+    }
+
     public static function formatDate($date)
     {
         return ($date !== null) ? date('m/d/Y', strtotime($date)) : '';
@@ -48,6 +59,17 @@ class App_Formatting
     public static function unformatDate($date)
     {
         return ($date !== '') ? date('Y-m-d', strtotime($date)) : null;
+    }
+
+    /**
+     * Truncates a string to the specific length, appending an ellipsis if truncate occurs.
+     *
+     * @param string $x
+     * @return string
+     */
+    public static function truncateString($x)
+    {
+        return (strlen($x) > 18) ? substr_replace($x, '…', 18) : $x;
     }
 
     public static function emptyToNull($x)
