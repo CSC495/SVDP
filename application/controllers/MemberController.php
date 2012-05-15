@@ -91,18 +91,6 @@ class MemberController extends Zend_Controller_Action
     }
 
     /**
-     * Action that lists contacts for parish members.
-     */
-    public function contactsAction()
-    {
-        $this->view->pageTitle = 'Member Contact List';
-
-        $service = new App_Service_AdminService();
-
-        $this->view->users = $service->getAllUsers();
-    }
-
-    /**
      * Action that allows members to edit the parish schedule.
      */
     public function editscheduleAction()
@@ -145,6 +133,50 @@ class MemberController extends Zend_Controller_Action
         }
         $service->removeScheduleEntries($this->view->form->getRemovedEntries());
         $this->_helper->redirector('editSchedule');
+    }
+
+    /**
+     * Action that lists contacts for parish members.
+     */
+    public function contactsAction()
+    {
+        $this->view->pageTitle = 'Member Contact List';
+
+        $service = new App_Service_AdminService();
+
+        $this->view->users = $service->getAllUsers();
+    }
+
+    /**
+     * Action that shows a landing page for the given client.
+     */
+    public function viewclientAction()
+    {
+        if (!$this->_hasParam('id')) {
+            // If no ID was provided, bail out.
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        $service = new App_Service_Member();
+
+        $this->view->pageTitle = 'View Client';
+        $this->view->client = $service->getClientById($this->_getParam('id'));
+    }
+
+    /**
+     * Action that shows a landing page for the given case.
+     */
+    public function viewcaseAction()
+    {
+        if (!$this->_hasParam('id')) {
+            // If no ID was provided, bail out.
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        $service = new App_Service_Member();
+
+        $this->view->pageTitle = 'View Case';
+        $this->view->case = $service->getCaseById($this->_getParam('id'));
     }
 
     /**
@@ -242,7 +274,49 @@ class MemberController extends Zend_Controller_Action
      */
     public function editcaseAction()
     {
+        $request = $this->getRequest();
+        $service = new App_Service_Member();
+
+        if ($this->_hasParam('id')) {
+            // Editing an existing case.
+            $id = $this->_getParam('id');
+
+            $this->view->pageTitle = 'Edit Case';
+            $this->view->form = new Application_Model_Member_CaseForm($id);
+
+            if (!$request->isPost()) {
+                // If the user hasn't submitted the form yet, load client info from the database.
+                $this->view->form->setNeeds($service->getNeedsByCase($id));
+                //$this->view->form->setVisits($service->getVisitsByCase($id));
+            }
+        } else {
+            // Adding a new case.
+            $this->view->pageTitle = 'New Case';
+            $this->view->form = new Application_Model_Member_CaseForm();
+        }
+
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_Member_CaseForm();
+
+        $this->view->form = new Application_Model_Member_CaseForm();
+
+        // If this isn't a post request, then we're done.
+        if (!$request->isPost()) {
+            return;
+        }
+
+        $data = $request->getPost();
+
+        // Re-add existing form data.
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        // If the user just submitted the form, make some validation goodness happen.
+        // If the user requested that we add or remove a household member or employer, or if form
+        // validation failed, then we're done here.
+        if ($this->view->form->handleAddRemoveRecords($data)
+                || !$this->view->form->isValid($data)) {
+            return;
+        }
     }
 }
