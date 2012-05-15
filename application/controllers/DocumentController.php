@@ -149,7 +149,7 @@ class DocumentController extends Zend_Controller_Action
                 ->setHeader('Cache-Control', 'public', true)
                 ->setHeader('Cache-Control', 'max-age=3800')
                 ->setHeader('Pragma', '', true);
-            echo readfile($filename);
+            readfile($filename);
             return;
         }
         

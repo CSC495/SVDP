@@ -159,8 +159,8 @@ class AdminController extends Zend_Controller_Action
         $mail = new Zend_Mail('utf-8');
         $transport = new App_Mail_Transport_AmazonSES(
         array(
-            'accessKey' => $_ENV["AWSPUB"],
-            'privateKey' => $_ENV["AWSPVT"]
+            'accessKey' => $_ENV["AWS_ACCESS_KEY_ID"],
+            'privateKey' => $_ENV["AWS_SECRET_ACCESS_KEY"]
         ));
         
         $mail->setBodyHtml('You have been added to the SVDP organization.' .
@@ -179,6 +179,7 @@ class AdminController extends Zend_Controller_Action
         catch(Exception $e)
         {
             var_dump($e);
+            exit();
         }   
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
