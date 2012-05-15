@@ -60,8 +60,8 @@ $scheduleEntries = Zend_Registry::get('schedule');
     <div class=row-fluid>
         <div class=span2>
             <div class="well sidebar-nav">
-                <ul class="nav nav-list">
                 <?php if ($auth->hasIdentity()){ ?>
+                <ul class="nav nav-list">
                     <li class=nav-header>Current Funds</li>
                     <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
 
@@ -70,7 +70,14 @@ $scheduleEntries = Zend_Registry::get('schedule');
                     <li><p style="width:200px;">Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></p></li>
                     <li><p style="width:150px; text-indent:10px;"><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
                     <?php } ?>
-
+                    <li class=nav-header>Quick Links</li>
+                    <a href="www.dupagepads.org">PADS</a><br>
+                    <a href="www.napervillecares.org">NaperCARES</a><br>
+                    <a href="url">Salvation Army</a><br>
+                    <a href="www.loaves-fishes.org">Loaves & Fishes</a><br>
+                    <a href="www.sharingconnections.org">Sharing Connections</a><br>
+                    <a href="www.samaritancenter.org">Samaritan Interfaith</a><br>
+                    <a href="www.napervilletownship.com">LIHeap</a>
                 </ul>
                 <?php } ?>
             </div><!--/.well -->
