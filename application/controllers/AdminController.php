@@ -128,8 +128,8 @@ class AdminController extends Zend_Controller_Action
         
         $user = new Application_Model_Impl_User();
         $user
-            ->setFirstName(ucfirst($form->getValue('firstname')))
-            ->setLastName(ucfirst($form->getValue('lastname')))
+            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
+            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))
@@ -163,21 +163,22 @@ class AdminController extends Zend_Controller_Action
             'privateKey' => $_ENV["AWSPVT"]
         ));
         
-        $mail->setBodyHtml('You have been added to the SVDP organization. '
-                           . 'You may log in with the username: <b>' . $userName . '</b>' .
-                           '<br/>password: <b>' . $password . '</b>' . '</br></br> Please note ' .
-                           'you will be required to change your password on first login.');
+        $mail->setBodyHtml('You have been added to the SVDP organization.' .
+                           '<br/>Username: <b>' . $userName . '</b>' .
+                           '<br/>Password: <b>' . $password . '</b>' . '</br></br> Please note ' .
+                           'you will be required to change your password on first login.' .
+                           '<br/><br/><i>If you believe you have recieved this message in error ' .
+                           'please contact the sender.</i>');
         
         $mail->setFrom('bagura@noctrl.edu', 'System');
         $mail->addTo('bagura@noctrl.edu');
-        $mail->setSubject('SVDP Password Reset');
+        $mail->setSubject('SVDP Account Created');
         try{
             $mail->send($transport);
         }
         catch(Exception $e)
         {
             var_dump($e);
-            exit();
         }   
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
@@ -257,8 +258,8 @@ class AdminController extends Zend_Controller_Action
         $user = new Application_Model_Impl_User();
         $user
             ->setUserId($form->getValue('userid'))
-            ->setFirstName($form->getValue('firstname'))
-            ->setLastName($form->getValue('lastname'))
+            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
+            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))

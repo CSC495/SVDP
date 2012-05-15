@@ -39,9 +39,6 @@ class LoginController extends Zend_Controller_Action
         // Forwards the user if they are already logged on
         $this->forwardUser();
 
-        // Set page variables
-        $this->view->error_flag = $request->getParam('error_flag');
-
         $this->view->form = new Application_Model_Login_LoginForm();
         $this->view->pageTitle = "Login Page";
         
@@ -64,7 +61,7 @@ class LoginController extends Zend_Controller_Action
 
         // Validate the fields on the form
         if( !$form->isValid( $request->getPost() ) ){
-            // Redirect to login page and set error flag
+            // Redirect to login page and set error
             return;
         }
         
@@ -193,9 +190,8 @@ class LoginController extends Zend_Controller_Action
         
         // Check for invalid result
         if( !$result->isValid() ){
-            // User was not valid
-            // redirect to login
-            $this->_redirect('/login/login/error_flag/TRUE');
+            // This is ugly... modifies the form of the 'login' view
+            return $this->view->form->err->addError('Invalid user name or password');
         }
         
         // Erase the password from the data to be stored with user
