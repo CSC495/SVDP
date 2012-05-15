@@ -71,6 +71,8 @@ class LoginController extends Zend_Controller_Action
 
         // Try to authenticate the user
         $this->authenticate($userid, $password);
+        
+        
     }
     
     /**
@@ -247,7 +249,7 @@ class LoginController extends Zend_Controller_Action
         // Ensure passwords match
         if( strcmp($pwd,$vpwd) )
         {
-            $form->verify->addError('Passwords don\'t match.');
+            $form->err->addError('Passwords don\'t match.');
             return;
         }
 
