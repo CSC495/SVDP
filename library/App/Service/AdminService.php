@@ -57,7 +57,7 @@ class App_Service_AdminService {
     
     public function updateUserPassword($userId, $newPass){
 	//Salting goes here when it is to be implemented
-	$hashPass =  hash('SHA256', $newPass);
+	$hashPass =  hash('SHA256', App_Password::saltIt($newPass));
 	$change = array(
 		    'password' => $hashPass,
 		    'change_pswd' => '0');
@@ -81,17 +81,7 @@ class App_Service_AdminService {
         $users = array();
         foreach($results as $row)
         {
-            $user = new Application_Model_Impl_User();
-            $user
-                ->setUserId($row['user_id'])
-                ->setFirstName($row['first_name'])
-                ->setLastName($row['last_name'])
-                ->setEmail($row['email'])
-                ->setCellPhone($row['cell_phone'])
-                ->setHomePhone($row['home_phone'])
-                ->setRole($row['role'])
-                ->setActive($row['active_flag']);
-                
+            $user = $this->buildUserModel($row);        
             $users[] = $user;
         }
         return $users;
@@ -112,7 +102,7 @@ class App_Service_AdminService {
     
     public function createUser($user, $password){
 	$userData = $this->disassembleUserModel($user);
-	$hashPass =  hash('SHA256', $password);
+	$hashPass =  hash('SHA256', App_Password::saltIt($password));
 	$userData['password'] = $hashPass;
 	$userData['change_pswd'] = '1';
 	$this->_db->insert('user', $userData);
@@ -162,6 +152,29 @@ class App_Service_AdminService {
                        'change_pswrd'  => 1);
         
         $this->_db->update('user',$data,"user_id ='" . $userId ."'");
+    }
+    
+    //Given a new user id will return null if the id is not already
+    //in the database, if present will return the next available
+    //number to append after the id
+    public function getNextIdNum($userId){
+        $idLen = strlen($userId);
+        $select = $this->_db->select()
+                ->from('user', 'user_id')
+                ->where('user_id LIKE ?', $userId.'%')
+                ->orWhere('user_id = ?', $userId)
+                ->order('user_id DESC');
+        $results = $this->_db->fetchAll($select);
+        if($results){
+            foreach($results as $row){
+                $sub = substr($row['user_id'], $idLen);
+                if(is_numeric($sub) || $sub == null)
+                    return (intval($sub) + 1);
+            }
+            return null;
+        }else{
+            return null;
+        }
     }
     
     /***

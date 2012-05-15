@@ -58,7 +58,7 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 			'filters'    => array('StringTrim'),
 			'validators' => array('EmailAddress'),
 			'required'   => true,
-			'label'      => 'E-Mail:',
+			'label'      => 'Email:',
                ));
                
                // User cell phone
@@ -69,10 +69,10 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 		   'validators' => array(
 			array('StringLength', true, array(
 				'min' => 10,
-				'max' => 11,
+				'max' => 10,
 				'messages' => array(
 				'stringLengthTooShort' => 'Phone number must be 10 digits.',
-				'stringLengthTooLong' => 'Phone number cannot be longer than 11 digits.',
+				'stringLengthTooLong' => 'Phone number must be 10 digits.',
                     )))),
                ));
                
@@ -84,10 +84,10 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 		   'validators' => array(
 			array('StringLength', true, array(
 				'min' => 10,
-				'max' => 11,
+				'max' => 10,
 				'messages' => array(
 				'stringLengthTooShort' => 'Phone number must be 10 digits.',
-				'stringLengthTooLong' => 'Phone number cannot be longer than 11 digits.',
+				'stringLengthTooLong' => 'Phone number must be 10 digits.',
                     )))),
                ));
                
