@@ -18,5 +18,8 @@
     <div class=control-group><div class=controls><p class=help-block><?php echo $this->escape($this->noRecordsMsg); ?></p></div></div>
     <?php } ?>
 
-    <div class=control-group><div class=controls><?php echo $this->addRecordBtn; ?></div></div>
+    <div class=control-group><div class=controls>
+        <?php echo $this->addRecordBtn; ?>
+        <?php if (isset($this->submitBtn)) { ?><?php echo $this->submitBtn; ?><?php } ?>
+    </div></div>
 </fieldset>

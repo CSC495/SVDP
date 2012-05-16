@@ -23,6 +23,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private $_addRecordBtn;
 
+    private $_submitBtn;
+
     public function __construct($options)
     {
         // Initialize necessary services.
@@ -48,6 +50,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                     'removedRecordsHashField' => &$this->_removedRecordsHashField,
                     'recordsSubForm' => &$this->_recordsSubForm,
                     'addRecordBtn' => &$this->_addRecordBtn,
+                    'submitBtn' => &$this->_submitBtn,
                 )),
             ),
             'elementDecorators' => array('ViewHelper'),
@@ -105,6 +108,16 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         ));
 
         $this->_addRecordBtn = $this->getElement("{$this->_namespace}RecordAdd");
+
+        if (isset($options['submitMsg'])) {
+            // If necessary, create submit changes button.
+            $this->addElement('submit', "{$this->_namespace}Submit", array(
+                'label' => $options['submitMsg'],
+                'class' => 'btn btn-success',
+            ));
+
+            $this->_submitBtn = $this->getElement("{$this->_namespace}Submit");
+        }
     }
 
     public function preValidate($data)
