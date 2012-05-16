@@ -79,10 +79,18 @@ class App_Service_Member
         $select = $this->_db->select()
             ->from(array('s' => 'client_case'), array(
                 'caseID' => 's.case_id',
-                'addByName' => 's.opened_user_id',
                 'dateRequested' => 's.opened_date',
                 'status' => 's.status',
             ))
+            ->join(
+                array('u' => 'user'),
+                's.opened_user_id = u.user_id',
+                array(
+                    'addById' => 'u.user_id',
+                    'addByFirstName' => 'u.first_name',
+                    'addByLastName' => 'u.last_name',
+                )
+            )
             ->join(
                 array('h' => 'household'),
                 's.household_id = h.household_id',
@@ -152,11 +160,22 @@ class App_Service_Member
         $select = $this->db->select()
 			->from(array('cc' => 'client_case'),
 				     array('caseID' => 'cc.case_id',
-                                           'addByName' => 'cc.opened_user_id', 
 					   'dateRequested' => 'cc.opened_date',
 					   'status' => 'cc.status',
 					   'hours' => 'hours',
 					   'miles' => 'miles'))
+            ->from(array('s' => 'client_case'), array(
+                'caseID' => 's.case_id',
+                'dateRequested' => 's.opened_date',
+                'status' => 's.status',
+            ))
+            ->joinInner(array('u' => 'user'), 's.opened_user_id = u.user_id',
+                array(
+                    'addById' => 'u.user_id',
+                    'addByFirstName' => 'u.first_name',
+                    'addByLastName' => 'u.last_name',
+                )
+            )
 			->joinInner(array('h' => 'household'), 'cc.household_id = h.household_id')
 			->joinInner(array('c' => 'client'), 'c.client_id = h.mainclient_id')
 			->joinInner(array('cn' => 'case_need'), 'cc.case_id = cn.case_id')
@@ -842,12 +861,17 @@ class App_Service_Member
     }
 
     private function buildCaseModel($result){
+        $user = new Application_Model_Impl_User();
+        $user
+            ->setUserId($result['addById'])
+            ->setFirstName($result['addByFirstName'])
+            ->setLastName($result['addByLastName']);
         $case = new Application_Model_Impl_Case();
         $case
             ->setId($result['caseID'])
             ->setOpenedDate($result['dateRequested'])
             ->setStatus($result['status'])
-            ->setOpenedUserId($result['addByName'])
+            ->setOpenedUser($user)
             ->setClient($this->getClientById($result['clientID']))
             ->setVisits($this->getVisitsByCase($result['caseID']))
             ->setNeedList($this->getNeedsByCase($result['caseID']));
@@ -943,7 +967,7 @@ class App_Service_Member
     private function disassembleCaseModel($case){
         return array(
             'household_id' => $case->getHouseholdId(),
-            'opened_user_id' => $case->getOpenedUserId(),
+            'opened_user_id' => $case->getOpenedUser()->getUserId(),
             'opened_date' => $case->getOpenedDate(),
             'status' => $case->getStatus()
         );

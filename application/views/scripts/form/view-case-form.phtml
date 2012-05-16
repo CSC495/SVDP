@@ -1,0 +1,23 @@
+<fieldset class=row-fluid>
+    <legend>General case information:</legend>
+
+    <div class=span6><?php echo $this->element->caseId; ?></div>
+    <div class=span6><?php echo $this->element->caseStatus; ?></div>
+
+    <div class=span6><?php echo $this->element->dateOpened; ?></div>
+    <div class=span6><?php echo $this->element->openingUser; ?></div>
+</fieldset>
+
+<?php if ($this->case->getStatus() !== 'Closed') { ?>
+<div class=form-actions>
+    <?php echo $this->element->closeCase; ?>
+</div>
+<?php } ?>
+
+<fieldset>
+    <legend>Case needs:</legend>
+</fieldset>
+
+<fieldset>
+    <legend>Case visits:</legend>
+</fieldset>

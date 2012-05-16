@@ -177,6 +177,7 @@ class MemberController extends Zend_Controller_Action
 
         $this->view->pageTitle = 'View Case';
         $this->view->case = $service->getCaseById($this->_getParam('id'));
+        $this->view->form = new Application_Model_Member_ViewCaseForm($this->view->case);
     }
 
     /**
