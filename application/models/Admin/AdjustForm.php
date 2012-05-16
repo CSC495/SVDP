@@ -39,8 +39,9 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 							    'messages' => array('notFloat' =>
 								'Value is not valid dollar amount'),))),
 			'required'   => true,
-			'label'      => 'Total Recievable Lifetime Aid:',
+			'label'      => 'Total Receivable Lifetime Aid:',
 			'class'      => 'input-small',
+			'prepend'    => '$',
 		));
 
 		// Input of funds for a particular case
@@ -51,8 +52,9 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 							    'messages' => array('notFloat' =>
 								'Value is not valid dollar amount'),))),
 			'required'   => true,
-			'label'      => 'Total Recievable Aid PER Case:',
+			'label'      => 'Total Receivable Aid Per Case:',
 			'class'      => 'input-small',
+			'prepend'    => '$',
                ));
 	       
                // Input of lifetime cases a client can have

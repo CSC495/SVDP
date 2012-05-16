@@ -1,5 +1,5 @@
 <?php if ($this->role === App_Roles::ADMIN) { ?>
-<a href="<?php echo $this->escape($this->baseUrl('/admin/members')); ?>" class="btn btn-primary btn-large">Manage Users</a>
+<a href="<?php echo $this->escape($this->baseUrl('/admin/users')); ?>" class="btn btn-primary btn-large">Manage Users</a>
 <a href="<?php echo $this->escape($this->baseUrl('/admin/adjust')); ?>" class="btn btn-primary btn-large">Adjust Limits</a>
 <a href="<?php echo $this->escape($this->baseUrl('/document/list')); ?>" class="btn btn-primary btn-large">Documents</a>
 <a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>" class="btn btn-primary btn-large">Logout</a>
@@ -14,8 +14,8 @@
 <a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>" class="btn btn-primary btn-large">Logout</a>
 <?php } else if ($this->role === App_Roles::TREASURER) { ?>
 <a href="<?php echo $this->escape($this->baseUrl('/treasurer')); ?>" class="btn btn-primary btn-large">Open Check Requests</a>
+<a href="<?php echo $this->escape($this->baseUrl('/treasurer/updateFunds')); ?>" class="btn btn-primary btn-large">Update Current Funds</a>
 <a href="<?php echo $this->escape($this->baseUrl('/search/treasurer')); ?>" class="btn btn-primary btn-large">Search</a>
 <a href="<?php echo $this->escape($this->baseUrl('/document/list')); ?>" class="btn btn-primary btn-large">Documents</a>
 <a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>" class="btn btn-primary btn-large">Logout</a>
 <?php } ?>
-

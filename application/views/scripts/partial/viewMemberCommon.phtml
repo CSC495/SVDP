@@ -1,9 +1,16 @@
+<?php
+    $cur = substr($this->user->getFirstName(),0,1);
+    if($this->last !== $cur ) {
+        echo '<a name="' . $cur . '"></a>';
+    }
+    $this->last = $cur;
+?>
 <tr class='search-result <?php echo $this->rowStripeClass; ?>'>
     <th class='search-cell top first name'>Name</th>
-    <td class='search-cell top'><?php echo $this->escape($this->user->getFirstName()) . " " . $this->escape($this->user->getLastName()); ?></td>
+    <td class='search-cell top'><?php echo $this->escape($this->user->getFullName()); ?></td>
     <th class='search-cell top id'>User Id</th>
     <td class='search-cell top'><?php echo $this->escape($this->user->getUserId()); ?></td>
-    <th class='search-cell top'>E-Mail</th>
+    <th class='search-cell top'>Email</th>
     <td class='search-cell top'><?php echo $this->escape($this->user->getEmail()); ?></td>
     <td class='search-cell top last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId())); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
     

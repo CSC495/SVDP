@@ -119,6 +119,43 @@ class DocumentController extends Zend_Controller_Action
         }
     }
     
+    public function displayAction()
+    {
+        $request = $this->getRequest();
+        $docId = $request->getParam('id');
+        
+        // If theres no param go back to index
+        if(!$docId)
+            return $this->_helper->redirector('index');
+            
+        $service = new App_Service_DocumentService();
+        $doc = $service->getDocument($docId);
+        if($doc)
+        {
+            $this->_helper->viewRenderer->setNoRender(true);
+            $this->view->layout()->disableLayout();
+            
+            $base = new Zend_View_Helper_BaseUrl();
+            $filename = APPLICATION_PATH . '/uploads/' . $doc->getUrl();
+            
+            // Get mime
+            $mime = App_MimeConverter::getMimeType($filename);
+            
+            $modified = new Zend_Date(filemtime($filename));
+            $this->getResponse()
+                ->setHeader('Last-Modified',$modified->toString(Zend_Date::RFC_1123))
+                ->setHeader('Content-Type', $mime)
+                ->setHeader('Expires', '', true)
+                ->setHeader('Cache-Control', 'private', true)
+                ->setHeader('Cache-Control', 'max-age=3800')
+                ->setHeader('Pragma', '', true);
+            readfile($filename);
+            return;
+        }
+        
+        return $this->_helper->redirector('index');
+    }
+    
     private function handleAddForm($form)
     {
         if( $form->isValid($_POST) )

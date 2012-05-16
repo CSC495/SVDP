@@ -42,7 +42,7 @@ class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical
             'required' => true,
             'filters' => array('StringTrim'),
             'label'   => 'Url:',
-            'validators' => array('Hostname'),
+            'validators' => array( new App_Validate_Url()),
         ));
         
 
