@@ -128,14 +128,13 @@ class AdminController extends Zend_Controller_Action
         
         $user = new Application_Model_Impl_User();
         $user
-            ->setFirstName($form->getValue('firstname'))
-            ->setLastName($form->getValue('lastname'))
+            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
+            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))
             ->setRole($form->getValue('role'))
             ->setActive(1); // Default user to active
-
         $this->createUser($user);
     }
     
@@ -160,26 +159,23 @@ class AdminController extends Zend_Controller_Action
         $mail = new Zend_Mail('utf-8');
         $transport = new App_Mail_Transport_AmazonSES(
         array(
-            'accessKey' => $_ENV["AWSPUB"],
-            'privateKey' => $_ENV["AWSPVT"]
+            'accessKey' => $_ENV["AWS_ACCESS_KEY_ID"],
+            'privateKey' => $_ENV["AWS_SECRET_ACCESS_KEY"]
         ));
         
-        $mail->setBodyHtml('You have been added to the SVDP organization. '
-                           . 'You may log in with the username: <b>' . $userName . '</b>' .
-                           '<br/>password: <b>' . $password . '</b>' . '</br></br> Please note ' .
-                           'you will be required to change your password on first login.');
+        $mail->setBodyHtml('You have been added to the SVDP organization.' .
+                           '<br/>Username: <b>' . $userName . '</b>' .
+                           '<br/>Password: <b>' . $password . '</b>' . '</br></br> Please note ' .
+                           'you will be required to change your password on first login.' .
+                           '<br/><br/><i>If you believe you have recieved this message in error ' .
+                           'please contact the sender.</i>');
         
         $mail->setFrom('bagura@noctrl.edu', 'System');
         $mail->addTo('bagura@noctrl.edu');
-        $mail->setSubject('SVDP Password Reset');
-        try{
-            $mail->send($transport);
-        }
-        catch(Exception $e)
-        {
-            var_dump($e);
-            exit();
-        }   
+        $mail->setSubject('SVDP Account Created');
+
+        $mail->send($transport);
+
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
                     Array( 'msg' => 'Member added successfully!',
@@ -258,8 +254,8 @@ class AdminController extends Zend_Controller_Action
         $user = new Application_Model_Impl_User();
         $user
             ->setUserId($form->getValue('userid'))
-            ->setFirstName($form->getValue('firstname'))
-            ->setLastName($form->getValue('lastname'))
+            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
+            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))
