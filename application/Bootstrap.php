@@ -8,6 +8,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         // Register the App namespace
         $autoloader = Zend_Loader_Autoloader::getInstance();
         $autoloader->registerNamespace(array('App_'));
+        
+        putenv('AWSPUB=AKIAI4KY3UJQ2ECLR5DQ');
+        putenv('AWSPVT=xEL1I72MZEzyMQKfHBl5Desa+mkOtB2wgTG0omF4');
     }
     
     protected function _initControllerPlugins()

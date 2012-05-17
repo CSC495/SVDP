@@ -39,9 +39,6 @@ class LoginController extends Zend_Controller_Action
         // Forwards the user if they are already logged on
         $this->forwardUser();
 
-        // Set page variables
-        $this->view->error_flag = $request->getParam('error_flag');
-
         $this->view->form = new Application_Model_Login_LoginForm();
         $this->view->pageTitle = "Login Page";
         
@@ -64,7 +61,7 @@ class LoginController extends Zend_Controller_Action
 
         // Validate the fields on the form
         if( !$form->isValid( $request->getPost() ) ){
-            // Redirect to login page and set error flag
+            // Redirect to login page and set error
             return;
         }
         
@@ -74,6 +71,8 @@ class LoginController extends Zend_Controller_Action
 
         // Try to authenticate the user
         $this->authenticate($userid, $password);
+        
+        
     }
     
     /**
@@ -112,17 +111,15 @@ class LoginController extends Zend_Controller_Action
         $username = $this->view->form->getValue('username');
         
         $user = $service->getUserInfo($username);
-        
         // generate password and send e-mail if the account exists
         if($user){
             $password = App_Password::generatePassword(10);
-            $service->updateUserPassword($username,$password);
-            
+
             $mail = new Zend_Mail('utf-8');
             $transport = new App_Mail_Transport_AmazonSES(
             array(
-                'accessKey' => $_ENV["AWSPUB"],
-                'privateKey' => $_ENV["AWSPVT"]
+                'accessKey' => $_ENV["AWS_ACCESS_KEY_ID"],
+                'privateKey' => $_ENV["AWS_SECRET_ACCESS_KEY"]
             ));
             
             $mail->setBodyHtml('Here is your temporary password. You will be required '
@@ -131,14 +128,9 @@ class LoginController extends Zend_Controller_Action
             $mail->setFrom('bagura@noctrl.edu', 'System');
             $mail->addTo('bagura@noctrl.edu');
             $mail->setSubject('SVDP Password Reset');
-            try{
-                $mail->send($transport);
-            }
-            catch(Exception $e)
-            {
-                var_dump($e);
-                exit();
-            }
+            
+            $mail->send($transport);
+
             
             // Update DB with temp password
             $admin = new App_Service_AdminService();
@@ -193,9 +185,8 @@ class LoginController extends Zend_Controller_Action
         
         // Check for invalid result
         if( !$result->isValid() ){
-            // User was not valid
-            // redirect to login
-            $this->_redirect('/login/login/error_flag/TRUE');
+            // This is ugly... modifies the form of the 'login' view
+            return $this->view->form->err->addError('Invalid user name or password');
         }
         
         // Erase the password from the data to be stored with user
@@ -253,7 +244,7 @@ class LoginController extends Zend_Controller_Action
         // Ensure passwords match
         if( strcmp($pwd,$vpwd) )
         {
-            $form->verify->addError('Passwords don\'t match.');
+            $form->err->addError('Passwords don\'t match.');
             return;
         }
 
