@@ -1,0 +1,65 @@
+<table border="1">
+    <tr>
+        <td>&nbsp;</td><td><h3>St. Vincent de Paul</h3></td><td>&nbsp;</td>      
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td><strong>Client Information Report</strong></td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;Client ID:&nbsp;<?php echo $this->client->getId() ?>&nbsp;</td>
+        <td>&nbsp;First Name:&nbsp;<?php echo $this->client->getFirstName() ?>&nbsp;</td>
+        <td>&nbsp;Last Name:&nbsp;<?php echo $this->client->getLastName() ?>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;Birth Date:&nbsp;<?php echo $this->client->getBirthDate() ?>&nbsp;</td>
+        <td>&nbsp;Marital Status:&nbsp;<?php echo $this->client->isMarried() ?>&nbsp;</td>
+        <td>&nbsp;Spouse:&nbsp;<?php if($this->client->isMarried())
+                                    {echo $this->client->getSpouse()->getFullName();} ?>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;Cell Number:&nbsp;<?php echo $this->client->getFormattedCellPhone() ?>&nbsp;</td>
+        <td>&nbsp;Home Number:&nbsp;<?php echo $this->client->getFormattedHomePhone() ?>&nbsp;</td>
+        <td>&nbsp;Work Number:&nbsp;<?php echo $this->client->getFormattedWorkPhone() ?>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;Date Created:&nbsp;<?php echo $this->client->getCreatedDate() ?>&nbsp;</td>
+        <td>&nbsp;Parish:&nbsp;<?php echo $this->client->getParish() ?>&nbsp;</td>
+        <td>&nbsp;Veteran:&nbsp;<?php if($this->client->isVeteran()){echo "Yes";}else{echo "No";} ?>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;Address</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;Street:&nbsp;<?php echo $this->client->getCurrentAddr()->getStreet() ?>&nbsp;</td>
+        <td>&nbsp;Apartment:&nbsp;<?php echo $this->client->getCurrentAddr()->getApt() ?>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;City:&nbsp;<?php echo $this->client->getCurrentAddr()->getCity() ?>&nbsp;</td>
+        <td>&nbsp;State:&nbsp;<?php echo $this->client->getCurrentAddr()->getState() ?>&nbsp;</td>
+        <td>&nbsp;Zip Code:&nbsp;<?php echo $this->client->getCurrentAddr()->getZip() ?>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;House Members:&nbsp;<?php echo $this->client->getEmployment() ?>&nbsp;</td>
+        <td>&nbsp;Employment:&nbsp;<?php echo $this->client->getHouseMembers() ?>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
