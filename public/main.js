@@ -401,7 +401,7 @@ function initEditClientForm() {
 
 function initUiWidgets() {
     // Attach jQuery UI widgets/plugin behavior.
-    $('.date').datepicker();
+    $(':not([readonly]).date').datepicker();
     $('.phone').mask('(999) 999-9999');
 }
 

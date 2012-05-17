@@ -13,6 +13,7 @@ class Application_Model_Member_ScheduleRecordListSubForm extends App_Form_Record
             'legend' => 'Edit the parish schedule below.',
             'addRecordMsg' => 'Add Another Entry',
             'noRecordsMsg' => 'No members are currently scheduled.',
+            'submitMsg' => 'Submit Changes',
         ));
 
         $this->_users = $users;
