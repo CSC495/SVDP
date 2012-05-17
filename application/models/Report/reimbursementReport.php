@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 class Application_Model_Report_reimbursementReport extends Twitter_Bootstrap_Form_Vertical
+=======
+class Application_Model_Report_reimbursementReport extends Zend_Form
+>>>>>>> c79b9b0788b036d6abd5177d15a770ba141706aa
 {
 	
 	public function __construct($options = null){
