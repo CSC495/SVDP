@@ -10,15 +10,24 @@
     <?php } ?>
 </fieldset>
 
-<?php echo $this->element->visitRecordList; ?>
-
 <fieldset>
     <legend>Case needs:</legend>
 
     <?php
     $this->partialLoop()->setObjectKey('need');
-    echo $this->partialLoop('partial/case-need.phtml', $this->case->getNeedList());
+    echo $this->partialLoop('partial/case-need.phtml', $this->case->getNeeds());
     ?>
 </fieldset>
 
-<?php echo $this->element->commentsSubForm; ?>
+<?php echo $this->element->visitRecordList; ?>
+
+<fieldset>
+    <legend>Member comments:</legend>
+
+    <?php if (!$this->readOnly) { ?>
+    <?php echo $this->element->commentText; ?>
+    <div class=control-group><div class=controls>
+        <?php echo $this->element->addComment; ?>
+    </div></div>
+    <?php } ?>
+</fieldset>

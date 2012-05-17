@@ -33,6 +33,9 @@ class Application_Model_Impl_Case
     //Client object?
     private $_client = null;
 
+    //Array of Comment objects
+    private $_comments = null;
+
     /* Generic get/set methods: */
 
     public function getId()
@@ -142,6 +145,15 @@ class Application_Model_Impl_Case
 
     public function setClient($client){
         $this->_client = $client;
+        return $this;
+    }
+
+    public function getComments(){
+        return $this->_comments;
+    }
+
+    public function setComments($comments){
+        $this->_comments = $comments;
         return $this;
     }
 }
