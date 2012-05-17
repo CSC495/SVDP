@@ -269,24 +269,39 @@ class App_Service_Member
     
     //Fetches an array of populated CaseVisit objects relevant to the given case
     public function getVisitsByCase($caseId){
-        $visits = array();
         $select = $this->_db->select()
-                ->from(array('cv' => 'case_visit'),
-                       array('visitId' => 'visit_id',
-                             'visitDate' => 'visit_date',
-                             'miles',
-                             'hours'))
-                ->where('cv.case_id = ?', $caseId);
+            ->from(
+                array('cv' => 'case_visit'),
+                array('cv.visit_id', 'cv.visit_date', 'cv.miles', 'cv.hours')
+            )
+            ->join(
+                array('v' => 'case_visitors'),
+                'cv.visit_id = v.visit_id',
+                array('v.user_id')
+            )
+            ->where('cv.case_id = ?', $caseId);
         $results = $this->_db->fetchAll($select);
-        
-        foreach($results as $row){
-            $visit = new Application_Model_Impl_CaseVisit();
-            $visit->setVisitId($row['visitId']);
-            $visit->setVisitDate($row['visitDate']);
-            $visit->setMiles($row['miles']);
-            $visit->setHours($row['hours']);
-            $visits[] = $visit;
+
+        $visits = array();
+
+        foreach ($results as $result) {
+            if (isset($visits[$result['visit_id']])) {
+                $visit = &$visits[$result['visit_id']];
+            } else {
+                $visits[$result['visit_id']] = $visit = new Application_Model_Impl_CaseVisit();
+                $visit
+                    ->setId($result['visit_id'])
+                    ->setDate($result['visit_date'])
+                    ->setMiles($result['miles'])
+                    ->setHours($result['hours'])
+                    ->setVisitors(array());
+            }
+
+            $user = new Application_Model_Impl_User();
+            $user->setUserId($result['user_id']);
+            $visit->addVisitor($user);
         }
+
         return $visits;
     }
     
@@ -629,8 +644,8 @@ class App_Service_Member
         $newVisits = array();
         foreach($visits as $visit){
             $visitData = $this->disassembleCaseVisitModel($visit);
-            if($visit->getVisitId()){
-                $this->updateCaseVisit($visitData, $visit->getVisitId());
+            if($visit->getVisit()){
+                $this->updateCaseVisit($visitData, $visit->getId());
                 $newVisits[] = $visit;
             }else{
                 $visitData['case_id'] = $caseId;
@@ -640,7 +655,7 @@ class App_Service_Member
                 $newVisitId = $this->_db->lastInsertId();
                 $this->insertVisitors($visit->getVisitors(), $newVisitId);
             
-                $visit->setVisitId($newVisitId);
+                $visit->setId($newVisitId);
                 $newVisits[] = $visit;
             }
         }
@@ -1015,7 +1030,7 @@ class App_Service_Member
     
     private function disassembleCaseVisitModel($visit){
         return array(
-            'visit_date' => $visit->getVisitDate(),
+            'visit_date' => $visit->getDate(),
             'miles' => $visit->getMiles(),
             'hours' => $visit->getHours(),
         );

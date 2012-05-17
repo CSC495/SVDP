@@ -99,15 +99,9 @@ class MemberController extends Zend_Controller_Action
 
         $request = $this->getRequest();
         $service = new App_Service_Member();
+        $users   = $this->fetchMemberOptions($service);
 
-        $users = $service->getActiveMembers();
-
-        foreach ($users as &$user) {
-            $user = $user->getFirstName() . ' ' . $user->getLastName();
-        }
-        unset($user);
-
-        $this->view->form = new Application_Model_Member_ScheduleForm(array('' => '') + $users);
+        $this->view->form = new Application_Model_Member_ScheduleForm($users);
 
         if (!$request->isPost()) {
             // If this isn't a POST request, fill the form from existing entries.
@@ -174,10 +168,11 @@ class MemberController extends Zend_Controller_Action
         }
 
         $service = new App_Service_Member();
+        $users   = $this->fetchMemberOptions($service);
 
         $this->view->pageTitle = 'View Case';
         $this->view->case = $service->getCaseById($this->_getParam('id'));
-        $this->view->form = new Application_Model_Member_ViewCaseForm($this->view->case);
+        $this->view->form = new Application_Model_Member_ViewCaseForm($this->view->case, $users);
     }
 
     /**
@@ -319,5 +314,16 @@ class MemberController extends Zend_Controller_Action
                 || !$this->view->form->isValid($data)) {
             return;
         }
+    }
+
+    private function fetchMemberOptions(App_Service_Member $service)
+    {
+        $users = $service->getActiveMembers();
+
+        foreach ($users as &$user) {
+            $user = $user->getFirstName() . ' ' . $user->getLastName();
+        }
+
+        return array('' => '') + $users;
     }
 }

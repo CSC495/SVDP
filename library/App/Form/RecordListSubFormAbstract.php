@@ -9,6 +9,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private $_labels;
 
+    private $_readOnly;
+
     private $_legendMsg;
 
     private $_addRecordMsg;
@@ -44,6 +46,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                 array('ViewScript', array(
                     'viewScript' => 'form/record-list-sub-form-abstract.phtml',
                     'labels' => &$this->_labels,
+                    'readOnly' => &$this->_readOnly,
                     'legendMsg' => &$this->_legendMsg,
                     'noRecordsMsg' => &$this->_noRecordsMsg,
                     'removedRecordsField' => &$this->_removedRecordsField,
@@ -67,6 +70,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         $this->_namespace = $options['namespace'];
         $this->_labels = $options['labels'];
 
+        $this->_readOnly = (isset($options['readOnly'])) ? $options['readOnly'] : false;
+
         // Get custom message strings.
         $this->_legendMsg = isset($options['legend'])
             ? $options['legend']
@@ -79,19 +84,21 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
             : 'No records listed.';
 
         // Create hidden elements to hold removed records across POST requests.
-        $safeSerializedEmptyArray = $this->_safeSerializeService->serialize(array());
+        if (!$this->_readOnly) {
+            $safeSerializedEmptyArray = $this->_safeSerializeService->serialize(array());
 
-        $this->addElement('hidden', "{$this->_namespace}RecordsRemoved", array(
-            'value' => $safeSerializedEmptyArray['serial'],
-        ));
+            $this->addElement('hidden', "{$this->_namespace}RecordsRemoved", array(
+                'value' => $safeSerializedEmptyArray['serial'],
+            ));
 
-        $this->addElement('hidden', "{$this->_namespace}RecordsRemovedHash", array(
-            'value' => $safeSerializedEmptyArray['hash'],
-        ));
+            $this->addElement('hidden', "{$this->_namespace}RecordsRemovedHash", array(
+                'value' => $safeSerializedEmptyArray['hash'],
+            ));
 
-        $this->_removedRecordsField = $this->getElement("{$this->_namespace}RecordsRemoved");
-        $this->_removedRecordsHashField
-            = $this->getElement("{$this->_namespace}RecordsRemovedHash");
+            $this->_removedRecordsField = $this->getElement("{$this->_namespace}RecordsRemoved");
+            $this->_removedRecordsHashField
+                = $this->getElement("{$this->_namespace}RecordsRemovedHash");
+        }
 
         // Create records sub form to hold the record sub forms. (It's sub forms all the way down!)
         $this->_recordsSubForm = new Zend_Form_SubForm(array(
@@ -102,14 +109,16 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         $this->addSubForm($this->_recordsSubForm, "{$this->_namespace}Records");
 
         // Create add record button.
-        $this->addElement('submit', "{$this->_namespace}RecordAdd", array(
-            'label' => $this->_addRecordMsg,
-            'class' => 'btn btn-info',
-        ));
+        if (!$this->_readOnly) {
+            $this->addElement('submit', "{$this->_namespace}RecordAdd", array(
+                'label' => $this->_addRecordMsg,
+                'class' => 'btn btn-info',
+            ));
+        }
 
         $this->_addRecordBtn = $this->getElement("{$this->_namespace}RecordAdd");
 
-        if (isset($options['submitMsg'])) {
+        if (isset($options['submitMsg']) && !$this->_readOnly) {
             // If necessary, create submit changes button.
             $this->addElement('submit', "{$this->_namespace}Submit", array(
                 'label' => $options['submitMsg'],
@@ -122,7 +131,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     public function preValidate($data)
     {
-        if (isset($data["{$this->_namespace}Records"])) {
+        if (!$this->_readOnly && isset($data["{$this->_namespace}Records"])) {
             foreach ($data["{$this->_namespace}Records"] as $recordName => $recordData) {
                 $this->_recordsSubForm->addSubForm($this->addEmptyRecord(), $recordName);
             }
@@ -131,6 +140,10 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     public function handleAddRemoveRecords($data)
     {
+        if ($this->_readOnly) {
+            return;
+        }
+
         if (isset($data["{$this->_namespace}RecordAdd"])) {
             $this->_recordsSubForm->addSubForm(
                 $this->addEmptyRecord(),
@@ -170,8 +183,10 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
     {
         $changedRecords = array();
 
-        foreach ($this->_recordsSubForm->getSubForms() as $recordName => $recordSubForm) {
-            $changedRecords[$recordName] = $this->getRecord($recordSubForm);
+        if (!$this->_readOnly) {
+            foreach ($this->_recordsSubForm->getSubForms() as $recordName => $recordSubForm) {
+                $changedRecords[$recordName] = $this->getRecord($recordSubForm);
+            }
         }
 
         return $changedRecords;
@@ -179,10 +194,12 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     public function getRemovedRecords()
     {
-        return $this->_safeSerializeService->unserialize(
-            $this->_removedRecordsField->getValue(),
-            $this->_removedRecordsHashField->getValue()
-        );
+        return !$this->_readOnly
+            ? $this->_safeSerializeService->unserialize(
+                $this->_removedRecordsField->getValue(),
+                $this->_removedRecordsHashField->getValue()
+            )
+            : array();
     }
 
     public function setRecords($records)
@@ -221,14 +238,24 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
         $this->initSubForm($recordSubForm);
 
-        $recordSubForm->addElement('submit', 'remove', array(
-            'label' => '×',
-            'decorators' => array(
-                'ViewHelper',
-                array('HtmlTag', array('tag' => 'td', 'class' => 'remove')),
-            ),
-            'class' => 'btn btn-danger remove',
-        ));
+        if ($this->_readOnly) {
+            foreach ($recordSubForm->getElements() as $element) {
+                if ($element instanceof Zend_Form_Element_Select) {
+                    $element->setAttrib('disabled', true);
+                } else {
+                    $element->setAttrib('readonly', true);
+                }
+            }
+        } else {
+            $recordSubForm->addElement('submit', 'remove', array(
+                'label' => '×',
+                'decorators' => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'td', 'class' => 'remove')),
+                ),
+                'class' => 'btn btn-danger remove',
+            ));
+        }
 
         return $recordSubForm;
     }

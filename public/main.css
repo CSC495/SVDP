@@ -44,7 +44,7 @@ div.search-results {
 table.search-results {
     border-bottom: 1px solid #ddd;
     border-collapse: collapse;
-    margin: 1em 0;
+    margin-bottom: 1em;
     table-layout: fixed;
     width: 100%;
 }

@@ -10,7 +10,9 @@
             <?php foreach ($this->labels as $label) { ?>
             <th><?php echo $this->escape($label); ?></th>
             <?php } ?>
+            <?php if (!$this->readOnly) { ?>
             <th class=remove></th>
+            <?php } ?>
         </tr>
         <?php echo $this->recordsSubForm; ?>
     </table>
@@ -18,8 +20,10 @@
     <div class=control-group><div class=controls><p class=help-block><?php echo $this->escape($this->noRecordsMsg); ?></p></div></div>
     <?php } ?>
 
+    <?php if (!$this->readOnly) { ?>
     <div class=control-group><div class=controls>
         <?php echo $this->addRecordBtn; ?>
         <?php if (isset($this->submitBtn)) { ?><?php echo $this->submitBtn; ?><?php } ?>
     </div></div>
+    <?php } ?>
 </fieldset>

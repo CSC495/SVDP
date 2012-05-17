@@ -3,7 +3,9 @@
 class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horizontal
 {
 
-    public function __construct(Application_Model_Impl_Case $case)
+    private $_readOnly;
+
+    public function __construct(Application_Model_Impl_Case $case, array $users)
     {
         parent::__construct(array(
             'action' => self::makeActionUrl($case->getId()),
@@ -18,6 +20,8 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
                 'Form',
             ),
         ));
+
+        $this->_readOnly = ($case->getStatus() === 'Closed');
 
         $this->addElement('text', 'caseId', array(
             'label' => 'Case ID',
@@ -54,13 +58,20 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
             'value' => $case->getOpenedUser()->getFullName(),
         ));
 
-        if ($case->getStatus() !== 'Closed') {
+        if (!$this->_readOnly) {
             $this->addElement('submit', 'closeCase', array(
                 'label' => 'Close Case',
                 'decorators' => array('ViewHelper'),
                 'class' => 'btn btn-danger',
             ));
         }
+
+        $this->addSubForm(
+            new Application_Model_Member_CaseVisitRecordListSubForm($users, $this->_readOnly),
+            'visitRecordList'
+        );
+
+        $this->visitRecordList->setRecords($case->getVisits());
     }
 
     private static function makeActionUrl($id)
