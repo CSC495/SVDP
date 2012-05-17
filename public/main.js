@@ -321,7 +321,7 @@ function renderMap(centerCoords, clientCoords) {
 
             if (parishId == 'stRaphael') {
                 inStRaphael = true;
-                alertMsg    = 'This address lies within '
+                alertMsg    = 'This address lies within the '
                             + $('<p/>').text(parishInfo.parishName).html()
                             + ' parish boundaries.';
             } else {

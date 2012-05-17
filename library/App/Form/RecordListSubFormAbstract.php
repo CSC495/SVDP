@@ -13,6 +13,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private $_legendMsg;
 
+    private $_descriptionMsg;
+
     private $_addRecordMsg;
 
     private $_noRecordsMsg;
@@ -48,6 +50,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                     'labels' => &$this->_labels,
                     'readOnly' => &$this->_readOnly,
                     'legendMsg' => &$this->_legendMsg,
+                    'descriptionMsg' => &$this->_descriptionMsg,
                     'noRecordsMsg' => &$this->_noRecordsMsg,
                     'removedRecordsField' => &$this->_removedRecordsField,
                     'removedRecordsHashField' => &$this->_removedRecordsHashField,
@@ -68,18 +71,17 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         }
 
         $this->_namespace = $options['namespace'];
-        $this->_labels = $options['labels'];
+        $this->_labels    = $options['labels'];
 
         $this->_readOnly = (isset($options['readOnly'])) ? $options['readOnly'] : false;
 
         // Get custom message strings.
-        $this->_legendMsg = isset($options['legend'])
-            ? $options['legend']
-            : 'Records:';
-        $this->_addRecordMsg = isset($options['addRecordMsg'])
+        $this->_legendMsg      = isset($options['legend']) ? $options['legend'] : 'Records:';
+        $this->_descriptionMsg = isset($options['description']) ? $options['description'] : null;
+        $this->_addRecordMsg   = isset($options['addRecordMsg'])
             ? $options['addRecordMsg']
             : 'Add Another Record';
-        $this->_noRecordsMsg = isset($options['noRecordsMsg'])
+        $this->_noRecordsMsg   = isset($options['noRecordsMsg'])
             ? $options['noRecordsMsg']
             : 'No records listed.';
 

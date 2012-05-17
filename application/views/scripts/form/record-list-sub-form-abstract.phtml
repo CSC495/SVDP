@@ -1,5 +1,10 @@
 <fieldset>
     <legend><?php echo $this->escape($this->legendMsg); ?></legend>
+    <?php
+    if (isset($this->descriptionMsg)) {
+        echo '<p>' . $this->escape($this->descriptionMsg) . '</p>';
+    }
+    ?>
 
     <?php echo $this->removedRecordsField; ?>
     <?php echo $this->removedRecordsHashField; ?>
