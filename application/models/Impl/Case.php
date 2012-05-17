@@ -22,8 +22,10 @@ class Application_Model_Impl_Case
 
     private $_totalAmount = null;
 
-    //Array of CaseNeed objects
     private $_needList = null;
+
+    //Array of CaseNeed objects
+    private $_needs = null;
 
     //Array of CaseVisit objects
     private $_visits = null;
@@ -82,6 +84,27 @@ class Application_Model_Impl_Case
     {
         $this->_status = $status;
         return $this;
+    }
+
+    public function getNeeds()
+    {
+        return $this->_needs;
+    }
+
+    public function setNeeds($needs)
+    {
+        $this->_needs = $needs;
+
+        $needAmounts      = array();
+        $needDescriptions = array();
+
+        foreach ($needs as $need) {
+            $needAmounts[]      = $need->getAmount();
+            $needDescriptions[] = $need->getNeed();
+        }
+
+        $this->_totalAmount = number_format(array_sum($needAmounts), 2);
+        $this->_needList    = implode(', ', $needDescriptions);
     }
 
     public function getNeedList()

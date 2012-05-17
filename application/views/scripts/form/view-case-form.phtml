@@ -1,18 +1,16 @@
-<fieldset class=row-fluid>
-    <legend>General case information:</legend>
-
-    <div class=span6><?php echo $this->element->caseId; ?></div>
-    <div class=span6><?php echo $this->element->caseStatus; ?></div>
-
-    <div class=span6><?php echo $this->element->dateOpened; ?></div>
-    <div class=span6><?php echo $this->element->openingUser; ?></div>
+<fieldset>
+    <legend>Case summary:</legend>
+    <div class=search-results><table class=search-results>
+    <?php echo $this->partial('partial/caseSummary.phtml', array('case' => $this->case)); ?>
+    </table></div>
+    <?php if ($this->case->getStatus() !== 'Closed') { ?>
+    <div class=control-group><div class=controls>
+        <?php echo $this->element->closeCase; ?>
+    </div></div>
+    <?php } ?>
 </fieldset>
 
-<?php if ($this->case->getStatus() !== 'Closed') { ?>
-<div class=form-actions>
-    <?php echo $this->element->closeCase; ?>
-</div>
-<?php } ?>
+<?php echo $this->element->visitRecordList; ?>
 
 <fieldset>
     <legend>Case needs:</legend>
@@ -22,7 +20,5 @@
     echo $this->partialLoop('partial/case-need.phtml', $this->case->getNeedList());
     ?>
 </fieldset>
-
-<?php echo $this->element->visitRecordList; ?>
 
 <?php echo $this->element->commentsSubForm; ?>

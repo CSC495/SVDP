@@ -1,17 +1,1 @@
-<?php
-$viewClientUrl = $this->baseUrl(App_Resources::MEMBER,
-    '/viewClient/id/' . urlencode($this->case->getClient()->getId()));
-?>
-<p>Viewing activity summary for case with ID <?php echo $this->escape($this->case->getId()); ?>.</p>
-
-<fieldset>
-    <legend>Client summary:</legend>
-    <div class=search-results><table class=search-results>
-    <?php
-    echo $this->partial('partial/searchResultClient.phtml', array(
-        'client' => $this->case->getClient(),
-    ));
-    ?>
-    </table></div>
-</fieldset>
 <?php echo $this->form; ?>

@@ -631,7 +631,7 @@ class App_Service_Member
             }
         }
         $case->setTotalAmount($totalAmount);
-        $case->setNeedList($newNeeds);
+        $case->setNeeds($newNeeds);
         return $case;
     }
     
@@ -889,7 +889,7 @@ class App_Service_Member
             ->setOpenedUser($user)
             ->setClient($this->getClientById($result['clientID']))
             ->setVisits($this->getVisitsByCase($result['caseID']))
-            ->setNeedList($this->getNeedsByCase($result['caseID']));
+            ->setNeeds($this->getNeedsByCase($result['caseID']));
         return $case;
     }
 
