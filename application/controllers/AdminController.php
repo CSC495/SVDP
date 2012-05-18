@@ -268,11 +268,6 @@ class AdminController extends Zend_Controller_Action
                         Array( 'msg' => 'Member Data Updated Successfully!',
                                'time' => 3,
                                'controller' => App_Resources::ADMIN,
-<<<<<<< HEAD
-                               'action' => 'users'));
-=======
-                               'action' => 'members'));
->>>>>>> 00ca543197914d5ae919c2ca1cd1bf8898138bac
-        
+                               'action' => 'users'));   
     }
 }
