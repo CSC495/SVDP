@@ -118,8 +118,8 @@ class LoginController extends Zend_Controller_Action
             $mail = new Zend_Mail('utf-8');
             $transport = new App_Mail_Transport_AmazonSES(
             array(
-                'accessKey' => $_ENV["AWS_ACCESS_KEY_ID"],
-                'privateKey' => $_ENV["AWS_SECRET_ACCESS_KEY"]
+                'accessKey' => getenv("AWS_ACCESS_KEY_ID"),
+                'privateKey' => getenv("AWS_SECRET_ACCESS_KEY")
             ));
             
             $mail->setBodyHtml('Here is your temporary password. You will be required '
