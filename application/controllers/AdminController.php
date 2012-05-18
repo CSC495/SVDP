@@ -80,9 +80,27 @@ class AdminController extends Zend_Controller_Action
     public function usersAction()
     {
         $this->view->pageTitle = "Admin Viewing Users";
-        
+
         $service = new App_Service_AdminService();
-        $this->view->users = $service->getAllUsers();
+        $users   = $service->getAllUsers();
+
+        $this->view->users = array();
+        $lastRowLetter     = null;
+
+        foreach ($users as $userId => $user) {
+            $firstName = $user->getFirstName();
+
+            if ($lastRowLetter !== $firstName[0]) {
+                $lastRowLetter = $rowLetter = $firstName[0];
+            } else {
+                $rowLetter = null;
+            }
+
+            $this->view->users[$userId] = array(
+                'user' => $user,
+                'rowLetter' => $rowLetter,
+            );
+        }
     }
     
     // displays view for creating new member

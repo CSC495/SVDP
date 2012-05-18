@@ -43,6 +43,6 @@ class Application_Model_Search_MemberForm extends Application_Model_Search_FormA
      */
     public function __construct()
     {
-        parent::__construct('member', $this->_additionalTypes);
+        parent::__construct('member', 'Clients', $this->_additionalTypes);
     }
 }

@@ -99,15 +99,9 @@ class MemberController extends Zend_Controller_Action
 
         $request = $this->getRequest();
         $service = new App_Service_Member();
+        $users   = $this->fetchMemberOptions($service);
 
-        $users = $service->getActiveMembers();
-
-        foreach ($users as &$user) {
-            $user = $user->getFirstName() . ' ' . $user->getLastName();
-        }
-        unset($user);
-
-        $this->view->form = new Application_Model_Member_ScheduleForm(array('' => '') + $users);
+        $this->view->form = new Application_Model_Member_ScheduleForm($users);
 
         if (!$request->isPost()) {
             // If this isn't a POST request, fill the form from existing entries.
@@ -143,8 +137,25 @@ class MemberController extends Zend_Controller_Action
         $this->view->pageTitle = 'Member Contact List';
 
         $service = new App_Service_AdminService();
+        $users   = $service->getAllUsers();
 
-        $this->view->users = $service->getAllUsers();
+        $this->view->users = array();
+        $lastRowLetter     = null;
+
+        foreach ($users as $userId => $user) {
+            $firstName = $user->getFirstName();
+
+            if ($lastRowLetter !== $firstName[0]) {
+                $lastRowLetter = $rowLetter = $firstName[0];
+            } else {
+                $rowLetter = null;
+            }
+
+            $this->view->users[$userId] = array(
+                'user' => $user,
+                'rowLetter' => $rowLetter,
+            );
+        }
     }
 
     /**
@@ -173,10 +184,13 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No ID parameter provided');
         }
 
-        $service = new App_Service_Member();
+        $service  = new App_Service_Member();
+        $case     = $service->getCaseById($this->_getParam('id'));
+        $comments = $service->getCommentsForCase($case);
+        $users    = $this->fetchMemberOptions($service);
 
         $this->view->pageTitle = 'View Case';
-        $this->view->case = $service->getCaseById($this->_getParam('id'));
+        $this->view->form = new Application_Model_Member_ViewCaseForm($case, $comments, $users);
     }
 
     /**
@@ -318,5 +332,16 @@ class MemberController extends Zend_Controller_Action
                 || !$this->view->form->isValid($data)) {
             return;
         }
+    }
+
+    private function fetchMemberOptions(App_Service_Member $service)
+    {
+        $users = $service->getActiveMembers();
+
+        foreach ($users as &$user) {
+            $user = $user->getFirstName() . ' ' . $user->getLastName();
+        }
+
+        return array('' => '') + $users;
     }
 }

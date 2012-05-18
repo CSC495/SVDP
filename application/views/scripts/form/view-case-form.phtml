@@ -1,0 +1,33 @@
+<fieldset>
+    <legend>Case summary:</legend>
+    <div class=search-results><table class=search-results>
+    <?php echo $this->partial('partial/caseSummary.phtml', array('case' => $this->case)); ?>
+    </table></div>
+    <?php if ($this->case->getStatus() !== 'Closed') { ?>
+    <div class=control-group><div class=controls>
+        <?php echo $this->element->closeCase; ?>
+    </div></div>
+    <?php } ?>
+</fieldset>
+
+<fieldset>
+    <legend>Case needs:</legend>
+
+    <?php
+    $this->partialLoop()->setObjectKey('need');
+    echo $this->partialLoop('partial/case-need.phtml', $this->case->getNeeds());
+    ?>
+</fieldset>
+
+<?php echo $this->element->visitRecordList; ?>
+
+<fieldset>
+    <legend>Member comments:</legend>
+
+    <?php if (!$this->readOnly) { ?>
+    <?php echo $this->element->commentText; ?>
+    <div class=control-group><div class=controls>
+        <?php echo $this->element->addComment; ?>
+    </div></div>
+    <?php } ?>
+</fieldset>
