@@ -159,8 +159,13 @@ class AdminController extends Zend_Controller_Action
         $mail = new Zend_Mail('utf-8');
         $transport = new App_Mail_Transport_AmazonSES(
         array(
+<<<<<<< HEAD
             'accessKey' => getenv("AWS_ACCESS_KEY_ID"),
             'privateKey' => getenv("AWS_SECRET_ACCESS_KEY")
+=======
+            'accessKey' => $_ENV["AWS_ACCESS_KEY_ID"],
+            'privateKey' => $_ENV["AWS_SECRET_ACCESS_KEY"]
+>>>>>>> 00ca543197914d5ae919c2ca1cd1bf8898138bac
         ));
         
         $mail->setBodyHtml('You have been added to the SVDP organization.' .
@@ -268,7 +273,11 @@ class AdminController extends Zend_Controller_Action
                         Array( 'msg' => 'Member Data Updated Successfully!',
                                'time' => 3,
                                'controller' => App_Resources::ADMIN,
+<<<<<<< HEAD
                                'action' => 'users'));
+=======
+                               'action' => 'members'));
+>>>>>>> 00ca543197914d5ae919c2ca1cd1bf8898138bac
         
     }
 }
