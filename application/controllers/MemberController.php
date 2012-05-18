@@ -169,9 +169,10 @@ class MemberController extends Zend_Controller_Action
         }
 
         $service = new App_Service_Member();
+        $client  = $service->getClientById($this->_getParam('id'));
 
         $this->view->pageTitle = 'View Client';
-        $this->view->client = $service->getClientById($this->_getParam('id'));
+        $this->view->form      = new Application_Model_Member_ViewClientForm($client);
     }
 
     /**
@@ -190,7 +191,8 @@ class MemberController extends Zend_Controller_Action
         $users    = $this->fetchMemberOptions($service);
 
         $this->view->pageTitle = 'View Case';
-        $this->view->form = new Application_Model_Member_ViewCaseForm($case, $comments, $users);
+        $this->view->form      = new Application_Model_Member_ViewCaseForm(
+            $case, $comments, $users);
     }
 
     /**

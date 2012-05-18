@@ -105,10 +105,6 @@ form.form-horizontal table {
     width: 100%;
 }
 
-form.form-horizontal th {
-    vertical-align: bottom;
-}
-
 form.form-horizontal td .control-group {
     margin-bottom: 0;
 }

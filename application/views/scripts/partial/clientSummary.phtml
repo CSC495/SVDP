@@ -1,0 +1,14 @@
+<?php
+$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
+    . urlencode($this->client->getId()));
+
+echo $this->partial('partial/searchResultCommon.phtml', array(
+    'rowStripeClass' => 'even',
+    'client' => $this->client,
+));
+?>
+<tr class="search-result even">
+    <th class="search-cell bot first">Address</th>
+    <td colspan=5 class="search-cell bot"><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
+    <td class="search-cell last"><?php if ($this->client->isDoNotHelp()) { ?><span class="label label-important">Do not help</span><?php } ?></td>
+</tr>
