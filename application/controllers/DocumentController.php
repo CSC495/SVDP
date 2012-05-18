@@ -94,7 +94,7 @@ class DocumentController extends Zend_Controller_Action
         $service->createDocument($doc);
         
         $upload = new Zend_File_Transfer_Adapter_Http();
-        $upload->setDestination(APPLICATION_PATH . '/uploads/');
+        
         $upload->receive();
         
         // Redirect user
@@ -136,14 +136,12 @@ class DocumentController extends Zend_Controller_Action
             $this->view->layout()->disableLayout();
             
             $base = new Zend_View_Helper_BaseUrl();
-            $filename = APPLICATION_PATH . '/uploads/' . $doc->getUrl();
+            $filename = $base->baseUrl('/uploads/' . $doc->getUrl()) ;
             
             // Get mime
             $mime = App_MimeConverter::getMimeType($filename);
             
-            $modified = new Zend_Date(filemtime($filename));
             $this->getResponse()
-                ->setHeader('Last-Modified',$modified->toString(Zend_Date::RFC_1123))
                 ->setHeader('Content-Type', $mime)
                 ->setHeader('Expires', '', true)
                 ->setHeader('Cache-Control', 'private', true)
