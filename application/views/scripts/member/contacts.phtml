@@ -1,51 +1,27 @@
-<!--<p>View member contact information.</p>
+<p>Viewing member contact information.</p>
+
+<p class=help-block>
+    Jump to:
+    <?php
+    foreach (range('A', 'Z') as $letter) {
+        echo '<a href="#' . $letter . '">' . $letter . '</a> ';
+    }
+    ?>
+</p>
 
 <div class=search-results>
-<table class=search-results>
-<?php
-//$this->partialLoop()->setObjectKey('user');
-//echo $this->partialLoop('partial/viewMemberForMember.phtml', $this->users);
-?>
-</table>
-</div>
--->
-
-<div class="row">
-    <p>Viewing member contact information.</p>
-</div>
-
-<div class="row">
-    <div class="span9">
-        <h5>
-            Jump to:
-            <?php foreach(range('A', 'Z') as $letter){
-                echo '<a href="#' . $letter . '">' . $letter . '</a>&nbsp'; 
-            } ?>
-        </h5>
-    </div>
-</div>
-
-<div class="search-results">
-    <table class="search-results">
-    
+    <table class=search-results>
     <?php
-    $this->partialLoop()->setObjectKey('user');
     echo $this->partialLoop('partial/viewMemberForMember.phtml', $this->users);
     ?>
-    
     </table>
 </div>
 
-<br />
-
-<div class="row">
-    <div class="span9">
-        <h5>
-            Jump to:
-            <?php foreach(range('A', 'Z') as $letter){
-                echo '<a href="#' . $letter . '">' . $letter . '</a>&nbsp'; 
-            } ?>
-        </h5>
-    </div>
-</div>
-
+<p class=help-block>
+    Jump to:
+    <?php
+    foreach (range('A', 'Z') as $letter) {
+        echo '<a href="#' . $letter . '">' . $letter . '</a> ';
+    }
+    ?>
+</p>

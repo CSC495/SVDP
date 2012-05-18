@@ -10,9 +10,11 @@ class Application_Model_Member_ScheduleRecordListSubForm extends App_Form_Record
         parent::__construct(array(
             'namespace' => 'schedule',
             'labels' => array('Week Begins', 'Member Name'),
-            'legend' => 'Edit the parish schedule below.',
+            'legend' => 'Edit the parish schedule:',
+            'description' => 'Please submit your changes for additions and removals to take place.',
             'addRecordMsg' => 'Add Another Entry',
             'noRecordsMsg' => 'No members are currently scheduled.',
+            'submitMsg' => 'Submit Changes',
         ));
 
         $this->_users = $users;

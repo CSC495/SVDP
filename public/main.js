@@ -321,7 +321,7 @@ function renderMap(centerCoords, clientCoords) {
 
             if (parishId == 'stRaphael') {
                 inStRaphael = true;
-                alertMsg    = 'This address lies within '
+                alertMsg    = 'This address lies within the '
                             + $('<p/>').text(parishInfo.parishName).html()
                             + ' parish boundaries.';
             } else {
@@ -401,7 +401,7 @@ function initEditClientForm() {
 
 function initUiWidgets() {
     // Attach jQuery UI widgets/plugin behavior.
-    $('.date').datepicker();
+    $(':not([readonly]).date').datepicker();
     $('.phone').mask('(999) 999-9999');
 }
 
