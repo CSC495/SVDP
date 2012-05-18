@@ -283,7 +283,7 @@ class AdminController extends Zend_Controller_Action
         $service->updateUserInformation($user);
         
         $this->_forward('index', App_Resources::REDIRECT, null,
-                        Array( 'msg' => 'Member Data Updated Successfully!',
+                        Array( 'msg' => 'User Data Updated Successfully!',
                                'time' => 3,
                                'controller' => App_Resources::ADMIN,
                                'action' => 'users'));   
