@@ -151,7 +151,7 @@ class SearchController extends Zend_Controller_Action
         if (!$form->isValid($req->getQuery())) {
             foreach ($form->getMessages() as $elementErrors) {
                 foreach ($elementErrors as $error) {
-                    $this->_helper->flashMessenger($error);
+                    $this->_helper->flashMessenger(array('type' => 'error', 'text' => $error));
                 }
             }
             return false;

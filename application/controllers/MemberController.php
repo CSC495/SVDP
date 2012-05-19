@@ -61,12 +61,18 @@ class MemberController extends Zend_Controller_Action
 
         // Respond to geocoding errors.
         if ($service->hasErrorMsg()) {
-            $this->_helper->flashMessenger($service->getErrorMsg());
+            $this->_helper->flashMessenger(array(
+                'type' => 'error',
+                'text' => $service->getErrorMsg(),
+            ));
             return;
         }
 
         if (!$service->hasResult()) {
-            $this->_helper->flashMessenger('No results were found for that address.');
+            $this->_helper->flashMessenger(array(
+                'type' => 'error',
+                'text' => 'No results were found for that address.',
+            ));
             return;
         }
 
