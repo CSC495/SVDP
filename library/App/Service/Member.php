@@ -176,7 +176,7 @@ class App_Service_Member
     //Given a client_id returns an array of populated Case objects for each case
     //associated with the client, returns all cases Opened and Closed
     public function getCasesByClient($clientId){
-        $select = $this->db->select()
+        $select = $this->_db->select()
 			->from(array('cc' => 'client_case'),
 				     array('caseID' => 'cc.case_id',
 					   'dateRequested' => 'cc.opened_date',
@@ -198,11 +198,10 @@ class App_Service_Member
 			->joinInner(array('h' => 'household'), 'cc.household_id = h.household_id')
 			->joinInner(array('c' => 'client'), 'c.client_id = h.mainclient_id')
 			->joinInner(array('cn' => 'case_need'), 'cc.case_id = cn.case_id')
-			->joinInner(array('u' => 'user'), 'u.user_id = cc.opened_user_id')
 			->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
 			->group('cc.case_id')
 			->where('c.client_id = ?', $client_id);
-		$results = $this->db->fetchAll($select);
+		$results = $this->_db->fetchAll($select);
 		return $this->buildCaseModels($results);
     }
 

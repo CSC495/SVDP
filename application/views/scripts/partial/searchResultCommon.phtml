@@ -1,15 +1,12 @@
 <?php
-$preClientId  = '<td class="search-cell top id">';
-$postClientId = '</td>';
 $clientId     = $this->escape($this->client->getId());
 
-$preGotoBtn  = '<td class="search-cell top last">';
-$postGotoBtn = '</td>';
-$gotoBtn     = '';
-
 if (isset($this->viewClientUrl)) {
-    $preClientId  = $preClientId . '<a href="' . $this->escape($this->viewClientUrl) . '">';
-    $postClientId =  '</a>' . $postClientId;
+    $preClientId  = '<a href="' . $this->escape($this->viewClientUrl) . '">';
+    $postClientId =  '</a>';
+} else {
+    $preClientId  = '';
+    $postClientId = '';
 }
 
 if (isset($this->gotoUrl, $this->gotoLabel)) {
@@ -18,14 +15,16 @@ if (isset($this->gotoUrl, $this->gotoLabel)) {
              . '" class="btn btn-mini btn-info">Go to '
              . $this->escape($this->gotoLabel)
              . '</a>';
+} else {
+    $gotoBtn = '';
 }
 ?>
 <tr class="search-result <?php echo $this->rowStripeClass; ?>">
-    <th class='search-cell top first'>Client ID</th>
-    <?php echo $preClientId, $clientId, $postClientId; ?>
-    <th class='search-cell top'>Name</th>
-    <td class='search-cell top name'><?php echo $this->escape($this->client->getFullName()); ?></td>
-    <th class='search-cell top'>Phone</th>
-    <td class='search-cell top'><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
-    <?php echo $preGotoBtn, $gotoBtn, $postGotoBtn; ?>
+    <th class="search-cell top first">Client ID</th>
+    <td class="search-cell top id"><?php echo $preClientId, $clientId, $postClientId; ?></td>
+    <th class="search-cell top">Name</th>
+    <td class="search-cell top name"><?php echo $this->escape($this->client->getFullName()); ?></td>
+    <th class="search-cell top">Phone</th>
+    <td class="search-cell top"><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
+    <td class="search-cell top last"><?php echo $gotoBtn; ?></td>
 </tr>

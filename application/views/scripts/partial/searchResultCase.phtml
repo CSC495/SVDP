@@ -1,30 +1,50 @@
 <?php
-$rowStripeClass = (!isset($this->partialCounter) || $this->partialCounter % 2) ? 'even' : 'odd';
+$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
 $viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
     . urlencode($this->case->getClient()->getId()));
-$viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/viewCase/id/'
-    . urlencode($this->case->getId()));
 
-echo $this->partial('partial/searchResultCommon.phtml', array(
+$options = array(
     'rowStripeClass' => $rowStripeClass,
     'viewClientUrl' => $viewClientUrl,
-    'gotoUrl' => $viewCaseUrl,
-    'gotoLabel' => 'Case',
     'client' => $this->case->getClient(),
-));
+);
+
+$caseId = $this->escape($this->case->getId());
+
+if (empty($this->noCaseLinks)) {
+    $viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/viewCase/id/'
+        . urlencode($this->case->getId()));
+
+    $options['gotoUrl']   = $viewCaseUrl;
+    $options['gotoLabel'] = 'Case';
+
+    $preCaseId  = '<a href="' . $this->escape($viewCaseUrl) . '">';
+    $postCaseId = '</a>';
+} else {
+    $options['gotoUrl']   = $viewClientUrl;
+    $options['gotoLabel'] = 'Client';
+
+    $preCaseId  = '';
+    $postCaseId = '';
+}
+
+echo $this->partial('partial/searchResultCommon.phtml', $options);
 ?>
-<tr class='search-result <?php echo $rowStripeClass; ?>'>
-    <th class='search-cell first'>Case ID</th>
-    <td class=search-cell><a href="<?php echo $this->escape($viewCaseUrl) ?>"><?php echo $this->escape($this->case->getId()); ?></a></td>
+<tr class="search-result <?php echo $rowStripeClass; ?>">
+    <th class="search-cell first">Case ID</th>
+    <td class=search-cell><?php echo $preCaseId, $caseId, $postCaseId; ?></td>
     <th class=search-cell>Date</th>
     <td class=search-cell><?php echo $this->escape(App_Formatting::formatDate($this->case->getOpenedDate())); ?></td>
     <th class=search-cell>Status</th>
     <td class=search-cell><?php echo $this->escape($this->case->getStatus()); ?></td>
-    <td rowspan=2 class='search-cell last'></td>
+    <td class="search-cell last"></td>
 </tr>
-<tr class='search-result <?php echo $rowStripeClass; ?>'>
-    <th class='search-cell bot first'>Amount</th>
-    <td class='search-cell bot'>$<?php echo $this->escape($this->case->getTotalAmount()); ?></td>
-    <th class='search-cell bot'>Needs</th>
-    <td class='search-cell bot' colspan=3><?php echo $this->escape($this->case->getNeedList()); ?></td>
+<tr class="search-result <?php echo $rowStripeClass; ?>">
+    <th class="search-cell bot first">Amount</th>
+    <td class="search-cell bot">$<?php echo $this->escape($this->case->getTotalAmount()); ?></td>
+    <th class="search-cell bot">Needs</th>
+    <td class="search-cell bot"><?php echo $this->escape($this->case->getNeedList()); ?></td>
+    <th class="search-cell bot">Member</th>
+    <td class="search-cell bot"><?php echo $this->escape($this->case->getOpenedUser()->getFullName()); ?></td>
+    <td class="search-cell last"></td>
 </tr>

@@ -3,7 +3,7 @@
 class Application_Model_Member_ViewClientForm extends Twitter_Bootstrap_Form_Horizontal
 {
 
-    public function __construct(Application_Model_Impl_Client $client)
+    public function __construct(Application_Model_Impl_Client $client, array $cases)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
@@ -18,6 +18,7 @@ class Application_Model_Member_ViewClientForm extends Twitter_Bootstrap_Form_Hor
                 array('ViewScript', array(
                     'viewScript' => 'form/view-client-form.phtml',
                     'client' => $client,
+                    'cases' => $cases,
                 )),
                 'Form',
             ),

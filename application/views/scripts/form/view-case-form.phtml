@@ -1,12 +1,21 @@
 <fieldset>
     <legend>Case summary:</legend>
-    <div class=search-results><table class=search-results>
-    <?php echo $this->partial('partial/caseSummary.phtml', array('case' => $this->case)); ?>
-    </table></div>
+    <div class=search-results>
+        <table class=search-results>
+            <?php
+            echo $this->partial('partial/searchResultCase.phtml', array(
+                'case' => $this->case,
+                'noCaseLinks' => true,
+            ));
+            ?>
+        </table>
+    </div>
     <?php if ($this->case->getStatus() !== 'Closed') { ?>
-    <div class=control-group><div class=controls>
-        <?php echo $this->element->closeCase; ?>
-    </div></div>
+    <div class=control-group>
+        <div class=controls>
+            <?php echo $this->element->closeCase; ?>
+        </div>
+    </div>
     <?php } ?>
 </fieldset>
 
@@ -26,8 +35,10 @@
 
     <?php if (!$this->readOnly) { ?>
     <?php echo $this->element->commentText; ?>
-    <div class=control-group><div class=controls>
-        <?php echo $this->element->addComment; ?>
-    </div></div>
+    <div class=control-group>
+        <div class=controls>
+            <?php echo $this->element->addComment; ?>
+        </div>
+    </div>
     <?php } ?>
 </fieldset>

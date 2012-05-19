@@ -1,5 +1,5 @@
 <?php
-$rowStripeClass = (!isset($this->partialCounter) || $this->partialCounter % 2) ? 'even' : 'odd';
+$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
 $viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
     . urlencode($this->client->getId()));
 
