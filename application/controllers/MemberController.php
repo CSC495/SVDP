@@ -249,7 +249,13 @@ class MemberController extends Zend_Controller_Action
             $service->closeCaseById($case->getId());
         }
 
-        // TODO: Handle requests to add, edit, and/or remove case visits.
+        // Handle requests to add, edit, and/or remove case visits.
+        if ($this->view->form->isChangeVisitsRequest($data)) {
+            foreach ($this->view->form->getChangedVisits() as $changedVisit) {
+                $service->changeCaseVisit($case->getId(), $changedVisit);
+            }
+            $service->removeCaseVisits($this->view->form->getRemovedVisits());
+        }
 
         // Handle requests to add case comments.
         $comment = $this->view->form->getAddedComment($data);

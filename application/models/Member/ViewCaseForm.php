@@ -55,12 +55,16 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
     public function isValid($data)
     {
-        if ($this->commentsSubForm->isAddCommentRequest($data)) {
-            return $this->commentsSubForm->isValid($data);
-        }
-
         if ($this->isCloseCaseRequest($data)) {
             return true;
+        }
+
+        if ($this->isChangeVisitsRequest($data)) {
+            return $this->visitRecordList->isValid($data);
+        }
+
+        if ($this->commentsSubForm->isAddCommentRequest($data)) {
+            return $this->commentsSubForm->isValid($data);
         }
 
         return false;
@@ -69,6 +73,11 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
     public function isCloseCaseRequest(array $data)
     {
         return isset($data['closeCase']);
+    }
+
+    public function isChangeVisitsRequest(array $data)
+    {
+        return isset($data['casevisitSubmit']);
     }
 
     public function handleAddRemoveVisits(array $data)

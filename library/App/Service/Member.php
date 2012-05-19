@@ -325,6 +325,8 @@ class App_Service_Member
             $user = new Application_Model_Impl_User();
             $user->setUserId($result['user_id']);
             $visit->addVisitor($user);
+
+            unset($visit);
         }
 
         return $visits;
@@ -528,6 +530,69 @@ class App_Service_Member
         //Update case visits
         $this->insertVisits($case);
         return $case;
+    }
+
+    public function changeCaseVisit($caseId, $visit)
+    {
+        $this->_db->beginTransaction();
+
+        try {
+            $visitFields = $this->disassembleCaseVisitModel($visit) + array('case_id' => $caseId);
+
+            if ($visit->getId() === null) {
+                // Insert new case visit.
+                $this->_db->insert('case_visit', $visitFields);
+                $visit->setId($this->_db->lastInsertId());
+            } else {
+                // Update case visit, temporarily removing old case visitors.
+                $where = $this->_db->quoteInto('visit_id = ?', $visit->getId());
+
+                $this->_db->delete('case_visitors', $where);
+                $this->_db->update('case_visit', $visitFields, $where);
+            }
+
+            // (Re)add case visitors.
+            foreach ($visit->getVisitors() as $visitor) {
+                $this->_db->insert('case_visitors', array(
+                    'visit_id' => $visit->getId(),
+                    'user_id' => $visitor->getUserId(),
+                ));
+            }
+
+            $this->_db->commit();
+        } catch (Exception $ex) {
+            $this->_db->rollBack();
+            throw $ex;
+        }
+
+        return $visit;
+    }
+
+    public function removeCaseVisits($visits)
+    {
+        if (!$visits) {
+            return;
+        }
+
+        $visitIds = array();
+        foreach ($visits as $visit) {
+            $visitIds[] = $visit->getId();
+        }
+
+        $this->_db->beginTransaction();
+
+        try {
+            // Remove case visitors and then case visit.
+            $where = $this->_db->quoteInto('visit_id IN (?)', $visitIds);
+
+            $this->_db->delete('case_visitors', $where);
+            $this->_db->delete('case_visit', $where);
+
+            $this->_db->commit();
+        } catch (Exception $ex) {
+            $this->_db->rollback();
+            throw $ex;
+        }
     }
     
     //Updates all information relevant to the given check request
