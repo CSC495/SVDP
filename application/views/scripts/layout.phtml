@@ -77,7 +77,7 @@ $scheduleEntries = Zend_Registry::get('schedule');
     <div class=row-fluid>
         <div class=span2>
             <?php if ($auth->hasIdentity()){ ?>
-            <div class="well sidebar-nav">
+            <div class=well>
                 <ul class="nav nav-list">
                     <li class=nav-header>Current Funds</li>
                     <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
