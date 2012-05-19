@@ -30,15 +30,4 @@
 
 <?php echo $this->element->visitRecordList; ?>
 
-<fieldset>
-    <legend>Member comments:</legend>
-
-    <?php if (!$this->readOnly) { ?>
-    <?php echo $this->element->commentText; ?>
-    <div class=control-group>
-        <div class=controls>
-            <?php echo $this->element->addComment; ?>
-        </div>
-    </div>
-    <?php } ?>
-</fieldset>
+<?php echo $this->element->commentsSubForm; ?>

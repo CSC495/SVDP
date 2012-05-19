@@ -42,19 +42,5 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         );
 
         $this->visitRecordList->setRecords($case->getVisits());
-
-        if (!$this->_readOnly) {
-            $this->addElement('textarea', 'commentText', array(
-                'label' => 'Comment',
-                'dimension' => 8,
-                'rows' => 5,
-            ));
-
-            $this->addElement('submit', 'addComment', array(
-                'label' => 'Add Comment',
-                'decorators' => array('ViewHelper'),
-                'class' => 'btn btn-success',
-            ));
-        }
     }
 }

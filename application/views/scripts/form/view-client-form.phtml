@@ -18,7 +18,7 @@ $newCaseUrl = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
     </div>
     <div class=control-group>
         <div class=controls>
-            <a href="<?php echo $this->escape($editClientUrl); ?>" class="btn btn-info">Edit Additional Details</a>
+            <a href="<?php echo $this->escape($editClientUrl); ?>" class="btn btn-info">View and Edit Details</a>
             <a href="<?php echo $this->escape($newCaseUrl); ?>" class="btn btn-success">Open New Case</a>
         </div>
     </div>
@@ -41,6 +41,12 @@ $newCaseUrl = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
         </table>
     </div>
     <?php } else { ?>
-    <p>This client has no current or past cases.</p>
+    <div class=controls>
+        <div class=control-group>
+            <p class=help-block>This client has no current or past cases.</p>
+        </div>
+    </div>
     <?php } ?>
 </fieldset>
+
+<?php echo $this->element->commentsSubForm; ?>

@@ -163,18 +163,43 @@ class MemberController extends Zend_Controller_Action
      */
     public function viewclientAction()
     {
+        // If no ID was provided, bail out.
         if (!$this->_hasParam('id')) {
-            // If no ID was provided, bail out.
             throw new UnexpectedValueException('No ID parameter provided');
         }
 
+        // Fetch client data for display.
+        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+
         $memberService = new App_Service_Member();
         $searchService = new App_Service_Search();
-        $client        = $memberService->getClientById($this->_getParam('id'));
-        $cases         = $searchService->getCasesByClientId($client->getId());
 
+        $client   = $memberService->getClientById($this->_getParam('id'));
+        $cases    = $searchService->getCasesByClientId($client->getId());
+        $comments = $memberService->getCommentsByClientId($client->getId());
+
+        // Initialize the view-client form.
         $this->view->pageTitle = 'View Client';
-        $this->view->form      = new Application_Model_Member_ViewClientForm($client, $cases);
+        $this->view->form      = new Application_Model_Member_ViewClientForm(
+            $userId, $client, $cases, $comments);
+
+        // If this isn't a POST request or form validation fails, bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost() || !$this->view->form->isValid($request->getPost())) {
+            return;
+        }
+
+        // Handle requests to add comments.
+        $comment = $this->view->form->getAddedComment($request->getPost());
+
+        if ($comment !== null) {
+            $memberService->createClientComment($client->getId(), $comment);
+
+            $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
+                'id' => $client->getId(),
+            ));
+        }
     }
 
     /**
@@ -189,7 +214,7 @@ class MemberController extends Zend_Controller_Action
 
         $service  = new App_Service_Member();
         $case     = $service->getCaseById($this->_getParam('id'));
-        $comments = $service->getCommentsForCase($case);
+        $comments = $service->getCommentsByCaseId($case->getId());
         $users    = $this->fetchMemberOptions($service);
 
         $this->view->pageTitle = 'View Case';

@@ -104,7 +104,26 @@ class App_Service_Member
         return $this->buildCaseModel($results);
     }
 
-    public function getCommentsForCase($case)
+    public function getCommentsByClientId($clientId)
+    {
+        $select = $this->_db->select()
+            ->from(array('c' => 'client_comment'), array(
+                'comment_id' => 'c.clientcomment_id',
+                'comment_date' => 'c.comment_date',
+                'c.comment',
+            ))
+            ->join(
+                array('u' => 'user'),
+                'c.user_id = u.user_id',
+                array('u.user_id', 'u.first_name', 'u.last_name')
+            )
+            ->where('c.client_id = ?', $clientId)
+            ->order('comment_date DESC', 'comment_id');
+        $results = $this->_db->fetchAssoc($select);
+        return $this->buildCommentModels($results);
+    }
+
+    public function getCommentsByCaseId($caseId)
     {
         $select = $this->_db->select()
             ->from(array('c' => 'case_comment'), array(
@@ -117,7 +136,7 @@ class App_Service_Member
                 'c.user_id = u.user_id',
                 array('u.user_id', 'u.first_name', 'u.last_name')
             )
-            ->where('c.case_id = ?', $case->getId())
+            ->where('c.case_id = ?', $caseId)
             ->order('comment_date DESC', 'comment_id');
         $results = $this->_db->fetchAssoc($select);
         return $this->buildCommentModels($results);
@@ -416,6 +435,17 @@ class App_Service_Member
             $this->_db->rollBack();
             throw $ex;
         }
+    }
+
+    public function createClientComment($clientId, Application_Model_Impl_Comment $comment)
+    {
+        $this->_db->insert('client_comment', array(
+            'client_id' => $clientId,
+            'user_id' => $comment->getUser()->getUserId(),
+            'comment_date' => $comment->getDateTime(),
+            'comment' => $comment->getText(),
+        ));
+        return $comment;
     }
     
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
