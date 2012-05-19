@@ -14,16 +14,20 @@
 
 /* Styles for two column horizontal forms: */
 
-form.twocol fieldset.row-fluid {
+.twocol fieldset.row-fluid {
     max-width: 960px;
 }
 
-form.twocol .span6 {
+.twocol .span6 {
     margin-left: 0 !important;
     padding-left: 0 !important;
 }
 
-/* Styles for remove buttons in horizontal form tables: */
+/* Styles for horizontal form tables: */
+
+table.records {
+    max-width: 960px;
+}
 
 td.remove {
     width: 3ex;
@@ -44,7 +48,7 @@ div.search-results {
 table.search-results {
     border-bottom: 1px solid #ddd;
     border-collapse: collapse;
-    margin: 1em 0;
+    margin-bottom: 1em;
     table-layout: fixed;
     width: 100%;
 }
@@ -98,7 +102,6 @@ th.search-cell {
 
 form.form-horizontal table {
     margin-bottom: 18px;
-    max-width: 960px;
     width: 100%;
 }
 
@@ -108,6 +111,10 @@ form.form-horizontal th {
 
 form.form-horizontal td .control-group {
     margin-bottom: 0;
+}
+
+legend {
+    margin-bottom: 18px !important;
 }
 
 /* Base Bootstrap style: */
@@ -1104,10 +1111,14 @@ select:focus:required:invalid:focus {
 .input-append select,
 .input-prepend .uneditable-input,
 .input-append .uneditable-input {
+  position: relative;
+  margin-bottom: 0;
   *margin-left: 0;
+  vertical-align: middle;
   -webkit-border-radius: 0 3px 3px 0;
-  -moz-border-radius: 0 3px 3px 0;
-  border-radius: 0 3px 3px 0;
+     -moz-border-radius: 0 3px 3px 0;
+          border-radius: 0 3px 3px 0;
+
 }
 .input-prepend input:focus,
 .input-append input:focus,
@@ -1141,9 +1152,11 @@ select:focus:required:invalid:focus {
 .input-append .add-on,
 .input-prepend .btn,
 .input-append .btn {
-  -webkit-border-radius: 3px 0 0 3px;
-  -moz-border-radius: 3px 0 0 3px;
-  border-radius: 3px 0 0 3px;
+  margin-left: -1px;
+  -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+          border-radius: 0;
+
 }
 .input-prepend .active,
 .input-append .active {

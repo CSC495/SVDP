@@ -21,7 +21,11 @@ class MemberController extends Zend_Controller_Action
         $this->view->pageTitle = 'Maps';
         $this->view->form = new Application_Model_Member_MapForm();
 
-        // If we don't have any GET parameters, display the form but not the map.
+        // Load the Google Maps JavaScript API.
+        $this->view->headScript()->appendFile(
+            'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry');
+
+        // If we don't have any GET parameters, display the form but don't look up any coordinates.
         $request = $this->getRequest();
 
         if (!$request->getQuery('search') && !$request->getQuery('newClient')) {
@@ -47,19 +51,21 @@ class MemberController extends Zend_Controller_Action
                     'city' => $addr->getCity(),
                     'state' => $addr->getState(),
                     'zip' => $addr->getZip(),
+                    'parish' => $addr->getParish(),
                 )
             );
         }
 
-        // If we got this far, the address seems (vaguely) legit, and so we can fetch geolocation
-        // data.
+        // If we got this far, the address seems (vaguely) legit, and so we can get geocoding data.
         $service = new App_Service_Map($this->view->form->getAddr());
 
         // Respond to geocoding errors.
         if ($service->hasErrorMsg()) {
             $this->_helper->flashMessenger($service->getErrorMsg());
             return;
-        } else if (!$service->hasResult()) {
+        }
+
+        if (!$service->hasResult()) {
             $this->_helper->flashMessenger('No results were found for that address.');
             return;
         }
@@ -69,9 +75,6 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->setAddr($service->getAddr());
         $this->view->latitude = $service->getLatitude();
         $this->view->longitude = $service->getLongitude();
-
-        $this->view->headScript()->appendFile(
-            'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry');
     }
 
     /**
@@ -88,18 +91,6 @@ class MemberController extends Zend_Controller_Action
     }
 
     /**
-     * Action that lists contacts for parish members.
-     */
-    public function contactsAction()
-    {
-        $this->view->pageTitle = 'Member Contact List';
-
-        $service = new App_Service_AdminService();
-
-        $this->view->users = $service->getAllUsers();
-    }
-
-    /**
      * Action that allows members to edit the parish schedule.
      */
     public function editscheduleAction()
@@ -108,15 +99,9 @@ class MemberController extends Zend_Controller_Action
 
         $request = $this->getRequest();
         $service = new App_Service_Member();
+        $users   = $this->fetchMemberOptions($service);
 
-        $users = $service->getActiveMembers();
-
-        foreach ($users as &$user) {
-            $user = $user->getFirstName() . ' ' . $user->getLastName();
-        }
-        unset($user);
-
-        $this->view->form = new Application_Model_Member_ScheduleForm(array('' => '') + $users);
+        $this->view->form = new Application_Model_Member_ScheduleForm($users);
 
         if (!$request->isPost()) {
             // If this isn't a POST request, fill the form from existing entries.
@@ -142,6 +127,70 @@ class MemberController extends Zend_Controller_Action
         }
         $service->removeScheduleEntries($this->view->form->getRemovedEntries());
         $this->_helper->redirector('editSchedule');
+    }
+
+    /**
+     * Action that lists contacts for parish members.
+     */
+    public function contactsAction()
+    {
+        $this->view->pageTitle = 'Member Contact List';
+
+        $service = new App_Service_AdminService();
+        $users   = $service->getAllUsers();
+
+        $this->view->users = array();
+        $lastRowLetter     = null;
+
+        foreach ($users as $userId => $user) {
+            $firstName = $user->getFirstName();
+
+            if ($lastRowLetter !== $firstName[0]) {
+                $lastRowLetter = $rowLetter = $firstName[0];
+            } else {
+                $rowLetter = null;
+            }
+
+            $this->view->users[$userId] = array(
+                'user' => $user,
+                'rowLetter' => $rowLetter,
+            );
+        }
+    }
+
+    /**
+     * Action that shows a landing page for the given client.
+     */
+    public function viewclientAction()
+    {
+        if (!$this->_hasParam('id')) {
+            // If no ID was provided, bail out.
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        $service = new App_Service_Member();
+
+        $this->view->pageTitle = 'View Client';
+        $this->view->client = $service->getClientById($this->_getParam('id'));
+    }
+
+    /**
+     * Action that shows a landing page for the given case.
+     */
+    public function viewcaseAction()
+    {
+        if (!$this->_hasParam('id')) {
+            // If no ID was provided, bail out.
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        $service  = new App_Service_Member();
+        $case     = $service->getCaseById($this->_getParam('id'));
+        $comments = $service->getCommentsForCase($case);
+        $users    = $this->fetchMemberOptions($service);
+
+        $this->view->pageTitle = 'View Case';
+        $this->view->form = new Application_Model_Member_ViewCaseForm($case, $comments, $users);
     }
 
     /**
@@ -174,11 +223,13 @@ class MemberController extends Zend_Controller_Action
                     && $this->_hasParam('state')) {
                 // Using address information from map action.
                 $addr = new Application_Model_Impl_Addr();
-                $addr->setStreet($this->_getParam('street'))
-                     ->setApt($this->_getParam('apt') !== '' ? $this->_getParam('apt') : null)
-                     ->setCity($this->_getParam('city'))
-                     ->setState($this->_getParam('state'))
-                     ->setZip($this->_getParam('zip') !== '' ? $this->_getParam('zip') : null);
+                $addr
+                    ->setStreet($this->_getParam('street'))
+                    ->setApt(App_Formatting::emptyToNull($this->_getParam('apt')))
+                    ->setCity($this->_getParam('city'))
+                    ->setState($this->_getParam('state'))
+                    ->setZip(App_Formatting::emptyToNull($this->_getParam('zip')))
+                    ->setParish(App_Formatting::emptyToNull($this->_getParam('parish')));
 
                 $client = new Application_Model_Impl_Client();
                 $client->setCurrentAddr($addr);
@@ -237,7 +288,60 @@ class MemberController extends Zend_Controller_Action
      */
     public function editcaseAction()
     {
+        $request = $this->getRequest();
+        $service = new App_Service_Member();
+
+        if ($this->_hasParam('id')) {
+            // Editing an existing case.
+            $id = $this->_getParam('id');
+
+            $this->view->pageTitle = 'Edit Case';
+            $this->view->form = new Application_Model_Member_CaseForm($id);
+
+            if (!$request->isPost()) {
+                // If the user hasn't submitted the form yet, load client info from the database.
+                $this->view->form->setNeeds($service->getNeedsByCase($id));
+                //$this->view->form->setVisits($service->getVisitsByCase($id));
+            }
+        } else {
+            // Adding a new case.
+            $this->view->pageTitle = 'New Case';
+            $this->view->form = new Application_Model_Member_CaseForm();
+        }
+
     	$this->view->pageTitle = 'Case View/Edit';
     	$this->view->form      = new Application_Model_Member_CaseForm();
+
+        $this->view->form = new Application_Model_Member_CaseForm();
+
+        // If this isn't a post request, then we're done.
+        if (!$request->isPost()) {
+            return;
+        }
+
+        $data = $request->getPost();
+
+        // Re-add existing form data.
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        // If the user just submitted the form, make some validation goodness happen.
+        // If the user requested that we add or remove a household member or employer, or if form
+        // validation failed, then we're done here.
+        if ($this->view->form->handleAddRemoveRecords($data)
+                || !$this->view->form->isValid($data)) {
+            return;
+        }
+    }
+
+    private function fetchMemberOptions(App_Service_Member $service)
+    {
+        $users = $service->getActiveMembers();
+
+        foreach ($users as &$user) {
+            $user = $user->getFirstName() . ' ' . $user->getLastName();
+        }
+
+        return array('' => '') + $users;
     }
 }

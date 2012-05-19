@@ -39,9 +39,6 @@ class LoginController extends Zend_Controller_Action
         // Forwards the user if they are already logged on
         $this->forwardUser();
 
-        // Set page variables
-        $this->view->error_flag = $request->getParam('error_flag');
-
         $this->view->form = new Application_Model_Login_LoginForm();
         $this->view->pageTitle = "Login Page";
         
@@ -64,7 +61,7 @@ class LoginController extends Zend_Controller_Action
 
         // Validate the fields on the form
         if( !$form->isValid( $request->getPost() ) ){
-            // Redirect to login page and set error flag
+            // Redirect to login page and set error
             return;
         }
         
@@ -74,6 +71,8 @@ class LoginController extends Zend_Controller_Action
 
         // Try to authenticate the user
         $this->authenticate($userid, $password);
+        
+        
     }
     
     /**
@@ -112,30 +111,36 @@ class LoginController extends Zend_Controller_Action
         $username = $this->view->form->getValue('username');
         
         $user = $service->getUserInfo($username);
-        
         // generate password and send e-mail if the account exists
         if($user){
             $password = App_Password::generatePassword(10);
-            $service->updateUserPassword($username,$password);
 
-            //$config = array('auth' => 'login',
-            //                'username' => 'AKIAI32KNSM26FVLWN4A',
-            //                'password' => 'AgdK1TjaLRqJr4Zh3NiiInn18QyZV7nLowNhhbWoWc6O');
-            //
-            //$transport = new Zend_Mail_Transport_Smtp('https://email.us-east-1.amazonaws.com', $config);
-            ////https://email.us-east-1.amazonaws.com
-            //$mail = new Zend_Mail();
-            //$mail->addHeader('Date', gmdate('D, d M Y H:i:s O'));
-            //$mail->addHeader('X-Amzn-Authorization' => )
-            //$mail->setBodyText('Here is your temporary password. You will be prompted to change it at next login. ' . $password );
-            //$mail->setFrom('SVDP@noreply.com', 'System');
-            //$mail->addTo('bagura@noctrl.edu','ben');
-            //$mail->setSubject('Temporary Password');
-            ////var_dump($mail);
-            ////exit();
-            //$mail->send($transport);
+            $mail = new Zend_Mail('utf-8');
+            $transport = new App_Mail_Transport_AmazonSES(
+            array(
+                'accessKey' => getenv("AWS_ACCESS_KEY_ID"),
+                'privateKey' => getenv("AWS_SECRET_ACCESS_KEY")
+            ));
+            
+            $mail->setBodyHtml('Here is your temporary password. You will be required '
+                               . 'to changed it on your next login.' .
+                               '<br/><b>' . $password . '</b>');
+            $mail->setFrom('bagura@noctrl.edu', 'System');
+            $mail->addTo('bagura@noctrl.edu');
+            $mail->setSubject('SVDP Password Reset');
+            
+            $mail->send($transport);
+
             
             // Update DB with temp password
+            $admin = new App_Service_AdminService();
+            $admin->resetUserPassword($username,$password);
+            
+            $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Your password will be emailed to you shortly.',
+                               'time' => 3,
+                               'controller' => App_Resources::INDEX,
+                               'action' => 'index'));
         }
         
         return $this->_helper->redirector('login');
@@ -180,9 +185,8 @@ class LoginController extends Zend_Controller_Action
         
         // Check for invalid result
         if( !$result->isValid() ){
-            // User was not valid
-            // redirect to login
-            $this->_redirect('/login/login/error_flag/TRUE');
+            // This is ugly... modifies the form of the 'login' view
+            return $this->view->form->err->addError('Invalid user name or password');
         }
         
         // Erase the password from the data to be stored with user
@@ -194,20 +198,9 @@ class LoginController extends Zend_Controller_Action
         // Get the users identity
         $identity = Zend_Auth::getInstance()->getIdentity();
         
-        // Set the identities role. This is strange.. It should already be set
-        // but for some reason the first request sent will not contain the role
-        // and will cause an error
-        //$identity->role = $data->role;
-        
         // Set the time out length
         $authSession = new Zend_Session_Namespace('Zend_Auth');
         $authSession->setExpirationSeconds($this->_timeout * 60);
-        
-        // Check if user needs password change. If so forward to change
-        //if($data->change_pswd == 1)
-        //{
-        //    return $this->_helper->redirector('change',App_Resources::LOGIN);
-        //}
         
         $this->forwardUser();
     }
@@ -251,13 +244,13 @@ class LoginController extends Zend_Controller_Action
         // Ensure passwords match
         if( strcmp($pwd,$vpwd) )
         {
-            $form->verify->addError('Passwords don\'t match.');
+            $form->err->addError('Passwords don\'t match.');
             return;
         }
 
         $identity = Zend_Auth::getInstance()->getIdentity(); 
         $service = new App_Service_LoginService();
-        $service->updateUserPassword($pwd);
+        $service->updateUserPassword($identity->user_id,$pwd);
         $identity->change_pswd = 0;
         
         $this->_forward('index', App_Resources::REDIRECT, null,
