@@ -48,12 +48,26 @@ $scheduleEntries = Zend_Registry::get('schedule');
         <div class=navbar-inner>
             <div class=container>
                 <a href="<?php echo $this->escape($this->baseUrl('')); ?>" class=brand>St. Vincent de Paul</a>
-                <?php
-                    echo $this->partial('partial/navigation.phtml', array(
-                        'role' => $role,
-                        'nav' => $this->nav,
-                    ));
-                ?>
+                <ul class=nav>
+                    <?php
+                    foreach ($this->navLinks as $path => $link) {
+                        echo '<li' . ($link['active'] ? ' class=active' : '') . '>'
+                           . '<a href="'
+                           . $this->escape($this->baseUrl($path))
+                           . '" '
+                           . '>'
+                           . $this->escape($link['text'])
+                           . '</a>'
+                           . '</li>';
+                    }
+                    ?>
+                </ul>
+                <?php if ($role !== App_Roles::GENERAL) { ?>
+                <ul class="nav pull-right">
+                    <li class=divider-vertical></li>
+                    <li><a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>">Logout</a></li>
+                </ul>
+                <?php } ?>
             </div>
         </div>
     </div>
