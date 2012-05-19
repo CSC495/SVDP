@@ -244,20 +244,24 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
-        // TODO: Handle requests to close the case.
+        // Handle requests to close the case.
+        if ($this->view->form->isCloseCaseRequest($data)) {
+            $service->closeCaseById($case->getId());
+        }
 
-        // Handle requests to add, edit, and/or remove case visits.
+        // TODO: Handle requests to add, edit, and/or remove case visits.
 
         // Handle requests to add case comments.
         $comment = $this->view->form->getAddedComment($data);
 
         if ($comment !== null) {
             $service->createCaseComment($case->getId(), $comment);
-
-            $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
-                'id' => $case->getId(),
-            ));
         }
+
+        // Redirect back to view case action to display updated case data.
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $case->getId(),
+        ));
     }
 
     /**

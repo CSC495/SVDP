@@ -500,6 +500,16 @@ class App_Service_Member
             throw $ex;
         }
     }
+
+    // Closes the case with the specified ID.
+    public function closeCaseById($caseId)
+    {
+        $this->_db->update(
+            'client_case',
+            array('status' => 'Closed'),
+            $this->_db->quoteInto('case_id = ?', $caseId)
+        );
+    }
     
     //Updates all information relevant to the given case with nested objects that
     //may or may not be in the database
