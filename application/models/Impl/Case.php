@@ -106,7 +106,7 @@ class Application_Model_Impl_Case
             $needDescriptions[] = $need->getNeed();
         }
 
-        $this->_totalAmount = number_format(array_sum($needAmounts), 2);
+        $this->_totalAmount = number_format(array_sum($needAmounts), 2, '.', '');
         $this->_needList    = implode(', ', $needDescriptions);
     }
 

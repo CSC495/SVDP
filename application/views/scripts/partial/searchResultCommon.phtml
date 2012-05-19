@@ -19,6 +19,7 @@ if (isset($this->gotoUrl, $this->gotoLabel)) {
     $gotoBtn = '';
 }
 ?>
+<?php if (empty($this->noClientHeader)) { ?>
 <tr class="search-result <?php echo $this->rowStripeClass; ?>">
     <th class="search-cell top first">Client ID</th>
     <td class="search-cell top id"><?php echo $preClientId, $clientId, $postClientId; ?></td>
@@ -26,5 +27,8 @@ if (isset($this->gotoUrl, $this->gotoLabel)) {
     <td class="search-cell top name"><?php echo $this->escape($this->client->getFullName()); ?></td>
     <th class="search-cell top">Phone</th>
     <td class="search-cell top"><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
+<?php } ?>
     <td class="search-cell top last"><?php echo $gotoBtn; ?></td>
+<?php if (empty($this->noClientHeader)) { ?>
 </tr>
+<?php } ?>

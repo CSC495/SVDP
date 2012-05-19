@@ -2,7 +2,12 @@
     <legend>Client summary:</legend>
     <div class=search-results>
         <table class=search-results>
-            <?php echo $this->partial('partial/clientSummary.phtml', array('client' => $this->client)); ?>
+            <?php
+            echo $this->partial('partial/searchResultClient.phtml', array(
+                'client' => $this->client,
+                'noClientLinks' => true,
+            ));
+            ?>
         </table>
     </div>
     <div class=control-group>
@@ -14,6 +19,7 @@
 
 <fieldset>
     <legend>Case history:</legend>
+    <?php if ($this->cases) { ?>
     <div class=search-results>
         <table class=search-results>
         <?php
@@ -21,10 +27,13 @@
             echo $this->partial('partial/searchResultCase.phtml', array(
                 'i' => $i,
                 'case' => $case,
-                'hideClientHeader' => true,
+                'noClientHeader' => true,
             ));
         }
         ?>
         </table>
     </div>
+    <?php } else { ?>
+    <p>This client has no current or past cases.</p>
+    <?php } ?>
 </fieldset>
