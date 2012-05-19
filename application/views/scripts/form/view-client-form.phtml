@@ -1,8 +1,17 @@
 <?php
 $editClientUrl = $this->baseUrl(App_Resources::MEMBER . '/editClient/id/'
     . urlencode($this->client->getId()));
-$newCaseUrl = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
+$historyUrl    = $this->baseUrl(App_Resources::MEMBER . '/clientHistory/id/'
     . urlencode($this->client->getId()));
+$newCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
+    . urlencode($this->client->getId()));
+
+if ($this->client->isMarried()) {
+    $viewSpouseUrl = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
+        . urlencode($this->client->getSpouse()->getId()));
+} else {
+    $viewSpouseUrl = null;
+}
 ?>
 <fieldset>
     <legend>Client summary:</legend>
@@ -12,6 +21,7 @@ $newCaseUrl = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
             echo $this->partial('partial/searchResultClient.phtml', array(
                 'client' => $this->client,
                 'noClientLinks' => true,
+                'viewSpouseUrl' => $viewSpouseUrl,
             ));
             ?>
         </table>
@@ -19,6 +29,7 @@ $newCaseUrl = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
     <div class=control-group>
         <div class=controls>
             <a href="<?php echo $this->escape($editClientUrl); ?>" class="btn btn-info">View and Edit Details</a>
+            <a href="<?php echo $this->escape($historyUrl); ?>" class="btn btn-info">View Household History</a>
             <a href="<?php echo $this->escape($newCaseUrl); ?>" class="btn btn-success">Open New Case</a>
         </div>
     </div>
