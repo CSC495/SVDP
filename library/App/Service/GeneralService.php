@@ -7,8 +7,8 @@ class App_Service_GeneralService {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
     
-    //Returns an array of 12 populated ScheduleEntry objects representing the first 12 schedule entries
-    //in the database, ordering them by start_date
+    //Returns an array of populated ScheduleEntry objects representing the schedule entries in the
+    //database, ordering them by start_date
     public function getScheduleEntries()
     {
         $select = $this->_db->select()
@@ -18,8 +18,7 @@ class App_Service_GeneralService {
                 's.user_id = u.user_id',
                 array('u.first_name', 'u.last_name')
             )
-            ->order('s.start_date', 'u.first_name', 'u.last_name', 's.user_id', 's.week_id')
-            ->limitPage(0, 12);
+            ->order('s.start_date', 'u.first_name', 'u.last_name', 's.user_id', 's.week_id');
 
         $results = $this->_db->fetchAssoc($select);
         return $this->buildScheduleEntryModels($results);

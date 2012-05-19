@@ -240,18 +240,6 @@ class App_Service_Member
         $results = $this->_db->fetchAssoc($select);
         return $this->buildUserModels($results);
     }
-
-    //Returns an array of populated ScheduleEntry objects representing all schedule entries
-    //in the database, ordering them by start_date
-    public function getScheduleEntries()
-    {
-        $select = $this->_db->select()
-            ->from(array('s' => 'schedule'), array('s.week_id', 's.start_date', 's.user_id'))
-            ->order('s.start_date', 's.user_id', 's.week_id');
-
-        $results = $this->_db->fetchAssoc($select);
-        return $this->buildScheduleEntryModels($results);
-    }
     
     //Given a checkrequest_id returns a populated CheckReq object
     public function getCheckReqById($id){

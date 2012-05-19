@@ -105,7 +105,7 @@ class MemberController extends Zend_Controller_Action
 
         if (!$request->isPost()) {
             // If this isn't a POST request, fill the form from existing entries.
-            $this->view->form->setEntries($service->getScheduleEntries());
+            $this->view->form->setEntries(Zend_Registry::get('schedule'));
             return;
         }
 
