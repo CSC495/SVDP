@@ -77,26 +77,24 @@ $scheduleEntries = Zend_Registry::get('schedule');
     <div class=row-fluid>
         <div class=span2>
             <?php if ($auth->hasIdentity()){ ?>
-            <div class=well>
-                <ul class="nav nav-list">
-                    <li class=nav-header>Current Funds</li>
-                    <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
+            <ul class="well nav nav-list">
+                <li class=nav-header>Current Funds</li>
+                <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
 
-                    <li class="nav-header">Schedule</li>
-                    <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
-                    <li><p style="width:200px;">Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></p></li>
-                    <li><p style="width:150px; text-indent:10px;"><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
-                    <?php } ?>
-                    <li class=nav-header>Quick Links</li>
-                    <a href="http://www.dupagepads.org">PADS</a><br>
-                    <a href="http://www.napervillecares.org">NaperCARES</a><br>
-                    <a href="http://www.salvationarmyusa.org/">Salvation Army</a><br>
-                    <a href="http://www.loaves-fishes.org">Loaves & Fishes</a><br>
-                    <a href="http://www.sharingconnections.org">Sharing Connections</a><br>
-                    <a href="http://www.samaritancenter.org">Samaritan Interfaith</a><br>
-                    <a href="http://www.napervilletownship.com">LIHeap</a>
-                </ul>
-            </div>
+                <li class="nav-header">Schedule</li>
+                <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
+                <li><p style="width:200px;">Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></p></li>
+                <li><p style="width:150px; text-indent:10px;"><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
+                <?php } ?>
+                <li class=nav-header>Quick Links</li>
+                <li><a href="http://www.dupagepads.org/">DuPage PADS</a></li>
+                <li><a href="http://www.napervilletownship.com/">LIHEAP</a></li>
+                <li><a href="http://www.loaves-fishes.org/">Loaves &amp; Fishes</a></li>
+                <li><a href="http://www.napervillecares.org/">Naperville CARES</a></li>
+                <li><a href="http://www.salvationarmyusa.org/">Salvation Army</a></li>
+                <li><a href="http://www.samaritancenter.org/">Samaritan Interfaith</a></li>
+                <li><a href="http://www.sharingconnections.org/">Sharing Connections</a></li>
+            </ul>
             <?php } else { ?>
             <p></p>
             <?php } ?>
