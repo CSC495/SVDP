@@ -226,15 +226,30 @@ class MemberController extends Zend_Controller_Action
         $this->view->form      = new Application_Model_Member_ViewCaseForm(
             $userId, $case, $comments, $users);
 
-        // If this isn't a POST request or form validation fails, bail out.
+        // If this isn't a POST request, populate the form from the database and bail out.
         $request = $this->getRequest();
 
-        if (!$request->isPost() || !$this->view->form->isValid($request->getPost())) {
+        if (!$request->isPost()) {
+            $this->view->form->setVisits($case->getVisits());
             return;
         }
 
+        // Repopulate the form with POST data.
+        $data = $request->getPost();
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        // If the user is adding or removing visits or form validation fails, bail out.
+        if ($this->view->form->handleAddRemoveVisits($data) || !$this->view->form->isValid($data)) {
+            return;
+        }
+
+        // TODO: Handle requests to close the case.
+
+        // Handle requests to add, edit, and/or remove case visits.
+
         // Handle requests to add case comments.
-        $comment = $this->view->form->getAddedComment($request->getPost());
+        $comment = $this->view->form->getAddedComment($data);
 
         if ($comment !== null) {
             $service->createCaseComment($case->getId(), $comment);

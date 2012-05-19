@@ -147,9 +147,11 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         }
 
         if (isset($data["{$this->_namespace}RecordAdd"])) {
+            $subFormKeys = array_keys($this->_recordsSubForm->getSubForms());
+
             $this->_recordsSubForm->addSubForm(
                 $this->addEmptyRecord(),
-                max(array_keys($this->_recordsSubForm->getSubForms())) + 1
+                $subFormKeys ? max($subFormKeys) + 1 : 0
             );
 
             return true;

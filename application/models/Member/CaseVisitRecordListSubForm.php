@@ -147,10 +147,12 @@ class Application_Model_Member_CaseVisitRecordListSubForm
     {
         $caseVisit = new Application_Model_Impl_CaseVisit();
         $caseVisit
-            ->setVisitId(App_Formatting::emptyToNull($caseVisitSubForm->id->getValue()))
-            ->setVisitDate(App_Formatting::unformatDate($caseVisitSubForm->date->getValue()))
+            ->setId(App_Formatting::emptyToNull($caseVisitSubForm->id->getValue()))
+            ->setDate(App_Formatting::unformatDate($caseVisitSubForm->date->getValue()))
             ->setMiles(App_Formatting::emptyToNull($caseVisitSubForm->miles->getValue()))
             ->setHours(App_Formatting::emptyToNull($caseVisitSubForm->hours->getValue()));
+
+        return $caseVisit;
     }
 
     protected function setRecord($caseVisitSubForm, $caseVisit)
@@ -160,13 +162,14 @@ class Application_Model_Member_CaseVisitRecordListSubForm
         $caseVisitSubForm->miles->setValue($caseVisit->getMiles());
         $caseVisitSubForm->hours->setValue($caseVisit->getHours());
 
-        $visitors         = $caseVisit->getVisitors();
-        $primaryVisitor   = array_shift($visitors);
-        $secondaryVisitor = array_shift($visitors);
+        $visitors = $caseVisit->getVisitors();
 
-        $caseVisitSubForm->primaryUserId->setValue($primaryVisitor->getUserId());
-        if ($secondaryVisitor) {
-            $caseVisitSubForm->secondaryUserId->setValue($secondaryVisitor->getUserId());
+        if ($visitor = array_shift($visitors)) {
+            $caseVisitSubForm->primaryUserId->setValue($visitor->getUserId());
+        }
+
+        if ($visitor = array_shift($visitors)) {
+            $caseVisitSubForm->secondaryUserId->setValue($visitor->getUserId());
         }
     }
 }

@@ -42,12 +42,15 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
             'visitRecordList'
         );
 
-        $this->visitRecordList->setRecords($case->getVisits());
-
         $this->addSubForm(
             new Application_Model_Member_CommentsSubForm($userId, $comments),
             'commentsSubForm'
         );
+    }
+
+    public function preValidate(array $data)
+    {
+        $this->visitRecordList->preValidate($data);
     }
 
     public function isValid($data)
@@ -66,5 +69,25 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         }
 
         return null;
+    }
+
+    public function handleAddRemoveVisits(array $data)
+    {
+        return $this->visitRecordList->handleAddRemoveRecords($data);
+    }
+
+    public function getChangedVisits()
+    {
+        return $this->visitRecordList->getChangedRecords();
+    }
+
+    public function getRemovedVisits()
+    {
+        return $this->visitRecordList->getRemovedRecords();
+    }
+
+    public function setVisits(array $visits)
+    {
+        $this->visitRecordList->setRecords($visits);
     }
 }
