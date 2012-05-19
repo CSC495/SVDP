@@ -95,6 +95,10 @@ th.search-cell {
 
 /* Patches to Bootstrap: */
 
+.navbar {
+    margin-top: 18px;
+}
+
 .hero-unit .help-block {
     font-size: 13px;
     line-height: 18px;
