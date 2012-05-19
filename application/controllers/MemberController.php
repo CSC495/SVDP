@@ -281,7 +281,7 @@ class MemberController extends Zend_Controller_Action
 
             $client = $service->createClient($client, $householders, $employers);
 
-            $this->_helper->redirector('editClient', App_Resources::MEMBER, null, array(
+            $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
                 'id' => $client->getId(),
             ));
         }

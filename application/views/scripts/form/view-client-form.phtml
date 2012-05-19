@@ -1,3 +1,9 @@
+<?php
+$editClientUrl = $this->baseUrl(App_Resources::MEMBER . '/editClient/id/'
+    . urlencode($this->client->getId()));
+$newCaseUrl = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
+    . urlencode($this->client->getId()));
+?>
 <fieldset>
     <legend>Client summary:</legend>
     <div class=search-results>
@@ -12,7 +18,8 @@
     </div>
     <div class=control-group>
         <div class=controls>
-            <?php echo $this->element->closeCase; ?>
+            <a href="<?php echo $this->escape($editClientUrl); ?>" class="btn btn-info">Edit Additional Details</a>
+            <a href="<?php echo $this->escape($newCaseUrl); ?>" class="btn btn-success">Open New Case</a>
         </div>
     </div>
 </fieldset>
