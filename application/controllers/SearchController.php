@@ -8,13 +8,19 @@ class SearchController extends Zend_Controller_Action
 
     /**
      * Main search action should never be linked to, but if someone access it manually, then we'll
-     * send them to member search page rather than just 404ing.
+     * send them to appropriate search page rather than just 404ing.
      */
     public function indexAction()
     {
-        // Redirect the index action to the member search page as that's what end users will likely
-        // want if they manually navigate there.
-        $this->_helper->redirector('member');
+        switch (Zend_Auth::getInstance()->getIdentity()->role) {
+            case App_Roles::MEMBER:
+                $this->_helper->redirector(App_Resources::MEMBER);
+
+            case App_Roles::TREASURER:
+                $this->_helper->redirector(App_Resources::TREASURER);
+        }
+
+        throw new UnexpectedValueException('Search is not supported for the current user role');
     }
 
     /**
