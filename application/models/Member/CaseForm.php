@@ -4,12 +4,13 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
 
     private $_id;
 
-    public function __construct($id = null)
+    public function __construct($clientId)
     {
-        $this->_id = $id;
+        $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
-            'action' => $this->makeActionUrl(),
+            'action' => $baseUrl->baseUrl(App_Resources::MEMBER
+                . '/newCase/clientId/' . urlencode($clientId)),
             'method' => 'post',
             'decorators' => array(
                 'PrepareElements',
@@ -24,22 +25,11 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
             'needRecordList'
         );
 
-        /*$this->addSubForm(
-            new Application_Model_Member_CaseVisitRecordListSubForm(),
-            'visitRecordList'
-        );
-
-        $this->addSubForm(
-            new Application_Model_Member_ReferralRecordListSubForm(),
-            'referralRecordList'
-        );*/
-    }
-
-    private function makeActionUrl()
-    {
-        $baseUrl = new Zend_View_Helper_BaseUrl();
-        return $baseUrl->baseUrl(App_Resources::MEMBER . '/editCase'
-            . (($this->_id !== null) ? '/id/' . urlencode($this->_id) : ''));
+        $this->addElement('submit', 'submit', array(
+            'label' => 'Open Case',
+            'decorators' => array('ViewHelper'),
+            'class' => 'btn btn-success',
+        ));
     }
 
     public function preValidate($data)
@@ -47,7 +37,7 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
         $this->needRecordList->preValidate($data);
     }
 
-    public function handleAddRemoveRecords($data)
+    public function handleAddRemoveNeeds($data)
     {
         return $this->needRecordList->handleAddRemoveRecords($data);
     }
@@ -60,10 +50,5 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
     public function getRemovedNeeds()
     {
         return $this->needRecordList->getRemovedRecords();
-    }
-
-    public function setNeeds($needs)
-    {
-        $this->needRecordList->setRecords($needs);
     }
 }

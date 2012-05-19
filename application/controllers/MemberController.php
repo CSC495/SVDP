@@ -361,35 +361,22 @@ class MemberController extends Zend_Controller_Action
     }
 
     /**
-     * Action that allows members to add new cases or edit data about existing cases.
+     * Action that allows members to add new cases.
      */
-    public function editcaseAction()
+    public function newcaseAction()
     {
+        // If no client ID was provided, bail out.
+        if (!$this->_hasParam('clientId')) {
+            throw new UnexpectedValueException('No client ID parameter provided');
+        }
+
         $request = $this->getRequest();
         $service = new App_Service_Member();
 
-        if ($this->_hasParam('id')) {
-            // Editing an existing case.
-            $id = $this->_getParam('id');
-
-            $this->view->pageTitle = 'Edit Case';
-            $this->view->form = new Application_Model_Member_CaseForm($id);
-
-            if (!$request->isPost()) {
-                // If the user hasn't submitted the form yet, load client info from the database.
-                $this->view->form->setNeeds($service->getNeedsByCase($id));
-                //$this->view->form->setVisits($service->getVisitsByCase($id));
-            }
-        } else {
-            // Adding a new case.
-            $this->view->pageTitle = 'New Case';
-            $this->view->form = new Application_Model_Member_CaseForm();
-        }
-
-    	$this->view->pageTitle = 'Case View/Edit';
-    	$this->view->form      = new Application_Model_Member_CaseForm();
-
-        $this->view->form = new Application_Model_Member_CaseForm();
+        $this->view->pageTitle = 'New Case';
+        $this->view->client    = $service->getClientById($this->_getParam('clientId'));
+        $this->view->form      = new Application_Model_Member_CaseForm(
+            $this->view->client->getId());
 
         // If this isn't a post request, then we're done.
         if (!$request->isPost()) {
@@ -403,10 +390,7 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->populate($data);
 
         // If the user just submitted the form, make some validation goodness happen.
-        // If the user requested that we add or remove a household member or employer, or if form
-        // validation failed, then we're done here.
-        if ($this->view->form->handleAddRemoveRecords($data)
-                || !$this->view->form->isValid($data)) {
+        if ($this->view->form->handleAddRemoveNeeds($data) || !$this->view->form->isValid($data)) {
             return;
         }
     }
