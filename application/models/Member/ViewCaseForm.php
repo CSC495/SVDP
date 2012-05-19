@@ -38,6 +38,11 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         }
 
         $this->addSubForm(
+            new Application_Model_Member_CaseNeedRecordListSubForm($this->_readOnly),
+            'needRecordList'
+        );
+
+        $this->addSubForm(
             new Application_Model_Member_CaseVisitRecordListSubForm($users, $this->_readOnly),
             'visitRecordList'
         );
@@ -78,6 +83,11 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
     public function isChangeVisitsRequest(array $data)
     {
         return isset($data['casevisitSubmit']);
+    }
+
+    public function setNeeds(array $needs)
+    {
+        $this->needRecordList->setRecords($needs);
     }
 
     public function handleAddRemoveVisits(array $data)

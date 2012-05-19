@@ -19,14 +19,7 @@
     <?php } ?>
 </fieldset>
 
-<fieldset>
-    <legend>Case needs:</legend>
-
-    <?php
-    $this->partialLoop()->setObjectKey('need');
-    echo $this->partialLoop('partial/case-need.phtml', $this->case->getNeeds());
-    ?>
-</fieldset>
+<?php echo $this->element->needRecordList; ?>
 
 <?php echo $this->element->visitRecordList; ?>
 

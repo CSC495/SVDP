@@ -237,6 +237,7 @@ class MemberController extends Zend_Controller_Action
         $request = $this->getRequest();
 
         if (!$request->isPost()) {
+            $this->view->form->setNeeds($case->getNeeds());
             $this->view->form->setVisits($case->getVisits());
             return;
         }

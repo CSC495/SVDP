@@ -31,7 +31,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
         'Water' => 'Water',
     );
 
-    public function __construct()
+    public function __construct($readOnly)
     {
         parent::__construct(array(
             'namespace' => 'caseneed',
@@ -39,6 +39,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 'Need',
                 'Amount',
             ),
+            'readOnly' => $readOnly,
             'narrow' => true,
             'legend' => 'Case needs:',
             'addRecordMsg' => 'Add Another Need',
