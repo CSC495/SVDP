@@ -36,21 +36,22 @@ if ($this->nav['action'] !== 'index') {
 }
 ?>
 <ul class=nav>
-<?php
-foreach ($navLinksByRole[$this->role] as $path => $text) {
-    echo '<li' . (($path === $currentPath) ? ' class=active' : '') . '>'
-       . '<a href="'
-       . $this->escape($this->baseUrl($path))
-       . '" '
-       . '>'
-       . $this->escape($text)
-       . '</a>'
-       . '</li>';
-}
-?>
+    <?php
+    foreach ($navLinksByRole[$this->role] as $path => $text) {
+        echo '<li' . (($path === $currentPath) ? ' class=active' : '') . '>'
+           . '<a href="'
+           . $this->escape($this->baseUrl($path))
+           . '" '
+           . '>'
+           . $this->escape($text)
+           . '</a>'
+           . '</li>';
+    }
+    ?>
 </ul>
 <?php if ($this->role !== App_Roles::GENERAL) { ?>
 <ul class="nav pull-right">
+    <li class=divider-vertical></li>
     <li><a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>">Logout</a></li>
 </ul>
 <?php } ?>
