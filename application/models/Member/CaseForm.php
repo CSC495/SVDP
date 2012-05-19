@@ -42,13 +42,13 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
         return $this->needRecordList->handleAddRemoveRecords($data);
     }
 
-    public function getChangedRecords()
+    public function getChangedNeeds()
     {
         return $this->needRecordList->getChangedRecords();
     }
 
-    public function getRemovedNeeds()
+    public function addEmptyNeed()
     {
-        return $this->needRecordList->getRemovedRecords();
+        return $this->needRecordList->addEmptyRecord();
     }
 }

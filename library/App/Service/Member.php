@@ -35,7 +35,7 @@ class App_Service_Member
             ->join(
                 array('h' => 'household'),
                 'c.client_id = h.mainclient_id OR c.client_id = h.spouse_id',
-                array()
+                array('h.household_id')
             )
             ->joinLeft(
                 array('c2' => 'client'),
@@ -397,11 +397,14 @@ class App_Service_Member
         $this->_db->beginTransaction();
         try{
             $caseData = $this->disassembleCaseModel($case);
+            $caseData['household_id'] = $case->getClient()->getHouseholdId();
             $this->_db->insert('client_case', $caseData);
             $case->setId($this->_db->lastInsertId());
-            
-            $case = $this->insertNeeds($case);
-            $case = $this->insertVisits($case);
+
+            foreach ($case->getNeeds() as $need) {
+                $this->changeCaseNeed($case->getId(), $need);
+            }
+
             $this->_db->commit();
             return $case;
         }catch(Exception $ex){
@@ -512,24 +515,24 @@ class App_Service_Member
             $this->_db->quoteInto('case_id = ?', $caseId)
         );
     }
-    
-    //Updates all information relevant to the given case with nested objects that
-    //may or may not be in the database
-    //Passed a case object fully populated
-    //Returns the same object with all nested objects entered in the databse and given ids
-    public function editCase($case){
-        //Update the information in the client_case table
-        $caseData = $this->disassembleCaseModel($case);
-        $caseData['case_id'] = $case->getId();
-        $where = $this->_db->quoteInto('case_id = ?', $case->getId());
-        $this->_db->update('client_case', $caseData, $where);
-        
-        //Update case needs
-        $case = $this->insertNeeds($case);
-        
-        //Update case visits
-        $this->insertVisits($case);
-        return $case;
+
+    public function changeCaseNeed($caseId, $need)
+    {
+        $needFields = $this->disassembleCaseNeedModel($need) + array('case_id' => $caseId);
+
+        if ($need->getId() === null) {
+            // Insert new case need.
+            $this->_db->insert('case_need', $needFields);
+            $need->setId($this->_db->lastInsertId());
+        } else {
+            $this->_db->update(
+                'case_need',
+                $needFields,
+                $this->_db->quoteInto('need_id = ?', $need->getId())
+            );
+        }
+
+        return $need;
     }
 
     public function changeCaseVisit($caseId, $visit)
@@ -731,74 +734,6 @@ class App_Service_Member
         return $this->_db->lastInsertId();
     }
     
-    //Given a Case object with nested CaseNeed objects updates existing
-    //case needs and adds new needs to database
-    //Returns the Case object with updated nested CaseNeeds (new CaseNeeds have Id's)
-    //as well as the total amount of all CaseNeeds
-    private function insertNeeds($case){
-        $needs = $case->getNeedList();
-        $caseId = $case->getId();
-        $newNeeds = array();
-        $totalAmount = 0;
-        foreach($needs as $need){
-            $needData = $this->disassembleCaseNeedModel($need);
-            if($need->getId()){
-                $this->updateCaseNeed($needData, $need->getId());
-                $totalAmount += $needData['amount'];
-                $newNeeds[] = $need;
-            }else{
-                $needData['case_id'] = $caseId;
-                $totalAmount += $needData['amount'];
-                $this->_db->insert('case_need', $needData);
-                $need->setId($this->_db->lastInsertId());
-                $newNeeds[] = $need;
-            }
-        }
-        $case->setTotalAmount($totalAmount);
-        $case->setNeeds($newNeeds);
-        return $case;
-    }
-    
-    //Given a Case object with nested CaseVisit objects updates CaseVisit information of visits
-    //in the database and adds new visits. 
-    //Returns the same Case object with all nested CaseVisit updated (i.e added visits have ids)
-    private function insertVisits($case){
-        $visits = $case->getVisits();
-        $caseId = $case->getId();
-        $newVisits = array();
-        foreach($visits as $visit){
-            $visitData = $this->disassembleCaseVisitModel($visit);
-            if($visit->getVisit()){
-                $this->updateCaseVisit($visitData, $visit->getId());
-                $newVisits[] = $visit;
-            }else{
-                $visitData['case_id'] = $caseId;
-                $this->_db->insert('case_visit', $visitData);
-            
-                //Insert individual visitors in case_visitors table
-                $newVisitId = $this->_db->lastInsertId();
-                $this->insertVisitors($visit->getVisitors(), $newVisitId);
-            
-                $visit->setId($newVisitId);
-                $newVisits[] = $visit;
-            }
-        }
-        $case->setVisits($newVisits);
-        return $case;
-    }
-    
-    //Given an array of User objects representing visitors of the given visit, updates
-    //visitor information associated with the given visit
-    private function insertVisitors($visitors, $visitId){
-        foreach($visitors as $visitor){
-            $visitorData = array(
-                'visit_id' => $visitId,
-                'user_id' => $visitor->getUserId(),
-            );
-            $this->_db->insert('case_visitors', $visitorData);
-        }
-    }
-    
     /****** PRIVATE EDIT/UPDATE QUERIES  ******/
     
     //Updates the address information with the given data at the entry given by the id
@@ -945,6 +880,7 @@ class App_Service_Member
             ->setParish($dbResult['member_parish'])
             ->setVeteran($dbResult['veteran_flag'])
             ->setSpouse($spouse)
+            ->setHouseholdId($dbResult['household_id'])
             ->setCurrentAddr($addr)
             ->setDoNotHelpReason($dbResult['do_not_help_reason']);
 
@@ -1129,7 +1065,6 @@ class App_Service_Member
     
     private function disassembleCaseModel($case){
         return array(
-            'household_id' => $case->getHouseholdId(),
             'opened_user_id' => $case->getOpenedUser()->getUserId(),
             'opened_date' => $case->getOpenedDate(),
             'status' => $case->getStatus()

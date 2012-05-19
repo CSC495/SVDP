@@ -46,6 +46,7 @@ class Application_Model_Member_HouseholderRecordListSubForm
             ),
             'decorators' => array(
                 'ViewHelper',
+                'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),

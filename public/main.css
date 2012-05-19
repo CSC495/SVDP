@@ -29,6 +29,10 @@ table.records {
     max-width: 960px;
 }
 
+table.records.narrow {
+    max-width: 480px;
+}
+
 td.remove {
     width: 3ex;
 }

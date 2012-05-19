@@ -40,6 +40,8 @@ class Application_Model_Impl_Client
 
     private $_spouse = null;
 
+    private $_householdId = null;
+
     private $_currentAddr = null;
 
     private $_doNotHelpReason = null;
@@ -212,6 +214,17 @@ class Application_Model_Impl_Client
     public function setSpouse($spouse)
     {
         $this->_spouse = $spouse;
+        return $this;
+    }
+
+    public function getHouseholdId()
+    {
+        return $this->_householdId;
+    }
+
+    public function setHouseholdId($householdId)
+    {
+        $this->_householdId = $householdId;
         return $this;
     }
 

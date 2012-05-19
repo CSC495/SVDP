@@ -12,8 +12,6 @@ class Application_Model_Impl_Case
 
     private $_id = null;
 
-    private $_householdId = null;
-
     private $_openedUser = null;
 
     private $_openedDate = null;
@@ -46,15 +44,6 @@ class Application_Model_Impl_Case
     public function setId($id)
     {
         $this->_id = $id;
-        return $this;
-    }
-
-    public function getHouseholdId(){
-        return $this->_householdId;
-    }
-
-    public function setHouseholdId($householdId){
-        $this->_householdId = $householdId;
         return $this;
     }
 

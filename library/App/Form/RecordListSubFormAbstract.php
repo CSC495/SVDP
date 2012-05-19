@@ -11,6 +11,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private $_readOnly;
 
+    private $_narrow;
+
     private $_legendMsg;
 
     private $_descriptionMsg;
@@ -49,6 +51,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                     'viewScript' => 'form/record-list-sub-form-abstract.phtml',
                     'labels' => &$this->_labels,
                     'readOnly' => &$this->_readOnly,
+                    'narrow' => &$this->_narrow,
                     'legendMsg' => &$this->_legendMsg,
                     'descriptionMsg' => &$this->_descriptionMsg,
                     'noRecordsMsg' => &$this->_noRecordsMsg,
@@ -74,6 +77,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         $this->_labels    = $options['labels'];
 
         $this->_readOnly = (isset($options['readOnly'])) ? $options['readOnly'] : false;
+        $this->_narrow   = (isset($options['narrow'])) ? $options['narrow'] : false;
 
         // Get custom message strings.
         $this->_legendMsg      = isset($options['legend']) ? $options['legend'] : 'Records:';
@@ -135,7 +139,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
     {
         if (!$this->_readOnly && isset($data["{$this->_namespace}Records"])) {
             foreach ($data["{$this->_namespace}Records"] as $recordName => $recordData) {
-                $this->_recordsSubForm->addSubForm($this->addEmptyRecord(), $recordName);
+                $this->_recordsSubForm->addSubForm($this->createSubForm(), $recordName);
             }
         }
     }
@@ -147,12 +151,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         }
 
         if (isset($data["{$this->_namespace}RecordAdd"])) {
-            $subFormKeys = array_keys($this->_recordsSubForm->getSubForms());
-
-            $this->_recordsSubForm->addSubForm(
-                $this->addEmptyRecord(),
-                $subFormKeys ? max($subFormKeys) + 1 : 0
-            );
+            $this->addEmptyRecord();
 
             return true;
         } else if (isset($data["{$this->_namespace}Records"])) {
@@ -214,13 +213,23 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
         foreach ($records as $record)
         {
-            $recordSubForm = $this->addEmptyRecord();
+            $recordSubForm = $this->createSubForm();
             $this->setRecord($recordSubForm, $record);
             $this->_recordsSubForm->addSubForm($recordSubForm, $i++);
         }
     }
 
-    private function addEmptyRecord()
+    public function addEmptyRecord()
+    {
+        $subFormKeys = array_keys($this->_recordsSubForm->getSubForms());
+
+        $this->_recordsSubForm->addSubForm(
+            $this->createSubForm(),
+            $subFormKeys ? max($subFormKeys) + 1 : 0
+        );
+    }
+
+    private function createSubForm()
     {
         $recordSubForm = new Zend_Form_SubForm();
         $recordSubForm
@@ -235,6 +244,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
             ))
             ->setElementDecorators(array(
                 'ViewHelper',
+                'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td')),

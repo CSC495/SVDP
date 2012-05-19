@@ -53,6 +53,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
             ),
             'decorators' => array(
                 'ViewHelper',
+                'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
@@ -127,7 +128,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'messages' => array('notInArray' => 'Must choose a member.'),
                 )),
             ),
-            'dimension' => 2,
+            'class' => 'span3',
         ));
 
         $caseVisitSubForm->addElement('select', 'secondaryUserId', array(
@@ -139,7 +140,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'messages' => array('notInArray' => 'Must choose a member.'),
                 )),
             ),
-            'dimension' => 2,
+            'class' => 'span3',
         ));
     }
 

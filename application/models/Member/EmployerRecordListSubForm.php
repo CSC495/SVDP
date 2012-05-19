@@ -45,6 +45,7 @@ class Application_Model_Member_EmployerRecordListSubForm
             ),
             'decorators' => array(
                 'ViewHelper',
+                'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),

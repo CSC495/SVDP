@@ -195,11 +195,12 @@ class MemberController extends Zend_Controller_Action
 
         if ($comment !== null) {
             $memberService->createClientComment($client->getId(), $comment);
-
-            $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
-                'id' => $client->getId(),
-            ));
         }
+
+        // Redirect back to view client action to display updated case data.
+        $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
+            'id' => $client->getId(),
+        ));
     }
 
     /**
@@ -370,22 +371,27 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No client ID parameter provided');
         }
 
-        $request = $this->getRequest();
+        // Initialize the new case form.
         $service = new App_Service_Member();
+        $client  = $service->getClientById($this->_getParam('clientId'));
 
         $this->view->pageTitle = 'New Case';
-        $this->view->client    = $service->getClientById($this->_getParam('clientId'));
-        $this->view->form      = new Application_Model_Member_CaseForm(
-            $this->view->client->getId());
+        $this->view->client    = $client;
+        $this->view->form      = new Application_Model_Member_CaseForm($client->getId());
 
         // If this isn't a post request, then we're done.
+        $request = $this->getRequest();
+
         if (!$request->isPost()) {
+            // Since there must always be at least one need for any given case, help the user out by
+            // adding a blank need.
+            $this->view->form->addEmptyNeed();
             return;
         }
 
+        // Re-add existing form data.
         $data = $request->getPost();
 
-        // Re-add existing form data.
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
@@ -393,6 +399,35 @@ class MemberController extends Zend_Controller_Action
         if ($this->view->form->handleAddRemoveNeeds($data) || !$this->view->form->isValid($data)) {
             return;
         }
+
+        // If we passed validation, try and get the needs for the new case.
+        $needs = $this->view->form->getChangedNeeds();;;
+
+        if (!$needs) {
+            $this->_helper->flashMessenger(array(
+                'type' => 'error',
+                'text' => 'You must add at least one case need.',
+            ));
+            return;
+        }
+
+        // Add the new case to the database and redirect to the new case's view page.
+        $user = new Application_Model_Impl_User();
+        $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
+
+        $case = new Application_Model_Impl_Case();
+        $case
+            ->setClient($client)
+            ->setOpenedUser($user)
+            ->setOpenedDate(date('Y-m-d'))
+            ->setStatus('Open')
+            ->setNeeds($needs);
+
+        $case = $service->createCase($case);
+
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $case->getId(),
+        ));
     }
 
     private function fetchMemberOptions(App_Service_Member $service)
