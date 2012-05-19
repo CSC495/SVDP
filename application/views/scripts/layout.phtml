@@ -78,14 +78,19 @@ $scheduleEntries = Zend_Registry::get('schedule');
         <div class=span2>
             <?php if ($auth->hasIdentity()){ ?>
             <ul class="well nav nav-list">
-                <li class=nav-header>Current Funds</li>
-                <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
+                <li class=nav-header>Available Funds</li>
+                <li class=sidebar-field><p><?php echo $this->escape($funds); ?></p></li>
 
-                <li class="nav-header">Schedule</li>
+                <li class=divider></li>
+
+                <li class=nav-header>Member Schedule</li>
                 <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
-                <li><p style="width:200px;">Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></p></li>
-                <li><p style="width:150px; text-indent:10px;"><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
+                <li><p>Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?>:</p></li>
+                <li class=sidebar-field><p><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
                 <?php } ?>
+
+                <li class=divider></li>
+
                 <li class=nav-header>Quick Links</li>
                 <li><a href="http://www.dupagepads.org/">DuPage PADS</a></li>
                 <li><a href="http://www.napervilletownship.com/">LIHEAP</a></li>

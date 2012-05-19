@@ -1,5 +1,11 @@
 @charset "utf-8";
 
+/* Styles for layout: */
+
+.sidebar-field {
+    padding-left: 3ex;
+}
+
 /* Styles for map view: */
 
 #map {
