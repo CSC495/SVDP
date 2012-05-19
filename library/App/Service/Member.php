@@ -445,6 +445,19 @@ class App_Service_Member
             'comment_date' => $comment->getDateTime(),
             'comment' => $comment->getText(),
         ));
+        $comment->setId($this->_db->lastInsertId());
+        return $comment;
+    }
+
+    public function createCaseComment($caseId, Application_Model_Impl_Comment $comment)
+    {
+        $this->_db->insert('case_comment', array(
+            'case_id' => $caseId,
+            'user_id' => $comment->getUser()->getUserId(),
+            'case_date' => $comment->getDateTime(),
+            'comment' => $comment->getText(),
+        ));
+        $comment->setId($this->_db->lastInsertId());
         return $comment;
     }
     

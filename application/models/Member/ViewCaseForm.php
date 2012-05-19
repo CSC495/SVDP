@@ -5,7 +5,8 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
     private $_readOnly;
 
-    public function __construct(Application_Model_Impl_Case $case, array $comments, array $users)
+    public function __construct($userId, Application_Model_Impl_Case $case, array $comments,
+        array $users)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
@@ -42,5 +43,28 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         );
 
         $this->visitRecordList->setRecords($case->getVisits());
+
+        $this->addSubForm(
+            new Application_Model_Member_CommentsSubForm($userId, $comments),
+            'commentsSubForm'
+        );
+    }
+
+    public function isValid($data)
+    {
+        if ($this->commentsSubForm->isAddCommentRequest($data)) {
+            return $this->commentsSubForm->isValid($data);
+        }
+
+        return true;
+    }
+
+    public function getAddedComment(array $data)
+    {
+        if ($this->commentsSubForm->isAddCommentRequest($data)) {
+            return $this->commentsSubForm->getComment();
+        }
+
+        return null;
     }
 }

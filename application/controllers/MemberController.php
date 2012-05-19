@@ -178,7 +178,7 @@ class MemberController extends Zend_Controller_Action
         $cases    = $searchService->getCasesByClientId($client->getId());
         $comments = $memberService->getCommentsByClientId($client->getId());
 
-        // Initialize the view-client form.
+        // Initialize the client view form.
         $this->view->pageTitle = 'View Client';
         $this->view->form      = new Application_Model_Member_ViewClientForm(
             $userId, $client, $cases, $comments);
@@ -190,7 +190,7 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
-        // Handle requests to add comments.
+        // Handle requests to add client comments.
         $comment = $this->view->form->getAddedComment($request->getPost());
 
         if ($comment !== null) {
@@ -207,19 +207,42 @@ class MemberController extends Zend_Controller_Action
      */
     public function viewcaseAction()
     {
+        // If no ID was provided, bail out.
         if (!$this->_hasParam('id')) {
-            // If no ID was provided, bail out.
             throw new UnexpectedValueException('No ID parameter provided');
         }
 
-        $service  = new App_Service_Member();
+        // Fetch client data for display.
+        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+
+        $service = new App_Service_Member();
+
         $case     = $service->getCaseById($this->_getParam('id'));
         $comments = $service->getCommentsByCaseId($case->getId());
         $users    = $this->fetchMemberOptions($service);
 
+        // Initialize the case view form.
         $this->view->pageTitle = 'View Case';
         $this->view->form      = new Application_Model_Member_ViewCaseForm(
-            $case, $comments, $users);
+            $userId, $case, $comments, $users);
+
+        // If this isn't a POST request or form validation fails, bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost() || !$this->view->form->isValid($request->getPost())) {
+            return;
+        }
+
+        // Handle requests to add case comments.
+        $comment = $this->view->form->getAddedComment($request->getPost());
+
+        if ($comment !== null) {
+            $service->createCaseComment($case->getId(), $comment);
+
+            $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+                'id' => $case->getId(),
+            ));
+        }
     }
 
     /**
