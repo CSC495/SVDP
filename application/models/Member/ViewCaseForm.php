@@ -55,6 +55,7 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
     public function preValidate(array $data)
     {
+        $this->needRecordList->preValidate($data);
         $this->visitRecordList->preValidate($data);
     }
 
@@ -85,14 +86,15 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         return isset($data['casevisitSubmit']);
     }
 
+    public function handleAddRemoveRecords(array $data)
+    {
+        return $this->needRecordList->handleAddRemoveRecords($data)
+            || $this->visitRecordList->handleAddRemoveRecords($data);
+    }
+
     public function setNeeds(array $needs)
     {
         $this->needRecordList->setRecords($needs);
-    }
-
-    public function handleAddRemoveVisits(array $data)
-    {
-        return $this->visitRecordList->handleAddRemoveRecords($data);
     }
 
     public function getChangedVisits()

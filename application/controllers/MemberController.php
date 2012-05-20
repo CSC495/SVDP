@@ -247,8 +247,9 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
-        // If the user is adding or removing visits or form validation fails, bail out.
-        if ($this->view->form->handleAddRemoveVisits($data) || !$this->view->form->isValid($data)) {
+        // If the user is adding or removing needs/visits or form validation fails, bail out.
+        if ($this->view->form->handleAddRemoveRecords($data)
+            || !$this->view->form->isValid($data)) {
             return;
         }
 
