@@ -1,18 +1,59 @@
 <?php
-if ($this->showStatus) {
-    $status = '<td>';
-    $status .= '</td>';
+if ($this->showStatus && $this->caseNeed !== null) {
+    $status  = '<td>';
+    $status2 = '<td>';
+
+    $referralOrCheckReq = $this->caseNeed->getReferralOrCheckReq();
+
+    if ($referralOrCheckReq instanceof Application_Model_Impl_Referral) {
+        $referral = $referralOrCheckReq;
+
+        $status  .= '<span class="label label-info">Referred</span>';
+        $status2 .= 'Referral: '
+                  . $referral->getReferredTo()
+                  . ' ('
+                  . App_Formatting::formatDate($referral->getDate())
+                  . ')';
+    } else if ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq) {
+        $checkReq        = $referralOrCheckReq;
+        $viewCheckReqUrl = $this->baseUrl(App_Resources::MEMBER . '/viewCheckReq/id/'
+            . urlencode($checkReq->getId()));
+
+        $status2 .= '<a href="' . $this->escape($viewCheckReqUrl) . '">';
+
+        if ($checkReq->getIssueDate() !== null) {
+            $status  .= '<span class="label label-success">Issued check</span>';
+            $status2 .= 'Issued: '
+                      . $this->escape(App_Formatting::formatDate($checkReq->getIssueDate()));
+        } else {
+            $status  .= '<span class="label label-warning">Pending check</span>';
+            $status2 .= 'Requested: '
+                      . $this->escape(App_Formatting::formatDate($checkReq->getRequestDate()));
+        }
+
+        $status2 .= '</a>';
+    } else {
+        $status  .= '<span class="label label-important">Unprocessed</span>';
+        $status2 .= '<a href="" class="btn btn-info">Referral</a>'
+                  . ' <a href="" class="btn btn-info">Check Req.</a>';
+    }
+
+    $status  .= '</td>';
+    $status2 .= '</td>';
 }
 ?>
 <tr>
-    <td><?php echo $this->element->id, $this->element->need; ?></td>
-    <td><?php echo $this->element->amount; ?></td>
     <?php
     if (isset($status)) {
         echo $status;
     }
     ?>
+    <td><?php echo $this->element->id, $this->element->need; ?></td>
+    <td><?php echo $this->element->amount; ?></td>
     <?php
+    if (isset($status2)) {
+        echo $status2;
+    }
     if (!$this->readOnly) {
         echo ($this->element->remove) ? $this->element->remove : '<td class=remove></td>';
     }

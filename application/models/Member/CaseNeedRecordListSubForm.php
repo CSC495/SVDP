@@ -40,12 +40,11 @@ class Application_Model_Member_CaseNeedRecordListSubForm
         $this->_readOnly   = $readOnly;
         $this->_showStatus = $showStatus;
 
+        $labels = $showStatus ? array('Status', 'Need', 'Amount', '') : array('Need', 'Amount');
+
         parent::__construct(array(
             'namespace' => 'caseneed',
-            'labels' => array_merge(array(
-                'Need',
-                'Amount',
-            ), $showStatus ? array('Status') : array()),
+            'labels' => $labels,
             'readOnly' => $readOnly,
             'narrow' => !$showStatus,
             'legend' => 'Case needs:',
@@ -60,6 +59,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             'viewScript' => 'form/case-need-record.phtml',
             'readOnly' => $this->_readOnly,
             'showStatus' => $this->_showStatus,
+            'caseNeed' => &$caseNeedSubForm->model,
         ))));
 
         $caseNeedSubForm->setElementDecorators(array(
@@ -125,6 +125,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
     protected function setRecord($caseNeedSubForm, $caseNeed)
     {
+        $caseNeedSubForm->model = $caseNeed;
         $caseNeedSubForm->id->setValue($caseNeed->getId());
         $caseNeedSubForm->need->setValue($caseNeed->getNeed());
         $caseNeedSubForm->amount->setValue($caseNeed->getAmount());

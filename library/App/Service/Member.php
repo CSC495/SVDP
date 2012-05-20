@@ -277,8 +277,14 @@ class App_Service_Member
         $select = $this->_db->select()
                     ->from(array('cn' => 'case_need'),
                            array('caseNeedId' => 'cn.caseneed_id',
-                           'need',
-                           'amount'))
+                           'cn.need',
+                           'cn.amount'))
+                    ->joinLeft(array('cr' => 'check_request'),
+                               'cn.caseneed_id = cr.caseneed_id',
+                               array('cr.checkrequest_id', 'cr.request_date', 'cr.issue_date'))
+                    ->joinLeft(array('r' => 'referral'),
+                               'cn.caseneed_id = r.caseneed_id',
+                               array('r.referred_date', 'r.reason', 'r.referred_to'))
                     ->where('cn.case_id = ?', $caseId);
         $results = $this->_db->fetchAll($select);
         
@@ -287,6 +293,23 @@ class App_Service_Member
             $need->setId($row['caseNeedId']);
             $need->setNeed($row['need']);
             $need->setAmount($row['amount']);
+
+            if ($row['referred_date']) {
+                $referral = new Application_Model_Impl_Referral();
+                $referral
+                    ->setDate($row['referred_date'])
+                    ->setReason($row['reason'])
+                    ->setReferredTo($row['referred_to']);
+                $need->setReferralOrCheckReq($referral);
+            } else if ($row['checkrequest_id'] !== null) {
+                $checkReq = new Application_Model_Impl_CheckReq();
+                $checkReq
+                    ->setId($row['checkrequest_id'])
+                    ->setRequestDate($row['request_date'])
+                    ->setIssueDate($row['issue_date']);
+                $need->setReferralOrCheckReq($checkReq);
+            }
+
             $needs[] = $need;
         }
         return $needs;

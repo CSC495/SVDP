@@ -33,6 +33,10 @@ table.records.narrow {
     max-width: 480px;
 }
 
+table.records td {
+    vertical-align: middle;
+}
+
 td.remove {
     width: 3ex;
 }

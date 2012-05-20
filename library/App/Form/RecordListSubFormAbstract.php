@@ -231,7 +231,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private function createSubForm()
     {
-        $recordSubForm = new Zend_Form_SubForm();
+        $recordSubForm = new App_Form_RecordSubForm();
         $recordSubForm
             ->addElementPrefixPath(
                 'Twitter_Bootstrap_Form_Decorator',
