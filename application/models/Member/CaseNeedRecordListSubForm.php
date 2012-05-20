@@ -31,16 +31,23 @@ class Application_Model_Member_CaseNeedRecordListSubForm
         'Water' => 'Water',
     );
 
-    public function __construct($readOnly)
+    private $_readOnly;
+
+    private $_showStatus;
+
+    public function __construct($readOnly = false, $showStatus = false)
     {
+        $this->_readOnly   = $readOnly;
+        $this->_showStatus = $showStatus;
+
         parent::__construct(array(
             'namespace' => 'caseneed',
-            'labels' => array(
+            'labels' => array_merge(array(
                 'Need',
                 'Amount',
-            ),
+            ), $showStatus ? array('Status') : array()),
             'readOnly' => $readOnly,
-            'narrow' => true,
+            'narrow' => !$showStatus,
             'legend' => 'Case needs:',
             'addRecordMsg' => 'Add Another Need',
             'noRecordsMsg' => 'No needs listed.',
@@ -49,11 +56,21 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
     protected function initSubForm($caseNeedSubForm)
     {
+        $caseNeedSubForm->setDecorators(array(array('ViewScript', array(
+            'viewScript' => 'form/case-need-record.phtml',
+            'readOnly' => $this->_readOnly,
+            'showStatus' => $this->_showStatus,
+        ))));
+
+        $caseNeedSubForm->setElementDecorators(array(
+            'ViewHelper',
+            'Addon',
+            'ElementErrors',
+            'Wrapper',
+        ));
+
         $caseNeedSubForm->addElement('hidden', 'id', array(
-            'decorators' => array(
-                'ViewHelper',
-                array('HtmlTag', array('tag' => 'td', 'openOnly' => true)),
-            ),
+            'decorators' => array('ViewHelper'),
         ));
 
         $caseNeedSubForm->addElement('select', 'need', array(
@@ -69,13 +86,6 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                     'strict' => true,
                     'messages' => array('notInArray' => 'Must choose a need.'),
                 )),
-            ),
-            'decorators' => array(
-                'ViewHelper',
-                'Addon',
-                'ElementErrors',
-                'Wrapper',
-                array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
             ),
             'class' => 'span3',
         ));

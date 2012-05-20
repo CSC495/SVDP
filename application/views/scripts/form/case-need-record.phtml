@@ -1,0 +1,20 @@
+<?php
+if ($this->showStatus) {
+    $status = '<td>';
+    $status .= '</td>';
+}
+?>
+<tr>
+    <td><?php echo $this->element->id, $this->element->need; ?></td>
+    <td><?php echo $this->element->amount; ?></td>
+    <?php
+    if (isset($status)) {
+        echo $status;
+    }
+    ?>
+    <?php
+    if (!$this->readOnly) {
+        echo ($this->element->remove) ? $this->element->remove : '<td class=remove></td>';
+    }
+    ?>
+</tr>
