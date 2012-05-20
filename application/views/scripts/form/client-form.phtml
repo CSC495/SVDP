@@ -8,6 +8,16 @@ function isMissingPhone($element)
 }
 ?>
 <input type=submit name=submit value="" class=hide>
+<?php if ($this->editing) { ?>
+<fieldset class=row-fluid>
+    <legend>General information:</legend>
+
+    <div class=span6><?php echo $this->element->clientId; ?></div>
+    <div class=span6><?php echo $this->element->userName; ?></div>
+
+    <div class=span6><?php echo $this->element->createdDate; ?></div>
+</fieldset>
+<?php } ?>
 <fieldset class=row-fluid>
     <legend>Personal information:</legend>
 

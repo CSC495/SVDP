@@ -12,8 +12,6 @@ class Application_Model_Impl_Case
 
     private $_id = null;
 
-    private $_householdId = null;
-
     private $_openedUser = null;
 
     private $_openedDate = null;
@@ -46,15 +44,6 @@ class Application_Model_Impl_Case
     public function setId($id)
     {
         $this->_id = $id;
-        return $this;
-    }
-
-    public function getHouseholdId(){
-        return $this->_householdId;
-    }
-
-    public function setHouseholdId($householdId){
-        $this->_householdId = $householdId;
         return $this;
     }
 
@@ -106,7 +95,7 @@ class Application_Model_Impl_Case
             $needDescriptions[] = $need->getNeed();
         }
 
-        $this->_totalAmount = number_format(array_sum($needAmounts), 2);
+        $this->_totalAmount = number_format(array_sum($needAmounts), 2, '.', '');
         $this->_needList    = implode(', ', $needDescriptions);
     }
 

@@ -10,7 +10,7 @@
     <?php echo $this->removedRecordsHashField; ?>
 
     <?php if ($this->recordsSubForm->getSubForms()) { ?>
-    <table class="table table-striped records">
+    <table class="table table-striped records<?php if ($this->narrow) { echo ' narrow'; } ?>">
         <tr>
             <?php foreach ($this->labels as $label) { ?>
             <th><?php echo $this->escape($label); ?></th>
