@@ -1171,11 +1171,12 @@ class App_Service_Member
     private function disassembleCheckRequestModel($request){
         return array(
             'caseneed_id' => $request->getCaseNeedId(),
-            'user_id' => $request->getSigneeUser()->getUserId(),
+            'user_id' => $request->getUser()->getUserId(),
             'request_date' => $request->getRequestDate(),
             'amount' => $request->getAmount(),
             'comment' => $request->getComment(),
-            'signee_userid' => $request->getSigneeUser()->getUserId(),
+            'signee_userid' => ($request->getSigneeUser() !== null)
+                ? $request->getSigneeUser()->getUserId() : null,
             'check_number' => $request->getCheckNumber(),
             'issue_date' => $request->getIssueDate(),
             'account_number' => $request->getAccountNumber(),

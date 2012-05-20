@@ -499,7 +499,7 @@ class MemberController extends Zend_Controller_Action
      */
     public function newcheckreqAction()
     {
-        // If no case need ID was provided, bail out.
+        // If no case ID, case need ID, or amount was provided, bail out.
         if (!$this->_hasParam('caseId')) {
             throw new UnexpectedValueException('No case ID parameter provided');
         }
@@ -508,7 +508,50 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No case need ID parameter provided');
         }
 
+        if (!$this->_hasParam('amount')) {
+            throw new UnexpectedValueException('No amount parameter provided');
+        }
+
+        // Create the check request form.
+        $caseId                = $this->_getParam('caseId');
+        $needId                = $this->_getParam('needId');
+        $amount                = $this->_getParam('amount');
         $this->view->pageTitle = 'New Check Request';
+        $this->view->form      = new Application_Model_Member_CheckReqForm(
+            $caseId,
+            $needId,
+            $amount
+        );
+
+        // If this isn't a POST request or form validation fails, bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost()) {
+            $this->view->form->setAmount($amount);
+            return;
+        }
+
+        if (!$this->view->form->isValid($request->getPost())) {
+            return;
+        }
+
+        // If everyone's kosher with the form, then we can add the check request and redirect back
+        // to the case view page.
+        $user = new Application_Model_Impl_User();
+        $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
+
+        $checkReq = $this->view->form->getCheckReq();
+        $checkReq
+            ->setCaseNeedId($needId)
+            ->setUser($user)
+            ->setRequestDate(date('Y-m-d'));
+
+        $service = new App_Service_Member();
+        $service->createCheckRequest($checkReq);
+
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $caseId,
+        ));
     }
 
     private function fetchMemberOptions(App_Service_Member $service)
