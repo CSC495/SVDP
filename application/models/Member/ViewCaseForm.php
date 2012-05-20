@@ -65,6 +65,10 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
             return true;
         }
 
+        if ($this->isChangeNeedsRequest($data)) {
+            return $this->needRecordList->isValid($data);
+        }
+
         if ($this->isChangeVisitsRequest($data)) {
             return $this->visitRecordList->isValid($data);
         }
@@ -81,6 +85,11 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         return isset($data['closeCase']);
     }
 
+    public function isChangeNeedsRequest(array $data)
+    {
+        return isset($data['caseneedSubmit']);
+    }
+
     public function isChangeVisitsRequest(array $data)
     {
         return isset($data['casevisitSubmit']);
@@ -90,6 +99,16 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
     {
         return $this->needRecordList->handleAddRemoveRecords($data)
             || $this->visitRecordList->handleAddRemoveRecords($data);
+    }
+
+    public function getChangedNeeds()
+    {
+        return $this->needRecordList->getChangedRecords();
+    }
+
+    public function getRemovedNeeds()
+    {
+        return $this->needRecordList->getRemovedRecords();
     }
 
     public function setNeeds(array $needs)

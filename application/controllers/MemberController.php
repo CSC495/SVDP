@@ -258,6 +258,14 @@ class MemberController extends Zend_Controller_Action
             $service->closeCaseById($case->getId());
         }
 
+        // Handle requests to add, edit, and/or remove case needs.
+        if ($this->view->form->isChangeNeedsRequest($data)) {
+            foreach ($this->view->form->getChangedNeeds() as $changedNeed) {
+                $service->changeCaseNeed($case->getId(), $changedNeed);
+            }
+            $service->removeCaseNeeds($this->view->form->getRemovedNeeds());
+        }
+
         // Handle requests to add, edit, and/or remove case visits.
         if ($this->view->form->isChangeVisitsRequest($data)) {
             foreach ($this->view->form->getChangedVisits() as $changedVisit) {
@@ -409,7 +417,7 @@ class MemberController extends Zend_Controller_Action
         }
 
         // If we passed validation, try and get the needs for the new case.
-        $needs = $this->view->form->getChangedNeeds();;;
+        $needs = $this->view->form->getChangedNeeds();
 
         if (!$needs) {
             $this->_helper->flashMessenger(array(

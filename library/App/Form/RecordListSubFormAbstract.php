@@ -144,6 +144,17 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         }
     }
 
+    public function setDefaults(array $defaults)
+    {
+        parent::setDefaults($defaults);
+
+        foreach ($this->_recordsSubForm->getSubForms() as $recordSubForm) {
+            $this->updateSubFormElementReadOnlyFlags($recordSubForm);
+        }
+
+        return $this;
+    }
+
     public function handleAddRemoveRecords($data)
     {
         if ($this->_readOnly) {
@@ -158,20 +169,24 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
             foreach ($data["{$this->_namespace}Records"] as $recordName => $recordData) {
                 if (isset($recordData['remove'])) {
                     $recordSubForm = $this->_recordsSubForm->getSubForm($recordName);
-                    $record        = $this->getRecord($recordSubForm);
 
-                    $this->_recordsSubForm->removeSubForm($recordName);
+                    if (!$this->isSubFormReadOnly($recordSubForm)) {
+                        $record = $this->getRecord($recordSubForm);
 
-                    if ($record->getId() !== null) {
-                        $removedRecords = array_merge($this->getRemovedRecords(), array($record));
-                        $safeSerializedRemovedRecords
-                            = $this->_safeSerializeService->serialize($removedRecords);
-                        $this->_removedRecordsField->setValue(
-                            $safeSerializedRemovedRecords['serial']
-                        );
-                        $this->_removedRecordsHashField->setValue(
-                            $safeSerializedRemovedRecords['hash']
-                        );
+                        $this->_recordsSubForm->removeSubForm($recordName);
+
+                        if ($record->getId() !== null) {
+                            $removedRecords
+                                = array_merge($this->getRemovedRecords(), array($record));
+                            $safeSerializedRemovedRecords
+                                = $this->_safeSerializeService->serialize($removedRecords);
+                            $this->_removedRecordsField->setValue(
+                                $safeSerializedRemovedRecords['serial']
+                            );
+                            $this->_removedRecordsHashField->setValue(
+                                $safeSerializedRemovedRecords['hash']
+                            );
+                        }
                     }
 
                     return true;
@@ -188,7 +203,9 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
         if (!$this->_readOnly) {
             foreach ($this->_recordsSubForm->getSubForms() as $recordName => $recordSubForm) {
-                $changedRecords[$recordName] = $this->getRecord($recordSubForm);
+                if (!$this->isSubFormReadOnly($recordSubForm)) {
+                    $changedRecords[$recordName] = $this->getRecord($recordSubForm);
+                }
             }
         }
 
@@ -231,7 +248,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private function createSubForm()
     {
-        $recordSubForm = new App_Form_RecordSubForm();
+        $recordSubForm = new Zend_Form_SubForm();
         $recordSubForm
             ->addElementPrefixPath(
                 'Twitter_Bootstrap_Form_Decorator',
@@ -252,26 +269,85 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
         $this->initSubForm($recordSubForm);
 
-        if ($this->_readOnly) {
-            foreach ($recordSubForm->getElements() as $element) {
-                if ($element instanceof Zend_Form_Element_Select) {
-                    $element->setAttrib('disabled', true);
-                } else {
-                    $element->setAttrib('readonly', true);
-                }
-            }
-        } else {
-            $recordSubForm->addElement('submit', 'remove', array(
-                'label' => '×',
+        if (!$this->_readOnly) {
+            $safeSerializedFalse = $this->_safeSerializeService->serialize(false);
+
+            $recordSubForm->addElement('hidden', 'readOnly', array(
+                'value' => $safeSerializedFalse['serial'],
                 'decorators' => array(
                     'ViewHelper',
-                    array('HtmlTag', array('tag' => 'td', 'class' => 'remove')),
+                    array('HtmlTag', array('tag' => 'td', 'class' => 'remove', 'openOnly' => true)),
                 ),
+            ));
+
+            $recordSubForm->addElement('submit', 'remove', array(
+                'decorators' => array('ViewHelper'),
                 'class' => 'btn btn-danger remove',
+            ));
+
+            $recordSubForm->addElement('hidden', 'readOnlyHash', array(
+                'value' => $safeSerializedFalse['hash'],
+                'decorators' => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
+                ),
             ));
         }
 
+        $this->updateSubFormElementReadOnlyFlags($recordSubForm);
+
         return $recordSubForm;
+    }
+
+    private function updateSubFormElementReadOnlyFlags($recordSubForm)
+    {
+        $readOnly = $this->_readOnly || $this->isSubFormReadOnly($recordSubForm);
+
+        foreach ($recordSubForm->getElements() as $element) {
+            if ($element instanceof Zend_Form_Element_Select) {
+                $element->setAttrib('disabled', $readOnly ? true : null);
+            } else {
+                $element->setAttrib('readonly', $readOnly ? true : null);
+            }
+        }
+
+        if (!$this->_readOnly) {
+            $removeElement = $recordSubForm->remove;
+
+            if ($readOnly) {
+                $removeElement->helper = 'formNote';
+                $removeElement->setLabel('');
+            } else {
+                $removeElement->helper = 'formSubmit';
+                $removeElement->setLabel('×');
+            }
+        }
+    }
+
+    protected function isSubFormReadOnly($recordSubForm)
+    {
+        if ($this->_readOnly) {
+            return true;
+        }
+
+        return $this->_safeSerializeService->unserialize(
+            $recordSubForm->readOnly->getValue(),
+            $recordSubForm->readOnlyHash->getValue()
+        );
+    }
+
+    protected function setSubFormReadOnly($recordSubForm, $readOnly)
+    {
+        if (!$this->_readOnly) {
+            $safeSerializedReadOnly = $this->_safeSerializeService->serialize($readOnly);
+
+            $recordSubForm->readOnly->setValue($safeSerializedReadOnly['serial']);
+            $recordSubForm->readOnlyHash->setValue($safeSerializedReadOnly['hash']);
+
+            $this->updateSubFormElementReadOnlyFlags($recordSubForm);
+        }
+
+        return $this;
     }
 
     protected abstract function initSubForm($recordSubForm);

@@ -551,11 +551,25 @@ class App_Service_Member
             $this->_db->update(
                 'case_need',
                 $needFields,
-                $this->_db->quoteInto('need_id = ?', $need->getId())
+                $this->_db->quoteInto('caseneed_id = ?', $need->getId())
             );
         }
 
         return $need;
+    }
+
+    public function removeCaseNeeds($needs)
+    {
+        if (!$needs) {
+            return;
+        }
+
+        $needIds = array();
+        foreach ($needs as $need) {
+            $needIds[] = $need->getId();
+        }
+
+        $this->_db->delete('case_need', $this->_db->quoteInto('caseneed_id IN (?)', $needIds));
     }
 
     public function changeCaseVisit($caseId, $visit)

@@ -50,27 +50,47 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             'legend' => 'Case needs:',
             'addRecordMsg' => 'Add Another Need',
             'noRecordsMsg' => 'No needs listed.',
+            'submitMsg' => 'Submit Changes',
         ));
+    }
+
+    public function setDefaults(array $defaults)
+    {
+        parent::setDefaults($defaults);
+
+        foreach ($this->caseneedRecords->getSubForms() as $caseNeedSubForm) {
+            $caseNeedSubForm->statusNote->setValue($caseNeedSubForm->status->getValue());
+            $caseNeedSubForm->status2Note->setValue($caseNeedSubForm->status2->getValue());
+        }
+
+        return $this;
     }
 
     protected function initSubForm($caseNeedSubForm)
     {
-        $caseNeedSubForm->setDecorators(array(array('ViewScript', array(
-            'viewScript' => 'form/case-need-record.phtml',
-            'readOnly' => $this->_readOnly,
-            'showStatus' => $this->_showStatus,
-            'caseNeed' => &$caseNeedSubForm->model,
-        ))));
+        $caseNeedSubForm->addPrefixPath('App_Form', 'App/Form/');
 
-        $caseNeedSubForm->setElementDecorators(array(
-            'ViewHelper',
-            'Addon',
-            'ElementErrors',
-            'Wrapper',
-        ));
+        if ($this->_showStatus) {
+            $caseNeedSubForm->addElement('hidden', 'status', array(
+                'decorators' => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'td', 'openOnly' => true)),
+                ),
+            ));
+
+            $caseNeedSubForm->addElement('note', 'statusNote', array(
+                'decorators' => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
+                ),
+            ));
+        }
 
         $caseNeedSubForm->addElement('hidden', 'id', array(
-            'decorators' => array('ViewHelper'),
+            'decorators' => array(
+                'ViewHelper',
+                array('HtmlTag', array('tag' => 'td', 'openOnly' => true)),
+            ),
         ));
 
         $caseNeedSubForm->addElement('select', 'need', array(
@@ -86,6 +106,13 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                     'strict' => true,
                     'messages' => array('notInArray' => 'Must choose a need.'),
                 )),
+            ),
+            'decorators' => array(
+                'ViewHelper',
+                'Addon',
+                'ElementErrors',
+                'Wrapper',
+                array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
             ),
             'class' => 'span3',
         ));
@@ -110,6 +137,22 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             'class' => 'span2',
             'prepend' => '$',
         ));
+
+        if ($this->_showStatus) {
+            $caseNeedSubForm->addElement('hidden', 'status2', array(
+                'decorators' => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'td', 'openOnly' => true)),
+                ),
+            ));
+
+            $caseNeedSubForm->addElement('note', 'status2Note', array(
+                'decorators' => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
+                ),
+            ));
+        }
     }
 
     protected function getRecord($caseNeedSubForm)
@@ -125,9 +168,63 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
     protected function setRecord($caseNeedSubForm, $caseNeed)
     {
-        $caseNeedSubForm->model = $caseNeed;
         $caseNeedSubForm->id->setValue($caseNeed->getId());
         $caseNeedSubForm->need->setValue($caseNeed->getNeed());
         $caseNeedSubForm->amount->setValue($caseNeed->getAmount());
+
+        if ($this->_showStatus) {
+            $this->updateStatus($caseNeedSubForm, $caseNeed);
+        }
+    }
+
+    private function updateStatus($caseNeedSubForm, $caseNeed)
+    {
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+
+        $referralOrCheckReq = $caseNeed->getReferralOrCheckReq();
+
+        if ($referralOrCheckReq instanceof Application_Model_Impl_Referral) {
+            $this->setSubFormReadOnly($caseNeedSubForm, true);
+
+            $referral = $referralOrCheckReq;
+
+            $status  = '<span class="label label-info">Referred</span>';
+            $status2 = 'Referral: '
+                     . htmlspecialchars($referral->getReferredTo())
+                     . ' ('
+                     . htmlspecialchars(App_Formatting::formatDate($referral->getDate()))
+                     . ')';
+        } else if ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq) {
+            $this->setSubFormReadOnly($caseNeedSubForm, true);
+
+            $checkReq        = $referralOrCheckReq;
+            $viewCheckReqUrl = $baseUrl->baseUrl(App_Resources::MEMBER . '/viewCheckReq/id/'
+                . urlencode($checkReq->getId()));
+
+            $status2 = '<a href="' . htmlspecialchars($viewCheckReqUrl) . '">';
+
+            if ($checkReq->getIssueDate() !== null) {
+                $status   = '<span class="label label-success">Issued check</span>';
+                $status2 .= 'Issued: '
+                          . htmlspecialchars(App_Formatting::formatDate($checkReq->getIssueDate()));
+            } else {
+                $status   = '<span class="label label-warning">Pending check</span>';
+                $status2 .= 'Requested: '
+                          . htmlspecialchars(App_Formatting::formatDate(
+                                             $checkReq->getRequestDate()));
+            }
+
+            $status2 .= '</a>';
+        } else {
+            $status  = '<span class="label label-important">Unprocessed</span>';
+            $status2 = '<a href="" class="btn btn-info">Referral</a>'
+                     . ' <a href="" class="btn btn-info">Check Req.</a>';
+        }
+
+        $caseNeedSubForm->status->setValue($status);
+        $caseNeedSubForm->status2->setValue($status2);
+
+        $caseNeedSubForm->statusNote->setValue($status);
+        $caseNeedSubForm->status2Note->setValue($status2);
     }
 }
