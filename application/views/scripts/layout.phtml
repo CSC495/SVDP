@@ -71,9 +71,7 @@ $scheduleEntries = Zend_Registry::get('schedule');
             </div>
         </div>
     </div>
-</div>
 
-<div class=container-fluid>
     <div class=row-fluid>
         <div class=span2>
             <?php if ($auth->hasIdentity()){ ?>
@@ -105,39 +103,37 @@ $scheduleEntries = Zend_Registry::get('schedule');
             <?php } ?>
         </div>
 
-        <div id=zendcontent class=span10>
+        <div class=span10>
             <div class=hero-unit>
-                <div id=content>
-                    <div id=alerts>
-                    <?php
-                        // Get any unread flash messages.
-                        $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+                <div id=alerts>
+                <?php
+                    // Get any unread flash messages.
+                    $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
 
-                        if ($flashMessenger->hasCurrentMessages()) {
-                            $messages = $flashMessenger->getCurrentMessages();
-                            $flashMessenger->clearCurrentMessages();
+                    if ($flashMessenger->hasCurrentMessages()) {
+                        $messages = $flashMessenger->getCurrentMessages();
+                        $flashMessenger->clearCurrentMessages();
+                    } else {
+                        $messages = $flashMessenger->getMessages();
+                    }
+                    foreach ($messages as $message) {
+                        if (is_array($message)) {
+                            $class = ' alert-' . $message['type'];
+                            $text  = $message['text'];
                         } else {
-                            $messages = $flashMessenger->getMessages();
+                            $class = '';
+                            $text  = $message;
                         }
-                        foreach ($messages as $message) {
-                            if (is_array($message)) {
-                                $class = ' alert-' . $message['type'];
-                                $text  = $message['text'];
-                            } else {
-                                $class = '';
-                                $text  = $message;
-                            }
 
-                            // Write each flash message as a top-level alert.
-                            echo '<p class="alert' . $class . '">' . $this->escape($text) . '</p>';
-                        }
-                    ?>
-                    </div>
-                    <?php
-                        // Write out page content specific to the current controller/action.
-                        echo $this->layout()->content;
-                    ?>
+                        // Write each flash message as a top-level alert.
+                        echo '<p class="alert' . $class . '">' . $this->escape($text) . '</p>';
+                    }
+                ?>
                 </div>
+                <?php
+                    // Write out page content specific to the current controller/action.
+                    echo $this->layout()->content;
+                ?>
             </div>
         </div>
     </div>
