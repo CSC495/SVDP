@@ -454,6 +454,22 @@ class MemberController extends Zend_Controller_Action
         ));
     }
 
+    /**
+     * Action allowing members to add referrals to unprocessed case needs.
+     */
+    public function newreferralAction()
+    {
+        $this->view->pageTitle = 'New Referral';
+    }
+
+    /**
+     * Action allowing members to open check requests for unprocessed case needs.
+     */
+    public function newcheckreqAction()
+    {
+        $this->view->pageTitle = 'New Check Request';
+    }
+
     private function fetchMemberOptions(App_Service_Member $service)
     {
         $users = $service->getActiveMembers();
