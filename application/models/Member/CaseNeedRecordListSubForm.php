@@ -216,9 +216,18 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
             $status2 .= '</a>';
         } else {
+            $newReferralUrl = $baseUrl->baseUrl(App_Resources::MEMBER . '/newReferral/needId/'
+                . urlencode($caseNeed->getId()));
+            $newCheckReqUrl = $baseUrl->baseUrl(App_Resources::MEMBER . '/newCheckReq/needId/'
+                . urlencode($caseNeed->getId()));
+
             $status  = '<span class="label label-important">Unprocessed</span>';
-            $status2 = '<a href="" class="btn btn-info">Referral</a>'
-                     . ' <a href="" class="btn btn-info">Check Req.</a>';
+            $status2 = '<a href="'
+                     . htmlspecialchars($newReferralUrl)
+                     . '" class="btn btn-info">Referral</a>'
+                     . ' <a href="'
+                     . htmlspecialchars($newCheckReqUrl)
+                     . '" class="btn btn-info">Check Req.</a>';
         }
 
         $caseNeedSubForm->status->setValue($status);
