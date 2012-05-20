@@ -9,7 +9,7 @@ class App_Service_Member
     {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
-    
+
     /******* PUBLIC GET QUERIES *******/
 
     //Given a client_id returns a Client object populated with all client information
@@ -32,6 +32,11 @@ class App_Service_Member
                 'c.member_parish',
                 'c.veteran_flag',
             ))
+            ->join(
+                array('u' => 'user'),
+                'c.created_user_id = u.user_id',
+                array('user_first_name' => 'u.first_name', 'user_last_name' => 'u.last_name')
+            )
             ->join(
                 array('h' => 'household'),
                 'c.client_id = h.mainclient_id OR c.client_id = h.spouse_id',
@@ -191,7 +196,7 @@ class App_Service_Member
         $results = $this->_db->fetchAssoc($select);
         return $this->buildEmployerModels($results);
     }
-    
+
     //Given a client_id returns an array of populated Case objects for each case
     //associated with the client, returns all cases Opened and Closed
     public function getCasesByClient($clientId){
@@ -240,7 +245,7 @@ class App_Service_Member
         $results = $this->_db->fetchAssoc($select);
         return $this->buildUserModels($results);
     }
-    
+
     //Given a checkrequest_id returns a populated CheckReq object
     public function getCheckReqById($id){
         $select = $this->_db->select()
@@ -249,7 +254,7 @@ class App_Service_Member
         $results = $this->_db->fetchRow($select);
         return $this->buildCheckRequestModel($results);
     }
-    
+
     //Given an array of caseneed_ids returns an associative array of CheckReq
     //objects with the id as the key and the CheckReq object as the value
     public function getCheckReqListByNeeds($needIdArr){
@@ -259,7 +264,7 @@ class App_Service_Member
         }
         return $requests;
     }
-    
+
     //Given a caseneed_id returns a populated CheckReq object
     //NOTE: the object returned has User and SigneeUser as only the ids, not User objects
     //can change if need be
@@ -270,7 +275,7 @@ class App_Service_Member
         $results = $this->_db->fetchRow($select);
         return $this->buildCheckRequestModel($results);
     }
-    
+
     //Fetches an array of populated CaseNeed objects relevant to the given case
     public function getNeedsByCase($caseId){
         $needs = array();
@@ -287,7 +292,7 @@ class App_Service_Member
                                array('r.referred_date', 'r.reason', 'r.referred_to'))
                     ->where('cn.case_id = ?', $caseId);
         $results = $this->_db->fetchAll($select);
-        
+
         foreach($results as $row){
             $need = new Application_Model_Impl_CaseNeed();
             $need->setId($row['caseNeedId']);
@@ -314,7 +319,7 @@ class App_Service_Member
         }
         return $needs;
     }
-    
+
     //Fetches an array of populated CaseVisit objects relevant to the given case
     public function getVisitsByCase($caseId){
         $select = $this->_db->select()
@@ -354,9 +359,9 @@ class App_Service_Member
 
         return $visits;
     }
-    
+
     /****** PUBLIC CREATE/INSERT QUERIES ******/
-    
+
     //Given a Client object, Householder object array, and an Employer object array
     //creates a new client in database, inserts all relavent information
     public function createClient($client, $householders, $employers)
@@ -372,7 +377,7 @@ class App_Service_Member
             if ($client->isDoNotHelp()) {
                 $this->_db->insert('do_not_help', array(
                     'client_id' => $client->getId(),
-                    'create_user_id' => $client->getUserId(),
+                    'create_user_id' => $client->getUser()->getUserId(),
                     'added_date' => $client->getCreatedDate(),
                     'reason' => $client->getDoNotHelpReason(),
                 ));
@@ -412,7 +417,7 @@ class App_Service_Member
 
         return $client;
     }
-    
+
     //Creates a new case entry in database, passed Case object
     //populated with all information except id
     //Returns same Case object with id added
@@ -447,7 +452,7 @@ class App_Service_Member
         $referral->setId($this->_db->lastInsertId());
         return $referral;
     }
-    
+
     //Creates a new check request entry in database, passed a
     //fully populated CheckRequest object except for id
     //Returns the same object with id added
@@ -488,9 +493,9 @@ class App_Service_Member
         $comment->setId($this->_db->lastInsertId());
         return $comment;
     }
-    
+
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
-    
+
     //Updates all information relevant to the given client
     //Passed a fully populated Client object, a string of the
     //client's marriage status IF it changed, null otherwise, and a boolean flag
@@ -500,23 +505,23 @@ class App_Service_Member
         try{
             $clientData = $this->disassembleClientModel($client);
             $addrData = $this->disassembleAddrModel($client->getCurrentAddr());
-            
+
             //Update Client data in client table
             $where = $this->_db->quoteInto('client_id = ?', $client->getId());
             $this->_db->update('client', $clientData, $where);
-            
+
             //If the client moved or had a change in marital status creates a new household, defaults
             //with values of old household
             if($marriageStatus || $movingFlag){
                 $this->createNewHousehold($this->getCurrentAddress($client->getId()), $client->getId());
             }
-            
+
             //If the client moved create new address; else edit the existing entry with submitted data
             if($movingFlag)
                 $this->createNewAddress($addrData, $client->getId());
             else
                 $this->editAddress($addrData, $this->getCurrentAddress($client->getId()));
-                
+
             //If the client had a change in marital status they either got married or divorced
             if($marriageStatus){
                 //Client got married, add thier spouse to client and new spouse id to household
@@ -531,7 +536,7 @@ class App_Service_Member
             }
             //Update any changes to existing employment records or create new ones
             $this->editEmployment($client->getEmployment(), $client->getId());
-            
+
             //Update any changes to existing hmember records or create new ones
             //$this->editHouseHolders($client->getHouseMembers(), $this->getCurrentHouseholdId($client->getId()));
             $this->_db->commit();
@@ -646,7 +651,7 @@ class App_Service_Member
             throw $ex;
         }
     }
-    
+
     //Updates all information relevant to the given check request
     //Passed a CheckRequest object fully populated
     public function editCheckRequest($request){
@@ -654,7 +659,7 @@ class App_Service_Member
         $where = $this->_db->quoteInto('checkrequest_id = ?', $request->getId());
         $this->_db->update('check_request', $reqData, $where);
     }
-    
+
     //Given a ScheduleEntry object updates entry information or adds it to database
     //Returns same object with id set if added to database
     public function changeScheduleEntry($scheduleEntry)
@@ -672,7 +677,7 @@ class App_Service_Member
 
         return $scheduleEntry;
     }
-    
+
     //Given an array of ScheduleEntry objects deletes all entries in database indicated
     //in the array
     public function removeScheduleEntries($scheduleEntries)
@@ -691,9 +696,9 @@ class App_Service_Member
             $scheduleEntryIds
         ));
     }
-    
+
     /****** PRIVATE GET QUERIES  ******/
-    
+
     //Fetches the household_id of the given client's current household
     private function getCurrentHouseholdId($clientId){
         $select = $this->_db->select()
@@ -703,7 +708,7 @@ class App_Service_Member
         $results = $this->_db->fetchRow($select);
         return $results['household_id'];
     }
-    
+
     //Fetches the address_id of the given client's current address
     private function getCurrentAddress($clientId){
         $select = $this->_db->select()
@@ -713,7 +718,7 @@ class App_Service_Member
         $results = $this->_db->fetchRow($select);
         return $results['address_id'];
     }
-    
+
     //Fetches the spouse_id of the given client's spouse
     //returns null if they are not married
     private function getSpouseId($clientId){
@@ -729,7 +734,7 @@ class App_Service_Member
     }
 
     /****** PRIVATE CREATE/INSERT QUERIES  ******/
-    
+
     private function createHouseholders($householdId, $householders)
     {
         foreach ($householders as $householder) {
@@ -749,28 +754,28 @@ class App_Service_Member
             $this->_db->insert('employment', $employerData);
         }
     }
-    
+
     //Creates a new address in database and changes the household address_id to id
     //of new address
     private function createNewAddress($addrData, $clientId){
         $newHouseId = $this->_db->lastInsertId();
-        
+
         $addrData['client_id'] = $clientId;
         $this->_db->insert('address', $addrData);
-        
+
         $newAddId = $this->_db->lastInsertId();
-        
+
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
         $change = array('address_id' => $newAddId);
         $this->_db->update('household', $change, $where);
     }
-    
+
     //Creates a new household for the given client using the given address
     //Sets all other households associated with the client to not current
     //Returns the household_id of the newly created household entry
     private function createNewHousehold($addressId, $clientId){
         $spouseId = $this->getSpouseId($clientId);
-        
+
         $where = $this->_db->quoteInto('mainclient_id = ?', $clientId);
         $change = array('current_flag' => '0');
         $this->_db->update('household', $change, $where);
@@ -782,15 +787,15 @@ class App_Service_Member
         $this->_db->insert('household', $houseData);
         return $this->_db->lastInsertId();
     }
-    
+
     /****** PRIVATE EDIT/UPDATE QUERIES  ******/
-    
+
     //Updates the address information with the given data at the entry given by the id
     private function editAddress($addrData, $addrId){
         $where = $this->_db->quoteInto('address_id = ?', $addrId);
         $this->_db->update('address', $addrData, $where);
     }
-    
+
     //Updates the spouse information in the client table with the given information
     //within the Client object
     private function editSpouse($clientId, $spouse){
@@ -801,7 +806,7 @@ class App_Service_Member
             $this->_db->update('client', $spouseData, $where);
         }
     }
-    
+
     //Updates all employment information with the given array of Employer objects at
     //the entry with the given id
     private function editEmployment($employment, $clientId){
@@ -817,7 +822,7 @@ class App_Service_Member
         }
         $this->createEmployers($clientId, $newEmploy);
     }
-    
+
     //Updates information of all hmembers already in the database
     //and adds those that are new
     private function editHouseHolders($householders, $clientId){
@@ -833,29 +838,29 @@ class App_Service_Member
         }
         $this->createHouseholders($this->getCurrentHouseholdId(), $newHolders);
     }
-    
+
     //Updates all client and client's ex-spouse information in
     //client, household, and address tables
     private function clientDivorce($clientId){
         $spouseId = $this->getSpouseId($clientId);
         $newHouseId = $this->getCurrentHouseholdId($clientId);
-        
+
         //Update spouse_id for client's new household
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
         $change = array('spouse_id' => NULL);
         $this->_db->update('household', $change, $where);
-        
+
         //Update client's ex-spouse's marriage status
         $where = $this->_db->quoteInto('client_id = ?', $spouseId);
         $change = array('marriage_status' => 'Divorced');
         $this->_db->update('client', $change, $where);
-        
+
         //Create new address & household for client's ex-spouse
         //the new address information (i.e street, city, etc.) will be null
         $this->createNewHousehold(NULL, $spouseId);
         $this->createNewAddress(array(), $spouseId);
     }
-    
+
     //Updates client's household to reflect marriage and adds client's
     //spouse to client table
     //Assumes $_spouse in Client is a Client object
@@ -863,33 +868,33 @@ class App_Service_Member
         //Insert the client's spouse in client table
         $spouseData = $this->disassembleClientModel($client->getSpouse());
         $spouseData['marriage_status'] = 'Married';
-        $spouseData['created_user_id'] = $client->getUserId();
+        $spouseData['created_user_id'] = $client->getUser()->getUserId();
         $this->_db->insert('client', $spouseData);
         $newSpouseId = $this->_db->lastInsertId();
-        
+
         //Update client's household to include spouse
         $newHouseId = $this->getCurrentHouseholdId($client->getId());
         $where = $this->_db->quoteInto('household_id = ?', $newHouseId);
         $change = array('spouse_id' => $newSpouseId);
         $this->_db->update('household', $change, $where);
     }
-    
+
     //Updates information in case_need table given an array of updated information,
     //typically produced by disassembler
     private function updateCaseNeed($needData, $needId){
         $where = $this->_db->quoteInto('caseneed_id = ?', $needId);
         $this->_db->update('case_need', $needData, $where);
     }
-    
+
     //Updates information in case_visit table given an array of updated information,
     //typically produced by disassembler
     private function updateCaseVisit($visitData, $visitId){
         $where = $this->_db->quoteInto('visit_id = ?', $visitId);
         $this->_db->update('case_visit', $visitData, $where);
     }
-    
+
     /****** IMPL OBJECT BUILDERS  ******/
-    
+
     private function buildClientModel($dbResult)
     {
         $addr = new Application_Model_Impl_Addr();
@@ -912,10 +917,16 @@ class App_Service_Member
             $spouse = null;
         }
 
+        $user = new Application_Model_Impl_User();
+        $user
+            ->setUserId($dbResult['created_user_id'])
+            ->setFirstName($dbResult['user_first_name'])
+            ->setLastName($dbResult['user_last_name']);
+
         $client = new Application_Model_Impl_Client();
         $client
             ->setId($dbResult['client_id'])
-            ->setUserId($dbResult['created_user_id'])
+            ->setUser($user)
             ->setFirstName($dbResult['first_name'])
             ->setLastName($dbResult['last_name'])
             ->setOtherName($dbResult['other_name'])
@@ -1062,7 +1073,7 @@ class App_Service_Member
 
         return $scheduleEntries;
     }
-    
+
     //User and SigneeUser are the ids of the users, can change to objects if need be
     private function buildCheckRequestModel($results){
         $request = new Application_Model_Impl_CheckReq();
@@ -1079,7 +1090,7 @@ class App_Service_Member
             ->setRequestDate($results['request_date'])
             ->setAmount($results['amount'])
             ->setComment($results['comment'])
-            ->setSigneeUser($results['signee_userid'])          
+            ->setSigneeUser($results['signee_userid'])
             ->setCheckNumber($results['check_number'])
             ->setIssueDate($results['issue_date'])
             ->setAccountNumber($results['account_number'])
@@ -1090,13 +1101,13 @@ class App_Service_Member
             ->setContactLastName($results['contact_lname']);
         return $request;
     }
-    
+
     /****** IMPL OBJECT DISASSEMBLERS  ******/
 
     private function disassembleClientModel($client)
     {
         return array(
-            'created_user_id' => $client->getUserId(),
+            'created_user_id' => $client->getUser()->getUserId(),
             'first_name' => $client->getFirstName(),
             'last_name' => $client->getLastName(),
             'other_name' => $client->getOtherName(),
@@ -1111,7 +1122,7 @@ class App_Service_Member
             'veteran_flag' => (int)$client->isVeteran(),
         );
     }
-    
+
     private function disassembleCaseModel($case){
         return array(
             'opened_user_id' => $case->getOpenedUser()->getUserId(),
@@ -1159,7 +1170,7 @@ class App_Service_Member
             'amount' => $need->getAmount(),
         );
     }
-    
+
     private function disassembleCaseVisitModel($visit){
         return array(
             'visit_date' => $visit->getDate(),
@@ -1167,7 +1178,7 @@ class App_Service_Member
             'hours' => $visit->getHours(),
         );
     }
-    
+
     private function disassembleCheckRequestModel($request){
         return array(
             'caseneed_id' => $request->getCaseNeedId(),
@@ -1190,7 +1201,7 @@ class App_Service_Member
             'contact_lname' => $request->getContactLastName()
         );
     }
-    
+
 
     private function disassembleScheduleEntryModel($scheduleEntry)
     {

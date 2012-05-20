@@ -12,7 +12,7 @@ class Application_Model_Impl_Client
 
     private $_id = null;
 
-    private $_userId = null;
+    private $_user = null;
 
     private $_firstName = null;
 
@@ -45,9 +45,9 @@ class Application_Model_Impl_Client
     private $_currentAddr = null;
 
     private $_doNotHelpReason = null;
-    
+
     private $_employment = null;
-    
+
     private $_hmembers = null;
 
     /* Generic get/set methods: */
@@ -63,14 +63,14 @@ class Application_Model_Impl_Client
         return $this;
     }
 
-    public function getUserId()
+    public function getUser()
     {
-        return $this->_userId;
+        return $this->_user;
     }
 
-    public function setUserId($userId)
+    public function setUser($user)
     {
-        $this->_userId = $userId;
+        $this->_user = $user;
         return $this;
     }
 
@@ -249,20 +249,20 @@ class Application_Model_Impl_Client
         $this->_doNotHelpReason = $doNotHelpReason;
         return $this;
     }
-    
+
     public function getEmployment(){
         return $this->_employment;
     }
-    
+
     public function setEmployment($employ){
         $this->_employment = $employ;
         return $this;
     }
-    
+
     public function getHouseMembers(){
         return $this->_hmembers;
     }
-    
+
     public function setHouseMembers($hmembers){
         $this->_hmembers = $hmembers;
         return $this;

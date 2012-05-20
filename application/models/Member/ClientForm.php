@@ -12,7 +12,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         'Other' => 'Other',
     );
 
-	private $_PARISH_OPTIONS = array(
+    private $_PARISH_OPTIONS = array(
         '' => '',
         'St. Raphael' => 'St. Raphael',
         'Holy Spirit' => 'Holy Spirit',
@@ -41,10 +41,32 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'method' => 'post',
             'decorators' => array(
                 'PrepareElements',
-                array('ViewScript', array('viewScript' => 'form/client-form.phtml')),
+                array('ViewScript', array(
+                    'viewScript' => 'form/client-form.phtml',
+                    'editing' => ($id !== null),
+                )),
                 'Form',
             ),
             'class' => 'form-horizontal twocol',
+        ));
+
+        // General summary elements for clients with existing database entries.
+        $this->addElement('text', 'clientId', array(
+            'label' => 'Client ID',
+            'readonly' => true,
+            'dimension' => 2,
+        ));
+
+        $this->addElement('text', 'userName', array(
+            'label' => 'Creating user',
+            'readonly' => true,
+            'dimension' => 3,
+        ));
+
+        $this->addElement('text', 'createdDate', array(
+            'label' => 'Creation date',
+            'readonly' => true,
+            'dimension' => 2,
         ));
 
         // Personal information elements:
@@ -436,6 +458,12 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function setClient($client)
     {
+        if ($this->_id !== null) {
+            $this->clientId->setValue($this->_id);
+            $this->userName->setValue($client->getUser()->getFullName());
+            $this->createdDate->setValue(App_Formatting::formatDate($client->getCreatedDate()));
+        }
+
         $this->firstName->setValue($client->getFirstName());
         $this->lastName->setValue($client->getLastName());
         $this->otherName->setValue($client->getOtherName());
