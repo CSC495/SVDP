@@ -22,31 +22,36 @@ class Application_Model_Member_CaseNeedRecordListSubForm
         'Misc' => 'Misc',
         'Mortgage' => 'Mortgage',
         'Moving Expenses' => 'Moving Expenses',
-        'Other' => 'Other',
         'Phone' => 'Phone',
         'Referral' => 'Referral',
         'Rent' => 'Rent',
         'Security Deposit' => 'Security Deposit',
         'Transportation' => 'Transportation',
         'Water' => 'Water',
+        'Other' => 'Other',
     );
 
     private $_readOnly;
 
+    private $_caseId;
+
     private $_showStatus;
 
-    public function __construct($readOnly = false, $showStatus = false)
+    public function __construct($readOnly = false, $caseId = null)
     {
         $this->_readOnly   = $readOnly;
-        $this->_showStatus = $showStatus;
+        $this->_caseId     = $caseId;
+        $this->_showStatus = ($caseId !== null);
 
-        $labels = $showStatus ? array('Status', 'Need', 'Amount', '') : array('Need', 'Amount');
+        $labels = $this->_showStatus
+                ? array('Status', 'Need', 'Amount', '')
+                : array('Need', 'Amount');
 
         parent::__construct(array(
             'namespace' => 'caseneed',
             'labels' => $labels,
             'readOnly' => $readOnly,
-            'narrow' => !$showStatus,
+            'narrow' => !$this->_showStatus,
             'legend' => 'Case needs:',
             'addRecordMsg' => 'Add Another Need',
             'noRecordsMsg' => 'No needs listed.',
@@ -216,10 +221,20 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
             $status2 .= '</a>';
         } else {
-            $newReferralUrl = $baseUrl->baseUrl(App_Resources::MEMBER . '/newReferral/needId/'
-                . urlencode($caseNeed->getId()));
-            $newCheckReqUrl = $baseUrl->baseUrl(App_Resources::MEMBER . '/newCheckReq/needId/'
-                . urlencode($caseNeed->getId()));
+            $newReferralUrl = $baseUrl->baseUrl(
+                App_Resources::MEMBER
+                . '/newReferral/caseId/'
+                . urlencode($this->_caseId)
+                . '/needId/'
+                . urlencode($caseNeed->getId())
+            );
+            $newCheckReqUrl = $baseUrl->baseUrl(
+                App_Resources::MEMBER
+                . '/newCheckReq/caseId/'
+                . urlencode($this->_caseId)
+                . '/needId/'
+                . urlencode($caseNeed->getId())
+            );
 
             $status  = '<span class="label label-important">Unprocessed</span>';
             $status2 = '<a href="'

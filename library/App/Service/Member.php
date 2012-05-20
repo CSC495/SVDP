@@ -435,6 +435,18 @@ class App_Service_Member
             throw $ex;
         }
     }
+
+    public function createReferral($needId, $referral)
+    {
+        $this->_db->insert('referral', array(
+            'caseneed_id' => $needId,
+            'referred_date' => $referral->getDate(),
+            'reason' => $referral->getReason(),
+            'referred_to' => $referral->getReferredTo(),
+        ));
+        $referral->setId($this->_db->lastInsertId());
+        return $referral;
+    }
     
     //Creates a new check request entry in database, passed a
     //fully populated CheckRequest object except for id

@@ -459,7 +459,39 @@ class MemberController extends Zend_Controller_Action
      */
     public function newreferralAction()
     {
+        // If no case ID or case need ID was provided, bail out.
+        if (!$this->_hasParam('caseId')) {
+            throw new UnexpectedValueException('No case ID parameter provided');
+        }
+
+        if (!$this->_hasParam('needId')) {
+            throw new UnexpectedValueException('No case need ID parameter provided');
+        }
+
+        // Create the referral form.
+        $caseId                = $this->_getParam('caseId');
+        $needId                = $this->_getParam('needId');
         $this->view->pageTitle = 'New Referral';
+        $this->view->form      = new Application_Model_Member_ReferralForm($caseId, $needId);
+
+        // If this isn't a POST request or form validation fails, bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost() || !$this->view->form->isValid($request->getPost())) {
+            return;
+        }
+
+        // If everyone's kosher with the form, then we can add the referral and redirect back to the
+        // case view page.
+        $referral = $this->view->form->getReferral();
+        $referral->setDate(date('Y-m-d'));
+
+        $service = new App_Service_Member();
+        $service->createReferral($needId, $referral);
+
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $caseId,
+        ));
     }
 
     /**
@@ -467,6 +499,15 @@ class MemberController extends Zend_Controller_Action
      */
     public function newcheckreqAction()
     {
+        // If no case need ID was provided, bail out.
+        if (!$this->_hasParam('caseId')) {
+            throw new UnexpectedValueException('No case ID parameter provided');
+        }
+
+        if (!$this->_hasParam('needId')) {
+            throw new UnexpectedValueException('No case need ID parameter provided');
+        }
+
         $this->view->pageTitle = 'New Check Request';
     }
 

@@ -26,7 +26,7 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
         );
 
         $this->addElement('submit', 'submit', array(
-            'label' => 'Open Case',
+            'label' => 'Create Case',
             'decorators' => array('ViewHelper'),
             'class' => 'btn btn-success',
         ));
