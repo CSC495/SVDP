@@ -9,19 +9,18 @@ class Application_Model_Member_ViewClientForm extends Twitter_Bootstrap_Form_Hor
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
-            'action' => $baseUrl->baseUrl(
-                App_Resources::MEMBER . '/viewClient/id/' . urlencode($client->getId())
-            ),
             'method' => 'post',
             'class' => 'form-horizontal',
             'decorators' => array(
                 'PrepareElements',
                 array('ViewScript', array(
                     'viewScript' => 'form/view-client-form.phtml',
+                    'action' => $baseUrl->baseUrl(
+                        App_Resources::MEMBER . '/viewClient/id/' . urlencode($client->getId())
+                    ),
                     'client' => $client,
                     'cases' => $cases,
                 )),
-                'Form',
             ),
         ));
 

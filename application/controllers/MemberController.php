@@ -247,6 +247,14 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
+        if (!$this->view->form->isChangeNeedsRequest($data)) {
+            $this->view->form->setNeeds($case->getNeeds());
+        }
+
+        if (!$this->view->form->isChangeVisitsRequest($data)) {
+            $this->view->form->setVisits($case->getVisits());
+        }
+
         // If the user is adding or removing needs/visits or form validation fails, bail out.
         if ($this->view->form->handleAddRemoveRecords($data)
             || !$this->view->form->isValid($data)) {

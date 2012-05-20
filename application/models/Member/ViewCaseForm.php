@@ -11,19 +11,18 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
-            'action' => $baseUrl->baseUrl(
-                App_Resources::MEMBER . '/viewCase/id/' . urlencode($case->getId())
-            ),
             'method' => 'post',
             'class' => 'form-horizontal',
             'decorators' => array(
                 'PrepareElements',
                 array('ViewScript', array(
                     'viewScript' => 'form/view-case-form.phtml',
+                    'action' => $baseUrl->baseUrl(
+                        App_Resources::MEMBER . '/viewCase/id/' . urlencode($case->getId())
+                    ),
                     'case' => $case,
                     'readOnly' => &$this->_readOnly,
                 )),
-                'Form',
             ),
         ));
 

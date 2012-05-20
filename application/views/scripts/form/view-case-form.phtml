@@ -1,26 +1,37 @@
-<fieldset>
-    <legend>Case summary:</legend>
-    <div class=search-results>
-        <table class=search-results>
-            <?php
-            echo $this->partial('partial/searchResultCase.phtml', array(
-                'case' => $this->case,
-                'noCaseLinks' => true,
-            ));
-            ?>
-        </table>
-    </div>
-    <?php if ($this->case->getStatus() !== 'Closed') { ?>
-    <div class=control-group>
-        <div class=controls>
-            <?php echo $this->element->closeCase; ?>
+<form action="<?php echo $this->escape($this->action); ?>" method=post class=form-horizontal>
+    <fieldset>
+        <legend>Case summary:</legend>
+        <div class=search-results>
+            <table class=search-results>
+                <?php
+                echo $this->partial('partial/searchResultCase.phtml', array(
+                    'case' => $this->case,
+                    'noCaseLinks' => true,
+                ));
+                ?>
+            </table>
         </div>
-    </div>
-    <?php } ?>
-</fieldset>
+        <?php if ($this->case->getStatus() !== 'Closed') { ?>
+        <div class=control-group>
+            <div class=controls>
+                <?php echo $this->element->closeCase; ?>
+            </div>
+        </div>
+        <?php } ?>
+    </fieldset>
+</form>
 
-<?php echo $this->element->needRecordList; ?>
+<form action="<?php echo $this->escape($this->action); ?>" method=post class=form-horizontal>
+    <input type=submit name=caseneedSubmit value="" class=hide>
+    <?php echo $this->element->needRecordList; ?>
+</form>
 
-<?php echo $this->element->visitRecordList; ?>
+<form action="<?php echo $this->escape($this->action); ?>" method=post class=form-horizontal>
+    <input type=submit name=casevisitSubmit value="" class=hide>
+    <?php echo $this->element->visitRecordList; ?>
+</form>
 
-<?php echo $this->element->commentsSubForm; ?>
+<form action="<?php echo $this->escape($this->action); ?>" method=post class=form-horizontal>
+    <input type=submit name=addComment value="" class=hide>
+    <?php echo $this->element->commentsSubForm; ?>
+</form>
