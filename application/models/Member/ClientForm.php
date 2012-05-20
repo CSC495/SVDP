@@ -51,23 +51,25 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         ));
 
         // General summary elements for clients with existing database entries.
-        $this->addElement('text', 'clientId', array(
-            'label' => 'Client ID',
-            'readonly' => true,
-            'dimension' => 2,
-        ));
+        if ($id !== null) {
+            $this->addElement('text', 'clientId', array(
+                'label' => 'Client ID',
+                'readonly' => true,
+                'dimension' => 2,
+            ));
 
-        $this->addElement('text', 'userName', array(
-            'label' => 'Creating user',
-            'readonly' => true,
-            'dimension' => 3,
-        ));
+            $this->addElement('text', 'userName', array(
+                'label' => 'Creating user',
+                'readonly' => true,
+                'dimension' => 3,
+            ));
 
-        $this->addElement('text', 'createdDate', array(
-            'label' => 'Creation date',
-            'readonly' => true,
-            'dimension' => 2,
-        ));
+            $this->addElement('text', 'createdDate', array(
+                'label' => 'Creation date',
+                'readonly' => true,
+                'dimension' => 2,
+            ));
+        }
 
         // Personal information elements:
 
@@ -369,6 +371,13 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'class' => 'phone',
         ));
 
+        if ($id !== null) {
+            $this->addElement('checkbox', 'moved', array(
+                'required' => true,
+                'label' => 'Moved?',
+            ));
+        }
+
         $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
 
         // Householders sub form:
@@ -422,6 +431,9 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function getClient()
     {
+        if ($this->_id) {
+        }
+
         $client = new Application_Model_Impl_Client();
         $client->setId($this->_id)
                ->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()))

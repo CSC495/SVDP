@@ -58,6 +58,8 @@ function isMissingPhone($element)
 <fieldset class=row-fluid>
     <legend>Current address:</legend>
 
+    <?php if ($this->editing) { echo $this->element->moved; } ?>
+
     <div class=span6><?php echo $this->element->addr->street; ?></div>
     <div class=span6><?php echo $this->element->addr->apt; ?></div>
 

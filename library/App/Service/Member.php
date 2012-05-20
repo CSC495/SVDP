@@ -500,7 +500,9 @@ class App_Service_Member
     //Passed a fully populated Client object, a string of the
     //client's marriage status IF it changed, null otherwise, and a boolean flag
     //indicating if the client has moved
-    public function editClient($client, $marriageStatus, $movingFlag){
+    public function editClient($client, $changedHouseholders, $changedEmployers,
+        $removedHouseholders, $removedEmployers, $marriageStatus, $movingFlag)
+    {
         $this->_db->beginTransaction();
         try{
             $clientData = $this->disassembleClientModel($client);
@@ -532,10 +534,10 @@ class App_Service_Member
                     $this->clientDivorce($client->getId());
             //Client did not have change in marital status, may have changed spouse's information
             }else{
-                $this->editSpouse($client->getId(), $client->getSpouse());
+                //$this->editSpouse($client->getId(), $client->getSpouse());
             }
             //Update any changes to existing employment records or create new ones
-            $this->editEmployment($client->getEmployment(), $client->getId());
+            //$this->editEmployment($client->getEmployment(), $client->getId());
 
             //Update any changes to existing hmember records or create new ones
             //$this->editHouseHolders($client->getHouseMembers(), $this->getCurrentHouseholdId($client->getId()));
@@ -544,6 +546,7 @@ class App_Service_Member
             $this->_db->rollBack();
             throw $ex;
         }
+        return $client;
     }
 
     // Closes the case with the specified ID.
@@ -1106,8 +1109,7 @@ class App_Service_Member
 
     private function disassembleClientModel($client)
     {
-        return array(
-            'created_user_id' => $client->getUser()->getUserId(),
+        $options = array(
             'first_name' => $client->getFirstName(),
             'last_name' => $client->getLastName(),
             'other_name' => $client->getOtherName(),
@@ -1117,10 +1119,16 @@ class App_Service_Member
             'cell_phone' => $client->getCellPhone(),
             'home_phone' => $client->getHomePhone(),
             'work_phone' => $client->getWorkPhone(),
-            'created_date' => $client->getCreatedDate(),
             'member_parish' => $client->getParish(),
             'veteran_flag' => (int)$client->isVeteran(),
         );
+        if ($client->getUser() !== null) {
+            $options['created_user_id'] = $client->getUser()->getUserId();
+        }
+        if ($client->getCreatedDate() !== null) {
+            $options['created_date'] = $client->getCreatedDate();
+        }
+        return $options;
     }
 
     private function disassembleCaseModel($case){

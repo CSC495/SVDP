@@ -362,12 +362,25 @@ class MemberController extends Zend_Controller_Action
         // If we passed validation, insert or update the database as required.
         $client = $this->view->form->getClient();
 
-        if ($this->_hasParam('id')) {
-            // TODO: Update existing client.
-        } else {
-            $householders = $this->view->form->getChangedHouseholders();
-            $employers    = $this->view->form->getChangedEmployers();
+        $changedHouseholders = $this->view->form->getChangedHouseholders();
+        $changedEmployers    = $this->view->form->getChangedEmployers();
 
+        if ($this->_hasParam('id')) {
+            // Update an existing client.
+            $removedHouseholders = $this->view->form->getChangedHouseholders();
+            $removedEmployers    = $this->view->form->getChangedEmployers();
+
+            $client = $service->editClient(
+                $client,
+                $changedHouseholders,
+                $changedEmployers,
+                $removedHouseholders,
+                $removedEmployers,
+                null,
+                false
+            );
+        } else {
+            // Add a new client.
             $user = new Application_Model_Impl_User();
             $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
 
@@ -381,7 +394,7 @@ class MemberController extends Zend_Controller_Action
                     ->setCreatedDate(date('Y-m-d'));
             }
 
-            $client = $service->createClient($client, $householders, $employers);
+            $client = $service->createClient($client, $changedHouseholders, $changedEmployers);
         }
 
         $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
