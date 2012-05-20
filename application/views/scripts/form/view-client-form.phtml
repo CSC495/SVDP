@@ -1,0 +1,30 @@
+<fieldset>
+    <legend>Client summary:</legend>
+    <div class=search-results>
+        <table class=search-results>
+            <?php echo $this->partial('partial/clientSummary.phtml', array('client' => $this->client)); ?>
+        </table>
+    </div>
+    <div class=control-group>
+        <div class=controls>
+            <?php echo $this->element->closeCase; ?>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>Case history:</legend>
+    <div class=search-results>
+        <table class=search-results>
+        <?php
+        foreach (array_values($this->cases) as $i => $case) {
+            echo $this->partial('partial/searchResultCase.phtml', array(
+                'i' => $i,
+                'case' => $case,
+                'hideClientHeader' => true,
+            ));
+        }
+        ?>
+        </table>
+    </div>
+</fieldset>

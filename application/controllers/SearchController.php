@@ -32,13 +32,13 @@ class SearchController extends Zend_Controller_Action
             switch ($searchType) {
                 // Member searches by client ID go to a single client's page.
                 case Application_Model_Search_FormAbstract::TYPE_CLIENT_ID:
-                    $this->_helper->redirector('client', App_Resources::MEMBER, null, array(
+                    $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
                         'id' => $searchQuery,
                     ));
 
                 // Member searches by case ID go to a single case's page.
                 case Application_Model_Search_FormAbstract::TYPE_CASE_ID:
-                    $this->_helper->redirector('case', App_Resources::MEMBER, null, array(
+                    $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
                         'id' => $searchQuery,
                     ));
             }
@@ -84,7 +84,7 @@ class SearchController extends Zend_Controller_Action
             switch ($searchType) {
                 // Treasurer searches by check request go to a single check request's page.
                 case Application_Model_Search_FormAbstract::TYPE_CHECK_REQ_ID:
-                    $this->_helper->redirector('case', App_Resources::MEMBER, null, array(
+                    $this->_helper->redirector('checkReq', App_Resources::MEMBER, null, array(
                         'id' => $this->view->form->getQuery(),
                     ));
             }

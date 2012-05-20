@@ -168,10 +168,13 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No ID parameter provided');
         }
 
-        $service = new App_Service_Member();
+        $memberService = new App_Service_Member();
+        $searchService = new App_Service_Search();
+        $client        = $memberService->getClientById($this->_getParam('id'));
+        $cases         = $searchService->getCasesByClientId($client->getId());
 
         $this->view->pageTitle = 'View Client';
-        $this->view->client = $service->getClientById($this->_getParam('id'));
+        $this->view->form      = new Application_Model_Member_ViewClientForm($client, $cases);
     }
 
     /**
@@ -190,7 +193,8 @@ class MemberController extends Zend_Controller_Action
         $users    = $this->fetchMemberOptions($service);
 
         $this->view->pageTitle = 'View Case';
-        $this->view->form = new Application_Model_Member_ViewCaseForm($case, $comments, $users);
+        $this->view->form      = new Application_Model_Member_ViewCaseForm(
+            $case, $comments, $users);
     }
 
     /**

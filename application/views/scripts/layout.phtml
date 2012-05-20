@@ -42,25 +42,42 @@ $funds  = App_Formatting::formatCurrency($config->getAvailableFunds());
 // Fetch user schedule for sidebar.
 $scheduleEntries = Zend_Registry::get('schedule');
 ?>
-<div class=row>
-    <div class=span3>
-        <a href="<?php echo $this->escape($this->baseUrl(''))?>">
-            <img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0" hspace="25" vspace="20">
-        </a>
-    </div>
-    <div class=span10>
-        <ul class=unstyled style="padding-top: 75px">
-            <li><h1>St. Vincent de Paul</h1></li>
-            <li><div class="nav nav-tabs nav-stacked"><?php echo $this->partial('partial/navigation.phtml', array('role' => $role)); ?></div></li>
-        </ul>
+
+<div class=container-fluid>
+    <div class=navbar>
+        <div class=navbar-inner>
+            <div class=container>
+                <a href="<?php echo $this->escape($this->baseUrl('')); ?>" class=brand>St. Vincent de Paul</a>
+                <ul class=nav>
+                    <?php
+                    foreach ($this->navLinks as $path => $link) {
+                        echo '<li' . ($link['active'] ? ' class=active' : '') . '>'
+                           . '<a href="'
+                           . $this->escape($this->baseUrl($path))
+                           . '" '
+                           . '>'
+                           . $this->escape($link['text'])
+                           . '</a>'
+                           . '</li>';
+                    }
+                    ?>
+                </ul>
+                <?php if ($role !== App_Roles::GENERAL) { ?>
+                <ul class="nav pull-right">
+                    <li class=divider-vertical></li>
+                    <li><a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>">Logout</a></li>
+                </ul>
+                <?php } ?>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class=container-fluid>
     <div class=row-fluid>
         <div class=span2>
+            <?php if ($auth->hasIdentity()){ ?>
             <div class="well sidebar-nav">
-                <?php if ($auth->hasIdentity()){ ?>
                 <ul class="nav nav-list">
                     <li class=nav-header>Current Funds</li>
                     <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
@@ -79,9 +96,11 @@ $scheduleEntries = Zend_Registry::get('schedule');
                     <a href="http://www.samaritancenter.org">Samaritan Interfaith</a><br>
                     <a href="http://www.napervilletownship.com">LIHeap</a>
                 </ul>
-                <?php } ?>
-            </div><!--/.well -->
-        </div><!--/span-->
+            </div>
+            <?php } else { ?>
+            <p></p>
+            <?php } ?>
+        </div>
 
         <div id=zendcontent class=span10>
             <div class=hero-unit>
@@ -109,8 +128,8 @@ $scheduleEntries = Zend_Registry::get('schedule');
                     ?>
                 </div>
             </div>
-        </div><!--/span-->
-    </div><!--/row-->
+        </div>
+    </div>
 
     <hr>
 

@@ -95,6 +95,10 @@ th.search-cell {
 
 /* Patches to Bootstrap: */
 
+.navbar {
+    margin-top: 18px;
+}
+
 .hero-unit .help-block {
     font-size: 13px;
     line-height: 18px;
@@ -103,10 +107,6 @@ th.search-cell {
 form.form-horizontal table {
     margin-bottom: 18px;
     width: 100%;
-}
-
-form.form-horizontal th {
-    vertical-align: bottom;
 }
 
 form.form-horizontal td .control-group {

@@ -7,8 +7,12 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
     public function __construct(Application_Model_Impl_Case $case, array $comments, array $users)
     {
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+
         parent::__construct(array(
-            'action' => self::makeActionUrl($case->getId()),
+            'action' => $baseUrl->baseUrl(
+                App_Resources::MEMBER . '/viewCase/id/' . urlencode($case->getId())
+            ),
             'method' => 'post',
             'class' => 'form-horizontal',
             'decorators' => array(
@@ -41,9 +45,9 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
         if (!$this->_readOnly) {
             $this->addElement('textarea', 'commentText', array(
-                'label' => 'Text of new comment',
+                'label' => 'Comment',
                 'dimension' => 8,
-                'rows' => 7,
+                'rows' => 5,
             ));
 
             $this->addElement('submit', 'addComment', array(
@@ -52,12 +56,5 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
                 'class' => 'btn btn-success',
             ));
         }
-    }
-
-    private static function makeActionUrl($id)
-    {
-        $baseUrl = new Zend_View_Helper_BaseUrl();
-        return $baseUrl->baseUrl(App_Resources::MEMBER . '/viewCase'
-            . (($id !== null) ? '/id/' . urlencode($id) : ''));
     }
 }
