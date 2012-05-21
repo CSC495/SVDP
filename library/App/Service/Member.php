@@ -405,9 +405,9 @@ class App_Service_Member
             ));
             $householdId = $this->_db->lastInsertId();
 
-            $this->createHouseholders($householdId, $householders);
+            $this->changeHouseholders($householdId, $householders);
 
-            $this->createEmployers($client->getId(), $employers);
+            $this->changeEmployers($client->getId(), $employers);
 
             $this->_db->commit();
         } catch (Exception $ex) {
@@ -526,35 +526,10 @@ class App_Service_Member
             }
 
             // Insert/update employers.
-            foreach ($changedEmployers as $changedEmployer) {
-                $employerFields = $this->disassembleEmployerModel($changedEmployer);
-                $employerFields['client_id'] = $client->getId();
-
-                if ($changedEmployer->getId() === null) {
-                    $this->_db->insert('employment', $employerFields);
-
-                    $changedEmployer->setId($this->_db->lastInsertId());
-                } else {
-                    $this->_db->update(
-                        'employment',
-                        $employerFields,
-                        $this->_db->quoteInto('employment_id = ?', $changedEmployer->getId())
-                    );
-                }
-            }
+            $this->changeEmployers($client->getId(), $changedEmployers);
 
             // Remove employers.
-            if ($removedEmployers) {
-                $removedEmployerIds = array();
-                foreach ($removedEmployers as $removedEmployer) {
-                    $removedEmployerIds[] = $removedEmployer->getId();
-                }
-
-                $this->_db->delete(
-                    'employment',
-                    $this->_db->quoteInto('employment_id IN (?)', $removedEmployerIds)
-                );
-            }
+            $this->removeEmployers($removedEmployers);
 
             // Insert/update address.
             $addrFields = $this->disassembleAddrModel($client->getCurrentAddr());
@@ -633,35 +608,10 @@ class App_Service_Member
             }
 
             // Insert/update householders.
-            foreach ($changedHouseholders as $changedHouseholder) {
-                $householderFields = $this->disassembleHouseholderModel($changedHouseholder);
-                $householderFields['household_id'] = $client->getHouseholdId();
-
-                if ($changedHouseholder->getId() === null) {
-                    $this->_db->insert('hmember', $householderFields);
-
-                    $changedHouseholder->setId($this->_db->lastInsertId());
-                } else {
-                    $this->_db->update(
-                        'hmember',
-                        $householderFields,
-                        $this->_db->quoteInto('hmember_id = ?', $changedHouseholder->getId())
-                    );
-                }
-            }
+            $this->changeHouseholders($client->getHouseholdId(), $changedHouseholders);
 
             // Remove householders.
-            if ($removedHouseholders) {
-                $removedHouseholderIds = array();
-                foreach ($removedHouseholders as $removedHouseholder) {
-                    $removedHouseholderIds[] = $removedHouseholder->getId();
-                }
-
-                $this->_db->delete(
-                    'hmember',
-                    $this->_db->quoteInto('hmember_id IN (?)', $removedHouseholderIds)
-                );
-            }
+            $this->removeHouseholders($removedHouseholders);
 
             $this->_db->commit();
         } catch (Exception $ex) {
@@ -861,24 +811,78 @@ class App_Service_Member
 
     /****** PRIVATE CREATE/INSERT QUERIES  ******/
 
-    private function createHouseholders($householdId, $householders)
+    private function changeHouseholders($householdId, $householders)
     {
         foreach ($householders as $householder) {
-            $householderData = $this->disassembleHouseholderModel($householder);
-            $householderData['household_id'] = $householdId;
+            $householderFields = $this->disassembleHouseholderModel($householder);
+            $householderFields['household_id'] = $householdId;
 
-            $this->_db->insert('hmember', $householderData);
+            if ($householder->getId() === null) {
+                $this->_db->insert('hmember', $householderFields);
+
+                $householder->setId($this->_db->lastInsertId());
+            } else {
+                $this->_db->update(
+                    'hmember',
+                    $householderFields,
+                    $this->_db->quoteInto('hmember_id = ?', $householder->getId())
+                );
+            }
         }
     }
 
-    private function createEmployers($clientId, $employers)
+    private function removeHouseholders($householders)
+    {
+        if (!$householders) {
+            return;
+        }
+
+        $householderIds = array();
+        foreach ($householders as $householder) {
+            $householderIds[] = $householder->getId();
+        }
+
+        $this->_db->delete(
+            'hmember',
+            $this->_db->quoteInto('hmember_id IN (?)', $householderIds)
+        );
+    }
+
+    private function changeEmployers($clientId, $employers)
     {
         foreach ($employers as $employer) {
-            $employerData = $this->disassembleEmployerModel($employer);
-            $employerData['client_id'] = $clientId;
+            $employerFields = $this->disassembleEmployerModel($employer);
+            $employerFields['client_id'] = $clientId;
 
-            $this->_db->insert('employment', $employerData);
+            if ($employer->getId() === null) {
+                $this->_db->insert('employment', $employerFields);
+
+                $employer->setId($this->_db->lastInsertId());
+            } else {
+                $this->_db->update(
+                    'employment',
+                    $employerFields,
+                    $this->_db->quoteInto('employment_id = ?', $employer->getId())
+                );
+            }
         }
+    }
+
+    private function removeEmployers($employers)
+    {
+        if (!$employers) {
+            return;
+        }
+
+        $employerIds = array();
+        foreach ($employers as $employer) {
+            $employerIds[] = $employer->getId();
+        }
+
+        $this->_db->delete(
+            'employment',
+            $this->_db->quoteInto('employment_id IN (?)', $employerIds)
+        );
     }
 
     /****** IMPL OBJECT BUILDERS  ******/
