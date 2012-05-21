@@ -37,6 +37,6 @@ class Application_Model_Search_TreasurerForm extends Application_Model_Search_Fo
      */
     public function __construct()
     {
-        parent::__construct('treasurer', $this->_additionalTypes);
+        parent::__construct('treasurer', 'Check Requests', $this->_additionalTypes);
     }
 }

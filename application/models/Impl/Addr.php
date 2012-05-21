@@ -120,9 +120,13 @@ class Application_Model_Impl_Addr
         $part2 = implode(', ', array_filter(array(
             $this->_city,
             $this->_state,
-            $this->_zip,
         ), 'Application_Model_Impl_Addr::isNotNullOrEmpty'));
-        return $part1 . (($part1 !== null && $part2 !== null) ? ', ' : '') . $part2;
+        $part3 = $this->_zip;
+        return $part1
+             . (($part1 !== null && $part2 !== null) ? ', ' : '')
+             . $part2
+             . (($part1 !== null || $part2 !== null) ? ' ' : '')
+             . $part3;
     }
 
     /**

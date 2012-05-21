@@ -171,9 +171,9 @@ class App_Service_AdminService {
                 if(is_numeric($sub) || $sub == null)
                     return (intval($sub) + 1);
             }
-            return null;
+            return '';
         }else{
-            return null;
+            return '';
         }
     }
     

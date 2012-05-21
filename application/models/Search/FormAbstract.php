@@ -28,7 +28,7 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
      * Initializes a new instance of the `Application_Model_SearchFormAbstract` class having the
      * specified form action and additional set of search types.
      */
-    public function __construct($action, $additionalTypes)
+    public function __construct($action, $listAllLabel, $additionalTypes)
     {
         // Initialize the form.
         parent::__construct();
@@ -71,7 +71,7 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
 
         $this->addElement('submit', 'listAll', array(
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_INFO,
-            'label' => 'List All',
+            'label' => "List All $listAllLabel",
         ));
 
         // Populate search type dropdown.

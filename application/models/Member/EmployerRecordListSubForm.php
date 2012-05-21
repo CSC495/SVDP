@@ -14,7 +14,7 @@ class Application_Model_Member_EmployerRecordListSubForm
                 'End Date (Optional)',
             ),
             'legend' => 'Employment status:',
-            'addRecordMsg' => 'Add Another Employment',
+            'addRecordMsg' => 'Add Another Employer',
             'noRecordsMsg' => 'No employers listed.',
         ));
     }
@@ -45,6 +45,7 @@ class Application_Model_Member_EmployerRecordListSubForm
             ),
             'decorators' => array(
                 'ViewHelper',
+                'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),

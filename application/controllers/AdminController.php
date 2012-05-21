@@ -11,7 +11,7 @@ class AdminController extends Zend_Controller_Action
     // Default landing for the admin
     public function indexAction()
     {
-        $this->view->pageTitle = "Admin Controller";
+        $this->view->pageTitle = "Admin Page";
     }
     
     private function initAdjustmentForm($form)
@@ -80,9 +80,27 @@ class AdminController extends Zend_Controller_Action
     public function usersAction()
     {
         $this->view->pageTitle = "Admin Viewing Users";
-        
+
         $service = new App_Service_AdminService();
-        $this->view->users = $service->getAllUsers();
+        $users   = $service->getAllUsers();
+
+        $this->view->users = array();
+        $lastRowLetter     = null;
+
+        foreach ($users as $userId => $user) {
+            $firstName = $user->getFirstName();
+
+            if ($lastRowLetter !== $firstName[0]) {
+                $lastRowLetter = $rowLetter = $firstName[0];
+            } else {
+                $rowLetter = null;
+            }
+
+            $this->view->users[$userId] = array(
+                'user' => $user,
+                'rowLetter' => $rowLetter,
+            );
+        }
     }
     
     // displays view for creating new member
@@ -128,48 +146,54 @@ class AdminController extends Zend_Controller_Action
         
         $user = new Application_Model_Impl_User();
         $user
-            ->setFirstName($form->getValue('firstname'))
-            ->setLastName($form->getValue('lastname'))
+            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
+            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))
             ->setRole($form->getValue('role'))
             ->setActive(1); // Default user to active
-
+        $this->createUser($user);
+    }
+    
+    //  Handles persistance and email generation for new user creation
+    private function createUser($user)
+    {
+        $service = new App_Service_AdminService();
+        
+        // Generate the user name
         $userName = substr($user->getFirstName(),0,1);
         $userName = $userName . $user->getLastName();
         $userName = strtolower($userName);
+        $userName = $userName . $service->getNextIdNum($userName);
+        // Store user name
         $user->setUserId($userName);
-
+        
+        // Generate user password and create user
         $password = App_Password::generatePassword(10);
-
-        $service = new App_Service_AdminService();
         $service->createParishMemeber($user,$password);
      
         // Send email for enw user
         $mail = new Zend_Mail('utf-8');
         $transport = new App_Mail_Transport_AmazonSES(
         array(
-            'accessKey' => $_ENV["AWSPUB"],
-            'privateKey' => $_ENV["AWSPVT"]
+            'accessKey' => getenv("AWS_ACCESS_KEY_ID"),
+            'privateKey' => getenv("AWS_SECRET_ACCESS_KEY")
         ));
         
-        $mail->setBodyHtml('You have been added to the SVDP organization. '
-                           . 'You may log in with the username: <b>' . $userName . '</b>' .
-                           '<br/>password: <b>' . $password . '</b>' . '</br></br> Please note ' .
-                           'you will be required to change your password on first login.');
+        $mail->setBodyHtml('You have been added to the SVDP organization.' .
+                           '<br/>Username: <b>' . $userName . '</b>' .
+                           '<br/>Password: <b>' . $password . '</b>' . '</br></br> Please note ' .
+                           'you will be required to change your password on first login.' .
+                           '<br/><br/><i>If you believe you have recieved this message in error ' .
+                           'please contact the sender.</i>');
         
         $mail->setFrom('bagura@noctrl.edu', 'System');
         $mail->addTo('bagura@noctrl.edu');
-        $mail->setSubject('SVDP Password Reset');
-        try{
-            $mail->send($transport);
-        }
-        catch(Exception $e)
-        {
-            var_dump($e);
-            exit();
-        }   
+        $mail->setSubject('SVDP Account Created');
+
+        $mail->send($transport);
+
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
                     Array( 'msg' => 'Member added successfully!',
@@ -177,6 +201,7 @@ class AdminController extends Zend_Controller_Action
                            'controller' => App_Resources::ADMIN,
                            'action' => 'users'));
     }
+    
     // Display for modifying a users information
     public function modifyAction()
     {
@@ -247,8 +272,8 @@ class AdminController extends Zend_Controller_Action
         $user = new Application_Model_Impl_User();
         $user
             ->setUserId($form->getValue('userid'))
-            ->setFirstName($form->getValue('firstname'))
-            ->setLastName($form->getValue('lastname'))
+            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
+            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))
@@ -258,10 +283,9 @@ class AdminController extends Zend_Controller_Action
         $service->updateUserInformation($user);
         
         $this->_forward('index', App_Resources::REDIRECT, null,
-                        Array( 'msg' => 'Member Data Updated Successfully!',
+                        Array( 'msg' => 'User Data Updated Successfully!',
                                'time' => 3,
                                'controller' => App_Resources::ADMIN,
-                               'action' => 'members'));
-        
+                               'action' => 'users'));   
     }
 }

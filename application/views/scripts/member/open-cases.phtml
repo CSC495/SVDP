@@ -5,15 +5,18 @@ if (empty($this->cases)) {
 <?php
 } else {
 ?>
-<p>Here is a summary of your current cases.</p>
-<div class=search-results>
-<table class=search-results>
-<?php
-$this->partialLoop()->setObjectKey('case');
-echo $this->partialLoop('partial/searchResultCase.phtml', $this->cases);
-?>
-</table>
-</div>
+<fieldset>
+    <legend>Your currently open cases:</legend>
+    <div class=search-results>
+    <table class=search-results>
+    <?php
+    foreach (array_values($this->cases) as $i => $case) {
+        echo $this->partial('partial/searchResultCase.phtml', array('i' => $i, 'case' => $case));
+    }
+    ?>
+    </table>
+    </div>
+</fieldset>
 <?php
 }
 ?>

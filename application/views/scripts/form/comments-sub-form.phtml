@@ -1,0 +1,40 @@
+<fieldset>
+    <legend>Comments:</legend>
+
+    <?php if ($this->comments) { ?>
+    <div class=search-results>
+        <table class=search-results>
+        <?php
+        foreach (array_values($this->comments) as $i => $comment) {
+            $rowStripeClass = ($i % 2) ? 'odd' : 'even';
+        ?>
+            <tr class="search-result <?php echo $rowStripeClass; ?>">
+                <th class="search-cell top first">Member</th>
+                <td class="search-cell top"><?php echo $this->escape($comment->getUser()->getFullName()); ?></td>
+                <th class="search-cell top">Date</th>
+                <td class="search-cell top"><?php echo $this->escape(App_Formatting::formatDateTime($comment->getDateTime())); ?></td>
+            </tr>
+            <tr class="search-result <?php echo $rowStripeClass; ?>">
+                <th class="search-cell bot first">Comment</th>
+                <td class="search-cell bot" colspan=3><?php echo $this->escape($comment->getText()); ?></td>
+            </tr>
+        <?php } ?>
+        </table>
+    </div>
+    <?php } else { ?>
+    <div class=controls>
+        <div class=control-group>
+            <p class=help-block>There are currently no member comments.</p>
+        </div>
+    </div>
+    <?php } ?>
+
+    <?php if (!$this->readOnly) { ?>
+    <?php echo $this->element->commentText; ?>
+    <div class=control-group>
+        <div class=controls>
+            <?php echo $this->element->addComment; ?>
+        </div>
+    </div>
+    <?php } ?>
+</fieldset>
