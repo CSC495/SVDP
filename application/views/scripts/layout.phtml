@@ -44,33 +44,34 @@ $scheduleEntries = Zend_Registry::get('schedule');
 ?>
 
 <div class=container-fluid>
-    <div class=navbar>
-        <div class=navbar-inner>
-            <div class=container>
-                <a href="<?php echo $this->escape($this->baseUrl('')); ?>" class=brand>St. Vincent de Paul</a>
-                <ul class=nav>
+
+                <ul style="margin-top: 15px;"  class="nav nav-pills">
+		    <li style="margin-right: 25px;"><h3><a href="<?php echo $this->escape($this->baseUrl('')); ?>">St. Vincent de Paul</a></h3></li>               
                     <?php
                     foreach ($this->navLinks as $path => $link) {
-                        echo '<li' . ($link['active'] ? ' class=active' : '') . '>'
+                        echo '<li class=active >'
                            . '<a href="'
                            . $this->escape($this->baseUrl($path))
-                           . '" '
-                           . '>'
+                           . '">'
                            . $this->escape($link['text'])
                            . '</a>'
                            . '</li>';
                     }
+		   
+		    echo '<li class="active pull-right">'
+		    . '<a href="'
+		    . $this->escape($this->baseUrl('login/logout'))
+		    . '">'
+		    . '"<i class="icon icon-share"></i>'
+		    . 'Logout'
+		    . '</a>'
+		    . '<li>';
                     ?>
-                </ul>
-                <?php if ($role !== App_Roles::GENERAL) { ?>
-                <ul class="nav pull-right">
-                    <li class=divider-vertical></li>
-                    <li><a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>">Logout</a></li>
-                </ul>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
+		    
+                </ul>  
+
+      
+   
 
     <div class=row-fluid>
         <div class=span2>
@@ -140,5 +141,5 @@ $scheduleEntries = Zend_Registry::get('schedule');
 
     <hr>
 
-    <footer><p>© 2012 Society of St. Vincent de Paul.</p></footer>
+    <footer><p>© 2012 Society of St. Vincent de Paul</p></footer>
 </div>
