@@ -74,6 +74,8 @@ class App_Acl extends Zend_Acl
             App_Resources::INDEX,
             App_Resources::MEMBER,
         ));
+        // Allow access to check request view action in the treasurer controller
+        $this->allow(App_Roles::MEMBER,App_Resources::TREASURER,'checkReq');
         // Allow access to all actions in the reports controller
         $this->allow(App_Roles::MEMBER,App_Resources::REPORT);
         // Allow access to list action in document controller
