@@ -21,7 +21,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initParishParams()
     {
         // Ensure DB is bootstrapped first
-        if ($this->getResource('db') === null) {
+        if ($this->getResource('db') == null) {
             $this->bootstrap('db');
         }
 
@@ -34,7 +34,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initSchedule()
     {
         // Ensure DB is bootstrapped first
-        if ($this->getResource('db') === null) {
+        if ($this->getResource('db') == null) {
             $this->bootstrap('db');
         }
 

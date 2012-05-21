@@ -118,23 +118,22 @@ class LoginController extends Zend_Controller_Action
             $mail = new Zend_Mail('utf-8');
             $transport = new App_Mail_Transport_AmazonSES(
             array(
-                'accessKey' => getenv("AWS_ACCESS_KEY_ID"),
-                'privateKey' => getenv("AWS_SECRET_ACCESS_KEY")
+                'accessKey' => Zend_Registry::get("AWS_ACCESS_KEY_ID"),
+                'privateKey' => Zend_Registry::get("AWS_SECRET_ACCESS_KEY"),
             ));
             
             $mail->setBodyHtml('Here is your temporary password. You will be required '
                                . 'to changed it on your next login.' .
                                '<br/><b>' . $password . '</b>');
             $mail->setFrom('bagura@noctrl.edu', 'System');
-            $mail->addTo('bagura@noctrl.edu');
+            $mail->addTo( $user->getEmail() );
             $mail->setSubject('SVDP Password Reset');
-            
             $mail->send($transport);
             
             // Update DB with temp password
             $admin = new App_Service_AdminService();
             $admin->resetUserPassword($username,$password);
-            
+
             return $this->_forward('index', App_Resources::REDIRECT, null,
                         Array( 'msg' => 'Your new password will be emailed to you shortly.',
                                'time' => 3,
