@@ -550,6 +550,8 @@ class App_Service_Member
             }
 
             // Insert/update spouse.
+            $oldSpouse = null;
+
             if ($maritalStatusChange) {
                 if ($client->getMaritalStatus() === 'Married') {
                     // If the client got married, insert the new spouse.
@@ -560,13 +562,24 @@ class App_Service_Member
 
                     $client->getSpouse()->setId($this->_db->lastInsertId());
                 } else {
-                    // If the client got unmarried, update the old spouse.
+                    // If the client got unmarried, update the old spouse and create a new address.
+                    $oldSpouse = $client->getSpouse();
+                    $oldSpouse
+                        ->setMaritalStatus($client->getMaritalStatus())
+                        ->setCurrentAddr(clone $client->getCurrentAddr());
+
                     $this->_db->update(
                         'client',
-                        array('marriage_status' => $client->getMaritalStatus()),
-                        $this->_db->quoteInto('client_id = ?', $client->getSpouse()->getId())
+                        array('marriage_status' => $oldSpouse->getMaritalStatus()),
+                        $this->_db->quoteInto('client_id = ?', $oldSpouse->getId())
                     );
 
+                    $addrFields = $this->disassembleAddrModel($oldSpouse->getCurrentAddr());
+                    $addrFields['client_id'] = $oldSpouse->getId();
+
+                    $this->_db->insert('address', $addrFields);
+
+                    $oldSpouse->getCurrentAddr()->setId($this->_db->lastInsertId());
                     $client->setSpouse(null);
                 }
             } else {
@@ -597,7 +610,19 @@ class App_Service_Member
                     'current_flag' => 1,
                 ));
 
-                $client->setHouseholdId($this->_db->lastInsertId());
+                $householdIds = array($this->_db->lastInsertId());
+                $client->setHouseholdId($householdIds[0]);
+
+                // If the client got unmarried, insert a new household for the old spouse.
+                if ($oldSpouse) {
+                    $this->_db->insert('household', array(
+                        'address_id' => $oldSpouse->getCurrentAddr()->getId(),
+                        'mainclient_id' => $oldSpouse->getId(),
+                        'current_flag' => 1,
+                    ));
+
+                    $householdIds[] = $this->_db->lastInsertId();
+                }
 
                 // Also, we're going to (re-)insert all the householders later.
                 foreach ($changedHouseholders as $changedHouseholder) {
@@ -605,13 +630,18 @@ class App_Service_Member
                 }
 
                 $removedHouseholders = array();
+            } else {
+                $householdIds = array($client->getHouseholdId());
             }
 
-            // Insert/update householders.
-            $this->changeHouseholders($client->getHouseholdId(), $changedHouseholders);
+            // Handle household members changes in all relevant households.
+            foreach ($householdIds as $householdId) {
+                // Insert/update household members.
+                $this->changeHouseholders($householdId, $changedHouseholders);
 
-            // Remove householders.
-            $this->removeHouseholders($removedHouseholders);
+                // Remove household members.
+                $this->removeHouseholders($removedHouseholders);
+            }
 
             $this->_db->commit();
         } catch (Exception $ex) {
