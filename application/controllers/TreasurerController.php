@@ -13,7 +13,7 @@ class TreasurerController extends Zend_Controller_Action
     {
         $this->view->pageTitle = "Open Check Requests";
 
-        $service               = new App_Service_Search();
+        $service = new App_Service_Search();
         $this->view->checkReqs = $service->getOpenCheckReqs();
     }
 	
@@ -30,6 +30,7 @@ class TreasurerController extends Zend_Controller_Action
 			
 			$amt = $this->view->form->getValue('funds');
 			$service->updateParishFunds($amt);
+			$this->_helper->redirector('index');
             return;
         }
 		
@@ -39,20 +40,40 @@ class TreasurerController extends Zend_Controller_Action
 	{
 		$this->view->pageTitle = 'Check Request';
 		
-		
-		
 		$request = $this->getRequest();
+		$service = new App_Service_TreasurerService();
+			
 		
+		if(!$request->isPost()) {
+			$check = $service->getCheckReqById($request->id);
+			$this->view->form = new Application_Model_Treasurer_CheckForm($check);
+		}
+		
+		
+		if ($request->isPost()) {
+		
+			$check = $service->getCheckReqById($request->checkID);
+			$this->view->form = new Application_Model_Treasurer_CheckForm($check);
 
-		//$service           = new App_Service_Search();
-        //$this->view->checkReqs = $service->getOpenCheckReqs();
-		
-        $service           = new App_Service_TreasurerService();
-        
-		$check = $service->getCheckReqById(2);
-		$this->view->form = new Application_Model_Treasurer_CheckForm($check);
-		
-		//$this->view->form 	= new App_Model_Treasurer_CheckForm();
+			$this->view->form->populate($_POST);
+			
+			
+			if($request->issueCheck){
+				$service->closeCheckRequest(27, $request->checkID, $request->checkNum);
+				$this->_helper->redirector('index');
+			}
+			if($request->denyCheck){
+				//do something here, what I am not sure yet
+			}
+			if($request->editCheck){
+				$this->view->form->editCheckReq($request->editCheck);
+			}
+			if($request->addComment){
+				$this->view->form->addAComment($request->addComment);
+			}
+			
+            return;
+        }
 		
 	}
 }

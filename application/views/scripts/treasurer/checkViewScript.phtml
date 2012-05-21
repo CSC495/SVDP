@@ -6,7 +6,10 @@
     <table>
     	<tbody>
     		<tr><td>
+				<?php echo $this->element->SVDPname ?>
+				</td></tr>
 				
+				<tr><td>
 			    <?php echo $this->element->caseID ?>
 			    </td>
 				<td>
@@ -46,7 +49,7 @@
 			    <?php echo $this->element->caseNeed ?>
 			    </td>
 				<td>
-			    <?php echo $this->element->comment ?>
+			    <?php echo $this->element->commentText ?>
 			    </td></tr>
 				
 
@@ -55,7 +58,10 @@
 	    </table>
 </fieldset>
 
-<?php echo $this->element->submit ?>
+<?php echo $this->element->issueCheck ?>
+<?php echo $this->element->denyCheck ?>
+<?php echo $this->element->editCheck ?>
+<?php echo $this->element->addComment ?>
 </form>
 
 

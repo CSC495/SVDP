@@ -1,16 +1,15 @@
 <?php
 
-class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horizontal
+class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horizontal 
 {
 
     public function __construct($check)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
-
 		
 		
         parent::__construct(array(
-            'action' => $baseUrl->baseUrl(App_Resources::TREASURER) . '/updateFunds',
+            'action' => $baseUrl->baseUrl(App_Resources::TREASURER) . '/checkReq',
             'method' => 'post',
             'decorators' => array(
                 'PrepareElements',
@@ -38,7 +37,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
-				'label'      => 'SVDP Member Name',
+				'label'      => 'Primary Worker',
 				'size'		 => 7,
 		));
 		$this->SVDPname->setValue($check->getUser());
@@ -140,6 +139,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		));
 		$this->payeeName->setValue($check->getPayeeName());
 		
+		
 		$addr = $check->getAddress();
 		$this->addElement('text', 'address',  array(
 				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
@@ -178,16 +178,21 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		//$this->caseNeed->setValue($this->escape($check->getCase()->getNeedList()));
 		
 		
-		$this->addElement('text', 'comment',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
-				'readonly'   => true,
-				'required'   => true,
-				'label'      => 'Comment',
-				'size'		 => 15,
-		));
-		$this->comment->setValue($check->getComment());
+		$this->addElement('textarea', 'commentText', array(
+                'label' => 'Comment',
+                'required' => true,
+                'filters' => array('StringTrim'),
+                'validators' => array(
+                    array('NotEmpty', true, array(
+                        'type' => 'string',
+                        'messages' => array('isEmpty' => 'You must enter a comment.'),
+                    )),
+                ),
+                'dimension' => 7,
+                'rows' => 4,
+				'readonly' => true,
+            ));
+		$this->commentText->setValue($check->getComment());
 		
 		
 		
@@ -218,8 +223,26 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 
-        $this->addElement('submit', 'submit', array(
-            'label' => 'Submit Changes',
+        $this->addElement('submit', 'issueCheck', array(
+            'label' => 'Issue Check Request',
+            'decorators' => array('ViewHelper'),
+            'class' => 'btn btn-success',
+        ));
+		
+		$this->addElement('submit', 'denyCheck', array(
+            'label' => 'Deny Check Request',
+            'decorators' => array('ViewHelper'),
+            'class' => 'btn btn-success',
+        ));
+		
+		$this->addElement('submit', 'editCheck', array(
+            'label' => 'Edit Check Request',
+            'decorators' => array('ViewHelper'),
+            'class' => 'btn btn-success',
+        ));
+		
+		$this->addElement('submit', 'addComment', array(
+            'label' => 'Add A Comment',
             'decorators' => array('ViewHelper'),
             'class' => 'btn btn-success',
         ));
@@ -231,128 +254,54 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
         //$this->  ->preValidate($data);
     }
 
-    public function getFunds()
+    public function editCheckReq($t)
     {
-        //$this->updateCurrentFunds->updateParishFunds($funds);
-		//$service->updateParishFunds(300);
+		//$this->->setAttrib('readonly', null);
 		
-		//return $this->updateCurrentFunds->$funds;
+		if($t === 'Edit Check Request'){
+			$this->SVDPname->setAttrib('readonly', null);
+			$this->amount->setAttrib('readonly', null);
+			$this->payeeName->setAttrib('readonly', null);
+			$this->payeeAccount->setAttrib('readonly', null);
+			$this->contact->setAttrib('readonly', null);
+			$this->contactPhone->setAttrib('readonly', null);
+			$this->checkNum->setAttrib('readonly', null);
+			$this->issueDate->setAttrib('readonly', null);
+			$this->caseNeed->setAttrib('readonly', null);
+			$this->commentText->setAttrib('readonly', null);
+			
+			$this->issueCheck->setAttrib('disabled', true);
+			$this->denyCheck->setAttrib('disabled', true);
+			$this->addComment->setAttrib('disabled', true);
+			
+			$this->editCheck->setLabel('Submit Edits');
+		}
 		
-		//return App_Formatting::emptyToNull($this->funds->getValue());
-		//return $this->funds->getValue();
-		return 702220;
+		if($t === 'Submit Edits'){
+			$this->editCheck->setLabel('Edit Check Request');
+		}
+		
     }
-
-}
-
-
-
-
-
-
-
-
-/*
-class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horizontal
-{
 	
-	public function __construct($options = null){
-		parent::__construct($options);
-		$this->setName('new');
-		$this->setAttrib('id', 'new');
-		$this->setMethod('post');
-		$baseUrl = new Zend_View_Helper_BaseUrl();
-		$this->setAction($baseUrl->baseUrl('/treasurer/checkReq'));
-		$this->setDecorators(array(
-			array('ViewScript',array('viewScript' => 'treasurer/ViewScript.phtml'))
-		));
+	public function addAComment($t)
+    {
+		//$this->->setAttrib('readonly', null);
 		
-		$this->addElementPrefixPath(
-			'Twitter_Bootstrap_Form_Decorator',
-			'Twitter/Bootstrap/Form/Decorator',
-			'decorator'
-		);
+		if($t === 'Add A Comment'){
+			$this->commentText->setAttrib('readonly', null);
+			
+			$this->issueCheck->setAttrib('disabled', true);
+			$this->denyCheck->setAttrib('disabled', true);
+			$this->editCheck->setAttrib('disabled', true);
+			
+			$this->addComment->setLabel('Submit Comment');
+		}
 		
-		$this->setElementDecorators(array(
-			'FieldSize',
-			'ViewHelper',
-			'Addon',
-			'ElementErrors',
-			array('Description', array('class' => 'help-block')),
-			array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
-			array('Label', array('class' => 'control-label')),
-			'Wrapper',
-		));
-		/*
-		// The memebers name
-		$firstname = $this->addElement('text', 'firstname', array(
-                                   'filters'    => array('StringTrim'),
-				   'required'   => true,
-				   'label'      => 'First Name:',
-				 ));
-		
-		// The memebrs name
-		$lastname = $this->addElement('text', 'lastname', array(
-                                   'filters'    => array('StringTrim'),
-				   'required'   => true,
-				   'label'      => 'Last Name:',
-				 ));
-		
-                // Members phone number
-                $home = $this->addElement('text', 'home', array(
-                   'filters'    => array('StringTrim','Digits'),
-                   'required'   => false,
-                   'label'      => 'Home Phone:',
-		   'validators' => array(
-			array('StringLength', true, array(
-				'min' => 10,
-				'max' => 10,
-				'messages' => array(
-				'stringLengthTooShort' => 'Phone number must be 10 digits.',
-				'stringLengthTooLong' => 'Phone number must be 10 digits.',
-                    )))),
-                ));
-        
-		// Members other phone
-		$cell = $this->addElement('text', 'cell', array(
-                   'filters'    => array('StringTrim','Digits'),
-                   'required'   => false,
-                   'label'      => 'Cell Phone:',
-		   'validators' => array(
-			array('StringLength', true, array(
-				'min' => 10,
-				'max' => 10,
-				'messages' => array(
-				'stringLengthTooShort' => 'Phone number must be 10 digits.',
-				'stringLengthTooLong' => 'Phone number must be 10 digits.',
-                    )))),
-                ));
-		
-		// IMemebers e-mail
-                $email = $this->addElement('text', 'email', array(
-			'filters'    => array('StringTrim'),
-			'validators' => array('EmailAddress'),
-			'required'   => true,
-			'label'      => 'Email:',
-                ));
-               
-	        // Type of memebr
-                $role = $this->addElement('select','role',array(
-			'label' => 'Member Type:',
-			'value' => App_Roles::MEMBER,
-			'multiOptions' => array ( 'M'   => 'Member',
-						  App_Roles::ADMIN     => 'Admin',
-						  App_Roles::TREASURER => 'Treasurer',)
-			,));
-               
-                $adjust = $this->addElement('submit', 'submit', array(
-                   'required' => false,
-                   'ignore'   => true,
-                   'label'    => 'Add New Contact',
-                   'class'    => 'btn btn-success',
-		   'decorators' => array('ViewHelper'),
-                ));
-               
-	}
+		if($t === 'Submit Comment'){
+			$this->addComment->setLabel('Add A Comment');
+		}
+    }
 }
-*/
+
+
+
