@@ -1,0 +1,15 @@
+<p>
+    Add needs for the new case.
+    (You will be able to add visits, referrals, and check requests from the next page.)
+</p>
+<fieldset>
+    <legend>Client summary:</legend>
+    <div class=search-results>
+        <table class=search-results>
+            <?php
+            echo $this->partial('partial/searchResultClient.phtml', array('client' => $this->client));
+            ?>
+        </table>
+    </div>
+</fieldset>
+<?php echo $this->form; ?>

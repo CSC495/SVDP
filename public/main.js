@@ -321,7 +321,7 @@ function renderMap(centerCoords, clientCoords) {
 
             if (parishId == 'stRaphael') {
                 inStRaphael = true;
-                alertMsg    = 'This address lies within '
+                alertMsg    = 'This address lies within the '
                             + $('<p/>').text(parishInfo.parishName).html()
                             + ' parish boundaries.';
             } else {
@@ -401,8 +401,18 @@ function initEditClientForm() {
 
 function initUiWidgets() {
     // Attach jQuery UI widgets/plugin behavior.
-    $('.date').datepicker();
+    $(':not([readonly]).date').datepicker();
     $('.phone').mask('(999) 999-9999');
+
+    // Convert disabled inputs to read-only inputs right before form submission to make sure their
+    // values get sent to the server.
+    //
+    // XXX: We really should take care of the "Disabled inputs don't submit" problem on the
+    // server-side instead.
+    $('form').submit(function () {
+        $(':disabled').attr('readonly', 'readonly');
+        $(':disabled').removeAttr('disabled');
+    });
 }
 
 $(initUiWidgets);

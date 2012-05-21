@@ -12,7 +12,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         'Other' => 'Other',
     );
 
-	private $_PARISH_OPTIONS = array(
+    private $_PARISH_OPTIONS = array(
         '' => '',
         'St. Raphael' => 'St. Raphael',
         'Holy Spirit' => 'Holy Spirit',
@@ -25,6 +25,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     private $_id;
 
+    private $_safeSerializeService;
+
     private static function makeActionUrl($id)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
@@ -35,17 +37,55 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
     public function __construct($id = null)
     {
         $this->_id = $id;
+        $this->_safeSerializeService = new App_Service_SafeSerialize();
 
         parent::__construct(array(
             'action' => self::makeActionUrl($id),
             'method' => 'post',
             'decorators' => array(
                 'PrepareElements',
-                array('ViewScript', array('viewScript' => 'form/client-form.phtml')),
+                array('ViewScript', array(
+                    'viewScript' => 'form/client-form.phtml',
+                    'editing' => ($id !== null),
+                )),
                 'Form',
             ),
             'class' => 'form-horizontal twocol',
         ));
+
+        // Hidden element storing IDs and things across edit requests.
+        $safeSerializedNull = $this->_safeSerializeService->serialize(null);
+
+        $this->addElement('hidden', 'fixedClientData', array(
+            'value' => $safeSerializedNull['serial'],
+            'decorators' => array('ViewHelper'),
+        ));
+
+        $this->addElement('hidden', 'fixedClientDataHash', array(
+            'value' => $safeSerializedNull['hash'],
+            'decorators' => array('ViewHelper'),
+        ));
+
+        // General summary elements for clients with existing database entries.
+        if ($id !== null) {
+            $this->addElement('text', 'clientId', array(
+                'label' => 'Client ID',
+                'readonly' => true,
+                'dimension' => 2,
+            ));
+
+            $this->addElement('text', 'userName', array(
+                'label' => 'Creating user',
+                'readonly' => true,
+                'dimension' => 3,
+            ));
+
+            $this->addElement('text', 'createdDate', array(
+                'label' => 'Creation date',
+                'readonly' => true,
+                'dimension' => 2,
+            ));
+        }
 
         // Personal information elements:
 
@@ -347,6 +387,13 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'class' => 'phone',
         ));
 
+        if ($id !== null) {
+            $this->addElement('checkbox', 'moved', array(
+                'required' => true,
+                'label' => 'Moved?',
+            ));
+        }
+
         $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
 
         // Householders sub form:
@@ -431,11 +478,54 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             $client->setSpouse($spouse);
         }
 
+        $fixedClientData = $this->_safeSerializeService->unserialize(
+            $this->fixedClientData->getValue(),
+            $this->fixedClientDataHash->getValue()
+        );
+
+        if ($fixedClientData) {
+            $user = new Application_Model_Impl_User();
+            $user->setUserId($fixedClientData['userId']);
+
+            $client
+                ->setUser($user)
+                ->setHouseholdId($fixedClientData['householdId'])
+                ->setCreatedDate($fixedClientData['createdDate']);
+
+            if (isset($fixedClientData['spouseId'])) {
+                $client->getSpouse()->setId($fixedClientData['spouseId']);
+            }
+        }
+
         return $client;
     }
 
     public function setClient($client)
     {
+        // Save fixed client IDs and other things that shouldn't be editable.
+        $fixedClientData = array(
+            'userId' => $client->getUser()->getUserId(),
+            'householdId' => $client->getHouseholdId(),
+            'maritalStatus' => $client->getMaritalStatus(),
+            'createdDate' => $client->getCreatedDate(),
+        );
+
+        if ($client->isMarried()) {
+            $fixedClientData['spouseId'] = $client->getSpouse()->getId();
+        }
+
+        $safeSerializedFixedClientData = $this->_safeSerializeService->serialize($fixedClientData);
+
+        $this->fixedClientData->setValue($safeSerializedFixedClientData['serial']);
+        $this->fixedClientDataHash->setValue($safeSerializedFixedClientData['hash']);
+
+        // Populate user-visible client fields.
+        if ($this->_id !== null) {
+            $this->clientId->setValue($this->_id);
+            $this->userName->setValue($client->getUser()->getFullName());
+            $this->createdDate->setValue(App_Formatting::formatDate($client->getCreatedDate()));
+        }
+
         $this->firstName->setValue($client->getFirstName());
         $this->lastName->setValue($client->getLastName());
         $this->otherName->setValue($client->getOtherName());
@@ -487,5 +577,22 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
     public function setEmployers($employers)
     {
         $this->employerRecordList->setRecords($employers);
+    }
+
+    public function isMove()
+    {
+        return $this->_id !== null && $this->moved->isChecked();
+    }
+
+    public function isMaritalStatusChange()
+    {
+        $fixedClientData = $this->_safeSerializeService->unserialize(
+            $this->fixedClientData->getValue(),
+            $this->fixedClientDataHash->getValue()
+        );
+
+        return $this->_id !== null
+            && $fixedClientData
+            && $fixedClientData['maritalStatus'] !== $this->maritalStatus->getValue();
     }
 }

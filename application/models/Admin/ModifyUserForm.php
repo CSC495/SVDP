@@ -66,6 +66,7 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
                    'required'   => false,
 		   'filters'    => array('Digits'),
                    'label'      => 'Cell Phone:',
+		   'class'      => 'phone',
 		   'validators' => array(
 			array('StringLength', true, array(
 				'min' => 10,
@@ -81,6 +82,7 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
                    'required'   => false,
 		   'filters'    => array('Digits'),
                    'label'      => 'Home Phone:',
+		   'class'      => 'phone',
 		   'validators' => array(
 			array('StringLength', true, array(
 				'min' => 10,

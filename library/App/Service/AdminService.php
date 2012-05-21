@@ -113,7 +113,7 @@ class App_Service_AdminService {
     public function createParishMemeber($user,$password)
     {
         $params = array('user_id'     => $user->getUserId(),
-                        'password'    => $password,
+                        'password'    => hash('SHA256', App_Password::saltIt($password)),
                         'first_name'  => $user->getFirstName(),
                         'last_name'   => $user->getLastName(),
                         'email'       => $user->getEmail(),
@@ -148,8 +148,8 @@ class App_Service_AdminService {
      */
     public function resetUserPassword($userId,$password)
     {
-        $data = array( 'password'      => $password,
-                       'change_pswrd'  => 1);
+        $data = array( 'password'      => hash('SHA256', App_Password::saltIt($password)),
+                       'change_pswd'  => 1);
         
         $this->_db->update('user',$data,"user_id ='" . $userId ."'");
     }
@@ -171,9 +171,9 @@ class App_Service_AdminService {
                 if(is_numeric($sub) || $sub == null)
                     return (intval($sub) + 1);
             }
-            return null;
+            return '';
         }else{
-            return null;
+            return '';
         }
     }
     

@@ -94,7 +94,7 @@ class DocumentController extends Zend_Controller_Action
         $service->createDocument($doc);
         
         $upload = new Zend_File_Transfer_Adapter_Http();
-        $upload->setDestination(APPLICATION_PATH . '/uploads/');
+        
         $upload->receive();
         
         // Redirect user
@@ -117,6 +117,41 @@ class DocumentController extends Zend_Controller_Action
         {
             $this->handleAddForm($form);
         }
+    }
+    
+    public function displayAction()
+    {
+        $request = $this->getRequest();
+        $docId = $request->getParam('id');
+        
+        // If theres no param go back to index
+        if(!$docId)
+            return $this->_helper->redirector('index');
+            
+        $service = new App_Service_DocumentService();
+        $doc = $service->getDocument($docId);
+        if($doc)
+        {
+            $this->_helper->viewRenderer->setNoRender(true);
+            $this->view->layout()->disableLayout();
+            
+            $base = new Zend_View_Helper_BaseUrl();
+            $filename = $base->baseUrl('/uploads/' . $doc->getUrl()) ;
+            
+            // Get mime
+            $mime = App_MimeConverter::getMimeType($filename);
+            
+            $this->getResponse()
+                ->setHeader('Content-Type', $mime)
+                ->setHeader('Expires', '', true)
+                ->setHeader('Cache-Control', 'private', true)
+                ->setHeader('Cache-Control', 'max-age=3800')
+                ->setHeader('Pragma', '', true);
+            readfile($filename);
+            return;
+        }
+        
+        return $this->_helper->redirector('index');
     }
     
     private function handleAddForm($form)
