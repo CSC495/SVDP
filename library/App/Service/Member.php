@@ -497,13 +497,171 @@ class App_Service_Member
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
 
     public function editClient($client, $changedHouseholders, $changedEmployers,
-        $removedHouseholders, $removedEmployers, $newMarriageStatus)
+        $removedHouseholders, $removedEmployers, $move, $maritalStatusChange)
     {
         $this->_db->beginTransaction();
 
         try {
-            $clientData = $this->disassembleClientModel($client);
-            $addrData   = $this->dissassembleAddrModel($client->getCurrentAddr());
+            // Update client.
+            $this->_db->update(
+                'client',
+                $this->disassembleClientModel($client),
+                $this->_db->quoteInto('client_id = ?', $client->getId())
+            );
+
+            // Remove/update do not help entry.
+            $this->_db->delete(
+                'do_not_help',
+                $this->_db->quoteInto('client_id = ?', $client->getId())
+            );
+
+            if ($client->isDoNotHelp()) {
+                // If the client is marked do-not-help, insert do-not-help record.
+                $this->_db->insert('do_not_help', array(
+                    'client_id' => $client->getId(),
+                    'create_user_id' => $client->getUser()->getUserId(),
+                    'added_date' => $client->getCreatedDate(),
+                    'reason' => $client->getDoNotHelpReason(),
+                ));
+            }
+
+            // Insert/update employers.
+            foreach ($changedEmployers as $changedEmployer) {
+                $employerFields = $this->disassembleEmployerModel($changedEmployer);
+                $employerFields['client_id'] = $client->getId();
+
+                if ($changedEmployer->getId() === null) {
+                    $this->_db->insert('employment', $employerFields);
+
+                    $changedEmployer->setId($this->_db->lastInsertId());
+                } else {
+                    $this->_db->update(
+                        'employment',
+                        $employerFields,
+                        $this->_db->quoteInto('employment_id = ?', $changedEmployer->getId())
+                    );
+                }
+            }
+
+            // Remove employers.
+            if ($removedEmployers) {
+                $removedEmployerIds = array();
+                foreach ($removedEmployers as $removedEmployer) {
+                    $removedEmployerIds[] = $removedEmployer->getId();
+                }
+
+                $this->_db->delete(
+                    'employment',
+                    $this->_db->quoteInto('employment_id IN (?)', $removedEmployerIds)
+                );
+            }
+
+            // Insert/update address.
+            $addrFields = $this->disassembleAddrModel($client->getCurrentAddr());
+            $addrFields['client_id'] = $client->getId();
+
+            if ($move) {
+                // If the client moved, insert a new address.
+                $this->_db->insert('address', $addrFields);
+
+                $client->getCurrentAddr()->setId($this->_db->lastInsertId());
+            } else {
+                // If the client didn't move, update the existing address.
+                $this->_db->update(
+                    'address',
+                    $addrFields,
+                    $this->_db->quoteInto('address_id = ?', $client->getCurrentAddr()->getId())
+                );
+            }
+
+            // Insert/update spouse.
+            if ($maritalStatusChange) {
+                if ($client->getMaritalStatus() === 'Married') {
+                    // If the client got married, insert the new spouse.
+                    $this->_db->insert(
+                        'client',
+                        $this->disassembleSpouseModel($client->getSpouse())
+                    );
+
+                    $client->getSpouse()->setId($this->_db->lastInsertId());
+                } else {
+                    // If the client got unmarried, update the old spouse.
+                    $this->_db->update(
+                        'client',
+                        array('marriage_status' => $client->getMaritalStatus()),
+                        $this->_db->quoteInto('client_id = ?', $client->getSpouse()->getId())
+                    );
+
+                    $client->setSpouse(null);
+                }
+            } else {
+                if ($client->isMarried()) {
+                    // If the client was married and stayed married, update the spouse.
+                    $this->_db->update(
+                        'client',
+                        $this->disassembleSpouseModel($client->getSpouse()),
+                        $this->_db->quoteInto('client_id = ?', $client->getSpouse()->getId())
+                    );
+                }
+            }
+
+            // Update/insert household.
+            if ($move || $maritalStatusChange) {
+                // If the client moved, got married, and/or got unmarried, mark the old household as
+                // not current and insert a new household.
+                $this->_db->update(
+                    'household',
+                    array('current_flag' => 0),
+                    $this->_db->quoteInto('household_id = ?', $client->getHouseholdId())
+                );
+
+                $this->_db->insert('household', array(
+                    'address_id' => $client->getCurrentAddr()->getId(),
+                    'mainclient_id' => $client->getId(),
+                    'spouse_id' => $client->isMarried() ? $client->getSpouse()->getId() : null,
+                    'current_flag' => 1,
+                ));
+
+                $client->setHouseholdId($this->_db->lastInsertId());
+
+                // Also, we're going to (re-)insert all the householders later.
+                foreach ($changedHouseholders as $changedHouseholder) {
+                    $changedHouseholder->setId(null);
+                }
+
+                $removedHouseholders = array();
+            }
+
+            // Insert/update householders.
+            foreach ($changedHouseholders as $changedHouseholder) {
+                $householderFields = $this->disassembleHouseholderModel($changedHouseholder);
+                $householderFields['household_id'] = $client->getHouseholdId();
+
+                if ($changedHouseholder->getId() === null) {
+                    $this->_db->insert('hmember', $householderFields);
+
+                    $changedHouseholder->setId($this->_db->lastInsertId());
+                } else {
+                    $this->_db->update(
+                        'hmember',
+                        $householderFields,
+                        $this->_db->quoteInto('hmember_id = ?', $changedHouseholder->getId())
+                    );
+                }
+            }
+
+            // Remove householders.
+            if ($removedHouseholders) {
+                $removedHouseholderIds = array();
+                foreach ($removedHouseholders as $removedHouseholder) {
+                    $removedHouseholderIds[] = $removedHouseholder->getId();
+                }
+
+                $this->_db->delete(
+                    'hmember',
+                    $this->_db->quoteInto('hmember_id IN (?)', $removedHouseholderIds)
+                );
+            }
 
             $this->_db->commit();
         } catch (Exception $ex) {
@@ -513,59 +671,6 @@ class App_Service_Member
 
         return $client;
     }
-
-    //Updates all information relevant to the given client
-    //Passed a fully populated Client object, a string of the
-    //client's marriage status IF it changed, null otherwise, and a boolean flag
-    //indicating if the client has moved
-    /*public function editClient($client, $changedHouseholders, $changedEmployers,
-        $removedHouseholders, $removedEmployers, $marriageStatus, $movingFlag)
-    {
-        $this->_db->beginTransaction();
-        try{
-            $clientData = $this->disassembleClientModel($client);
-            $addrData = $this->disassembleAddrModel($client->getCurrentAddr());
-
-            //Update Client data in client table
-            $where = $this->_db->quoteInto('client_id = ?', $client->getId());
-            $this->_db->update('client', $clientData, $where);
-
-            //If the client moved or had a change in marital status creates a new household, defaults
-            //with values of old household
-            if($marriageStatus || $movingFlag){
-                $this->createNewHousehold($this->getCurrentAddress($client->getId()), $client->getId());
-            }
-
-            //If the client moved create new address; else edit the existing entry with submitted data
-            if($movingFlag)
-                $this->createNewAddress($addrData, $client->getId());
-            else
-                $this->editAddress($addrData, $this->getCurrentAddress($client->getId()));
-
-            //If the client had a change in marital status they either got married or divorced
-            if($marriageStatus){
-                //Client got married, add thier spouse to client and new spouse id to household
-                if($client->isMarried())
-                    $this->clientMarriage($client);
-                //Client got divorced, change household to not married & create new household for spouse
-                else
-                    $this->clientDivorce($client->getId());
-            //Client did not have change in marital status, may have changed spouse's information
-            }else{
-                //$this->editSpouse($client->getId(), $client->getSpouse());
-            }
-            //Update any changes to existing employment records or create new ones
-            //$this->editEmployment($client->getEmployment(), $client->getId());
-
-            //Update any changes to existing hmember records or create new ones
-            //$this->editHouseHolders($client->getHouseMembers(), $this->getCurrentHouseholdId($client->getId()));
-            $this->_db->commit();
-        }catch(Exception $ex){
-            $this->_db->rollBack();
-            throw $ex;
-        }
-        return $client;
-    }*/
 
     // Closes the case with the specified ID.
     public function closeCaseById($caseId)
@@ -759,7 +864,7 @@ class App_Service_Member
     private function createHouseholders($householdId, $householders)
     {
         foreach ($householders as $householder) {
-            $householderData = $this->disassmebleHouseholderModel($householder);
+            $householderData = $this->disassembleHouseholderModel($householder);
             $householderData['household_id'] = $householdId;
 
             $this->_db->insert('hmember', $householderData);
@@ -1149,6 +1254,16 @@ class App_Service_Member
         return $options;
     }
 
+    private function disassembleSpouseModel($client)
+    {
+        $options = $this->disassembleClientModel($client);
+        unset($options['other_name']);
+        unset($options['cell_phone']);
+        unset($options['work_phone']);
+        unset($options['veteran_flag']);
+        return $options;
+    }
+
     private function disassembleCaseModel($case){
         return array(
             'opened_user_id' => $case->getOpenedUser()->getUserId(),
@@ -1169,7 +1284,7 @@ class App_Service_Member
         );
     }
 
-    private function disassmebleHouseholderModel($householder)
+    private function disassembleHouseholderModel($householder)
     {
         return array(
             'first_name' => $householder->getFirstName(),

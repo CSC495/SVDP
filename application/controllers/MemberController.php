@@ -367,8 +367,8 @@ class MemberController extends Zend_Controller_Action
 
         if ($this->_hasParam('id')) {
             // Update an existing client.
-            $removedHouseholders = $this->view->form->getChangedHouseholders();
-            $removedEmployers    = $this->view->form->getChangedEmployers();
+            $removedHouseholders = $this->view->form->getRemovedHouseholders();
+            $removedEmployers    = $this->view->form->getRemovedEmployers();
 
             $client = $service->editClient(
                 $client,
@@ -376,8 +376,8 @@ class MemberController extends Zend_Controller_Action
                 $changedEmployers,
                 $removedHouseholders,
                 $removedEmployers,
-                null,
-                false
+                $this->view->form->isMove(),
+                $this->view->form->isMaritalStatusChange()
             );
         } else {
             // Add a new client.

@@ -465,8 +465,9 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                    ? App_Formatting::emptyToNull($this->doNotHelpReason->getValue())
                    : null);
 
+        $spouse = new Application_Model_Impl_Client();
+
         if ($client->isMarried()) {
-            $spouse = new Application_Model_Impl_Client();
             $spouse->setFirstName(App_Formatting::emptyToNull($this->spouseName->getValue()))
                    ->setLastName($client->getLastName())
                    ->setMaritalStatus($client->getMaritalStatus())
@@ -474,9 +475,9 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                    ->setSsn4(App_Formatting::emptyToNull($this->spouseSsn4->getValue()))
                    ->setHomePhone($client->getHomePhone())
                    ->setParish($client->getParish());
-
-            $client->setSpouse($spouse);
         }
+
+        $client->setSpouse($spouse);
 
         $fixedClientData = $this->_safeSerializeService->unserialize(
             $this->fixedClientData->getValue(),
@@ -551,7 +552,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function getRemovedHouseholders()
     {
-        return $tihs->householderRecordList->getRemovedRecords();
+        return $this->householderRecordList->getRemovedRecords();
     }
 
     public function getChangedHouseholders()
@@ -566,7 +567,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function getRemovedEmployers()
     {
-        return $this->employerRecordList->getRemovedEmployers();
+        return $this->employerRecordList->getRemovedRecords();
     }
 
     public function getChangedEmployers()
