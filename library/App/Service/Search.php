@@ -111,6 +111,20 @@ class App_Service_Search
         return $this->buildCaseModels($results);
     }
 
+    /**
+     * Retrieve a list of case history for the specified client.
+     *
+     * @param string $caseId
+     * @return Application_Model_Impl_Case[]
+     */
+    public function getCasesByClientId($clientId) {
+        $select  = $this->initCaseSelect()
+            ->where('c.client_id = ?', $clientId);
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCaseModels($results);
+    }
+
     /* Check request search methods: */
 
     /**
@@ -272,6 +286,15 @@ class App_Service_Search
                     'total_amount' => 'SUM(n.amount)',
                 )
             )
+            ->join(
+                array('u' => 'user'),
+                's.opened_user_id = u.user_id',
+                array(
+                    'u.user_id',
+                    'user_first_name' => 'u.first_name',
+                    'user_last_name' => 'u.last_name',
+                )
+            )
             ->join(array('h' => 'household'), 's.household_id = h.household_id', array())
             ->join(
                 array('c' => 'client'),
@@ -286,7 +309,7 @@ class App_Service_Search
                 )
             )
             ->group('n.case_id')
-            ->order(array('c.last_name', 'c.first_name', 'c.client_id', 's.case_id'));
+            ->order('s.opened_date DESC', 's.case_id');
     }
 
     private function initCheckReqSelect()
@@ -362,6 +385,12 @@ class App_Service_Search
         $cases = array();
 
         foreach ($dbResults as $dbResult) {
+            $user = new Application_Model_Impl_User();
+            $user
+                ->setUserId($dbResult['user_id'])
+                ->setFirstName($dbResult['user_first_name'])
+                ->setLastName($dbResult['user_last_name']);
+
             $client = new Application_Model_Impl_Client();
             $client
                 ->setId($dbResult['client_id'])
@@ -376,6 +405,7 @@ class App_Service_Search
                 ->setId($dbResult['case_id'])
                 ->setOpenedDate($dbResult['opened_date'])
                 ->setStatus($dbResult['status'])
+                ->setOpenedUser($user)
                 ->setNeedList($dbResult['need_list'])
                 ->setTotalAmount($dbResult['total_amount'])
                 ->setClient($client);

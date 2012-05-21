@@ -5,24 +5,25 @@ echo $this->form;
 if (isset($this->clients)) {
     $addClientUrl = $this->baseUrl(App_Resources::MEMBER . '/editClient');
 
-    if (empty($this->clients)) {
+    if ($this->clients) {
+?>
+<div class=search-results>
+<table class=search-results>
+<?php
+foreach (array_values($this->clients) as $i => $client) {
+    echo $this->partial('partial/searchResultClient.phtml', array('i' => $i, 'client' => $client));
+}
+?>
+</table>
+</div>
+<p>Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a new client</a>?</p>
+<?php
+    } else {
 ?>
 <p>
 Your search query returned no results.
 Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a new client</a>?
 </p>
-<?php
-    } else {
-?>
-<div class=search-results>
-<table class=search-results>
-<?php
-$this->partialLoop()->setObjectKey('client');
-echo $this->partialLoop('partial/searchResultClient.phtml', $this->clients);
-?>
-</table>
-</div>
-<p>Would you like to <a href="<?php echo $this->escape($addClientUrl); ?>">add a new client</a>?</p>
 <?php
     }
 }

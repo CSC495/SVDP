@@ -11,7 +11,7 @@ class AdminController extends Zend_Controller_Action
     // Default landing for the admin
     public function indexAction()
     {
-        $this->view->pageTitle = "Admin Controller";
+        $this->view->pageTitle = "Admin Page";
     }
     
     private function initAdjustmentForm($form)
@@ -80,9 +80,27 @@ class AdminController extends Zend_Controller_Action
     public function usersAction()
     {
         $this->view->pageTitle = "Admin Viewing Users";
-        
+
         $service = new App_Service_AdminService();
-        $this->view->users = $service->getAllUsers();
+        $users   = $service->getAllUsers();
+
+        $this->view->users = array();
+        $lastRowLetter     = null;
+
+        foreach ($users as $userId => $user) {
+            $firstName = $user->getFirstName();
+
+            if ($lastRowLetter !== $firstName[0]) {
+                $lastRowLetter = $rowLetter = $firstName[0];
+            } else {
+                $rowLetter = null;
+            }
+
+            $this->view->users[$userId] = array(
+                'user' => $user,
+                'rowLetter' => $rowLetter,
+            );
+        }
     }
     
     // displays view for creating new member
@@ -159,8 +177,8 @@ class AdminController extends Zend_Controller_Action
         $mail = new Zend_Mail('utf-8');
         $transport = new App_Mail_Transport_AmazonSES(
         array(
-            'accessKey' => $_ENV["AWS_ACCESS_KEY_ID"],
-            'privateKey' => $_ENV["AWS_SECRET_ACCESS_KEY"]
+            'accessKey' => getenv("AWS_ACCESS_KEY_ID"),
+            'privateKey' => getenv("AWS_SECRET_ACCESS_KEY")
         ));
         
         $mail->setBodyHtml('You have been added to the SVDP organization.' .
@@ -265,10 +283,9 @@ class AdminController extends Zend_Controller_Action
         $service->updateUserInformation($user);
         
         $this->_forward('index', App_Resources::REDIRECT, null,
-                        Array( 'msg' => 'Member Data Updated Successfully!',
+                        Array( 'msg' => 'User Data Updated Successfully!',
                                'time' => 3,
                                'controller' => App_Resources::ADMIN,
-                               'action' => 'members'));
-        
+                               'action' => 'users'));   
     }
 }

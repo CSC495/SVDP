@@ -12,7 +12,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         'Other' => 'Other',
     );
 
-	private $_PARISH_OPTIONS = array(
+    private $_PARISH_OPTIONS = array(
         '' => '',
         'St. Raphael' => 'St. Raphael',
         'Holy Spirit' => 'Holy Spirit',
@@ -41,11 +41,35 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'method' => 'post',
             'decorators' => array(
                 'PrepareElements',
-                array('ViewScript', array('viewScript' => 'form/client-form.phtml')),
+                array('ViewScript', array(
+                    'viewScript' => 'form/client-form.phtml',
+                    'editing' => ($id !== null),
+                )),
                 'Form',
             ),
             'class' => 'form-horizontal twocol',
         ));
+
+        // General summary elements for clients with existing database entries.
+        if ($id !== null) {
+            $this->addElement('text', 'clientId', array(
+                'label' => 'Client ID',
+                'readonly' => true,
+                'dimension' => 2,
+            ));
+
+            $this->addElement('text', 'userName', array(
+                'label' => 'Creating user',
+                'readonly' => true,
+                'dimension' => 3,
+            ));
+
+            $this->addElement('text', 'createdDate', array(
+                'label' => 'Creation date',
+                'readonly' => true,
+                'dimension' => 2,
+            ));
+        }
 
         // Personal information elements:
 
@@ -347,6 +371,13 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'class' => 'phone',
         ));
 
+        if ($id !== null) {
+            $this->addElement('checkbox', 'moved', array(
+                'required' => true,
+                'label' => 'Moved?',
+            ));
+        }
+
         $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
 
         // Householders sub form:
@@ -400,6 +431,9 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function getClient()
     {
+        if ($this->_id) {
+        }
+
         $client = new Application_Model_Impl_Client();
         $client->setId($this->_id)
                ->setFirstName(App_Formatting::emptyToNull($this->firstName->getValue()))
@@ -436,6 +470,12 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function setClient($client)
     {
+        if ($this->_id !== null) {
+            $this->clientId->setValue($this->_id);
+            $this->userName->setValue($client->getUser()->getFullName());
+            $this->createdDate->setValue(App_Formatting::formatDate($client->getCreatedDate()));
+        }
+
         $this->firstName->setValue($client->getFirstName());
         $this->lastName->setValue($client->getLastName());
         $this->otherName->setValue($client->getOtherName());
