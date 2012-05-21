@@ -89,12 +89,12 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
     public function isChangeNeedsRequest(array $data)
     {
-        return isset($data['caseneedSubmit']);
+        return isset($data['caseneedRecordsRemoved']);
     }
 
     public function isChangeVisitsRequest(array $data)
     {
-        return isset($data['casevisitSubmit']);
+        return isset($data['casevisitRecordsRemoved']);
     }
 
     public function handleAddRemoveRecords(array $data)
