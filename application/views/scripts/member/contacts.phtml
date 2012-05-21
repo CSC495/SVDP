@@ -1,10 +1,27 @@
-<p>View member contact information.</p>
+<p>Viewing member contact information.</p>
+
+<p class=help-block>
+    Jump to:
+    <?php
+    foreach (range('A', 'Z') as $letter) {
+        echo '<a href="#' . $letter . '">' . $letter . '</a> ';
+    }
+    ?>
+</p>
 
 <div class=search-results>
-<table class=search-results>
-<?php
-$this->partialLoop()->setObjectKey('user');
-echo $this->partialLoop('partial/viewMemberForMember.phtml', $this->users);
-?>
-</table>
+    <table class=search-results>
+    <?php
+    echo $this->partialLoop('partial/viewMemberForMember.phtml', $this->users);
+    ?>
+    </table>
 </div>
+
+<p class=help-block>
+    Jump to:
+    <?php
+    foreach (range('A', 'Z') as $letter) {
+        echo '<a href="#' . $letter . '">' . $letter . '</a> ';
+    }
+    ?>
+</p>

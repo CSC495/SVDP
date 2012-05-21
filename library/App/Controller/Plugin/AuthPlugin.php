@@ -25,17 +25,25 @@ class App_Controller_Plugin_AuthPlugin extends Zend_Controller_Plugin_Abstract
         $auth = Zend_Auth::getInstance();
         // Check if user has not logged in
         if (!$auth->hasIdentity()
-                && $request->getControllerName() != App_Resources::LOGIN
-                && $request->getActionName()     != 'process') {
+                && $request->getControllerName() !== App_Resources::LOGIN
+                && $request->getActionName()     !== 'login') {
             $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('Redirector');
-            $redirector->gotoSimpleAndExit('process', App_Resources::LOGIN);
+            $redirector->gotoSimpleAndExit('login', App_Resources::LOGIN);
         }
 
-        // User is logged in or on login page.
+        // User is logged in
         if ($auth->hasIdentity()) {
             // Get users identity
             $identity = $auth->getIdentity();
-
+            // Send user to change password page if change is required
+            if( $identity->change_pswd
+                    && ($request->getControllerName() !== App_Resources::LOGIN
+                    || $request->getActionName() !== 'change')
+                    && $request->getActionName() !== 'logout'){
+                
+                $request->setControllerName(App_Resources::LOGIN)
+                        ->setActionName('change');
+            }
             // Check if role allows access to controller and action
             $isAllowed = $this->_acl->isAllowed($identity->role,
                                          $request->getControllerName(),

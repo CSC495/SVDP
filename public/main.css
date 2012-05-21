@@ -1,9 +1,9 @@
 @charset "utf-8";
 
-/* Layour Styles */
+/* Styles for layout: */
 
-.sidebar-nav {
-    padding: 9px 0;
+.sidebar-field {
+    padding-left: 3ex;
 }
 
 /* Styles for map view: */
@@ -12,29 +12,39 @@
     height: 400px;
 }
 
-/* Styles for edit client/case views: */
+/* Styles for two column horizontal forms: */
 
-form.member fieldset.row-fluid {
+.twocol fieldset.row-fluid {
     max-width: 960px;
 }
 
-form.member .span6 {
+.twocol .span6 {
     margin-left: 0 !important;
     padding-left: 0 !important;
 }
 
-form.member table {
-    margin-bottom: 18px;
+/* Styles for horizontal form tables: */
+
+table.records {
     max-width: 960px;
-    width: 100%;
 }
 
-form.member th {
-  vertical-align: bottom;
+table.records.narrow {
+    max-width: 480px;
 }
 
-form.member td .control-group {
-    margin-bottom: 0;
+table.records td {
+    vertical-align: middle;
+}
+
+td.remove {
+    width: 3ex;
+}
+
+input.remove {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 16px;
 }
 
 /* Styles for search views: */
@@ -46,7 +56,7 @@ div.search-results {
 table.search-results {
     border-bottom: 1px solid #ddd;
     border-collapse: collapse;
-    margin: 1em 0;
+    margin-bottom: 1em;
     table-layout: fixed;
     width: 100%;
 }
@@ -93,9 +103,26 @@ th.search-cell {
 
 /* Patches to Bootstrap: */
 
+.navbar {
+    margin-top: 18px;
+}
+
 .hero-unit .help-block {
     font-size: 13px;
     line-height: 18px;
+}
+
+form.form-horizontal table {
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+form.form-horizontal td .control-group {
+    margin-bottom: 0;
+}
+
+legend {
+    margin-bottom: 18px !important;
 }
 
 /* Base Bootstrap style: */
@@ -449,6 +476,9 @@ h6 {
   font-weight: bold;
   color: inherit;
   text-rendering: optimizelegibility;
+}
+h2.pad-right {
+  padding-right: 20px;
 }
 h1 small,
 h2 small,
@@ -1092,10 +1122,14 @@ select:focus:required:invalid:focus {
 .input-append select,
 .input-prepend .uneditable-input,
 .input-append .uneditable-input {
+  position: relative;
+  margin-bottom: 0;
   *margin-left: 0;
+  vertical-align: middle;
   -webkit-border-radius: 0 3px 3px 0;
-  -moz-border-radius: 0 3px 3px 0;
-  border-radius: 0 3px 3px 0;
+     -moz-border-radius: 0 3px 3px 0;
+          border-radius: 0 3px 3px 0;
+
 }
 .input-prepend input:focus,
 .input-append input:focus,
@@ -1129,9 +1163,11 @@ select:focus:required:invalid:focus {
 .input-append .add-on,
 .input-prepend .btn,
 .input-append .btn {
-  -webkit-border-radius: 3px 0 0 3px;
-  -moz-border-radius: 3px 0 0 3px;
-  border-radius: 3px 0 0 3px;
+  margin-left: -1px;
+  -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+          border-radius: 0;
+
 }
 .input-prepend .active,
 .input-append .active {
@@ -2651,9 +2687,9 @@ input[type="submit"].btn.btn-mini {
 }
 .nav-tabs > li > a,
 .nav-pills > li > a {
-  padding-right: 12px;
-  padding-left: 12px;
-  margin-right: 2px;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-right: 4px;
   line-height: 14px;
 }
 .nav-tabs {

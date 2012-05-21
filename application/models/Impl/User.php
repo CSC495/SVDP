@@ -18,6 +18,8 @@ class Application_Model_Impl_User
     
     private $_active;
     
+    private $_changePswdFlag;
+    
     public function setUserId($userId){
         // User ids should not be changed.
         // if someone trys to set it just return without
@@ -87,7 +89,15 @@ class Application_Model_Impl_User
     
     public function setActive($val){
         $this->_active = $val;
-
+        return $this;
+    }
+    
+    public function getChangePswdFlag(){
+        return $this->_changePswdFlag;
+    }
+    
+    public function setChangePswdFlag($flag){
+        $this->_changePswdFlag = $flag;
         return $this;
     }
     
@@ -101,5 +111,16 @@ class Application_Model_Impl_User
         if(!$this->_active)
             return 0;
         return $this->_active;
+    }
+
+    public function getFullName()
+    {
+        if ($this->_firstName === null) {
+            return (string) $this->_lastName;
+        }
+        if ($this->_lastName === null) {
+            return (string) $this->_firstName;
+        }
+        return $this->_firstName . ' ' . $this->_lastName;
     }
 }

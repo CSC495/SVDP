@@ -8,13 +8,19 @@ class SearchController extends Zend_Controller_Action
 
     /**
      * Main search action should never be linked to, but if someone access it manually, then we'll
-     * send them to member search page rather than just 404ing.
+     * send them to appropriate search page rather than just 404ing.
      */
     public function indexAction()
     {
-        // Redirect the index action to the member search page as that's what end users will likely
-        // want if they manually navigate there.
-        $this->_helper->redirector('member');
+        switch (Zend_Auth::getInstance()->getIdentity()->role) {
+            case App_Roles::MEMBER:
+                $this->_helper->redirector(App_Resources::MEMBER);
+
+            case App_Roles::TREASURER:
+                $this->_helper->redirector(App_Resources::TREASURER);
+        }
+
+        throw new UnexpectedValueException('Search is not supported for the current user role');
     }
 
     /**
@@ -32,13 +38,13 @@ class SearchController extends Zend_Controller_Action
             switch ($searchType) {
                 // Member searches by client ID go to a single client's page.
                 case Application_Model_Search_FormAbstract::TYPE_CLIENT_ID:
-                    $this->_helper->redirector('client', App_Resources::MEMBER, null, array(
+                    $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
                         'id' => $searchQuery,
                     ));
 
                 // Member searches by case ID go to a single case's page.
                 case Application_Model_Search_FormAbstract::TYPE_CASE_ID:
-                    $this->_helper->redirector('case', App_Resources::MEMBER, null, array(
+                    $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
                         'id' => $searchQuery,
                     ));
             }
@@ -84,7 +90,7 @@ class SearchController extends Zend_Controller_Action
             switch ($searchType) {
                 // Treasurer searches by check request go to a single check request's page.
                 case Application_Model_Search_FormAbstract::TYPE_CHECK_REQ_ID:
-                    $this->_helper->redirector('case', App_Resources::MEMBER, null, array(
+                    $this->_helper->redirector('checkReq', App_Resources::MEMBER, null, array(
                         'id' => $this->view->form->getQuery(),
                     ));
             }
@@ -145,7 +151,7 @@ class SearchController extends Zend_Controller_Action
         if (!$form->isValid($req->getQuery())) {
             foreach ($form->getMessages() as $elementErrors) {
                 foreach ($elementErrors as $error) {
-                    $this->_helper->flashMessenger($error);
+                    $this->_helper->flashMessenger(array('type' => 'error', 'text' => $error));
                 }
             }
             return false;

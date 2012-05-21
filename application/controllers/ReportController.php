@@ -7,13 +7,12 @@ class ReportController extends Zend_Controller_Action
     {
         $this->view->pageTitle = "Report Controller";
         
-        $sessionNamespace = new Zend_Session_Namespace();
     }
 
     public function indexAction()
     {
         $this->view->pageTitle = "Report Controller";
-         $this->view->form = new Application_Model_reportForm(); 
+         $this->view->form = new Application_Model_Report_reportForm(); 
     }
      public function processAction(){
    	$request = $this->getRequest();
@@ -24,24 +23,23 @@ class ReportController extends Zend_Controller_Action
         }
         
         // Get our form and validate it
-        $form = new Application_Model_reportForm();
+        $form = new Application_Model_Report_reportForm(); 
        
-        $sessionNamespace = new Zend_Session_Namespace();
         $valid = true;
  	
 	$this->view->error_flag = FALSE;
 	
         $form->populate($_POST);
         
-	if($form->report1->isChecked())
+	if($form->rReport->isChecked())
 	{
-	    $this->_helper->redirector('reimburseform');
+	    $this->_helper->redirector('reimbursementreport');
 	}
-	else if($form->report2->isChecked())
+	else if($form->oReport->isChecked())
 	{
 	    $this->_helper->redirector('ocactivities');
 	}
-        else if($form->report3->isChecked())
+        else if($form->cReport->isChecked())
 	{            
 	    $this->_helper->redirector('clientinfo');
 	}
@@ -50,17 +48,25 @@ class ReportController extends Zend_Controller_Action
     }
     public function clientinfoAction(){
 	$this->view->pageTitle = "Client Information Report"; 
-	$sessionNamespace = new Zend_Session_Namespace();
-        $this->view->form = new Application_Model_clientReport(); 
+        $this->view->form = new Application_Model_Report_clientReport(); 
+    }
+    public function clientresultsAction(){
+	$this->view->pageTitle = "Client Information Report";
+	$form = new Application_Model_Report_clientReport();
+	$form->populate($_POST);
+	$cId = $form->clientid->getValue();
+	$service = new App_Service_Member();	
+	$this->view->client = $service->getClientById($cId);
+	
     }
     public function ocactivitiesAction(){
 	$this->view->pageTitle = "On Call Activities Report"; 
     }
-    public function reimburseformAction(){
+    public function reimbursementreportAction(){
 	$this->view->pageTitle = "Reimbursement Report"; 
-	$sessionNamespace = new Zend_Session_Namespace();
-        $this->view->form = new Application_Model_clientReport(); 
+        $this->view->form = new Application_Model_Report_reimbursementReport(); 
     }
+     
 
 }
 

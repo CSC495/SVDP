@@ -6,7 +6,7 @@ class MemberController extends Zend_Controller_Action
 {
 
     /**
-     * Home page action: currently just redirects to the map search screen.
+     * Home page action: just redirects to the map search screen.
      */
     public function indexAction()
     {
@@ -21,7 +21,11 @@ class MemberController extends Zend_Controller_Action
         $this->view->pageTitle = 'Maps';
         $this->view->form = new Application_Model_Member_MapForm();
 
-        // If we don't have any GET parameters, display the form but not the map.
+        // Load the Google Maps JavaScript API.
+        $this->view->headScript()->appendFile(
+            'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry');
+
+        // If we don't have any GET parameters, display the form but don't look up any coordinates.
         $request = $this->getRequest();
 
         if (!$request->getQuery('search') && !$request->getQuery('newClient')) {
@@ -47,20 +51,28 @@ class MemberController extends Zend_Controller_Action
                     'city' => $addr->getCity(),
                     'state' => $addr->getState(),
                     'zip' => $addr->getZip(),
+                    'parish' => $addr->getParish(),
                 )
             );
         }
 
-        // If we got this far, the address seems (vaguely) legit, and so we can fetch geolocation
-        // data.
+        // If we got this far, the address seems (vaguely) legit, and so we can get geocoding data.
         $service = new App_Service_Map($this->view->form->getAddr());
 
         // Respond to geocoding errors.
         if ($service->hasErrorMsg()) {
-            $this->_helper->flashMessenger($service->getErrorMsg());
+            $this->_helper->flashMessenger(array(
+                'type' => 'error',
+                'text' => $service->getErrorMsg(),
+            ));
             return;
-        } else if (!$service->hasResult()) {
-            $this->_helper->flashMessenger('No results were found for that address.');
+        }
+
+        if (!$service->hasResult()) {
+            $this->_helper->flashMessenger(array(
+                'type' => 'error',
+                'text' => 'No results were found for that address.',
+            ));
             return;
         }
 
@@ -69,9 +81,6 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->setAddr($service->getAddr());
         $this->view->latitude = $service->getLatitude();
         $this->view->longitude = $service->getLongitude();
-
-        $this->view->headScript()->appendFile(
-            'http://maps.googleapis.com/maps/api/js?sensor=false&libraries=geometry');
     }
 
     /**
@@ -85,6 +94,205 @@ class MemberController extends Zend_Controller_Action
         $service           = new App_Service_Search();
         $userId            = Zend_Auth::getInstance()->getIdentity()->user_id;
         $this->view->cases = $service->getOpenCasesByUserId($userId);
+    }
+
+    /**
+     * Action that allows members to edit the parish schedule.
+     */
+    public function editscheduleAction()
+    {
+        $this->view->pageTitle = 'Edit Schedule';
+
+        $request = $this->getRequest();
+        $service = new App_Service_Member();
+        $users   = $this->fetchMemberOptions($service);
+
+        $this->view->form = new Application_Model_Member_ScheduleForm($users);
+
+        if (!$request->isPost()) {
+            // If this isn't a POST request, fill the form from existing entries.
+            $this->view->form->setEntries(Zend_Registry::get('schedule'));
+            return;
+        }
+
+        // Repopulate the form with POST data.
+        $data = $request->getPost();
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        if ($this->view->form->handleAddRemoveEntries($data)
+                || !$this->view->form->isValid($data)) {
+            // If the user just added or removed a schedule entry, then we're done. Do likewise for
+            // validation errors.
+            return;
+        }
+
+        // Handle added, modified, and deleted schedule entries.
+        foreach ($this->view->form->getChangedEntries() as $changedEntry) {
+            $service->changeScheduleEntry($changedEntry);
+        }
+        $service->removeScheduleEntries($this->view->form->getRemovedEntries());
+        $this->_helper->redirector('editSchedule');
+    }
+
+    /**
+     * Action that lists contacts for parish members.
+     */
+    public function contactsAction()
+    {
+        $this->view->pageTitle = 'Member Contact List';
+
+        $service = new App_Service_AdminService();
+        $users   = $service->getAllUsers();
+
+        $this->view->users = array();
+        $lastRowLetter     = null;
+
+        foreach ($users as $userId => $user) {
+            $firstName = $user->getFirstName();
+
+            if ($lastRowLetter !== $firstName[0]) {
+                $lastRowLetter = $rowLetter = $firstName[0];
+            } else {
+                $rowLetter = null;
+            }
+
+            $this->view->users[$userId] = array(
+                'user' => $user,
+                'rowLetter' => $rowLetter,
+            );
+        }
+    }
+
+    /**
+     * Action that shows a landing page for the given client.
+     */
+    public function viewclientAction()
+    {
+        // If no ID was provided, bail out.
+        if (!$this->_hasParam('id')) {
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        // Fetch client data for display.
+        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+
+        $memberService = new App_Service_Member();
+        $searchService = new App_Service_Search();
+
+        $client   = $memberService->getClientById($this->_getParam('id'));
+        $cases    = $searchService->getCasesByClientId($client->getId());
+        $comments = $memberService->getCommentsByClientId($client->getId());
+
+        // Initialize the client view form.
+        $this->view->pageTitle = 'View Client';
+        $this->view->form      = new Application_Model_Member_ViewClientForm(
+            $userId, $client, $cases, $comments);
+
+        // If this isn't a POST request or form validation fails, bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost() || !$this->view->form->isValid($request->getPost())) {
+            return;
+        }
+
+        // Handle requests to add client comments.
+        $comment = $this->view->form->getAddedComment($request->getPost());
+
+        if ($comment !== null) {
+            $memberService->createClientComment($client->getId(), $comment);
+        }
+
+        // Redirect back to view client action to display updated case data.
+        $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
+            'id' => $client->getId(),
+        ));
+    }
+
+    /**
+     * Action that shows a landing page for the given case.
+     */
+    public function viewcaseAction()
+    {
+        // If no ID was provided, bail out.
+        if (!$this->_hasParam('id')) {
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        // Fetch client data for display.
+        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+
+        $service = new App_Service_Member();
+
+        $case     = $service->getCaseById($this->_getParam('id'));
+        $comments = $service->getCommentsByCaseId($case->getId());
+        $users    = $this->fetchMemberOptions($service);
+
+        // Initialize the case view form.
+        $this->view->pageTitle = 'View Case';
+        $this->view->form      = new Application_Model_Member_ViewCaseForm(
+            $userId, $case, $comments, $users);
+
+        // If this isn't a POST request, populate the form from the database and bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost()) {
+            $this->view->form->setNeeds($case->getNeeds());
+            $this->view->form->setVisits($case->getVisits());
+            return;
+        }
+
+        // Repopulate the form with POST data.
+        $data = $request->getPost();
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        if (!$this->view->form->isChangeNeedsRequest($data)) {
+            $this->view->form->setNeeds($case->getNeeds());
+        }
+
+        if (!$this->view->form->isChangeVisitsRequest($data)) {
+            $this->view->form->setVisits($case->getVisits());
+        }
+
+        // If the user is adding or removing needs/visits or form validation fails, bail out.
+        if ($this->view->form->handleAddRemoveRecords($data)
+            || !$this->view->form->isValid($data)) {
+            return;
+        }
+
+        // Handle requests to close the case.
+        if ($this->view->form->isCloseCaseRequest($data)) {
+            $service->closeCaseById($case->getId());
+        }
+
+        // Handle requests to add, edit, and/or remove case needs.
+        if ($this->view->form->isChangeNeedsRequest($data)) {
+            foreach ($this->view->form->getChangedNeeds() as $changedNeed) {
+                $service->changeCaseNeed($case->getId(), $changedNeed);
+            }
+            $service->removeCaseNeeds($this->view->form->getRemovedNeeds());
+        }
+
+        // Handle requests to add, edit, and/or remove case visits.
+        if ($this->view->form->isChangeVisitsRequest($data)) {
+            foreach ($this->view->form->getChangedVisits() as $changedVisit) {
+                $service->changeCaseVisit($case->getId(), $changedVisit);
+            }
+            $service->removeCaseVisits($this->view->form->getRemovedVisits());
+        }
+
+        // Handle requests to add case comments.
+        $comment = $this->view->form->getAddedComment($data);
+
+        if ($comment !== null) {
+            $service->createCaseComment($case->getId(), $comment);
+        }
+
+        // Redirect back to view case action to display updated case data.
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $case->getId(),
+        ));
     }
 
     /**
@@ -117,11 +325,13 @@ class MemberController extends Zend_Controller_Action
                     && $this->_hasParam('state')) {
                 // Using address information from map action.
                 $addr = new Application_Model_Impl_Addr();
-                $addr->setStreet($this->_getParam('street'))
-                     ->setApt($this->_getParam('apt') !== '' ? $this->_getParam('apt') : null)
-                     ->setCity($this->_getParam('city'))
-                     ->setState($this->_getParam('state'))
-                     ->setZip($this->_getParam('zip') !== '' ? $this->_getParam('zip') : null);
+                $addr
+                    ->setStreet($this->_getParam('street'))
+                    ->setApt(App_Formatting::emptyToNull($this->_getParam('apt')))
+                    ->setCity($this->_getParam('city'))
+                    ->setState($this->_getParam('state'))
+                    ->setZip(App_Formatting::emptyToNull($this->_getParam('zip')))
+                    ->setParish(App_Formatting::emptyToNull($this->_getParam('parish')));
 
                 $client = new Application_Model_Impl_Client();
                 $client->setCurrentAddr($addr);
@@ -141,63 +351,221 @@ class MemberController extends Zend_Controller_Action
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
-        // Handles requests to add new householders or employers.
-        if ($this->view->form->isAddHouseholderRequest($data)) {
-            $this->view->form->addHouseholder();
-            return;
-        }
-
-        if ($this->view->form->isAddEmployerRequest($data)) {
-            $this->view->form->addEmployer();
-            return;
-        }
-
         // If the user just submitted the form, make some validation goodness happen.
-        if (!$this->view->form->isValid($data)) {
+        // If the user requested that we add or remove a household member or employer, or if form
+        // validation failed, then we're done here.
+        if ($this->view->form->handleAddRemoveRecords($data)
+                || !$this->view->form->isValid($data)) {
             return;
         }
 
         // If we passed validation, insert or update the database as required.
+        $client = $this->view->form->getClient();
+
         if ($this->_hasParam('id')) {
             // TODO: Update existing client.
         } else {
-            $client       = $this->view->form->getClient();
-            $householders = $this->view->form->getHouseholders();
-            $employers    = $this->view->form->getEmployers();
+            $householders = $this->view->form->getChangedHouseholders();
+            $employers    = $this->view->form->getChangedEmployers();
+
+            $user = new Application_Model_Impl_User();
+            $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
 
             $client
-                ->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id)
+                ->setUser($user)
                 ->setCreatedDate(date('Y-m-d'));
 
             if ($client->isMarried()) {
                 $client->getSpouse()
-                    ->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id)
+                    ->setUser($user)
                     ->setCreatedDate(date('Y-m-d'));
             }
 
             $client = $service->createClient($client, $householders, $employers);
-
-            $this->_helper->redirector('editClient', App_Resources::MEMBER, null, array(
-                'id' => $client->getId(),
-            ));
         }
+
+        $this->_helper->redirector('viewClient', App_Resources::MEMBER, null, array(
+            'id' => $client->getId(),
+        ));
     }
 
     /**
-     * Action that allows members to add new cases or edit data about existing cases.
+     * Action that allows members to add new cases.
      */
-    public function editcaseAction()
+    public function newcaseAction()
     {
-    	$this->view->pageTitle = 'Case View/Edit';
-    	$this->view->form      = new Application_Model_Member_CaseForm();
+        // If no client ID was provided, bail out.
+        if (!$this->_hasParam('clientId')) {
+            throw new UnexpectedValueException('No client ID parameter provided');
+        }
+
+        // Initialize the new case form.
+        $service = new App_Service_Member();
+        $client  = $service->getClientById($this->_getParam('clientId'));
+
+        $this->view->pageTitle = 'New Case';
+        $this->view->client    = $client;
+        $this->view->form      = new Application_Model_Member_CaseForm($client->getId());
+
+        // If this isn't a post request, then we're done.
+        $request = $this->getRequest();
+
+        if (!$request->isPost()) {
+            // Since there must always be at least one need for any given case, help the user out by
+            // adding a blank need.
+            $this->view->form->addEmptyNeed();
+            return;
+        }
+
+        // Re-add existing form data.
+        $data = $request->getPost();
+
+        $this->view->form->preValidate($data);
+        $this->view->form->populate($data);
+
+        // If the user just submitted the form, make some validation goodness happen.
+        if ($this->view->form->handleAddRemoveNeeds($data) || !$this->view->form->isValid($data)) {
+            return;
+        }
+
+        // If we passed validation, try and get the needs for the new case.
+        $needs = $this->view->form->getChangedNeeds();
+
+        if (!$needs) {
+            $this->_helper->flashMessenger(array(
+                'type' => 'error',
+                'text' => 'You must add at least one case need.',
+            ));
+            return;
+        }
+
+        // Add the new case to the database and redirect to the new case's view page.
+        $user = new Application_Model_Impl_User();
+        $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
+
+        $case = new Application_Model_Impl_Case();
+        $case
+            ->setClient($client)
+            ->setOpenedUser($user)
+            ->setOpenedDate(date('Y-m-d'))
+            ->setStatus('Open')
+            ->setNeeds($needs);
+
+        $case = $service->createCase($case);
+
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $case->getId(),
+        ));
     }
 
-    public function contactsAction()
+    /**
+     * Action allowing members to add referrals to unprocessed case needs.
+     */
+    public function newreferralAction()
     {
-        $this->view->pageTitle = 'Member Contact List';
+        // If no case ID or case need ID was provided, bail out.
+        if (!$this->_hasParam('caseId')) {
+            throw new UnexpectedValueException('No case ID parameter provided');
+        }
 
-        $service = new App_Service_AdminService();
+        if (!$this->_hasParam('needId')) {
+            throw new UnexpectedValueException('No case need ID parameter provided');
+        }
 
-        $this->view->users = $service->getParishMembers();
+        // Create the referral form.
+        $caseId                = $this->_getParam('caseId');
+        $needId                = $this->_getParam('needId');
+        $this->view->pageTitle = 'New Referral';
+        $this->view->form      = new Application_Model_Member_ReferralForm($caseId, $needId);
+
+        // If this isn't a POST request or form validation fails, bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost() || !$this->view->form->isValid($request->getPost())) {
+            return;
+        }
+
+        // If everyone's kosher with the form, then we can add the referral and redirect back to the
+        // case view page.
+        $referral = $this->view->form->getReferral();
+        $referral->setDate(date('Y-m-d'));
+
+        $service = new App_Service_Member();
+        $service->createReferral($needId, $referral);
+
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $caseId,
+        ));
+    }
+
+    /**
+     * Action allowing members to open check requests for unprocessed case needs.
+     */
+    public function newcheckreqAction()
+    {
+        // If no case ID, case need ID, or amount was provided, bail out.
+        if (!$this->_hasParam('caseId')) {
+            throw new UnexpectedValueException('No case ID parameter provided');
+        }
+
+        if (!$this->_hasParam('needId')) {
+            throw new UnexpectedValueException('No case need ID parameter provided');
+        }
+
+        if (!$this->_hasParam('amount')) {
+            throw new UnexpectedValueException('No amount parameter provided');
+        }
+
+        // Create the check request form.
+        $caseId                = $this->_getParam('caseId');
+        $needId                = $this->_getParam('needId');
+        $amount                = $this->_getParam('amount');
+        $this->view->pageTitle = 'New Check Request';
+        $this->view->form      = new Application_Model_Member_CheckReqForm(
+            $caseId,
+            $needId,
+            $amount
+        );
+
+        // If this isn't a POST request or form validation fails, bail out.
+        $request = $this->getRequest();
+
+        if (!$request->isPost()) {
+            $this->view->form->setAmount($amount);
+            return;
+        }
+
+        if (!$this->view->form->isValid($request->getPost())) {
+            return;
+        }
+
+        // If everyone's kosher with the form, then we can add the check request and redirect back
+        // to the case view page.
+        $user = new Application_Model_Impl_User();
+        $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
+
+        $checkReq = $this->view->form->getCheckReq();
+        $checkReq
+            ->setCaseNeedId($needId)
+            ->setUser($user)
+            ->setRequestDate(date('Y-m-d'));
+
+        $service = new App_Service_Member();
+        $service->createCheckRequest($checkReq);
+
+        $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
+            'id' => $caseId,
+        ));
+    }
+
+    private function fetchMemberOptions(App_Service_Member $service)
+    {
+        $users = $service->getActiveMembers();
+
+        foreach ($users as &$user) {
+            $user = $user->getFirstName() . ' ' . $user->getLastName();
+        }
+
+        return array('' => '') + $users;
     }
 }

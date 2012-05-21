@@ -46,7 +46,7 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
      * @param Zend_View_Interface $view
      * @return string
      */
-    public function render($view = null)
+    public function render(Zend_View_Interface $view = null)
     {
         if (!$this->_showNewClientButton) {
             $this->removeElement('newClient');

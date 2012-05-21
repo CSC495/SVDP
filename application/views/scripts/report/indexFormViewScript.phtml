@@ -1,0 +1,30 @@
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod()) ?>">
+      
+<table>
+    <tr>
+        <td>
+            <br />Reimbursement Form
+        </td>
+        <td>
+            <br /><?php echo $this->element->rReport?> 
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <br />On Call Activities
+        </td>
+        <td>
+            <br /><?php echo $this->element->oReport?> 
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <br />Client Information
+        </td>
+        <td>
+            <br /><?php echo $this->element->cReport?>
+        </td>
+    </tr>
+</table>
+</form>

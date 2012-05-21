@@ -1,53 +1,37 @@
 
 <form action="<?php echo $this->escape($this->element->getAction()) ?>"
       method="<?php echo $this->escape($this->element->getMethod()) ?>"
+      class="twocol form-horizontal"
       onsubmit="javascript:return validate_new(this)">
 
-<fieldset>
-    <legend>Add New SVDP Member</legend>
+<fieldset class="row-fluid">
+    <legend>Add New SVDP User</legend>
     
-    <table>
-        <tr>
-            <td>
-                <?php echo $this->element->firstname ?>
-                
-            </td>
-            
-            <td>
-                <?php echo $this->element->lastname ?>
-                
-            </td>
-            
-        </tr>
-        <tr>
-            <td>
-                <?php echo $this->element->phonetype; ?>
-            </td>
-            <td>
-                <?php echo $this->element->phone ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <?php echo $this->element->otherphonetype ?>
-            </td>
-            <td>
-                <?php echo $this->element->otherphone ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <?php echo $this->element->email ?>
-            </td>
-        </tr>
-        
-        <tr>
-            <td>
-            <?php echo $this->element->type ?>
-            </td>
-        </tr>
+    <div class="span6">
+        <?php echo $this->element->firstname ?>
+    </div>
     
-    </table>
+    <div class="span6">
+        <?php echo $this->element->lastname ?>
+    </div>   
+     
+    <div class="span6">           
+        <?php echo $this->element->home ?>
+    </div>
+
+    <div class="span6">
+        <?php echo $this->element->cell ?>
+    </div>
+</fieldset>
+<fieldset class="row-fluid">
+    <div class="span6">
+        <?php echo $this->element->email ?>
+    </div>
+
+    <div class="span6">
+        <?php echo $this->element->role ?>
+    </div>
+
 </fieldset>
     
     <?php echo $this->element->submit ?>

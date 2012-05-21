@@ -63,13 +63,13 @@ class App_Service_Search
     public function getClientsByAddr($addr)
     {
         $likeAddr = '%' . App_Escaping::escapeLike($addr) . '%';
-        $select  = $this->initClientSelect()
+        $select   = $this->initClientSelect()
             ->where(
                 'a.street LIKE ? OR a.apt LIKE ? OR a.city LIKE ? OR a.state LIKE ?'
                     . ' OR a.zipcode LIKE ?',
                 $likeAddr, $likeAddr, $likeAddr, $likeAddr, $likeAddr
             );
-        $results = $this->_db->fetchAssoc($select);
+        $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildClientModels($results);
     }
@@ -82,12 +82,13 @@ class App_Service_Search
      */
     public function getClientsByPhone($phone)
     {
-        $select  = $this->initClientSelect()
+        $likePhone = '%' . App_Escaping::escapeLike($phone) . '%';
+        $select    = $this->initClientSelect()
             ->where(
-                'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ?',
-                $phone, $phone, $phone
+                'c.cell_phone LIKE ? OR c.home_phone LIKE ? OR c.work_phone LIKE ?',
+                $likePhone, $likePhone, $likePhone
             );
-        $results = $this->_db->fetchAssoc($select);
+        $results   = $this->_db->fetchAssoc($select);
 
         return $this->buildClientModels($results);
     }
@@ -105,6 +106,20 @@ class App_Service_Search
         $select  = $this->initCaseSelect()
             ->where('s.opened_user_id = ?', $userId)
             ->where('s.status <> "Closed"');
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCaseModels($results);
+    }
+
+    /**
+     * Retrieve a list of case history for the specified client.
+     *
+     * @param string $caseId
+     * @return Application_Model_Impl_Case[]
+     */
+    public function getCasesByClientId($clientId) {
+        $select  = $this->initCaseSelect()
+            ->where('c.client_id = ?', $clientId);
         $results = $this->_db->fetchAssoc($select);
 
         return $this->buildCaseModels($results);
@@ -185,11 +200,12 @@ class App_Service_Search
      */
     public function getCheckReqsByClientPhone($phone)
     {
+        $likePhone = '%' . App_Escaping::escapeLike($phone) . '%';
         $select  = $this->initCheckReqSelect()
             ->where(
-                'c.cell_phone = ? OR c.home_phone = ? OR c.work_phone = ? OR c2.cell_phone = ?'
-                    . ' OR c2.home_phone = ? OR c2.work_phone = ?',
-                $phone, $phone, $phone, $phone, $phone, $phone
+                'c.cell_phone LIKE ? OR c.home_phone LIKE ? OR c.work_phone LIKE ?'
+                    . ' OR c2.cell_phone LIKE ? OR c2.home_phone = ? OR c2.work_phone = ?',
+                $likePhone, $likePhone, $likePhone, $likePhone, $likePhone, $likePhone
             );
         $results = $this->_db->fetchAssoc($select);
 
@@ -270,6 +286,15 @@ class App_Service_Search
                     'total_amount' => 'SUM(n.amount)',
                 )
             )
+            ->join(
+                array('u' => 'user'),
+                's.opened_user_id = u.user_id',
+                array(
+                    'u.user_id',
+                    'user_first_name' => 'u.first_name',
+                    'user_last_name' => 'u.last_name',
+                )
+            )
             ->join(array('h' => 'household'), 's.household_id = h.household_id', array())
             ->join(
                 array('c' => 'client'),
@@ -284,7 +309,7 @@ class App_Service_Search
                 )
             )
             ->group('n.case_id')
-            ->order(array('c.last_name', 'c.first_name', 'c.client_id', 's.case_id'));
+            ->order('s.opened_date DESC', 's.case_id');
     }
 
     private function initCheckReqSelect()
@@ -360,6 +385,12 @@ class App_Service_Search
         $cases = array();
 
         foreach ($dbResults as $dbResult) {
+            $user = new Application_Model_Impl_User();
+            $user
+                ->setUserId($dbResult['user_id'])
+                ->setFirstName($dbResult['user_first_name'])
+                ->setLastName($dbResult['user_last_name']);
+
             $client = new Application_Model_Impl_Client();
             $client
                 ->setId($dbResult['client_id'])
@@ -374,6 +405,7 @@ class App_Service_Search
                 ->setId($dbResult['case_id'])
                 ->setOpenedDate($dbResult['opened_date'])
                 ->setStatus($dbResult['status'])
+                ->setOpenedUser($user)
                 ->setNeedList($dbResult['need_list'])
                 ->setTotalAmount($dbResult['total_amount'])
                 ->setClient($client);
