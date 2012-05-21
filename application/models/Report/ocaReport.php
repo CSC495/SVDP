@@ -4,12 +4,12 @@ class Application_Model_Report_ocaReport extends Twitter_Bootstrap_Form_Vertical
 	
 	public function __construct($options = null){
 		parent::__construct($options);
-		$this->setName('clientinfo');
-		$this->setAttrib('id', 'clientinfo');
+		$this->setName('oca');
+		$this->setAttrib('id', 'oca');
 		$this->setMethod('post');
 		
 		$baseUrl = new Zend_View_Helper_BaseUrl();
-		$this->setAction($baseUrl->baseUrl('/report/ocactivities/'));
+		$this->setAction($baseUrl->baseUrl('/report/ocactivitiesresults/'));
 		
 		$this->setDecorators(array(
 			array('ViewScript', array('viewScript' => 'report/ocaReportViewScript.phtml'))

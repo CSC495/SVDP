@@ -63,6 +63,42 @@ class ReportController extends Zend_Controller_Action
 	$this->view->pageTitle = "On Call Activities Report";
 	$this->view->form = new Application_Model_Report_ocaReport();
     }
+    public function ocactivitiesresultsAction(){
+	$this->view->pageTitle = "On Call Activities Report";
+	$form = new Application_Model_Report_ocaReport();
+	$form->populate($_POST);
+	$start = $form->startDate->getValue();
+	$end = $form->endDate->getValue();
+	$service = new App_Service_DocumentService();
+	//calculate total miles for cases
+	$homeVisit = 0;
+	$teleVisit = 0;
+	$miles = $service->getCaseVisitMiles($start, $end);
+	foreach($miles as $row)
+	{
+	    //if miles is greater than zero its a home visit
+	    if($row['totalMiles'] > 0)
+	    {
+		$homeVisit += 1;
+	    }
+	    else //else its a phone visit
+	    {
+		$teleVisit += 1;
+	    }	    
+	}
+	$this->view->home = $homeVisit;
+	$this->view->tele = $teleVisit;
+	
+	$totalHours = 0;
+	$hours = $service->getCaseVisitHours($start, $end);
+	foreach($hours as $row)
+	{
+	    $totalHours = $totalHours + $row;	    
+	}
+	$this->view->totalHours = $totalHours;
+	
+	
+    }
     public function reimbursementreportAction(){
 	$this->view->pageTitle = "Reimbursement Report"; 
         $this->view->form = new Application_Model_Report_reimbursementReport(); 

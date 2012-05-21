@@ -36,11 +36,7 @@
     <tr>
         <td>&nbsp;Date Created:&nbsp;<?php echo $this->client->getCreatedDate() ?>&nbsp;</td>
         <td>&nbsp;Parish:&nbsp;<?php echo $this->client->getParish() ?>&nbsp;</td>
-<<<<<<< HEAD
         <td>&nbsp;Veteran:&nbsp;<?php if($this->client->isVeteran()){echo "Yes";}else{echo "No";} ?>&nbsp;</td>
-=======
-        <td>&nbsp;Veteran:&nbsp;<?php if($this->client->isVeteran()){echo "Yes";} ?>&nbsp;</td>
->>>>>>> c79b9b0788b036d6abd5177d15a770ba141706aa
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -62,8 +58,8 @@
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     <tr>
-        <td>&nbsp;House Members:&nbsp;<?php echo $this->client->getEmployment() ?>&nbsp;</td>
-        <td>&nbsp;Employment:&nbsp;<?php echo $this->client->getHouseMembers() ?>&nbsp;</td>
+        <td>&nbsp;House Members:&nbsp;<?php /*echo $this->client->getHouseMembers()*/ ?>&nbsp;</td>
+        <td>&nbsp;Employment:&nbsp;<?php /*echo $this->client->getEmployment()*/ ?>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
 </table>
