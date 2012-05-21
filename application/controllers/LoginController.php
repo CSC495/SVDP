@@ -105,7 +105,7 @@ class LoginController extends Zend_Controller_Action
             // Render view with error
             return;
         }
-        
+
         // find users info
         $service = new App_Service_LoginService();
         $username = $this->view->form->getValue('username');
@@ -130,17 +130,16 @@ class LoginController extends Zend_Controller_Action
             $mail->setSubject('SVDP Password Reset');
             
             $mail->send($transport);
-
             
             // Update DB with temp password
             $admin = new App_Service_AdminService();
             $admin->resetUserPassword($username,$password);
             
-            $this->_forward('index', App_Resources::REDIRECT, null,
-                        Array( 'msg' => 'Your password will be emailed to you shortly.',
+            return $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Your new password will be emailed to you shortly.',
                                'time' => 3,
-                               'controller' => App_Resources::INDEX,
-                               'action' => 'index'));
+                               'controller' => App_Resources::LOGIN,
+                               'action' => 'index')); 
         }
         
         return $this->_helper->redirector('login');
@@ -158,13 +157,6 @@ class LoginController extends Zend_Controller_Action
         $this->_helper->redirector('index');
     }
     /**
-     * Handles the configuration of the authentication adapter
-     *
-     * @usedby LoginController::process()
-     * @return void
-     */
-    
-    /**
      * Handles the authentication of a user
      *
      * @usedby LoginController::processAction()
@@ -172,7 +164,6 @@ class LoginController extends Zend_Controller_Action
      * @param string $password
      * @return void
      */
-    //PASS THESE PARAMS IN SERVICE
     protected function authenticate($userid, $password)
     {
         $auth = Zend_Auth::getInstance();
