@@ -610,8 +610,8 @@ class App_Service_Member
                     'current_flag' => 1,
                 ));
 
-                $householdIds = array($this->_db->lastInsertId());
-                $client->setHouseholdId($householdIds[0]);
+                $client->setHouseholdId($this->_db->lastInsertId());
+                $householdIds = array($client->getHouseholdId());
 
                 // If the client got unmarried, insert a new household for the old spouse.
                 if ($oldSpouse) {
@@ -621,23 +621,21 @@ class App_Service_Member
                         'current_flag' => 1,
                     ));
 
-                    $householdIds[] = $this->_db->lastInsertId();
+                    $oldSpouse->setHouseholdId($this->_db->lastInsertId());
+                    $householdIds[] = $oldSpouse->getHouseholdId();
                 }
 
-                // Also, we're going to (re-)insert all the householders later.
-                foreach ($changedHouseholders as $changedHouseholder) {
-                    $changedHouseholder->setId(null);
-                }
+                // (Re-)insert household members for the client and the old spouse (if present).
+                foreach ($householdIds as $householdId) {
+                    foreach ($changedHouseholders as $changedHouseholder) {
+                        $changedHouseholder->setId(null);
+                    }
 
-                $removedHouseholders = array();
+                    $this->changeHouseholders($householdId, $changedHouseholders);
+                }
             } else {
-                $householdIds = array($client->getHouseholdId());
-            }
-
-            // Handle household members changes in all relevant households.
-            foreach ($householdIds as $householdId) {
                 // Insert/update household members.
-                $this->changeHouseholders($householdId, $changedHouseholders);
+                $this->changeHouseholders($client->getHouseholdId(), $changedHouseholders);
 
                 // Remove household members.
                 $this->removeHouseholders($removedHouseholders);
