@@ -2,8 +2,8 @@
 
 /* Styles for layout: */
 
-.sidebar-nav {
-    padding: 9px 0;
+.sidebar-field {
+    padding-left: 3ex;
 }
 
 /* Styles for map view: */
@@ -27,6 +27,14 @@
 
 table.records {
     max-width: 960px;
+}
+
+table.records.narrow {
+    max-width: 480px;
+}
+
+table.records td {
+    vertical-align: middle;
 }
 
 td.remove {

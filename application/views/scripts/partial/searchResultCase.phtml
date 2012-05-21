@@ -3,13 +3,14 @@ $rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
 $viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
     . urlencode($this->case->getClient()->getId()));
 
+$caseId = $this->escape($this->case->getId());
+
 $options = array(
     'rowStripeClass' => $rowStripeClass,
     'viewClientUrl' => $viewClientUrl,
     'client' => $this->case->getClient(),
+    'noClientHeader' => !empty($this->noClientHeader),
 );
-
-$caseId = $this->escape($this->case->getId());
 
 if (empty($this->noCaseLinks)) {
     $viewCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/viewCase/id/'
@@ -28,16 +29,27 @@ if (empty($this->noCaseLinks)) {
     $postCaseId = '';
 }
 
-echo $this->partial('partial/searchResultCommon.phtml', $options);
+if (empty($this->noClientHeader)) {
+    $topClass = '';
+    echo $this->partial('partial/searchResultCommon.phtml', $options);
+} else {
+    $topClass = ' top';
+}
 ?>
 <tr class="search-result <?php echo $rowStripeClass; ?>">
-    <th class="search-cell first">Case ID</th>
-    <td class=search-cell><?php echo $preCaseId, $caseId, $postCaseId; ?></td>
-    <th class=search-cell>Date</th>
-    <td class=search-cell><?php echo $this->escape(App_Formatting::formatDate($this->case->getOpenedDate())); ?></td>
-    <th class=search-cell>Status</th>
-    <td class=search-cell><?php echo $this->escape($this->case->getStatus()); ?></td>
-    <td class="search-cell last"></td>
+    <th class="search-cell<?php echo $topClass; ?> first">Case ID</th>
+    <td class="search-cell<?php echo $topClass; ?>"><?php echo $preCaseId, $caseId, $postCaseId; ?></td>
+    <th class="search-cell<?php echo $topClass; ?>">Date</th>
+    <td class="search-cell<?php echo $topClass; ?>"><?php echo $this->escape(App_Formatting::formatDate($this->case->getOpenedDate())); ?></td>
+    <th class="search-cell<?php echo $topClass; ?>">Status</th>
+    <td class="search-cell<?php echo $topClass; ?>"><?php echo $this->escape($this->case->getStatus()); ?></td>
+    <?php if (empty($this->noClientHeader)) { ?>
+    <td class="search-cell<?php echo $topClass; ?> last"></td>
+    <?php
+    } else {
+        echo $this->partial('partial/searchResultCommon.phtml', $options);
+    }
+    ?>
 </tr>
 <tr class="search-result <?php echo $rowStripeClass; ?>">
     <th class="search-cell bot first">Amount</th>

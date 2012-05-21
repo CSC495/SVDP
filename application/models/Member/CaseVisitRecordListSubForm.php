@@ -14,7 +14,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                 'Miles',
                 'Hours',
                 'Primary Member',
-                'Secondary Member',
+                'Secondary Member (Optional)',
             ),
             'readOnly' => $readOnly,
             'legend' => 'Case visits:',
@@ -41,7 +41,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'Must choose a start date.'),
+                    'messages' => array('isEmpty' => 'Must choose a visit date.'),
                 )),
                 array('Date', true, array(
                     'format' => 'MM/dd/yyyy',
@@ -53,6 +53,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
             ),
             'decorators' => array(
                 'ViewHelper',
+                'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
@@ -72,7 +73,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                 array('Digits', true, array(
                     'messages' => array('notDigits' => 'Must be an integer.'),
                 )),
-                array('LessThan', true, array(
+                array('GreaterThan', true, array(
                     'min' => 0,
                     'messages' => array('notGreaterThan' => 'Must not be negative.'),
                 )),
@@ -93,12 +94,12 @@ class Application_Model_Member_CaseVisitRecordListSubForm
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
-                    'messages' => array('isEmpty' => 'Must enter miles.'),
+                    'messages' => array('isEmpty' => 'Must enter hours.'),
                 )),
                 array('Digits', true, array(
                     'messages' => array('notDigits' => 'Must be an integer.'),
                 )),
-                array('LessThan', true, array(
+                array('GreaterThan', true, array(
                     'min' => 0,
                     'messages' => array('notGreaterThan' => 'Must not be negative.'),
                 )),
@@ -127,7 +128,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'messages' => array('notInArray' => 'Must choose a member.'),
                 )),
             ),
-            'dimension' => 2,
+            'class' => 'span3',
         ));
 
         $caseVisitSubForm->addElement('select', 'secondaryUserId', array(
@@ -139,7 +140,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'messages' => array('notInArray' => 'Must choose a member.'),
                 )),
             ),
-            'dimension' => 2,
+            'class' => 'span3',
         ));
     }
 
@@ -147,10 +148,25 @@ class Application_Model_Member_CaseVisitRecordListSubForm
     {
         $caseVisit = new Application_Model_Impl_CaseVisit();
         $caseVisit
-            ->setVisitId(App_Formatting::emptyToNull($caseVisitSubForm->id->getValue()))
-            ->setVisitDate(App_Formatting::unformatDate($caseVisitSubForm->date->getValue()))
+            ->setId(App_Formatting::emptyToNull($caseVisitSubForm->id->getValue()))
+            ->setDate(App_Formatting::unformatDate($caseVisitSubForm->date->getValue()))
             ->setMiles(App_Formatting::emptyToNull($caseVisitSubForm->miles->getValue()))
-            ->setHours(App_Formatting::emptyToNull($caseVisitSubForm->hours->getValue()));
+            ->setHours(App_Formatting::emptyToNull($caseVisitSubForm->hours->getValue()))
+            ->setVisitors(array());
+
+        if ($caseVisitSubForm->primaryUserId->getValue() !== '') {
+            $user = new Application_Model_Impl_User();
+            $user->setUserId($caseVisitSubForm->primaryUserId->getValue());
+            $caseVisit->addVisitor($user);
+        }
+
+        if ($caseVisitSubForm->secondaryUserId->getValue() !== '') {
+            $user = new Application_Model_Impl_User();
+            $user->setUserId($caseVisitSubForm->secondaryUserId->getValue());
+            $caseVisit->addVisitor($user);
+        }
+
+        return $caseVisit;
     }
 
     protected function setRecord($caseVisitSubForm, $caseVisit)
@@ -160,13 +176,14 @@ class Application_Model_Member_CaseVisitRecordListSubForm
         $caseVisitSubForm->miles->setValue($caseVisit->getMiles());
         $caseVisitSubForm->hours->setValue($caseVisit->getHours());
 
-        $visitors         = $caseVisit->getVisitors();
-        $primaryVisitor   = array_shift($visitors);
-        $secondaryVisitor = array_shift($visitors);
+        $visitors = $caseVisit->getVisitors();
 
-        $caseVisitSubForm->primaryUserId->setValue($primaryVisitor->getUserId());
-        if ($secondaryVisitor) {
-            $caseVisitSubForm->secondaryUserId->setValue($secondaryVisitor->getUserId());
+        if ($visitor = array_shift($visitors)) {
+            $caseVisitSubForm->primaryUserId->setValue($visitor->getUserId());
+        }
+
+        if ($visitor = array_shift($visitors)) {
+            $caseVisitSubForm->secondaryUserId->setValue($visitor->getUserId());
         }
     }
 }
