@@ -477,6 +477,9 @@ h6 {
   color: inherit;
   text-rendering: optimizelegibility;
 }
+h2.pad-right {
+  padding-right: 20px;
+}
 h1 small,
 h2 small,
 h3 small,
@@ -2684,9 +2687,9 @@ input[type="submit"].btn.btn-mini {
 }
 .nav-tabs > li > a,
 .nav-pills > li > a {
-  padding-right: 12px;
-  padding-left: 12px;
-  margin-right: 2px;
+  padding-right: 20px;
+  padding-left: 20px;
+  margin-right: 4px;
   line-height: 14px;
 }
 .nav-tabs {
