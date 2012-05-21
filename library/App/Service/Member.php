@@ -496,11 +496,29 @@ class App_Service_Member
 
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
 
+    public function editClient($client, $changedHouseholders, $changedEmployers,
+        $removedHouseholders, $removedEmployers, $newMarriageStatus)
+    {
+        $this->_db->beginTransaction();
+
+        try {
+            $clientData = $this->disassembleClientModel($client);
+            $addrData   = $this->dissassembleAddrModel($client->getCurrentAddr());
+
+            $this->_db->commit();
+        } catch (Exception $ex) {
+            $this->_db->rollBack();
+            throw $ex;
+        }
+
+        return $client;
+    }
+
     //Updates all information relevant to the given client
     //Passed a fully populated Client object, a string of the
     //client's marriage status IF it changed, null otherwise, and a boolean flag
     //indicating if the client has moved
-    public function editClient($client, $changedHouseholders, $changedEmployers,
+    /*public function editClient($client, $changedHouseholders, $changedEmployers,
         $removedHouseholders, $removedEmployers, $marriageStatus, $movingFlag)
     {
         $this->_db->beginTransaction();
@@ -547,7 +565,7 @@ class App_Service_Member
             throw $ex;
         }
         return $client;
-    }
+    }*/
 
     // Closes the case with the specified ID.
     public function closeCaseById($caseId)
