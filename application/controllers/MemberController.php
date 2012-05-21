@@ -365,10 +365,21 @@ class MemberController extends Zend_Controller_Action
         $changedHouseholders = $this->view->form->getChangedHouseholders();
         $changedEmployers    = $this->view->form->getChangedEmployers();
 
+        $user = new Application_Model_Impl_User();
+        $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
+
         if ($this->_hasParam('id')) {
             // Update an existing client.
             $removedHouseholders = $this->view->form->getRemovedHouseholders();
             $removedEmployers    = $this->view->form->getRemovedEmployers();
+
+            if ($this->view->form->isMaritalStatusChange() && $client->isMarried()) {
+                // If an existing client gets married, then we need to track the creation date and
+                // creating user for the newly entered spouse.
+                $client->getSpouse()
+                    ->setUser($user)
+                    ->setCreatedDate(date('Y-m-d'));
+            }
 
             $client = $service->editClient(
                 $client,
@@ -381,9 +392,6 @@ class MemberController extends Zend_Controller_Action
             );
         } else {
             // Add a new client.
-            $user = new Application_Model_Impl_User();
-            $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
-
             $client
                 ->setUser($user)
                 ->setCreatedDate(date('Y-m-d'));
