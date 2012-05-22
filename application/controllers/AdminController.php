@@ -12,6 +12,7 @@ class AdminController extends Zend_Controller_Action
     public function indexAction()
     {
         $this->view->pageTitle = "Admin Page";
+        return $this->_helper->redirector('users');
     }
     
     private function initAdjustmentForm($form)
@@ -72,7 +73,7 @@ class AdminController extends Zend_Controller_Action
                     Array( 'msg' => 'Limits have been adjusted successfully!',
                            'time' => 3,
                            'controller' => App_Resources::ADMIN,
-                           'action' => 'index'));
+                           'action' => 'adjust'));
         }
     }
 
