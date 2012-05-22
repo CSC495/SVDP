@@ -177,8 +177,8 @@ class AdminController extends Zend_Controller_Action
         $mail = new Zend_Mail('utf-8');
         $transport = new App_Mail_Transport_AmazonSES(
         array(
-            'accessKey' => getenv("AWS_ACCESS_KEY_ID"),
-            'privateKey' => getenv("AWS_SECRET_ACCESS_KEY")
+            'accessKey' => Zend_Registry::get("AWS_ACCESS_KEY_ID"),
+            'privateKey' => Zend_Registry::get("AWS_SECRET_ACCESS_KEY"),
         ));
         
         $mail->setBodyHtml('You have been added to the SVDP organization.' .
@@ -189,7 +189,7 @@ class AdminController extends Zend_Controller_Action
                            'please contact the sender.</i>');
         
         $mail->setFrom('bagura@noctrl.edu', 'System');
-        $mail->addTo('bagura@noctrl.edu');
+        $mail->addTo($user->getEmail());
         $mail->setSubject('SVDP Account Created');
 
         $mail->send($transport);

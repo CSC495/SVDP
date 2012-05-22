@@ -3,13 +3,21 @@ $rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
 $viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
     . urlencode($this->client->getId()));
 
-echo $this->partial('partial/searchResultCommon.phtml', array(
+$options = array(
     'rowStripeClass' => $rowStripeClass,
-    'viewClientUrl' => $viewClientUrl,
-    'gotoUrl' => $viewClientUrl,
-    'gotoLabel' => 'Client',
     'client' => $this->client,
-));
+);
+
+if (empty($this->noClientLinks)) {
+    $options['viewClientUrl'] = $viewClientUrl;
+    $options['gotoUrl']   = $viewClientUrl;
+    $options['gotoLabel'] = 'Client';
+} else if (!empty($this->viewSpouseUrl)) {
+    $options['gotoUrl']   = $this->viewSpouseUrl;
+    $options['gotoLabel'] = 'Spouse';
+}
+
+echo $this->partial('partial/searchResultCommon.phtml', $options);
 ?>
 <tr class="search-result <?php echo $rowStripeClass; ?>">
     <th class="search-cell bot first">Address</th>

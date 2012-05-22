@@ -56,9 +56,19 @@ class App_Formatting
         return ($date !== null) ? date('m/d/Y', strtotime($date)) : '';
     }
 
+    public static function formatDateTime($dateTime)
+    {
+        return ($dateTime !== null) ? date('m/d/Y g:i A', strtotime($dateTime)) : '';
+    }
+
     public static function unformatDate($date)
     {
         return ($date !== '') ? date('Y-m-d', strtotime($date)) : null;
+    }
+
+    public static function unformatDateTime($dateTime)
+    {
+        return ($dateTime !== null) ? date('Y-m-d H:i:s', strtotime($dateTime)) : '';
     }
 
     /**

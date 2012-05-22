@@ -10,6 +10,7 @@ class Application_Model_Member_ScheduleRecordListSubForm extends App_Form_Record
         parent::__construct(array(
             'namespace' => 'schedule',
             'labels' => array('Week Begins', 'Member Name'),
+            'narrow' => true,
             'legend' => 'Edit the parish schedule:',
             'description' => 'Please submit your changes for additions and removals to take place.',
             'addRecordMsg' => 'Add Another Entry',
@@ -47,6 +48,7 @@ class Application_Model_Member_ScheduleRecordListSubForm extends App_Form_Record
             ),
             'decorators' => array(
                 'ViewHelper',
+                'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
@@ -69,7 +71,7 @@ class Application_Model_Member_ScheduleRecordListSubForm extends App_Form_Record
                     'messages' => array('notInArray' => 'Must choose a member.'),
                 )),
             ),
-            'dimension' => 2,
+            'class' => 'span3',
         ));
     }
 
