@@ -63,7 +63,8 @@ class TreasurerController extends Zend_Controller_Action
 				$this->_helper->redirector('index');
 			}
 			if($request->denyCheck){
-				//do something here, what I am not sure yet
+				$service->denyCheckRequest($request->checkID);
+				$this->_helper->redirector('index');
 			}
 			if($request->editCheck){
 				$this->view->form->editCheckReq($request->editCheck);

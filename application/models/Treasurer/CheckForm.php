@@ -35,10 +35,10 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
-				'label'      => 'Primary Worker',
+				'label'      => 'Submitted By',
 				'size'		 => 7,
 		));
-		$this->SVDPname->setValue($check->getUser());
+		$this->SVDPname->setValue($check->getUserFName() . ' ' . $check->getUserLName());
 		
 		
 		$this->addElement('text', 'contact',  array(
@@ -166,8 +166,9 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'label'      => 'Case Need',
 				'size'		 => 7,
 		));
-		$this->caseNeed->setValue($check->getCaseNeedID());
+		$this->caseNeed->setValue($check->getCaseNeedName());
 		//$this->caseNeed->setValue($this->escape($check->getCase()->getNeedList()));
+		
 		
 		
 		$this->addElement('textarea', 'commentText', array(
@@ -212,6 +213,8 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'label'      => 'Current Funds:',
 				'size'		 => 7,
 		));
+		
+		
 		
 		
 
