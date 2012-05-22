@@ -122,26 +122,30 @@ class ReportController extends Zend_Controller_Action
 	$this->view->referrals = $referrals;
 	$this->view->referHelped = $referHelped;
 	
-	
     }
     public function reimbursementreportAction(){
 	$this->view->pageTitle = "Reimbursement Report"; 
         $this->view->form = new Application_Model_Report_reimbursementReport(); 
     }
     public function reimbursementresultsAction(){
-	$this->view->pageTitle = "Reimbursement Report"; 
-        $this->view->form = new Application_Model_Report_reimbursementReport();
+	$this->view->pageTitle = "Reimbursement Report";         
+	$form = new Application_Model_Report_reimbursementReport();
 	$form->populate($_POST);
-	$start = $form->startDate->getValue();
-	$end = $form->endDate->getValue();
-	$this->view->start = $start;
-	$this->view->end = $end;
-	$service = new App_Service_DocumentService();
-	$miles = $service->getClosedCheckReqs($start, $end);
+	$caseId = $form->caseId->getValue();
+	$chkRequest = array();
 	
-	$service = new App_Service_Member();	
-	$this->view->client = $service->getClientById($cId);
-     
+	$service2 = new App_Service_Member();	
+	$service = new App_Service_DocumentService();
+	$this->view->client = $service2->getClientById($caseId);
+	$results = $service->getCheckReqsByCaseId($caseId);
+	
+	$ctr = 0;
+	foreach($results as $row)
+	{
+	    $chkRequest[$ctr] = $row;
+	    $ctr += 1;
+	}
+	$this->view->request = $chkRequest;
     }
 
 }
