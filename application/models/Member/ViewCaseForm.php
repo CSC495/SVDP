@@ -5,20 +5,24 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
     private $_readOnly;
 
-    public function __construct(Application_Model_Impl_Case $case, array $comments, array $users)
+    public function __construct($userId, Application_Model_Impl_Case $case, array $comments,
+        array $users)
     {
+        $baseUrl = new Zend_View_Helper_BaseUrl();
+
         parent::__construct(array(
-            'action' => self::makeActionUrl($case->getId()),
             'method' => 'post',
             'class' => 'form-horizontal',
             'decorators' => array(
                 'PrepareElements',
                 array('ViewScript', array(
                     'viewScript' => 'form/view-case-form.phtml',
+                    'action' => $baseUrl->baseUrl(
+                        App_Resources::MEMBER . '/viewCase/id/' . urlencode($case->getId())
+                    ),
                     'case' => $case,
                     'readOnly' => &$this->_readOnly,
                 )),
-                'Form',
             ),
         ));
 
@@ -33,31 +37,108 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
         }
 
         $this->addSubForm(
+            new Application_Model_Member_CaseNeedRecordListSubForm(
+                $this->_readOnly,
+                $case->getId()
+            ),
+            'needRecordList'
+        );
+
+        $this->addSubForm(
             new Application_Model_Member_CaseVisitRecordListSubForm($users, $this->_readOnly),
             'visitRecordList'
         );
 
-        $this->visitRecordList->setRecords($case->getVisits());
-
-        if (!$this->_readOnly) {
-            $this->addElement('textarea', 'commentText', array(
-                'label' => 'Text of new comment',
-                'dimension' => 8,
-                'rows' => 7,
-            ));
-
-            $this->addElement('submit', 'addComment', array(
-                'label' => 'Add Comment',
-                'decorators' => array('ViewHelper'),
-                'class' => 'btn btn-success',
-            ));
-        }
+        $this->addSubForm(
+            new Application_Model_Member_CommentsSubForm($userId, $comments),
+            'commentsSubForm'
+        );
     }
 
-    private static function makeActionUrl($id)
+    public function preValidate(array $data)
     {
-        $baseUrl = new Zend_View_Helper_BaseUrl();
-        return $baseUrl->baseUrl(App_Resources::MEMBER . '/viewCase'
-            . (($id !== null) ? '/id/' . urlencode($id) : ''));
+        $this->needRecordList->preValidate($data);
+        $this->visitRecordList->preValidate($data);
+    }
+
+    public function isValid($data)
+    {
+        if ($this->isCloseCaseRequest($data)) {
+            return true;
+        }
+
+        if ($this->isChangeNeedsRequest($data)) {
+            return $this->needRecordList->isValid($data);
+        }
+
+        if ($this->isChangeVisitsRequest($data)) {
+            return $this->visitRecordList->isValid($data);
+        }
+
+        if ($this->commentsSubForm->isAddCommentRequest($data)) {
+            return $this->commentsSubForm->isValid($data);
+        }
+
+        return false;
+    }
+
+    public function isCloseCaseRequest(array $data)
+    {
+        return isset($data['closeCase']);
+    }
+
+    public function isChangeNeedsRequest(array $data)
+    {
+        return isset($data['caseneedRecordsRemoved']);
+    }
+
+    public function isChangeVisitsRequest(array $data)
+    {
+        return isset($data['casevisitRecordsRemoved']);
+    }
+
+    public function handleAddRemoveRecords(array $data)
+    {
+        return $this->needRecordList->handleAddRemoveRecords($data)
+            || $this->visitRecordList->handleAddRemoveRecords($data);
+    }
+
+    public function getChangedNeeds()
+    {
+        return $this->needRecordList->getChangedRecords();
+    }
+
+    public function getRemovedNeeds()
+    {
+        return $this->needRecordList->getRemovedRecords();
+    }
+
+    public function setNeeds(array $needs)
+    {
+        $this->needRecordList->setRecords($needs);
+    }
+
+    public function getChangedVisits()
+    {
+        return $this->visitRecordList->getChangedRecords();
+    }
+
+    public function getRemovedVisits()
+    {
+        return $this->visitRecordList->getRemovedRecords();
+    }
+
+    public function setVisits(array $visits)
+    {
+        $this->visitRecordList->setRecords($visits);
+    }
+
+    public function getAddedComment(array $data)
+    {
+        if ($this->commentsSubForm->isAddCommentRequest($data)) {
+            return $this->commentsSubForm->getComment();
+        }
+
+        return null;
     }
 }

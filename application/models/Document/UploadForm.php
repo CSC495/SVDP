@@ -42,9 +42,8 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
             'filters' => array('StringTrim'),
             'label'  => 'Url:',
             'decorators' => array('File'),
-            'destination' => APPLICATION_PATH . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR,
         ));
-        
+
         $this->addElement('hidden', 'err', array(
             'required' => false,
         ));
