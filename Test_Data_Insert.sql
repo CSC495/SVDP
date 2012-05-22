@@ -1,31 +1,34 @@
 INSERT INTO user VALUES 
-("asmith", "abc123", "Addy",  "Smith", "asmith@123.com", 1231231234, 1231231234, 'M', 0, 1),
-("badams", "abc123", "Ben",  "Adams", "badams@123.com", 1231231234, 1231231234, 'M', 0, 1),
-("jcombs", "abc123", "Julie",  "Combs", "jcombs@123.com", 1231231234, 1231231234, 'M', 1, 1),
-("rmoney", "abc123", "Rain",  "Money", "makeitrain@123.com", 1231231234, 1231231234, 'T', 1, 1),
-("dboss", "abc123", "Da",  "Boss", "dboss@123.com", 1231231234, 1231231234, 'A', 1, 1);
+("asmith", "abc12345", "Addy",  "Smith", "asmith@123.com", 1231231234, 1231231234, 'M', 0, 1),
+("badams", "abc12345", "Ben",  "Adams", "badams@123.com", 1231231234, 1231231234, 'M', 0, 1),
+("jcombs", "abc12345", "Julie",  "Combs", "jcombs@123.com", 1231231234, 1231231234, 'M', 0, 1),
+("rmoney", "abc12345", "Rain",  "Money", "makeitrain@123.com", 1231231234, 1231231234, 'T', 0, 1),
+("dboss", "abc12345", "Da",  "Boss", "dboss@123.com", 1231231234, 1231231234, 'A', 0, 1),
+("cpassword", "abc12345", "Change",  "Password", "cpassword@123.com", 1231231234, 1231231234, 'M', 1, 1);
 
-update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc123', 256) where user_id="asmith";
-update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc123', 256) where user_id="badams";
-update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc123', 256) where user_id="jcombs";
-update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc123', 256) where user_id="rmoney";
-update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc123', 256) where user_id="dboss";
+
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="asmith";
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="badams";
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="jcombs";
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="rmoney";
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="dboss";
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="cpassword";
 
 
 INSERT INTO client VALUES 
-(NULL, "badams", "John", "Doe", NULL, "Married", '1968-12-12', 1111, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Vincent DePaul", 1),
-(NULL, "badams", "Kathy", "Doe", NULL, "Married", '1968-1-1', 1114, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Vincent DePaul", 0),
-(NULL, "asmith", "Mary", "Stevens", "Jane", "Single", '1968-1-13', 1112, 1231231238, 1231231239, 1231231240, '2006-7-12', "St. Peter and Paul", 0),
-(NULL, "jcombs", "Julie", "Johnson", "Rose", "Divorced", '1973-10-3', 1117, 1231231244, 1231231245, 1231231246, '2010-3-8', "St. Vincent DePaul", 0),
-(NULL, "jcombs", "Jake", "Johnson", NULL, "Divorced", '1970-8-2', 1113, 1231231241, 1231231242, 1231231243, '2010-3-8', "St. Vincent DePaul", 0);
+(NULL, "badams", "John", "Doe", NULL, "Married", '1968-12-12', 1111, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Raphael", 1),
+(NULL, "badams", "Kathy", "Doe", NULL, "Married", '1968-1-1', 1114, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Raphael", 0),
+(NULL, "asmith", "Mary", "Stevens", "Jane", "Single", '1968-1-13', 1112, 1231231238, 1231231239, 1231231240, '2006-7-12', "SS. Peter & Paul", 0),
+(NULL, "jcombs", "Julie", "Johnson", "Rose", "Divorced", '1973-10-3', 1117, 1231231244, 1231231245, 1231231246, '2010-3-8', "St. Raphael", 0),
+(NULL, "jcombs", "Jake", "Johnson", NULL, "Divorced", '1970-8-2', 1113, 1231231241, 1231231242, 1231231243, '2010-3-8', "St. Raphael", 0);
 
 
 INSERT INTO address VALUES
-(NULL, 1, "13302 Wellesley Circle", NULL, "Plainfield",'IL', '60585', "St. Peter and Paul"),
-(NULL, 1, "1310 Brush Hill Circle", NULL, "Naperville", 'IL', '60540', "St. Vincent DePaul"),
-(NULL, 5, "30 N. Brainard", NULL, "Naperville",'IL', '60540', "St. Vincent DePaul"),
-(NULL, 4, "892 Benedetti Dr.", "Apt 101", "Naperville",'IL', '60563', "St. Vincent DePaul"),
-(NULL, 3, "1204 Brook Lane", NULL, "Naperville",'IL', '60540', "St. Vincent DePaul");
+(NULL, 1, "13302 Wellesley Circle", NULL, "Plainfield",'IL', '60585', "Other"),
+(NULL, 1, "1310 Brush Hill Circle", NULL, "Naperville", 'IL', '60540', "St. Raphael"),
+(NULL, 5, "30 N. Brainard", NULL, "Naperville",'IL', '60540', "SS. Peter & Paul"),
+(NULL, 4, "892 Benedetti Dr.", "Apt 101", "Naperville",'IL', '60563', "St. Raphael"),
+(NULL, 3, "1204 Brook Lane", NULL, "Naperville",'IL', '60540', "St. Raphael");
 
 INSERT INTO household VALUES
 (NULL, 3, 5, 4, 0),
@@ -72,16 +75,16 @@ INSERT INTO case_comment VALUES
 (NULL, 1, "badams", '2008-12-29 13:24:30', "This is a comment about a case");
 
 INSERT INTO case_need VALUES
-(NULL, 1, "rent", 1000.00),
-(NULL, 1, "car payment", 750.00),
-(NULL, 2, "food", 100.00);
+(NULL, 1, "Rent", 1000.00),
+(NULL, 1, "Auto", 750.00),
+(NULL, 2, "Food", 100.00);
 
 INSERT INTO check_request VALUES
-(NULL, 1, "badams", '2009-1-9', 1000.00, "I hate making comments. please write this check quickly.", "jcombs", "7321", '2009-1-18', "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
-(NULL, 2, "asmith", '2010-3-25', 750.00, "I hate making comments. please write this check quickly.", null, null, null, "1370498509384", "Toyota", "123 abc street", "naperville", 'IL', '60560', 1231237890, "Mike", "Young");
+(NULL, 1, "badams", '2009-1-9', 1000.00, "Please write this check quickly.", "jcombs", "7321", '2009-1-18', "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
+(NULL, 2, "asmith", '2010-3-25', 750.00, "Please write this check quickly.", null, null, null, "1370498509384", "Toyota", "123 abc street", "naperville", 'IL', '60560', 1231237890, "Mike", "Young");
 
 INSERT INTO referral VALUES
-(NULL, 3, '2010-3-8', "food needs", "Loaves and Fishes");
+(NULL, 3, '2010-3-8', "Food", "Loaves & Fishes");
 
 INSERT INTO do_not_help VALUES
 (3, "badams", '2012-1-1', "Hopping parish help services");
@@ -95,6 +98,5 @@ INSERT INTO schedule VALUES
 (3, '2012-3-14', "jcombs"),
 (4, '2012-3-21', "asmith"),
 (5, '2012-3-28', "badams");
-
 
 

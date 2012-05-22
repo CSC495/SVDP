@@ -44,37 +44,49 @@ $scheduleEntries = Zend_Registry::get('schedule');
 ?>
 
 <div class=container-fluid>
-    <div class=navbar>
-        <div class=navbar-inner>
-            <div class=container>
-                <a href="<?php echo $this->escape($this->baseUrl('')); ?>" class=brand>St. Vincent de Paul</a>
-                <ul class=nav>
-                    <?php
-                    foreach ($this->navLinks as $path => $link) {
-                        echo '<li' . ($link['active'] ? ' class=active' : '') . '>'
-                           . '<a href="'
-                           . $this->escape($this->baseUrl($path))
-                           . '" '
-                           . '>'
-                           . $this->escape($link['text'])
-                           . '</a>'
-                           . '</li>';
+    <ul style="margin-top: 15px;"  class="nav nav-pills">
+        <li style="margin-right: 25px;"><h3><a href="<?php echo $this->escape($this->baseUrl('')); ?>">St. Vincent de Paul</a></h3></li>               
+            <?php
+                foreach ($this->navLinks as $path => $link) {
+                    echo '<li class=active >'
+                        . '<a href="'
+                        . $this->escape($this->baseUrl($path))
+                        . '">'
+                        . $this->escape($link['text'])
+                        . '</a>'
+                        . '</li>';
                     }
+
+
+
+		   
+                   if( $role !== App_Roles::GENERAL)
+                   {
+
+		    echo '<li class="active pull-right">'
+		    . '<a href="'
+		    . $this->escape($this->baseUrl('login/logout'))
+		    . '">'
+		    . '<i class="icon-share icon-white"></i>'
+		    . 'Logout'
+		    . '</a>'
+		    . '<li>';
+
+
+
+                   }
+
                     ?>
-                </ul>
-                <?php if ($role !== App_Roles::GENERAL) { ?>
-                <ul class="nav pull-right">
-                    <li class=divider-vertical></li>
-                    <li><a href="<?php echo $this->escape($this->baseUrl('/login/logout')); ?>">Logout</a></li>
-                </ul>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
+            
+		    
+                </ul>  
+
+      
+   
 
     <div class=row-fluid>
-        <div class=span2>
-            <?php if ($auth->hasIdentity()){ ?>
+        <?php if ($auth->hasIdentity()){ ?>
+        <div class=span2> 
             <ul class="well nav nav-list">
                 <li class=nav-header>Available Funds</li>
                 <li class=sidebar-field><p><?php echo $this->escape($funds); ?></p></li>
@@ -97,10 +109,10 @@ $scheduleEntries = Zend_Registry::get('schedule');
                 <li><a href="http://www.salvationarmyusa.org/">Salvation Army</a></li>
                 <li><a href="http://www.samaritancenter.org/">Samaritan Interfaith</a></li>
                 <li><a href="http://www.sharingconnections.org/">Sharing Connections</a></li>
+                <li><a href="http://www.willcountytaxbill.com/">Will Country Collector</a></li>
+                <li><a href=http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
             </ul>
-            <?php } else { ?>
-            <p></p>
-            <?php } ?>
+            <?php }?>
         </div>
 
         <div class=span10>
@@ -140,5 +152,5 @@ $scheduleEntries = Zend_Registry::get('schedule');
 
     <hr>
 
-    <footer><p>© 2012 Society of St. Vincent de Paul.</p></footer>
+    <footer><p>© 2012 Society of St. Vincent de Paul</p></footer>
 </div>

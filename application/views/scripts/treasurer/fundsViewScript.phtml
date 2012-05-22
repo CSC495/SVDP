@@ -1,0 +1,18 @@
+
+<form action="<?= $this->escape($this->element->getAction()) ?>"
+      method="<?= $this->escape($this->element->getMethod()) ?>">
+
+<fieldset>
+    <table>
+    	<tbody>
+    		<tr><td>
+			    
+			    <?php echo $this->element->funds ?>
+			    </td></tr>
+			    
+		    </tbody>
+	    </table>
+</fieldset>
+
+<?php echo $this->element->submit ?>
+</form>

@@ -8,6 +8,7 @@ function isMissingPhone($element)
 }
 ?>
 <input type=submit name=submit value="" class=hide>
+<?php echo $this->element->fixedClientData, $this->element->fixedClientDataHash; ?>
 <?php if ($this->editing) { ?>
 <fieldset class=row-fluid>
     <legend>General information:</legend>
@@ -58,7 +59,13 @@ function isMissingPhone($element)
 <fieldset class=row-fluid>
     <legend>Current address:</legend>
 
-    <?php if ($this->editing) { echo $this->element->moved; } ?>
+    <?php
+    if ($this->editing) {
+        echo $this->element->moved;
+    }
+
+    echo $this->element->addr->addrId;
+    ?>
 
     <div class=span6><?php echo $this->element->addr->street; ?></div>
     <div class=span6><?php echo $this->element->addr->apt; ?></div>

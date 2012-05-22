@@ -280,9 +280,11 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                 ),
             ));
 
-            $recordSubForm->addElement('submit', 'remove', array(
+            $recordSubForm->addElement('button', 'remove', array(
                 'decorators' => array('ViewHelper'),
-                'class' => 'btn btn-danger remove',
+                'class' => 'btn btn-danger',
+                'escape'=> false,
+                'type'=> 'submit',
             ));
 
             $recordSubForm->addElement('hidden', 'readOnlyHash', array(
@@ -318,8 +320,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                 $removeElement->helper = 'formNote';
                 $removeElement->setLabel('');
             } else {
-                $removeElement->helper = 'formSubmit';
-                $removeElement->setLabel('×');
+                $removeElement->helper = 'formButton';
+                $removeElement->setLabel('<i class="icon-remove icon-white"></i>');
             }
         }
     }

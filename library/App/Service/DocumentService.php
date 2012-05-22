@@ -165,9 +165,8 @@ class App_Service_DocumentService {
         return $ids;
     }
     
-    //Given an associative array of GenReport objects where key is case_id and value is the objects 
-    //Gets the total number of household members associated with each case including the main client of he household
-    //Returns the array with the NumHMembers populated
+    //Gets the total number of household members associated with each case
+    //Returns an array of GenReport objects with _caseId & _numHMembers populated
     private function getNumMems($arr){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
@@ -192,7 +191,11 @@ class App_Service_DocumentService {
     
     //Given a time span bounded by a start date and an end date (assured to be in international notation)
     //Gets the total number of referrals associated with each case
+<<<<<<< HEAD
     //Returns an associative array with the key as 
+=======
+    //Returns the given array with all object's _numRefs populated
+>>>>>>> 69deb8a6dff38577607566c36445e19e7cb7e790
     private function getNumRefs($newStartDate, $newEndDate){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
