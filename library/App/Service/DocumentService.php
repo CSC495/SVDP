@@ -47,18 +47,17 @@ class App_Service_DocumentService {
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
-                             'totalMiles' => new Zend_Db_Expr('SUM(cv.miles)')))
+                             'totalMiles' => 'cv.miles'))
                 ->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
                 ->where('cv.visit_date >= ?', $newStartDate)
-                ->where('cv.visit_date <= ?', $newEndDate)
-                ->group('cc.case_id');
+                ->where('cv.visit_date <= ?', $newEndDate);
         $results = $this->_db->fetchAll($select);
         $arr = array();
         foreach($results as $row){
             $report = new Application_Model_Impl_GenReport();
             $report->setCaseId($row['id']);
             $report->setTotalMiles($row['totalMiles']);
-            $arr[$row['id']] = $report;
+            $arr[] = $report;
         }
         $arr = $this->getNumMems($arr);
         return $arr;
@@ -166,8 +165,9 @@ class App_Service_DocumentService {
         return $ids;
     }
     
-    //Gets the total number of household members associated with each case
-    //Returns an array of GenReport objects with _caseId & _numHMembers populated
+    //Given an associative array of GenReport objects where key is case_id and value is the objects 
+    //Gets the total number of household members associated with each case including the main client of he household
+    //Returns the array with the NumHMembers populated
     private function getNumMems($arr){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
@@ -177,17 +177,22 @@ class App_Service_DocumentService {
                            'cc.household_id = hmem.household_id')
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
+        $index = 0;
         foreach($results as $row){
-            if(array_key_exists($row['id'], $arr)){
-                $arr[$row['id']]->setNumHMembers($row['totalMems'] + 1);
+            foreach($arr as $rep){
+                if($row['id'] == $rep->getCaseId()){
+                    $arr[$index]->setNumHMembers($row['totalMems'] + 1);
+                }
+                $index++;
             }
+            $index = 0;
         }
         return $arr;
     }
     
-    //Given an array of GenReport objects with _caseId & _numHMembers populated
+    //Given a time span bounded by a start date and an end date (assured to be in international notation)
     //Gets the total number of referrals associated with each case
-    //Returns the given array with all object's _numRefs populated
+    //Returns an associative array with the key as 
     private function getNumRefs($newStartDate, $newEndDate){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
