@@ -47,18 +47,17 @@ class App_Service_DocumentService {
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
-                             'totalMiles' => new Zend_Db_Expr('SUM(cv.miles)')))
+                             'totalMiles' => 'cv.miles'))
                 ->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
                 ->where('cv.visit_date >= ?', $newStartDate)
-                ->where('cv.visit_date <= ?', $newEndDate)
-                ->group('cc.case_id');
+                ->where('cv.visit_date <= ?', $newEndDate);
         $results = $this->_db->fetchAll($select);
         $arr = array();
         foreach($results as $row){
             $report = new Application_Model_Impl_GenReport();
             $report->setCaseId($row['id']);
             $report->setTotalMiles($row['totalMiles']);
-            $arr[$row['id']] = $report;
+            $arr[] = $report;
         }
         $arr = $this->getNumMems($arr);
         return $arr;

@@ -79,7 +79,7 @@ class ReportController extends Zend_Controller_Action
 	$teleHelped = 0;
 	$homeHelped = 0;
 	$miles = $service->getCaseVisitMiles($start, $end);
-	foreach($miles as $key => $value)
+	foreach($miles as $key=>$value)
 	{
 	    //if miles is greater than zero its a home visit
 	    if($value->getTotalMiles() > 0)
