@@ -211,7 +211,7 @@ class App_Service_DocumentService {
             $report = new Application_Model_Impl_GenReport();
             $report->setCaseId($row['id']);
             $report->setNumRefs($row['totalRefs']);
-            $arr[$row['id']] = $report;
+            $arr[] = $report;
         }
         return $arr;
     }
