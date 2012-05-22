@@ -191,11 +191,7 @@ class App_Service_DocumentService {
     
     //Given a time span bounded by a start date and an end date (assured to be in international notation)
     //Gets the total number of referrals associated with each case
-<<<<<<< HEAD
     //Returns an associative array with the key as 
-=======
-    //Returns the given array with all object's _numRefs populated
->>>>>>> 69deb8a6dff38577607566c36445e19e7cb7e790
     private function getNumRefs($newStartDate, $newEndDate){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
