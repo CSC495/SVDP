@@ -112,7 +112,7 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
                $submit = $this->addElement('submit', 'submit', array(
                    'required' => false,
                    'ignore'   => true,
-		   'label'    => 'Submit Changes',
+		   'label'    => 'Submit',
                    'class'    => 'btn btn-success',
 		   'decorators' => array('ViewHelper'),
                 ));
