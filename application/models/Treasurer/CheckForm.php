@@ -20,8 +20,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'checkID',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
@@ -32,20 +31,18 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'SVDPname',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
-				'label'      => 'Primary Worker',
+				'label'      => 'Submitted By',
 				'size'		 => 7,
 		));
-		$this->SVDPname->setValue($check->getUser());
+		$this->SVDPname->setValue($check->getUserFName() . ' ' . $check->getUserLName());
 		
 		
 		$this->addElement('text', 'contact',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
@@ -56,21 +53,20 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'contactPhone',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'   =>	array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
-				'readonly'   => true,
-				'required'   => true,
-				'label'      => 'Contact Phone #',
-				'size'		 => 7,
+				'readonly'  => 	true,
+				'required'  => 	true,
+				'label'     => 	'Contact Phone #',
+				'size'		=> 	7,
+				'class' 	=> 	'phone'
 		));
 		$this->contactPhone->setValue($check->getPhone());
 		
 		
 		
 		$this->addElement('text', 'amount',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
@@ -81,8 +77,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'caseID',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
@@ -93,20 +88,20 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'requestDate',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'filters'    => array('StringTrim'),
+				'validators' => array('Date'),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Check Requested',
-				'size'		 => 7,
+				'value' 	 => '',
+				'size'		 => 10,
 		));
-		$this->requestDate->setValue($check->getRequestDate());
+		$this->requestDate->setValue(App_Formatting::formatDate($check->getRequestDate()));
+		//$this->requestDate->setValue($check->getRequestDate());
 		
 		
 		$this->addElement('text', 'checkNum',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
@@ -117,20 +112,18 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'issueDate',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Check Issued Date',
 				'size'		 => 7,
 		));
-		$this->issueDate->setValue($check->getIssueDate());
+		$this->issueDate->setValue(App_Formatting::formatDate($check->getIssueDate()));
 		
 		
 		$this->addElement('text', 'payeeName',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
@@ -142,8 +135,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$addr = $check->getAddress();
 		$this->addElement('text', 'address',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
+				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
@@ -174,8 +166,9 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'label'      => 'Case Need',
 				'size'		 => 7,
 		));
-		$this->caseNeed->setValue($check->getCaseNeedID());
+		$this->caseNeed->setValue($check->getCaseNeedName());
 		//$this->caseNeed->setValue($this->escape($check->getCase()->getNeedList()));
+		
 		
 		
 		$this->addElement('textarea', 'commentText', array(
@@ -222,30 +215,34 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		));
 		
 		
+		if($check->getStatus() === 'P'){
+			
 
-        $this->addElement('submit', 'issueCheck', array(
-            'label' => 'Issue Check Request',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
-		
-		$this->addElement('submit', 'denyCheck', array(
-            'label' => 'Deny Check Request',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
-		
-		$this->addElement('submit', 'editCheck', array(
-            'label' => 'Edit Check Request',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
-		
-		$this->addElement('submit', 'addComment', array(
-            'label' => 'Add A Comment',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
+			$this->addElement('submit', 'issueCheck', array(
+				'label' => 'Issue Check Request',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+			$this->addElement('submit', 'denyCheck', array(
+				'label' => 'Deny Check Request',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+			$this->addElement('submit', 'editCheck', array(
+				'label' => 'Edit Check Request',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+			$this->addElement('submit', 'addComment', array(
+				'label' => 'Add A Comment',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+		}
 		
     }
 
