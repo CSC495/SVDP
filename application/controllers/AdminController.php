@@ -12,6 +12,7 @@ class AdminController extends Zend_Controller_Action
     public function indexAction()
     {
         $this->view->pageTitle = "Admin Page";
+        return $this->_helper->redirector('users');
     }
     
     private function initAdjustmentForm($form)
