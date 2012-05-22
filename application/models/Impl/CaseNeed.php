@@ -8,6 +8,7 @@ class Application_Model_Impl_CaseNeed{
     private $_id = null;
     private $_need = null;
     private $_amount = null;
+    private $_referralOrCheckReq = null;
     
     //Generic getter and setter methods
     public function getId(){
@@ -34,6 +35,15 @@ class Application_Model_Impl_CaseNeed{
     
     public function setAmount($amount){
         $this->_amount = $amount;
+        return $this;
+    }
+
+    public function getReferralOrCheckReq(){
+        return $this->_referralOrCheckReq;
+    }
+
+    public function setReferralOrCheckReq($referralOrCheckReq){
+        $this->_referralOrCheckReq = $referralOrCheckReq;
         return $this;
     }
 }

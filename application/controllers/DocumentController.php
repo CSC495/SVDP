@@ -89,14 +89,14 @@ class DocumentController extends Zend_Controller_Action
             ->setUrl($_FILES['url']['name'])
             ->setName($form->getValue('name'))
             ->setInternal(1);
-            
+
         $service = new App_Service_DocumentService();
         $service->createDocument($doc);
         
         $upload = new Zend_File_Transfer_Adapter_Http();
-        
+        $upload->setDestination(APPLICATION_PATH . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR);
         $upload->receive();
-        
+
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
                     Array( 'msg' => 'SVDP Document Uploaded Successfully!',
@@ -135,8 +135,8 @@ class DocumentController extends Zend_Controller_Action
             $this->_helper->viewRenderer->setNoRender(true);
             $this->view->layout()->disableLayout();
             
-            $base = new Zend_View_Helper_BaseUrl();
-            $filename = $base->baseUrl('/uploads/' . $doc->getUrl()) ;
+            $filename = APPLICATION_PATH . DIRECTORY_SEPARATOR .
+                'uploads' . DIRECTORY_SEPARATOR . $doc->getUrl();
             
             // Get mime
             $mime = App_MimeConverter::getMimeType($filename);

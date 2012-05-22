@@ -1,0 +1,67 @@
+
+<form action="<?= $this->escape($this->element->getAction()) ?>"
+      method="<?= $this->escape($this->element->getMethod()) ?>">
+
+<fieldset>
+    <table>
+    	<tbody>
+    		<tr><td>
+				<?php echo $this->element->SVDPname ?>
+				</td></tr>
+				
+				<tr><td>
+			    <?php echo $this->element->caseID ?>
+			    </td>
+				<td>
+			    <?php echo $this->element->requestDate ?>
+			    </td></tr>
+				
+				<tr><td>
+			    <?php echo $this->element->checkID ?>
+			    </td>
+				<td>
+			    <?php echo $this->element->amount ?>
+			    </td></tr>
+				
+				<tr><td>
+			    <?php echo $this->element->payeeName ?>
+			    </td>
+				<td>
+			    <?php echo $this->element->payeeAccount ?>
+			    </td>
+				</tr>
+				
+				<tr><td>
+			    <?php echo $this->element->contact ?>
+			    </td>
+				<td>
+			    <?php echo $this->element->contactPhone ?>
+			    </td></tr>
+				
+				<tr><td>
+			    <?php echo $this->element->checkNum ?>
+			    </td>
+				<td>
+			    <?php echo $this->element->issueDate ?>
+			    </td></tr>
+				
+				<tr><td>
+			    <?php echo $this->element->caseNeed ?>
+			    </td>
+				<td>
+			    <?php echo $this->element->commentText ?>
+			    </td></tr>
+				
+
+				
+		    </tbody>
+	    </table>
+</fieldset>
+
+<?php echo $this->element->issueCheck ?>
+<?php echo $this->element->denyCheck ?>
+<?php echo $this->element->editCheck ?>
+<?php echo $this->element->addComment ?>
+</form>
+
+

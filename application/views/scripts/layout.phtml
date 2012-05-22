@@ -42,77 +42,115 @@ $funds  = App_Formatting::formatCurrency($config->getAvailableFunds());
 // Fetch user schedule for sidebar.
 $scheduleEntries = Zend_Registry::get('schedule');
 ?>
-<div class=row>
-    <div class=span3>
-        <a href="<?php echo $this->escape($this->baseUrl(''))?>">
-            <img src="<?php echo $this->escape($this->baseUrl('svdp_logo.jpg'))?>" width="150" height="150" style="padding: 0" hspace="25" vspace="20">
-        </a>
-    </div>
-    <div class=span10>
-        <ul class=unstyled style="padding-top: 75px">
-            <li><h1>St. Vincent de Paul</h1></li>
-            <li><div class="nav nav-tabs nav-stacked"><?php echo $this->partial('partial/navigation.phtml', array('role' => $role)); ?></div></li>
-        </ul>
-    </div>
-</div>
 
 <div class=container-fluid>
+    <ul style="margin-top: 15px;"  class="nav nav-pills">
+        <li style="margin-right: 25px;"><h3><a href="<?php echo $this->escape($this->baseUrl('')); ?>">St. Vincent de Paul</a></h3></li>               
+            <?php
+                foreach ($this->navLinks as $path => $link) {
+                    echo '<li class=active >'
+                        . '<a href="'
+                        . $this->escape($this->baseUrl($path))
+                        . '">'
+                        . $this->escape($link['text'])
+                        . '</a>'
+                        . '</li>';
+                    }
+
+
+
+		   
+                   if( $role !== App_Roles::GENERAL)
+                   {
+
+		    echo '<li class="active pull-right">'
+		    . '<a href="'
+		    . $this->escape($this->baseUrl('login/logout'))
+		    . '">'
+		    . '<i class="icon-share icon-white"></i>'
+		    . 'Logout'
+		    . '</a>'
+		    . '<li>';
+
+
+
+                   }
+
+                    ?>
+            
+		    
+                </ul>  
+
+      
+   
+
     <div class=row-fluid>
-        <div class=span2>
-            <div class="well sidebar-nav">
-                <?php if ($auth->hasIdentity()){ ?>
-                <ul class="nav nav-list">
-                    <li class=nav-header>Current Funds</li>
-                    <li style="text-indent:10px;"><?php echo $this->escape($funds); ?></li>
+        <?php if ($auth->hasIdentity()){ ?>
+        <div class=span2> 
+            <ul class="well nav nav-list">
+                <li class=nav-header>Available Funds</li>
+                <li class=sidebar-field><p><?php echo $this->escape($funds); ?></p></li>
 
-                    <li class="nav-header">Schedule</li>
-                    <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
-                    <li><p style="width:200px;">Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></p></li>
-                    <li><p style="width:150px; text-indent:10px;"><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
-                    <?php } ?>
-                    <li class=nav-header>Quick Links</li>
-                    <a href="http://www.dupagepads.org">PADS</a><br>
-                    <a href="http://www.napervillecares.org">NaperCARES</a><br>
-                    <a href="http://www.salvationarmyusa.org/">Salvation Army</a><br>
-                    <a href="http://www.loaves-fishes.org">Loaves & Fishes</a><br>
-                    <a href="http://www.sharingconnections.org">Sharing Connections</a><br>
-                    <a href="http://www.samaritancenter.org">Samaritan Interfaith</a><br>
-                    <a href="http://www.napervilletownship.com">LIHeap</a>
-                </ul>
+                <li class=divider></li>
+
+                <li class=nav-header>Member Schedule</li>
+                <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
+                <li><p>Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?>:</p></li>
+                <li class=sidebar-field><p><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
                 <?php } ?>
-            </div><!--/.well -->
-        </div><!--/span-->
 
-        <div id=zendcontent class=span10>
+                <li class=divider></li>
+
+                <li class=nav-header>Quick Links</li>
+                <li><a href="http://www.dupagepads.org/">DuPage PADS</a></li>
+                <li><a href="http://www.napervilletownship.com/">LIHEAP</a></li>
+                <li><a href="http://www.loaves-fishes.org/">Loaves &amp; Fishes</a></li>
+                <li><a href="http://www.napervillecares.org/">Naperville CARES</a></li>
+                <li><a href="http://www.salvationarmyusa.org/">Salvation Army</a></li>
+                <li><a href="http://www.samaritancenter.org/">Samaritan Interfaith</a></li>
+                <li><a href="http://www.sharingconnections.org/">Sharing Connections</a></li>
+                <li><a href="http://www.willcountytaxbill.com/">Will Country Collector</a></li>
+                <li><a href=http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
+            </ul>
+            <?php }?>
+        </div>
+
+        <div class=span10>
             <div class=hero-unit>
-                <div id=content>
-                    <div id=alerts>
-                    <?php
-                        // Get any unread flash messages.
-                        $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+                <div id=alerts>
+                <?php
+                    // Get any unread flash messages.
+                    $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
 
-                        if ($flashMessenger->hasCurrentMessages()) {
-                            $messages = $flashMessenger->getCurrentMessages();
-                            $flashMessenger->clearCurrentMessages();
+                    if ($flashMessenger->hasCurrentMessages()) {
+                        $messages = $flashMessenger->getCurrentMessages();
+                        $flashMessenger->clearCurrentMessages();
+                    } else {
+                        $messages = $flashMessenger->getMessages();
+                    }
+                    foreach ($messages as $message) {
+                        if (is_array($message)) {
+                            $class = ' alert-' . $message['type'];
+                            $text  = $message['text'];
                         } else {
-                            $messages = $flashMessenger->getMessages();
+                            $class = '';
+                            $text  = $message;
                         }
-                        foreach ($messages as $message) {
-                            // Write each flash message as a top-level alert.
-                            echo '<p class=alert>' . $this->escape($message) . '</p>';
-                        }
-                    ?>
-                    </div>
-                    <?php
-                        // Write out page content specific to the current controller/action.
-                        echo $this->layout()->content;
-                    ?>
+
+                        // Write each flash message as a top-level alert.
+                        echo '<p class="alert' . $class . '">' . $this->escape($text) . '</p>';
+                    }
+                ?>
                 </div>
+                <?php
+                    // Write out page content specific to the current controller/action.
+                    echo $this->layout()->content;
+                ?>
             </div>
-        </div><!--/span-->
-    </div><!--/row-->
+        </div>
+    </div>
 
     <hr>
 
-    <footer><p>© 2012 Society of St. Vincent de Paul.</p></footer>
+    <footer><p>© 2012 Society of St. Vincent de Paul</p></footer>
 </div>
