@@ -72,7 +72,7 @@ class AdminController extends Zend_Controller_Action
                     Array( 'msg' => 'Limits have been adjusted successfully!',
                            'time' => 3,
                            'controller' => App_Resources::ADMIN,
-                           'action' => 'index'));
+                           'action' => 'adjust'));
         }
     }
 
