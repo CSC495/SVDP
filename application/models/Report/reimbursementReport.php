@@ -1,20 +1,17 @@
 <?php
-<<<<<<< HEAD
+
 class Application_Model_Report_reimbursementReport extends Twitter_Bootstrap_Form_Vertical
-=======
-class Application_Model_Report_reimbursementReport extends Zend_Form
->>>>>>> c79b9b0788b036d6abd5177d15a770ba141706aa
 {
 	
 	public function __construct($options = null){
 		parent::__construct($options);
-		$this->setName('login');
-		$this->setAttrib('id', 'login');
+		$this->setName('reimburse');
+		$this->setAttrib('id', 'reimburse');
 		$this->setMethod('post');
 		$this->setAction('');
 		
 		$baseUrl = new Zend_View_Helper_BaseUrl();
-		$this->setAction($baseUrl->baseUrl('/report/reimbursementreport/'));
+		//$this->setAction($baseUrl->baseUrl('/report/reimbursementresults/'));
 		
 		$this->setDecorators(array(
 			array('ViewScript', array('viewScript' => 'report/reimbursementViewScript.phtml'))
