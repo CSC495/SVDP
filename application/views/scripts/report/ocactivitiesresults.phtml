@@ -1,58 +1,88 @@
-<table border="1">
+<table>
     <tr>
-        <td>&nbsp;</td><td><h3>&nbsp;&nbsp;St. Vincent de Paul&nbsp;&nbsp;</h3></td><td>&nbsp;</td>      
+        <td>&nbsp;</td><td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td>      
     </tr>
     <tr>
-        <td>&nbsp;</td><td><strong>&nbsp;&nbsp;&nbsp;Client Information Report&nbsp;&nbsp;</strong></td><td>&nbsp;</td>
+        <td>&nbsp;</td><td><h4><center>On Call Activities Report&nbsp;</center></h4></td><td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     <tr>
-        <td>&nbsp;Start Date:&nbsp;<?php echo $this->start ?>&nbsp;</td>
-        <td>&nbsp;End Date:&nbsp;<?php echo $this->end ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><center><?php echo $this->start ?>&nbsp; - &nbsp; <?php echo $this->end ?></center></td>        
         <td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     <tr>
-        <td>&nbsp;1)Home Visits &nbsp;</td>
-        <td>&nbsp;# of Home Visits:&nbsp;<?php echo $this->home ?>&nbsp;</td>
-        <td>&nbsp;# of People Helped:&nbsp;<?php echo $this->homeHelped ?>&nbsp;</td>
+        <td><strong>Home Visits &nbsp;</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>        
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Home Visits:&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->home ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>        
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;<?php echo $this->homeHelped ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     <tr>
-        <td>&nbsp;2)Telephone Visits &nbsp;</td>
-        <td>&nbsp;# of Phone Visits:&nbsp;<?php echo $this->tele ?>&nbsp;</td>
-        <td>&nbsp;# of People Helped:&nbsp;<?php echo $this->teleHelped ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><strong>Telephone Contact &nbsp;</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Phone Visits:&nbsp;&nbsp;&nbsp;<?php echo $this->tele ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;<?php echo $this->teleHelped ?></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>    
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Referrals &nbsp;</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Referrals:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->referrals ?>&nbsp;</td>
+        <td>&nbsp;</td>        
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;<?php echo $this->referHelped ?>&nbsp;</td>
+        <td>&nbsp;</td>        
+        <td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     <tr>
-        <td>&nbsp;3)Referrals &nbsp;</td>
-        <td>&nbsp;# of Referrals:&nbsp;<?php echo $this->referrals ?>&nbsp;</td>
-        <td>&nbsp;# of People Helped:&nbsp;<?php echo $this->referHelped ?>&nbsp;</td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-    </tr>
-    <tr>
-        <td>&nbsp;4)People Helped During Week on Call: &nbsp;<?php $sum = $this->referHelped + $this->teleHelped
+        <td><strong>Total People Helped: </strong>&nbsp;<?php $sum = $this->referHelped + $this->teleHelped
                                                                 + $this->homeHelped; echo $sum ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td>&nbsp;5)Estimated # of Hours: &nbsp;<?php echo $this->totalHours ?>&nbsp;</td>
+        <td><strong>Estimated # of Hours: </strong>&nbsp;<?php echo $this->totalHours ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td>&nbsp;6)Estimated # of Miles: &nbsp;<?php echo $this->totalMiles ?>&nbsp;</td>
+        <td><strong>Estimated # of Miles: </strong>&nbsp;&nbsp;<?php echo $this->totalMiles ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
