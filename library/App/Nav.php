@@ -28,7 +28,7 @@ class App_Nav
         // Navigation for treasurers.
         App_Roles::TREASURER => array(
             '/treasurer' => 'Open Check Requests',
-            '/treasurer/updateFunds' => 'Update Current Funds',
+            '/treasurer/updateFunds' => 'Update Available Funds',
             '/search/treasurer' => 'Search',
             '/report' => 'Reports',
             '/document/list' => 'Documents',
