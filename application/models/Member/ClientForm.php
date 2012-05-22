@@ -399,14 +399,14 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         // Householders sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_HouseholderRecordListSubForm(),
+            new Application_Model_Member_HouseholderRecordListSubForm($id !== null),
             'householderRecordList'
         );
 
         // Employers sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_EmployerRecordListSubForm(),
+            new Application_Model_Member_EmployerRecordListSubForm($id !== null),
             'employerRecordList'
         );
 

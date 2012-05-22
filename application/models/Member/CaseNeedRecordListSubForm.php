@@ -37,7 +37,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
     private $_showStatus;
 
-    public function __construct($showSubmitChanges, $readOnly = false, $caseId = null)
+    public function __construct($showSubmitChanges = false, $readOnly = false, $caseId = null)
     {
         $this->_readOnly   = $readOnly;
         $this->_caseId     = $caseId;
@@ -55,7 +55,6 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             'legend' => 'Case needs:',
             'addRecordMsg' => 'Add Another Need',
             'noRecordsMsg' => 'No needs listed.',
-            'submitMsg' => 'Submit',
         );
 
         if ($showSubmitChanges) {
