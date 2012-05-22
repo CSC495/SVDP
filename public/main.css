@@ -76,11 +76,11 @@ table.search-results {
 .search-cell.icon {
     text-align: center;
     vertical-align: middle;
-    width: 1ex;
+    width: 0;
 }
 
 .search-cell.first {
-    width: 12ex;
+    width: 11ex;
 }
 
 .search-cell.id {
