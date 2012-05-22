@@ -53,9 +53,14 @@ class App_Service_DocumentService {
                 ->where('cv.visit_date <= ?', $newEndDate)
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
-        $arr = $this->getAssocOfCases();
-        foreach($results as $row)
-            $arr[$row['id']] = $row['totalMiles'];
+        $arr = array();
+        foreach($results as $row){
+            $report = new Application_Model_Impl_GenReport();
+            $report->setCaseId($row['id']);
+            $report->setTotalMiles($row['totalMiles']);
+            $arr[$row['id']] = $report;
+        }
+        $arr = $this->getNumMems($arr);
         return $arr;
     }
     
@@ -79,7 +84,7 @@ class App_Service_DocumentService {
                 ->where('cv.visit_date <= ?', $newEndDate)
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
-        $arr = $this->getAssocOfCases();
+        $arr = array();
         foreach($results as $row)
             $arr[$row['id']] = $row['totalHours'];
         return $arr;
@@ -107,7 +112,6 @@ class App_Service_DocumentService {
         
         $newEndDate = new Zend_Date($endDate, 'MM-dd-YYYY', 'en');
         $newEndDate = $newEndDate->get('YYYY-MM-dd');
-        //return $this->getNumRefs($this->getNumMems());
         return $this->getNumMems($this->getNumRefs($newStartDate, $newEndDate));
     }
     
@@ -156,8 +160,9 @@ class App_Service_DocumentService {
                 ->from('client_case', array('id' => 'case_id'));
         $results = $this->_db->fetchAll($select);
         $ids = array();
-        foreach($results as $row)
+        foreach($results as $row){
             $ids[$row['id']] = '0';
+        }
         return $ids;
     }
     
@@ -173,9 +178,8 @@ class App_Service_DocumentService {
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
         foreach($results as $row){
-            if($row->getNumRefs() > 0){
-                $arr[$row['id']]->setNumHMembers($row['totalMems']);
-                $arr[$row['id']] = $report;
+            if(array_key_exists($row['id'], $arr)){
+                $arr[$row['id']]->setNumHMembers($row['totalMems'] + 1);
             }
         }
         return $arr;
