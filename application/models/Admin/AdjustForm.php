@@ -35,22 +35,29 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 		$aid = $this->addElement('text', 'aid', array(
 			'filters'    => array( new App_Filter_Money() ),
 			'validators' => array(
-						array('Float',true,array(
-							    'messages' => array('notFloat' =>
-								'Value is not valid dollar amount'),))),
+					array('Float',true,array(
+						'messages' => array('notFloat' =>
+						'Value is not valid dollar amount'))),
+					array('GreaterThan',false,array("min" => -1, "messages" =>
+									array("notGreaterThan" =>
+									      "Value must be 0 or greater")))),
 			'required'   => true,
 			'label'      => 'Total Receivable Lifetime Aid:',
 			'class'      => 'input-small',
 			'prepend'    => '$',
 		));
 
+
 		// Input of funds for a particular case
                $casefund = $this->addElement('text', 'casefund', array(
 			'filters'    => array( new App_Filter_Money() ),
 			'validators' => array(
-						array('Float',true,array(
-							    'messages' => array('notFloat' =>
-								'Value is not valid dollar amount'),))),
+					array('Float',true,array(
+							'messages' => array('notFloat' =>
+								'Value is not valid dollar amount'))),
+					array('GreaterThan',false,array("min" => -1, "messages" =>
+									array("notGreaterThan" =>
+									      "Value must be 0 or greater")))),
 			'required'   => true,
 			'label'      => 'Total Receivable Aid Per Case:',
 			'class'      => 'input-small',
@@ -59,7 +66,10 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 	       
                // Input of lifetime cases a client can have
                $lifetimecases = $this->addElement('text', 'lifetimecases', array(
-		   'validators' => array('Int'),
+		   'validators' => array('Int',
+				   array('GreaterThan',false,
+					 array("min" => -1, "messages" =>
+						array("notGreaterThan" => "Value must be 0 or greater")))),
                    'required'   => true,
                    'label'      => 'Lifetime Case Limit:',
 		   'class'      => 'input-small',
@@ -67,7 +77,10 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
         
 		// Input of yearly cases a client can have
                $yearlycases = $this->addElement('text', 'yearlycases', array(
-		   'validators' => array('Int'),
+		   'validators' => array('Int',
+				   array('GreaterThan',false,
+					 array("min" => -1, "messages" =>
+						array("notGreaterThan" => "Value must be 0 or greater")))),
                    'required'   => true,
                    'label'      => 'Yearly Cases Limit:',
 		   'class'      => 'input-small',
