@@ -1,0 +1,89 @@
+<table>
+    <tr>
+        <td>&nbsp;</td><td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td>      
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td><h4><center>On Call Activities Report&nbsp;</center></h4></td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td><center><?php echo $this->start ?>&nbsp; - &nbsp; <?php echo $this->end ?></center></td>        
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Home Visits &nbsp;</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>        
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Home Visits:&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->home ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>        
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;<?php echo $this->homeHelped ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Telephone Contact &nbsp;</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Phone Visits:&nbsp;&nbsp;&nbsp;<?php echo $this->tele ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;<?php echo $this->teleHelped ?></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>    
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Referrals &nbsp;</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Referrals:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $this->referrals ?>&nbsp;</td>
+        <td>&nbsp;</td>        
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;<?php echo $this->referHelped ?>&nbsp;</td>
+        <td>&nbsp;</td>        
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Total People Helped: </strong>&nbsp;<?php $sum = $this->referHelped + $this->teleHelped
+                                                                + $this->homeHelped; echo $sum ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Estimated # of Hours: </strong>&nbsp;<?php echo $this->totalHours ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td><strong>Estimated # of Miles: </strong>&nbsp;&nbsp;<?php echo $this->totalMiles ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+</table>

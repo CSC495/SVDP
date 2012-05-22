@@ -180,6 +180,7 @@ CREATE TABLE check_request(
      	signee_userid VARCHAR(30),
      	check_number VARCHAR(15),
      	issue_date DATE,
+	status CHAR(1),
 	account_number VARCHAR(30),
      	payee_name VARCHAR(50),
      	street VARCHAR(100),
@@ -235,7 +236,7 @@ CREATE TABLE schedule(
 CREATE TABLE documents(
 	doc_id INT NOT NULL AUTO_INCREMENT,
 	filename VARCHAR(50),
-	url VARCHAR(50),
+	url VARCHAR(2083),
 	internal_flag TINYINT(1),
 	PRIMARY KEY (doc_id)
 ) ENGINE = InnoDB;

@@ -60,13 +60,93 @@ class ReportController extends Zend_Controller_Action
 	
     }
     public function ocactivitiesAction(){
-	$this->view->pageTitle = "On Call Activities Report"; 
+	$this->view->pageTitle = "On Call Activities Report";
+	$this->view->form = new Application_Model_Report_ocaReport();
+    }
+    public function ocactivitiesresultsAction(){
+	$this->view->pageTitle = "On Call Activities Report";
+	$form = new Application_Model_Report_ocaReport();
+	$form->populate($_POST);
+	$start = $form->startDate->getValue();
+	$end = $form->endDate->getValue();
+	$this->view->start = $start;
+	$this->view->end = $end;
+	$service = new App_Service_DocumentService();
+	//calculate total miles for cases
+	$homeVisit = 0;
+	$teleVisit = 0;
+	$totalMiles = 0;
+	$teleHelped = 0;
+	$homeHelped = 0;
+	$miles = $service->getCaseVisitMiles($start, $end);
+	foreach($miles as $key => $value)
+	{
+	    //if miles is greater than zero its a home visit
+	    if($value->getTotalMiles() > 0)
+	    {
+		$homeVisit += 1;
+		$totalMiles += $value->getTotalMiles();
+		$homeHelped += $value->getNumHMembers();
+	    }
+	    else  //else its a phone visit
+	    {
+		$teleVisit += 1;
+		$teleHelped += $value->getNumHMembers();
+	    }
+	    
+	}
+	$this->view->home = $homeVisit;
+	$this->view->tele = $teleVisit;
+	$this->view->totalMiles = $totalMiles;
+	$this->view->homeHelped = $homeHelped;
+	$this->view->teleHelped = $teleHelped;
+	
+	$totalHours = 0;
+	$hours = $service->getCaseVisitHours($start, $end);
+	foreach($hours as $row)
+	{
+	    $totalHours = $totalHours + $row;	    
+	}
+	$this->view->totalHours = $totalHours;
+	
+	$refer = $service->getGenReports($start, $end);
+	$referrals = 0;
+	$referHelped = 0;
+	
+	foreach($refer as $row)
+	{
+	    $referrals += $row->getNumRefs();
+	    $referHelped += $row->getNumHMembers();
+	}
+	
+	$this->view->referrals = $referrals;
+	$this->view->referHelped = $referHelped;
+	
     }
     public function reimbursementreportAction(){
 	$this->view->pageTitle = "Reimbursement Report"; 
         $this->view->form = new Application_Model_Report_reimbursementReport(); 
     }
-     
+    public function reimbursementresultsAction(){
+	$this->view->pageTitle = "Reimbursement Report";         
+	$form = new Application_Model_Report_reimbursementReport();
+	$form->populate($_POST);
+	$caseId = $form->caseId->getValue();
+	$chkRequest = array();
+	
+	$service2 = new App_Service_Member();	
+	$service = new App_Service_DocumentService();
+	$this->view->client = $service2->getClientById($caseId);
+	$results = $service->getCheckReqsByCaseId($caseId);
+	
+	$ctr = 0;
+	foreach($results as $row)
+	{
+	    $chkRequest[$ctr] = $row;
+	    $ctr += 1;
+	}
+	$this->view->request = $chkRequest;
+    }
 
 }
 
