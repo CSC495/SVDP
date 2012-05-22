@@ -37,6 +37,10 @@ table.records td {
     vertical-align: middle;
 }
 
+table.records tr.removed {
+    background-color: #d08989;
+}
+
 td.remove {
     width: 3ex;
 }

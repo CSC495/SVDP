@@ -37,7 +37,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
     private $_showStatus;
 
-    public function __construct($readOnly = false, $caseId = null)
+    public function __construct($showSubmitChanges, $readOnly = false, $caseId = null)
     {
         $this->_readOnly   = $readOnly;
         $this->_caseId     = $caseId;
@@ -47,7 +47,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 ? array('Status', 'Need', 'Amount', '')
                 : array('Need', 'Amount');
 
-        parent::__construct(array(
+        $options = array(
             'namespace' => 'caseneed',
             'labels' => $labels,
             'readOnly' => $readOnly,
@@ -55,17 +55,25 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             'legend' => 'Case needs:',
             'addRecordMsg' => 'Add Another Need',
             'noRecordsMsg' => 'No needs listed.',
-            'submitMsg' => 'Submit Changes',
-        ));
+            'submitMsg' => 'Submit',
+        );
+
+        if ($showSubmitChanges) {
+            $options['submitMsg'] = 'Submit';
+        }
+
+        parent::__construct($options);
     }
 
     public function setDefaults(array $defaults)
     {
         parent::setDefaults($defaults);
 
-        foreach ($this->caseneedRecords->getSubForms() as $caseNeedSubForm) {
-            $caseNeedSubForm->statusNote->setValue($caseNeedSubForm->status->getValue());
-            $caseNeedSubForm->status2Note->setValue($caseNeedSubForm->status2->getValue());
+        if ($this->_showStatus) {
+            foreach ($this->caseneedRecords->getSubForms() as $caseNeedSubForm) {
+                $caseNeedSubForm->statusNote->setValue($caseNeedSubForm->status->getValue());
+                $caseNeedSubForm->status2Note->setValue($caseNeedSubForm->status2->getValue());
+            }
         }
 
         return $this;
@@ -209,11 +217,11 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             $status2 = '<a href="' . htmlspecialchars($viewCheckReqUrl) . '">';
 
             if ($checkReq->getIssueDate() !== null) {
-                $status   = '<span class="label label-success">Issued check</span>';
+                $status   = '<span class="label label-success">Issued</span>';
                 $status2 .= 'Issued: '
                           . htmlspecialchars(App_Formatting::formatDate($checkReq->getIssueDate()));
             } else {
-                $status   = '<span class="label label-warning">Pending check</span>';
+                $status   = '<span class="label label-warning">Pending</span>';
                 $status2 .= 'Requested: '
                           . htmlspecialchars(App_Formatting::formatDate(
                                              $checkReq->getRequestDate()));
@@ -238,13 +246,13 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 . urlencode($caseNeed->getAmount())
             );
 
-            $status  = '<span class="label label-important">Unprocessed</span>';
+            $status  = '<span class="label label-important">Added</span>';
             $status2 = '<a href="'
                      . htmlspecialchars($newReferralUrl)
                      . '" class="btn btn-info">Referral</a>'
                      . ' <a href="'
                      . htmlspecialchars($newCheckReqUrl)
-                     . '" class="btn btn-info">Check Req.</a>';
+                     . '" class="btn btn-info">Req. Check</a>';
         }
 
         $caseNeedSubForm->status->setValue($status);
