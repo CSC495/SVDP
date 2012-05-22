@@ -15,7 +15,7 @@ class Application_Model_Member_ScheduleRecordListSubForm extends App_Form_Record
             'description' => 'Please submit your changes for additions and removals to take place.',
             'addRecordMsg' => 'Add Another Entry',
             'noRecordsMsg' => 'No members are currently scheduled.',
-            'submitMsg' => 'Submit Changes',
+            'submitMsg' => 'Submit',
         ));
 
         $this->_users = $users;

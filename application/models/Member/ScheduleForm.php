@@ -23,7 +23,7 @@ class Application_Model_Member_ScheduleForm extends Twitter_Bootstrap_Form_Horiz
         );
 
         $this->addElement('submit', 'submit', array(
-            'label' => 'Submit Changes',
+            'label' => 'Submit',
             'decorators' => array('ViewHelper'),
             'class' => 'btn btn-success',
         ));

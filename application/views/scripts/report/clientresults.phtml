@@ -1,9 +1,9 @@
 <table border="1">
     <tr>
-        <td>&nbsp;</td><td><h3>St. Vincent de Paul</h3></td><td>&nbsp;</td>      
+        <td>&nbsp;</td><td><h3>&nbsp;&nbsp;St. Vincent de Paul</h3></td><td>&nbsp;</td>      
     </tr>
     <tr>
-        <td>&nbsp;</td><td><strong>Client Information Report</strong></td><td>&nbsp;</td>
+        <td>&nbsp;</td><td><strong>&nbsp;&nbsp;&nbsp;Client Information Report</strong></td><td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -36,7 +36,7 @@
     <tr>
         <td>&nbsp;Date Created:&nbsp;<?php echo $this->client->getCreatedDate() ?>&nbsp;</td>
         <td>&nbsp;Parish:&nbsp;<?php echo $this->client->getParish() ?>&nbsp;</td>
-        <td>&nbsp;Veteran:&nbsp;<?php if($this->client->isVeteran()){echo "Yes";} ?>&nbsp;</td>
+        <td>&nbsp;Veteran:&nbsp;<?php if($this->client->isVeteran()){echo "Yes";}else{echo "No";} ?>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -53,13 +53,5 @@
         <td>&nbsp;City:&nbsp;<?php echo $this->client->getCurrentAddr()->getCity() ?>&nbsp;</td>
         <td>&nbsp;State:&nbsp;<?php echo $this->client->getCurrentAddr()->getState() ?>&nbsp;</td>
         <td>&nbsp;Zip Code:&nbsp;<?php echo $this->client->getCurrentAddr()->getZip() ?>&nbsp;</td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-    </tr>
-    <tr>
-        <td>&nbsp;House Members:&nbsp;<?php echo $this->client->getEmployment() ?>&nbsp;</td>
-        <td>&nbsp;Employment:&nbsp;<?php echo $this->client->getHouseMembers() ?>&nbsp;</td>
-        <td>&nbsp;</td>
     </tr>
 </table>
