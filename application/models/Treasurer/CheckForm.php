@@ -119,7 +119,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'label'      => 'Check Issued Date',
 				'size'		 => 7,
 		));
-		$this->issueDate->setValue($check->getIssueDate());
+		$this->issueDate->setValue(App_Formatting::formatDate($check->getIssueDate()));
 		
 		
 		$this->addElement('text', 'payeeName',  array(
@@ -215,32 +215,34 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		));
 		
 		
-		
-		
+		if($check->getStatus() === 'P'){
+			
 
-        $this->addElement('submit', 'issueCheck', array(
-            'label' => 'Issue Check Request',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
-		
-		$this->addElement('submit', 'denyCheck', array(
-            'label' => 'Deny Check Request',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
-		
-		$this->addElement('submit', 'editCheck', array(
-            'label' => 'Edit Check Request',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
-		
-		$this->addElement('submit', 'addComment', array(
-            'label' => 'Add A Comment',
-            'decorators' => array('ViewHelper'),
-            'class' => 'btn btn-success',
-        ));
+			$this->addElement('submit', 'issueCheck', array(
+				'label' => 'Issue Check Request',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+			$this->addElement('submit', 'denyCheck', array(
+				'label' => 'Deny Check Request',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+			$this->addElement('submit', 'editCheck', array(
+				'label' => 'Edit Check Request',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+			$this->addElement('submit', 'addComment', array(
+				'label' => 'Add A Comment',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+			));
+			
+		}
 		
     }
 
