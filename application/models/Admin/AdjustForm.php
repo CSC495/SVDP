@@ -94,7 +94,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 		   'decorators' => array('ViewHelper'),
                 ));
                
-	       $jsparam = 'javascript:return adjust_validation(this)';
-	       $this->addAttribs(array('onSubmit'=>$jsparam));
+	       //$jsparam = 'javascript:return adjust_validation(this)';
+	       //$this->addAttribs(array('onSubmit'=>$jsparam));
 	}
 }
