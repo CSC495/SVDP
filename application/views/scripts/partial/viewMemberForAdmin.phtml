@@ -5,5 +5,5 @@ echo $this->partial('partial/viewMemberCommon.phtml', array(
     'rowStripeClass' => $rowStripeClass,
     'showEditBtn' => true,
     'user' => $this->user,
-    'last'  => '?',
+    'rowId' => ($this->rowLetter !== null) ? 'id="' . $this->escape($this->rowLetter) . '" ' : '',
 ));

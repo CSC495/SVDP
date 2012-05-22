@@ -1,0 +1,68 @@
+<?php
+$editClientUrl = $this->baseUrl(App_Resources::MEMBER . '/editClient/id/'
+    . urlencode($this->client->getId()));
+$historyUrl    = $this->baseUrl(App_Resources::MEMBER . '/clientHistory/id/'
+    . urlencode($this->client->getId()));
+$newCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
+    . urlencode($this->client->getId()));
+
+if ($this->client->isMarried()) {
+    $viewSpouseUrl = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
+        . urlencode($this->client->getSpouse()->getId()));
+} else {
+    $viewSpouseUrl = null;
+}
+?>
+<form action="<?php echo $this->escape($this->action); ?>" method=post class=form-horizontal>
+    <fieldset>
+        <legend>Client summary:</legend>
+        <div class=search-results>
+            <table class=search-results>
+                <?php
+                echo $this->partial('partial/searchResultClient.phtml', array(
+                    'client' => $this->client,
+                    'noClientLinks' => true,
+                    'viewSpouseUrl' => $viewSpouseUrl,
+                ));
+                ?>
+            </table>
+        </div>
+        <div class=control-group>
+            <div class=controls>
+                <a href="<?php echo $this->escape($editClientUrl); ?>" class="btn btn-info">View and Edit Details</a>
+                <a href="<?php echo $this->escape($historyUrl); ?>" class="btn btn-info">View Household History</a>
+                <a href="<?php echo $this->escape($newCaseUrl); ?>" class="btn btn-success">Open New Case</a>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Case history:</legend>
+        <?php if ($this->cases) { ?>
+        <div class=search-results>
+            <table class=search-results>
+            <?php
+            foreach (array_values($this->cases) as $i => $case) {
+                echo $this->partial('partial/searchResultCase.phtml', array(
+                    'i' => $i,
+                    'case' => $case,
+                    'noClientHeader' => true,
+                ));
+            }
+            ?>
+            </table>
+        </div>
+        <?php } else { ?>
+        <div class=controls>
+            <div class=control-group>
+                <p class=help-block>This client has no current or past cases.</p>
+            </div>
+        </div>
+        <?php } ?>
+    </fieldset>
+</form>
+
+<form action="<?php echo $this->escape($this->action); ?>" method=post class=form-horizontal>
+    <input type=submit name=addComment value="" class=hide>
+    <?php echo $this->element->commentsSubForm; ?>
+</form>

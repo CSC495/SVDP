@@ -3,22 +3,26 @@
 echo $this->form;
 
 if (isset($this->checkReqs)) {
-    if (empty($this->checkReqs)) {
-?>
-<p>
-Your search query returned no results.
-</p>
-<?php
-    } else {
+    if ($this->checkReqs) {
 ?>
 <div class=search-results>
 <table class=search-results>
 <?php
-$this->partialLoop()->setObjectKey('checkReq');
-echo $this->partialLoop('partial/searchResultCheckReq.phtml', $this->checkReqs);
+foreach (array_values($this->checkReqs) as $i => $checkReq) {
+    echo $this->partial('partial/searchResultCheckReq.phtml', array(
+        'i' => $i,
+        'checkReq' => $checkReq,
+    ));
+}
 ?>
 </table>
 </div>
+<?php
+    } else {
+?>
+<p>
+Your search query returned no results.
+</p>
 <?php
     }
 }
