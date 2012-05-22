@@ -41,12 +41,6 @@ td.remove {
     width: 3ex;
 }
 
-input.remove {
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 16px;
-}
-
 /* Styles for search views: */
 
 div.search-results {
@@ -79,8 +73,14 @@ table.search-results {
     padding-bottom: 12px;
 }
 
+.search-cell.icon {
+    text-align: center;
+    vertical-align: middle;
+    width: 0;
+}
+
 .search-cell.first {
-    width: 12ex;
+    width: 11ex;
 }
 
 .search-cell.id {
@@ -1533,7 +1533,7 @@ table .span24 {
   height: 14px;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("../img/glyphicons-halflings.png");
+  background-image: url("img/glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
   *margin-right: .3em;
@@ -1543,7 +1543,7 @@ table .span24 {
   *margin-left: 0;
 }
 .icon-white {
-  background-image: url("../img/glyphicons-halflings-white.png");
+  background-image: url("img/glyphicons-halflings-white.png");
 }
 .icon-glass {
   background-position: 0      0;
