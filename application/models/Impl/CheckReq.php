@@ -11,15 +11,23 @@ class Application_Model_Impl_CheckReq
 
     private $_id = null;
     private $_caseneedId = null;
+    //Actual name of the need (ie. food)
+    private $_caseneedName = null;
     private $_requestDate = null;
     //Case id, not object
     private $_case = null;
-    //User object or id depending on use
+    //User object
     private $_user = null;
+    //User id
+    private $_userId = null;
+    private $_userFName = null;
+    private $_userLName = null;
     private $_amount = null;
     private $_comment = null;
-    //User object or id depending on use
+    //User object
     private $_signeeUser = null;
+    //User id
+    private $_signeeUserId = null;
     private $_checkNumber = null;
     private $_issueDate = null;
     private $_accountNumber = null;
@@ -29,6 +37,7 @@ class Application_Model_Impl_CheckReq
     private $_phone = null;
     private $_contactFirstName = null;
     private $_contactLastName = null;
+    private $_status = null;
 
     /* Generic get/set methods: */
 
@@ -52,12 +61,48 @@ class Application_Model_Impl_CheckReq
         return $this;
     }
     
+    public function getCaseNeedName(){
+        return $this->_caseneedName;
+    }
+    
+    public function setCaseNeedName($name){
+        $this->_caseneedName = $name;
+        return $this;
+    }
+    
     public function getUser(){
         return $this->_user;
     }
     
     public function setUser($user){
         $this->_user = $user;
+        return $this;
+    }
+    
+    public function getUserId(){
+        return $this->_userId;
+    }
+    
+    public function setUserId($id){
+        $this->_userId = $id;
+        return $this;
+    }
+    
+    public function getUserFName(){
+        return $this->_userFName;
+    }
+    
+    public function setUserFName($fName){
+        $this->_userFName = $fName;
+        return $this;
+    }
+    
+    public function getUserLName(){
+        return $this->_userLName;
+    }
+    
+    public function setUserLName($lName){
+        $this->_userLName = $lName;
         return $this;
     }
 
@@ -109,6 +154,16 @@ class Application_Model_Impl_CheckReq
         $this->_signeeUser = $user;
         return $this;
     }
+    
+    public function getSigneeUserId(){
+        return $this->_signeeUserId;
+    }
+    
+    public function setSigneeUserId($id){
+        $this->_signeeUserId = $id;
+        return $this;
+    }
+    
     public function getCheckNumber(){
          return $this->_checkNumber;
     }
@@ -174,6 +229,15 @@ class Application_Model_Impl_CheckReq
     
     public function setContactLastName($lName){
         $this->_contactLastName = $lName;
+        return $this;
+    }
+    
+    public function getStatus(){
+        return $this->_status;
+    }
+    
+    public function setStatus($status){
+        $this->_status = $status;
         return $this;
     }
 }
