@@ -101,8 +101,14 @@ class App_Service_DocumentService {
     //Gets the number of references and number of hmembers per case
     //Returns an array of populated GenReport objects
     //THIS WILL BE RENAMED TO REFLECT THE SPECIFIC REPORT THAT USES IT
-    public function getGenReports(){
-        return $this->getNumRefs($this->getNumMems());
+    public function getGenReports($startDate, $endDate){
+        $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
+        $newStartDate = $newStartDate->get('YYYY-MM-dd');
+        
+        $newEndDate = new Zend_Date($endDate, 'MM-dd-YYYY', 'en');
+        $newEndDate = $newEndDate->get('YYYY-MM-dd');
+        //return $this->getNumRefs($this->getNumMems());
+        return $this->getNumMems($this->getNumRefs($newStartDate, $newEndDate));
     }
     
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
@@ -157,7 +163,7 @@ class App_Service_DocumentService {
     
     //Gets the total number of household members associated with each case
     //Returns an array of GenReport objects with _caseId & _numHMembers populated
-    private function getNumMems(){
+    private function getNumMems($arr){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
@@ -166,12 +172,11 @@ class App_Service_DocumentService {
                            'cc.household_id = hmem.household_id')
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
-        $arr = array();
         foreach($results as $row){
-            $report = new Application_Model_Impl_GenReport();
-            $report->setCaseId($row['id']);
-            $report->setNumHMembers($row['totalMems']);
-            $arr[$row['id']] = $report;
+            if($row->getNumRefs() > 0){
+                $arr[$row['id']]->setNumHMembers($row['totalMems']);
+                $arr[$row['id']] = $report;
+            }
         }
         return $arr;
     }
@@ -179,7 +184,7 @@ class App_Service_DocumentService {
     //Given an array of GenReport objects with _caseId & _numHMembers populated
     //Gets the total number of referrals associated with each case
     //Returns the given array with all object's _numRefs populated
-    private function getNumRefs($arr){
+    private function getNumRefs($newStartDate, $newEndDate){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
@@ -188,10 +193,17 @@ class App_Service_DocumentService {
                            'cc.case_id = cn.case_id')
                 ->joinLeft(array('r' => 'referral'),
                            'cn.caseneed_id = r.caseneed_id')
+                ->where('r.referred_date >= ?', $newStartDate)
+                ->where('r.referred_date <= ?', $newEndDate)
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
-        foreach($results as $row)
-            $arr[$row['id']]->setNumRefs($row['totalRefs']);
+        $arr = array();
+        foreach($results as $row){
+            $report = new Application_Model_Impl_GenReport();
+            $report->setCaseId($row['id']);
+            $report->setNumRefs($row['totalRefs']);
+            $arr[$row['id']] = $report;
+        }
         return $arr;
     }
     
