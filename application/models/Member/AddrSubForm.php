@@ -30,6 +30,8 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
         $this->setIsArray(true)
              ->setDecorators(array('FormElements'));
 
+        $this->addElement('hidden', 'addrId', array('decorators' => array('ViewHelper')));
+
         $this->addElement('text', 'street', array(
             'required' => true,
             'filters' => array('StringTrim'),
@@ -177,6 +179,7 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
     {
         $addr = new Application_Model_Impl_Addr();
         $addr
+            ->setId(($this->addrId->getValue() !== '') ? $this->addrId->getValue() : null)
             ->setStreet(($this->street->getValue() !== '') ? $this->street->getValue() : null)
             ->setApt(($this->apt->getValue() !== '') ? $this->apt->getValue() : null)
             ->setCity(($this->city->getValue() !== '') ? $this->city->getValue() : null)
@@ -196,6 +199,7 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
      */
     public function setAddr($addr)
     {
+        $this->addrId->setValue($addr->getId());
         $this->street->setValue($addr->getStreet());
         $this->apt->setValue($addr->getApt());
         $this->city->setValue($addr->getCity());

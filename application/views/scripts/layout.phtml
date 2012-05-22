@@ -56,7 +56,13 @@ $scheduleEntries = Zend_Registry::get('schedule');
                         . '</a>'
                         . '</li>';
                     }
-		   if($role != App_Roles::GENERAL){
+
+
+
+		   
+                   if( $role !== App_Roles::GENERAL)
+                   {
+
 		    echo '<li class="active pull-right">'
 		    . '<a href="'
 		    . $this->escape($this->baseUrl('login/logout'))
@@ -65,7 +71,11 @@ $scheduleEntries = Zend_Registry::get('schedule');
 		    . 'Logout'
 		    . '</a>'
 		    . '<li>';
-            }
+
+
+
+                   }
+
                     ?>
             
 		    
