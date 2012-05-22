@@ -38,13 +38,19 @@ class App_Service_DocumentService {
     //Returns an associative array with the case_id as key and total miles as value
     //DOES NOT DISCRIMINATE BETWEEN OPEN AND CLOSED CASES
     public function getCaseVisitMiles($startDate, $endDate){
+        $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
+        $newStartDate = $newStartDate->get('YYYY-MM-dd');
+        
+        $newEndDate = new Zend_Date($endDate, 'MM-dd-YYYY', 'en');
+        $newEndDate = $newEndDate->get('YYYY-MM-dd');
+        
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
                              'totalMiles' => new Zend_Db_Expr('SUM(cv.miles)')))
                 ->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
-                ->where('cv.visit_date >= ?', $startDate)
-                ->where('cv.visit_date <= ?', $endDate)
+                ->where('cv.visit_date >= ?', $newStartDate)
+                ->where('cv.visit_date <= ?', $newEndDate)
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
         $arr = $this->getAssocOfCases();
@@ -58,13 +64,19 @@ class App_Service_DocumentService {
     //Returns an associative array with the case_id as key and total hours as value
     //DOES NOT DISCRIMINATE BETWEEN OPEN AND CLOSED CASES
     public function getCaseVisitHours($startDate, $endDate){
+        $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
+        $newStartDate = $newStartDate->get('YYYY-MM-dd');
+        
+        $newEndDate = new Zend_Date($endDate, 'MM-dd-YYYY', 'en');
+        $newEndDate = $newEndDate->get('YYYY-MM-dd');
+        
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
                              'totalHours' => new Zend_Db_Expr('SUM(cv.hours)')))
                 ->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
-                ->where('cv.visit_date >= ?', $startDate)
-                ->where('cv.visit_date <= ?', $endDate)
+                ->where('cv.visit_date >= ?', $newStartDate)
+                ->where('cv.visit_date <= ?', $newEndDate)
                 ->group('cc.case_id');
         $results = $this->_db->fetchAll($select);
         $arr = $this->getAssocOfCases();
