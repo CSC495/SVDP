@@ -1,6 +1,6 @@
 <?php
 $viewClientUrl = $this->baseUrl(App_Resources::MEMBER,
-    '/viewClient/id/' . urlencode($this->case->getClient()->getId()));
+    '/viewCase/id/' . urlencode($this->case->getClient()->getId()));
 ?>
 <p>Viewing summary for case ID <?php echo $this->escape($this->case->getId()); ?>.</p>
 
