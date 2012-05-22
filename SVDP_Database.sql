@@ -235,7 +235,7 @@ CREATE TABLE schedule(
 CREATE TABLE documents(
 	doc_id INT NOT NULL AUTO_INCREMENT,
 	filename VARCHAR(50),
-	url VARCHAR(50),
+	url VARCHAR(2083),
 	internal_flag TINYINT(1),
 	PRIMARY KEY (doc_id)
 ) ENGINE = InnoDB;
