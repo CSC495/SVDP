@@ -20,7 +20,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
             'legend' => 'Case visits:',
             'addRecordMsg' => 'Add Another Visit',
             'noRecordsMsg' => 'No visits listed.',
-            'submitMsg' => 'Submit Changes',
+            'submitMsg' => 'Submit',
         ));
 
         $this->_users = $users;

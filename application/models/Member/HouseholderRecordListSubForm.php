@@ -3,7 +3,7 @@
 class Application_Model_Member_HouseholderRecordListSubForm
     extends App_Form_RecordListSubFormAbstract {
 
-    public function __construct()
+    public function __construct($showDirtyMsg)
     {
         parent::__construct(array(
             'namespace' => 'householder',
@@ -17,6 +17,7 @@ class Application_Model_Member_HouseholderRecordListSubForm
             'legend' => 'Household members:',
             'addRecordMsg' => 'Add Another Household Member',
             'noRecordsMsg' => 'No household members listed.',
+            'dirtyMsg' => $showDirtyMsg ? 'Click "Submit Changes" to save household members.' : '',
         ));
     }
 

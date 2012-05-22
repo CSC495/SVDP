@@ -4,26 +4,26 @@
 <table>
     <tr>
         <td>
-            <br />Reimbursement Form
+            <br /><?php echo $this->element->cReport?>            
         </td>
         <td>
-            <br /><?php echo $this->element->rReport?> 
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <br />On Call Activities
-        </td>
-        <td>
-            <br /><?php echo $this->element->oReport?> 
+            <br /><strong>&nbsp;&nbsp;&nbsp;&nbsp;Client Information</strong>
         </td>
     </tr>
     <tr>
         <td>
-            <br />Client Information
+            <br /><?php echo $this->element->oReport?>             
         </td>
         <td>
-            <br /><?php echo $this->element->cReport?>
+            <br /><strong>&nbsp;&nbsp;&nbsp;&nbsp;On-Call Activities</strong>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <br /><?php echo $this->element->rReport?>             
+        </td>
+        <td>
+            <br /><strong>&nbsp;&nbsp;&nbsp;&nbsp;Reimbursement Form</strong>
         </td>
     </tr>
 </table>
