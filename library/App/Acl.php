@@ -63,6 +63,8 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::GENERAL,App_Resources::INDEX);
         $this->allow(App_Roles::GENERAL,App_Resources::ERROR);
         $this->allow(App_Roles::GENERAL,App_Resources::REDIRECT);
+        // All logged in users have access to displaying a document
+        $this->allow(App_Roles::GENERAL,App_Resources::DOCUMENT,'display');
     }
 
     protected function setMemberAccess()
