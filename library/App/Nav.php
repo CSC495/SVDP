@@ -16,12 +16,14 @@ class App_Nav
             '/report' => 'Reports',
             '/member/contacts' => 'Contacts',
             '/document/list' => 'Documents',
+
         ),
         // Navigation for administrators.
         App_Roles::ADMIN => array(
             '/admin/users' => 'Manage Users',
-            '/admin/adjust' => 'Adjust Limits',
+            '/admin/adjust' => 'Adjust Limits', 
             '/document/list' => 'Documents',
+
         ),
         // Navigation for treasurers.
         App_Roles::TREASURER => array(
@@ -30,6 +32,7 @@ class App_Nav
             '/search/treasurer' => 'Search',
             '/report' => 'Reports',
             '/document/list' => 'Documents',
+
         ),
     );
 
