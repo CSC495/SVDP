@@ -268,10 +268,21 @@ class MemberController extends Zend_Controller_Action
 
         // Handle requests to add, edit, and/or remove case needs.
         if ($this->view->form->isChangeNeedsRequest($data)) {
-            foreach ($this->view->form->getChangedNeeds() as $changedNeed) {
+            $changedNeeds = $this->view->form->getChangedNeeds();
+            $removedNeeds = $this->view->form->getRemovedNeeds();
+
+            if (count($removedNeeds) - count($changedNeeds) === count($case->getNeeds())) {
+                $this->_helper->flashMessenger(array(
+                    'type' => 'error',
+                    'text' => 'A case must have at least one need.',
+                ));
+                return;
+            }
+
+            foreach ($changedNeeds as $changedNeed) {
                 $service->changeCaseNeed($case->getId(), $changedNeed);
             }
-            $service->removeCaseNeeds($this->view->form->getRemovedNeeds());
+            $service->removeCaseNeeds($removedNeeds);
         }
 
         // Handle requests to add, edit, and/or remove case visits.
