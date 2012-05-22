@@ -9,12 +9,14 @@
             $rowStripeClass = ($i % 2) ? 'odd' : 'even';
         ?>
             <tr class="search-result <?php echo $rowStripeClass; ?>">
+                <td class="search-cell top icon"><i class='icon-comment'></i></td>
                 <th class="search-cell top first">Member</th>
                 <td class="search-cell top"><?php echo $this->escape($comment->getUser()->getFullName()); ?></td>
                 <th class="search-cell top">Date</th>
                 <td class="search-cell top"><?php echo $this->escape(App_Formatting::formatDateTime($comment->getDateTime())); ?></td>
             </tr>
             <tr class="search-result <?php echo $rowStripeClass; ?>">
+                <td class="search-cell bot icon"></td>
                 <th class="search-cell bot first">Comment</th>
                 <td class="search-cell bot" colspan=3><?php echo $this->escape($comment->getText()); ?></td>
             </tr>
