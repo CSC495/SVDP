@@ -38,6 +38,7 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
         $this->addSubForm(
             new Application_Model_Member_CaseNeedRecordListSubForm(
+                true,
                 $this->_readOnly,
                 $case->getId()
             ),

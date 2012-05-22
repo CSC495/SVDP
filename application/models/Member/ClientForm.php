@@ -504,15 +504,19 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
     public function setClient($client)
     {
         // Save fixed client IDs and other things that shouldn't be editable.
-        $fixedClientData = array(
-            'userId' => $client->getUser()->getUserId(),
-            'householdId' => $client->getHouseholdId(),
-            'maritalStatus' => $client->getMaritalStatus(),
-            'createdDate' => $client->getCreatedDate(),
-        );
+        if ($client->getUser() !== null) {
+            $fixedClientData = array(
+                'userId' => $client->getUser()->getUserId(),
+                'householdId' => $client->getHouseholdId(),
+                'maritalStatus' => $client->getMaritalStatus(),
+                'createdDate' => $client->getCreatedDate(),
+            );
 
-        if ($client->isMarried()) {
-            $fixedClientData['spouseId'] = $client->getSpouse()->getId();
+            if ($client->isMarried()) {
+                $fixedClientData['spouseId'] = $client->getSpouse()->getId();
+            }
+        } else {
+            $fixedClientData = null;
         }
 
         $safeSerializedFixedClientData = $this->_safeSerializeService->serialize($fixedClientData);

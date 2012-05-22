@@ -42,6 +42,20 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             'prepend' => '$',
         ));
 
+        $this->addElement('textarea', 'comment', array(
+            'filters' => array('StringTrim'),
+            'label' => 'Comment',
+            'description' => '(Optional)',
+            'dimension' => 7,
+            'rows' => 4,
+        ));
+
+        $this->addDisplayGroup(
+            array('amount', 'comment'),
+            'generalInfo',
+            array('legend' => 'General information:')
+        );
+
         $this->addElement('text', 'accountNumber', array(
             'required' => true,
             'filters' => array('StringTrim'),
@@ -65,20 +79,6 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             'maxlength' => 30,
             'dimension' => 3,
         ));
-
-        $this->addElement('textarea', 'comment', array(
-            'filters' => array('StringTrim'),
-            'label' => 'Comment',
-            'description' => '(Optional)',
-            'dimension' => 7,
-            'rows' => 4,
-        ));
-
-        $this->addDisplayGroup(
-            array('amount', 'accountNumber', 'comment'),
-            'generalInfo',
-            array('legend' => 'General information:')
-        );
 
         $this->addElement('text', 'payeeName', array(
             'required' => true,
@@ -164,7 +164,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addDisplayGroup(
-            array('payeeName', 'phone', 'contactFirstName', 'contactLastName'),
+            array('accountNumber', 'payeeName', 'phone', 'contactFirstName', 'contactLastName'),
             'general',
             array('legend' => 'Payee contact information:')
         );

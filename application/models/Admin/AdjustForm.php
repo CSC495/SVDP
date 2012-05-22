@@ -89,7 +89,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
                $adjust = $this->addElement('submit', 'adjust', array(
                    'required' => false,
                    'ignore'   => true,
-                   'label'    => 'Submit Changes',
+                   'label'    => 'Submit',
 		   'class'    => 'btn btn-success',
 		   'decorators' => array('ViewHelper'),
                 ));
