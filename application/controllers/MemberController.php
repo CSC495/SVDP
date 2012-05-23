@@ -580,7 +580,8 @@ class MemberController extends Zend_Controller_Action
         $checkReq
             ->setCaseNeedId($needId)
             ->setUser($user)
-            ->setRequestDate(date('Y-m-d'));
+            ->setRequestDate(date('Y-m-d'))
+            ->setStatus('P');
 
         $service = new App_Service_Member();
         $service->createCheckRequest($checkReq);
