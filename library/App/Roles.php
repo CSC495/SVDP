@@ -1,11 +1,29 @@
 <?php
 
-// Provides constants for defining the role of the user
+/**
+ * Provides constants for the possible user roles
+ * Note: A user that is logged in simply has no role (null)
+ */
 class App_Roles
 {
-    // Change the string values to match with database values
-    const GENERAL   = "G";      // Parent Role (Shared among all others)
-    const MEMBER    = "M";      // Standard member
-    const TREASURER = "T";      // Treasurer
-    const ADMIN     = "A";      // Admin
+	/**
+     * General Role. 'subclass' role of all other roles
+     * @var string
+     */
+    const GENERAL   = "G";
+	/**
+     * Standard Member Role.
+     * @var string
+     */
+    const MEMBER    = "M";
+	/**
+     * Treasurer Role
+     * @var string
+     */
+    const TREASURER = "T";
+	/**
+     * Admin Role
+     * @var string
+     */
+    const ADMIN     = "A";
 }

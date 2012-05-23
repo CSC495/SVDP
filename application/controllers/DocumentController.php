@@ -1,13 +1,27 @@
 <?php
-
+/**
+* Class implements all functionality needed for documents. Provides
+* functions for uploading a doc, linking to external doc, and 
+* creating the view for the documents.
+*/
 class DocumentController extends Zend_Controller_Action
 {
+    /*
+	* Initalizes any global data for DocumentController
+	*
+	* @return null
+	*/
     public function init()
     {
         /* Initialize action controller here */
     }
     
-    // Lists the documents
+	/*
+	* Provides the interface for displaying the list
+	* of documents to the user
+	*
+	* @return null
+	*/
     public function listAction()
     {
         $this->view->pageTitle = "Document List";
@@ -19,7 +33,13 @@ class DocumentController extends Zend_Controller_Action
  
     }
     
-    // Determines the partial to use
+	/*
+	* Determines which partial to use based on the current users role.
+	* This partial is responsible for displaying the list of documents
+	* and providing the roles their proper functions pertaining to documents
+	*
+	* @return null
+	*/
     private function setPartial()
     {
         $auth = Zend_Auth::getInstance();
@@ -41,7 +61,12 @@ class DocumentController extends Zend_Controller_Action
         }
     } 
     
-    // Upload a new document
+    /*
+	* Handles the interface for uploading a document. GET displays the
+	* form while POST validates the form
+	*
+	* @return null
+	*/
     public function uploadAction()
     {
         $request = $this->getRequest();
@@ -54,7 +79,14 @@ class DocumentController extends Zend_Controller_Action
             $this->handleUploadForm($form);
         }
     }
-    
+	
+    /**
+	 * Handles logic for validating a file upload form
+	 *
+	 * @param Application_Model_Document_UploadForm $form Upload form to be validated
+	 *
+	 * @return null
+	 */
     private function handleUploadForm($form)
     {
         $form->populate($_POST);
@@ -80,22 +112,31 @@ class DocumentController extends Zend_Controller_Action
         // return if not valid
         return;
     }
-    
+    /*
+	* Handles logic for saving a file to disk
+	*
+	* @param Application_Model_Document_UploadForm $form Validated form holding document
+	*
+	* @return null
+	*/
     private function saveFile($form)
     {
+		// Create the document
         $doc = new Application_Model_Impl_Document();
         $doc
             ->setId(null)
             ->setUrl($_FILES['url']['name'])
             ->setName($form->getValue('name'))
             ->setInternal(1);
-
-        $service = new App_Service_DocumentService();
-        $service->createDocument($doc);
         
+		// Pull in the document and save it
         $upload = new Zend_File_Transfer_Adapter_Http();
         $upload->setDestination(APPLICATION_PATH . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR);
         $upload->receive();
+		
+		// Persist document to database
+        $service = new App_Service_DocumentService();
+        $service->createDocument($doc);
 
         // Redirect user
         $this->_forward('index', App_Resources::REDIRECT, null,
@@ -105,7 +146,12 @@ class DocumentController extends Zend_Controller_Action
                            'action' => 'list'));
     }
     
-    // Add's an external document
+    /*
+	* Handles logic for adding external document (URL). GET displays form
+	* and POST validates form
+	*
+	* @return null
+	*/
     public function addAction()
     {
         $request = $this->getRequest();
@@ -118,7 +164,11 @@ class DocumentController extends Zend_Controller_Action
             $this->handleAddForm($form);
         }
     }
-    
+	/*
+	* Handles logic for displaying a document
+	*
+	* @return null
+	*/
     public function displayAction()
     {
         $request = $this->getRequest();
@@ -127,7 +177,8 @@ class DocumentController extends Zend_Controller_Action
         // If theres no param go back to index
         if(!$docId)
             return $this->_helper->redirector('index');
-            
+         
+		// Get the information about the document
         $service = new App_Service_DocumentService();
         $doc = $service->getDocument($docId);
         if($doc)
@@ -141,6 +192,7 @@ class DocumentController extends Zend_Controller_Action
             // Get mime
             $mime = App_MimeConverter::getMimeType($filename);
             
+			// Set file properties
             $this->getResponse()
                 ->setHeader('Content-Type', $mime)
                 ->setHeader('Expires', '', true)
@@ -153,7 +205,13 @@ class DocumentController extends Zend_Controller_Action
         
         return $this->_helper->redirector('index');
     }
-    
+	/*
+	* Handles validation logic for form to add new document from URL
+	*
+	* @param Application_Model_Document_AddForm $form Form holding file information
+	*
+	* @return null
+	*/
     private function handleAddForm($form)
     {
         if( $form->isValid($_POST) )
@@ -182,7 +240,11 @@ class DocumentController extends Zend_Controller_Action
         return;
     }
     
-    // Delete an exisiting document
+	/*
+	* Deletes a document which is specifed by the Id passed in the GET query
+	*
+	* @return null
+	*/
     public function deleteAction()
     {
         // Get request and passed parameter
@@ -198,17 +260,24 @@ class DocumentController extends Zend_Controller_Action
         
         if($doc)
         {
+			// Delete doc in proper way
             if($doc->isInternal())
                 $this->removeInternal($doc);
             else
                 $this->removeExternal($doc);    
         }
-        else
+        else // File did not exist (according to database)
             return $this->_helper->redirector('index');
             
         
     }
-    
+	/*
+	* Handles logic for removing an external document from the site
+	*
+	* @param int $doc id of the document to remove from database
+	*
+	* @return null
+	*/
     private function removeExternal($doc)
     {
         $service = new App_Service_DocumentService();
@@ -217,7 +286,13 @@ class DocumentController extends Zend_Controller_Action
         
         return $this->_helper->redirector('list',App_Resources::DOCUMENT);
     }
-    
+	/*
+	* Handles logic for removing an internal document from the site
+	*
+	* @param int $doc id of the document to remove from database
+	*
+	* @return null
+	*/
     private function removeInternal($doc)
     {
         $file = APPLICATION_PATH . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . $doc->getUrl();

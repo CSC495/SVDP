@@ -159,8 +159,8 @@ class LoginController extends Zend_Controller_Action
      * Handles the authentication of a user
      *
      * @usedby LoginController::processAction()
-     * @param string $userid
-     * @param string $password
+     * @param string $userid The ID that the user is trying to log in as
+     * @param string $password The password the user provided to log in
      * @return void
      */
     protected function authenticate($userid, $password)
