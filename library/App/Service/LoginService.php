@@ -63,16 +63,6 @@ class App_Service_LoginService {
             ->setCredential( hash('SHA256', App_Password::saltIt($password)) );
         return $adapter;
     }
-    
-    //Returns the number of admin users
-    public function getNumAdmins(){
-        $select = $this->_db->select()
-                ->from('user', array('numAdmins' => 'COUNT(*)'))
-                ->where('role = ?', 'A')
-                ->order();
-        $result = $this->_db->fetchRow($select);
-        return $result['numAdmins'];
-    }
         
     /***
      * Build User object from row result

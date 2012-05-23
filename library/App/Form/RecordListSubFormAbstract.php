@@ -23,6 +23,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private $_noRecordsMsg;
 
+    private $_dirtyMsg;
+
     private $_dirtyField;
 
     private $_removedRecordsField;
@@ -60,6 +62,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                     'legendMsg' => &$this->_legendMsg,
                     'descriptionMsg' => &$this->_descriptionMsg,
                     'noRecordsMsg' => &$this->_noRecordsMsg,
+                    'dirtyMsg' => &$this->_dirtyMsg,
                     'dirtyField' => &$this->_dirtyField,
                     'removedRecordsField' => &$this->_removedRecordsField,
                     'removedRecordsHashField' => &$this->_removedRecordsHashField,
@@ -94,6 +97,9 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         $this->_noRecordsMsg   = isset($options['noRecordsMsg'])
             ? $options['noRecordsMsg']
             : 'No records listed.';
+        $this->_dirtyMsg   = isset($options['dirtyMsg'])
+            ? $options['dirtyMsg']
+            : 'Click "Submit" to save changes.';
 
         // Create hidden elements to hold removed records across POST requests.
         if (!$this->_readOnly) {
@@ -146,7 +152,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     public function preValidate($data)
     {
-        if ($data["{$this->_namespace}Dirty"]) {
+        if (isset($data["{$this->_namespace}Dirty"]) && $data["{$this->_namespace}Dirty"]) {
             $this->_dirty = true;
         }
 

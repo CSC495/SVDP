@@ -6,8 +6,6 @@ class Application_Model_Treasurer_FundsForm extends Twitter_Bootstrap_Form_Horiz
     public function __construct()
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
-
-		
 		
         parent::__construct(array(
             'action' => $baseUrl->baseUrl(App_Resources::TREASURER) . '/updateFunds',
@@ -28,7 +26,7 @@ class Application_Model_Treasurer_FundsForm extends Twitter_Bootstrap_Form_Horiz
 						array('StringLength', false, array(1, 7)),
 				),
 				'required'   => true,
-				'label'      => 'Current Funds:',
+				'label'      => 'Available Funds:',
 				'size'		 => 7,
 		));
 		
