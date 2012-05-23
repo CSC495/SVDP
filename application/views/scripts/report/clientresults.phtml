@@ -18,7 +18,8 @@
     </tr>
     <tr>
         <td>&nbsp;Birth Date:&nbsp;<?php echo $this->client->getBirthDate() ?>&nbsp;</td>
-        <td>&nbsp;Marital Status:&nbsp;<?php echo $this->client->isMarried() ?>&nbsp;</td>
+        <td>&nbsp;Marital Status:&nbsp;<?php if($this->client->isMarried())
+                                    {echo "Married";}else{echo "Single";} ?>&nbsp;</td>
         <td>&nbsp;Spouse:&nbsp;<?php if($this->client->isMarried())
                                     {echo $this->client->getSpouse()->getFullName();} ?>&nbsp;</td>
     </tr>

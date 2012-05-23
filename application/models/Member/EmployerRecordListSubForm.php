@@ -3,7 +3,7 @@
 class Application_Model_Member_EmployerRecordListSubForm
     extends App_Form_RecordListSubFormAbstract {
 
-    public function __construct()
+    public function __construct($showDirtyMsg)
     {
         parent::__construct(array(
             'namespace' => 'employer',
@@ -16,6 +16,7 @@ class Application_Model_Member_EmployerRecordListSubForm
             'legend' => 'Employment status:',
             'addRecordMsg' => 'Add Another Employer',
             'noRecordsMsg' => 'No employers listed.',
+            'dirtyMsg' => $showDirtyMsg ? 'Click "Submit Changes" to save employers.' : '',
         ));
     }
 

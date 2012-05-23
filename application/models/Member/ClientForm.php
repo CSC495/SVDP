@@ -23,6 +23,12 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         'None' => 'None',
     );
 
+    private $_CHANGE_TYPE_OPTIONS = array(
+        '' => '',
+        'move' => 'Moved',
+        'edit' => 'Edited Address',
+    );
+
     private $_id;
 
     private $_safeSerializeService;
@@ -388,9 +394,17 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         ));
 
         if ($id !== null) {
-            $this->addElement('checkbox', 'moved', array(
-                'required' => true,
-                'label' => 'Moved?',
+            $this->addElement('select', 'changeType', array(
+                'multiOptions' => $this->_CHANGE_TYPE_OPTIONS,
+                'validators' => array(
+                    array('InArray', true, array(
+                        'haystack' => array_keys($this->_CHANGE_TYPE_OPTIONS),
+                        'strict' => true,
+                        'messages' => array('notInArray' => 'Must choose a change type.'),
+                    )),
+                ),
+                'label' => 'Change type',
+                'dimension' => 2,
             ));
         }
 
@@ -399,14 +413,14 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         // Householders sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_HouseholderRecordListSubForm(),
+            new Application_Model_Member_HouseholderRecordListSubForm($id !== null),
             'householderRecordList'
         );
 
         // Employers sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_EmployerRecordListSubForm(),
+            new Application_Model_Member_EmployerRecordListSubForm($id !== null),
             'employerRecordList'
         );
 
@@ -586,7 +600,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function isMove()
     {
-        return $this->_id !== null && $this->moved->isChecked();
+        return $this->_id !== null && $this->changeType->getValue() === 'move';
     }
 
     public function isMaritalStatusChange()

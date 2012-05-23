@@ -90,7 +90,7 @@ class SearchController extends Zend_Controller_Action
             switch ($searchType) {
                 // Treasurer searches by check request go to a single check request's page.
                 case Application_Model_Search_FormAbstract::TYPE_CHECK_REQ_ID:
-                    $this->_helper->redirector('checkReq', App_Resources::MEMBER, null, array(
+                    $this->_helper->redirector('checkReq', App_Resources::TREASURER, null, array(
                         'id' => $this->view->form->getQuery(),
                     ));
             }

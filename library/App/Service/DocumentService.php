@@ -37,7 +37,7 @@ class App_Service_DocumentService {
     //Gets the total miles of each case's visits within the timespan
     //Returns an associative array with the case_id as key and total miles as value
     //DOES NOT DISCRIMINATE BETWEEN OPEN AND CLOSED CASES
-     public function getCaseVisitMiles($startDate, $endDate){
+    public function getCaseVisitMiles($startDate, $endDate){
         $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
         $newStartDate = $newStartDate->get('YYYY-MM-dd');
         
@@ -159,8 +159,9 @@ class App_Service_DocumentService {
                 ->from('client_case', array('id' => 'case_id'));
         $results = $this->_db->fetchAll($select);
         $ids = array();
-        foreach($results as $row)
+        foreach($results as $row){
             $ids[$row['id']] = '0';
+        }
         return $ids;
     }
     
@@ -188,9 +189,9 @@ class App_Service_DocumentService {
         return $arr;
     }
     
-    //Given an array of GenReport objects with _caseId & _numHMembers populated
+    //Given a time span bounded by a start date and an end date (assured to be in international notation)
     //Gets the total number of referrals associated with each case
-    //Returns the given array with all object's _numRefs populated
+    //Returns an associative array with the key as 
     private function getNumRefs($newStartDate, $newEndDate){
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
