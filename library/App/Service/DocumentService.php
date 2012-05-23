@@ -164,6 +164,18 @@ class App_Service_DocumentService {
         }
         return $ids;
     }
+     public function getCheckReqsByCaseId($caseId){
+        $select = $this->_db->select()
+                ->from(array('cr' => 'check_request'))
+                ->join(array('cn' => 'case_need'), 'cn.caseneed_id = cr.caseneed_id')
+                ->join(array('cc' => 'client_case'), 'cn.case_id = cc.case_id')
+                ->where('cc.case_id = ?', $caseId);
+        $results = $this->_db->fetchAll($select);
+        $arr = array();
+        foreach($results as $row)
+            $arr[] = $this->buildCheckRequestModel($row);
+        return $arr;
+    }
     
     //Gets the total number of household members associated with each case
     //Returns an array of GenReport objects with _caseId & _numHMembers populated

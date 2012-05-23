@@ -20,7 +20,16 @@ class Application_Model_Report_clientReport extends Twitter_Bootstrap_Form_Verti
 			'filters'    => array('Digits'),
 			'required'   => true,
 			'class'	     => 'input-small',
-			));
+			'validators' => array(
+			array('Db_RecordExists', true, array(
+			    'table' => 'client',
+			    'field' => 'client_id',
+			    'messages' => array(
+				'noRecordFound' => 'No client was found for that ID.'
+				)),                
+			)),
+		));
+	
 		
                $login = $this->addElement('submit', 'create', array(
                    'required' => false,
