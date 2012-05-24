@@ -48,7 +48,7 @@ class App_Service_Search
     {
         $likeName = '%' . App_Escaping::escapeLike($name) . '%';
         $select   = $this->initClientSelect()
-            ->where('c.last_name LIKE ? OR c.first_name LIKE ?', $likeName, $likeName);
+            ->where("CONCAT_WS(' ', c.first_name, c.last_name) LIKE ?", $likeName);
         $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildClientModels($results);
@@ -172,9 +172,8 @@ class App_Service_Search
     {
         $likeName = '%' . App_Escaping::escapeLike($name) . '%';
         $select   = $this->initCheckReqSelect()
-            ->where('c.last_name LIKE ? OR c.first_name LIKE ? OR c2.last_name LIKE ?'
-                        .' OR c2.first_name LIKE ?',
-                    $likeName, $likeName, $likeName, $likeName);
+            ->where("CONCAT_WS(' ', c.first_name, c.last_name) LIKE ? "
+                  . "OR CONCAT_WS(' ', c2.first_name, c2.last_name) LIKE ?", $likeName, $likeName);
         $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildCheckReqModels($results);
