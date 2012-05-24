@@ -31,8 +31,8 @@ class DocumentController extends Zend_Controller_Action
         
         $this->setPartial();
 		
-		// Add the javascript file
-		$this->view->headScript()->appendFile($this->view->baseUrl('document.js'));
+	// Add the javascript file
+	$this->view->headScript()->appendFile($this->view->baseUrl('document.js'));
  
     }
     
@@ -124,7 +124,12 @@ class DocumentController extends Zend_Controller_Action
 	*/
     private function saveFile($form)
     {
-		// Create the document
+        // Set up file transfer        
+        $upload = new Zend_File_Transfer_Adapter_Http();
+        $uploadDir = APPLICATION_PATH . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR;
+        $upload->setDestination($uploadDir);
+        
+	// Create the document
         $doc = new Application_Model_Impl_Document();
         $doc
             ->setId(null)
@@ -132,12 +137,38 @@ class DocumentController extends Zend_Controller_Action
             ->setName($form->getValue('name'))
             ->setInternal(1);
         
-		// Pull in the document and save it
+        // get the files extension
+        $ext = (false === $pos = strrpos($doc->getUrl(), '.')) ? '' : substr($doc->getUrl(), $pos);
+        
+        // get the files name
+        $fileName = basename($doc->getUrl(),$ext);
+        
+        // added number for name to fix naming conflicts
+        $fileNum = 0;
+        
+        // Get the next number for this file
+        while( file_exists($uploadDir . $doc->getUrl()) )
+        {
+            $fileNum = $fileNum + 1;
+            // Change the documents URL
+            $doc->setUrl($fileName . '(' . $fileNum . ')' . $ext);
+            var_dump($doc->getUrl());
+        }
+        
+        // Set up file transfer        
         $upload = new Zend_File_Transfer_Adapter_Http();
-        $upload->setDestination(APPLICATION_PATH . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR);
+        $upload->setDestination($uploadDir);
+        
+        // Rewrite destination with the file number appended
+        if( $fileNum != 0)
+        {
+            $upload->addFilter('Rename', array('target' => $uploadDir . $doc->getUrl(),
+                                               'overwrite' => true));
+        }
+        
         $upload->receive();
-		
-		// Persist document to database
+
+        // Persist document to database
         $service = new App_Service_DocumentService();
         $service->createDocument($doc);
 
@@ -194,9 +225,10 @@ class DocumentController extends Zend_Controller_Action
             
             // Get mime
             $mime = App_MimeConverter::getMimeType($filename);
-            
+            $downloadName = str_replace(' ','_',$doc->getName());
 			// Set file properties
             $this->getResponse()
+                ->setHeader('Content-Disposition', 'inline; filename=' . $downloadName)
                 ->setHeader('Content-Type', $mime)
                 ->setHeader('Expires', '', true)
                 ->setHeader('Cache-Control', 'private', true)
