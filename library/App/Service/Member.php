@@ -1225,6 +1225,7 @@ class App_Service_Member
                 ? $request->getSigneeUser()->getUserId() : null,
             'check_number' => $request->getCheckNumber(),
             'issue_date' => $request->getIssueDate(),
+            'status' => $request->getStatus(),
             'account_number' => $request->getAccountNumber(),
             'payee_name' => $request->getPayeeName(),
             'street' => $request->getAddress()->getStreet(),
