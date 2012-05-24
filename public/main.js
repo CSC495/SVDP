@@ -412,6 +412,43 @@ function initEditClientForm() {
     update();
 }
 
+function initViewCaseForm() {
+    // Create a dialog to confirm the case close operation.
+    var closeCaseBtn = $('#closeCase');
+
+    var confirmCloseCase = $('<div/>')
+        .html('<p>Are you sure you want to close this case?</p>'
+            + '<p>The case cannot be reopened after closing.</p>')
+        .dialog({
+            autoOpen: false,
+            buttons: {
+                'Yes': function () {
+                    closeCaseBtn.trigger('click');
+                },
+                'No': function () {
+                    confirmCloseCase.dialog('close');
+                }
+            },
+            modal: true,
+            resizable: false,
+            title: 'Confirm Closing Case'
+        });
+
+    // Attach event handler to close button.
+    closeCaseBtn.click(function () {
+        // If the confirmation dialog is already open, we should hide the dialog and let the form
+        // submit.
+        if (confirmCloseCase.dialog('isOpen')) {
+            confirmCloseCase.dialog('close');
+            return;
+        }
+
+        // Otherwise, we should show the confirmation dialog.
+        confirmCloseCase.dialog('open');
+        return false;
+    });
+}
+
 function initUiWidgets() {
     // Attach jQuery UI widgets/plugin behavior.
     $(':not([readonly]).date').datepicker();
