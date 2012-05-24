@@ -6,6 +6,10 @@
     padding-left: 3ex;
 }
 
+.sidebar-field .error {
+    color: #b94a48;
+}
+
 /* Styles for map view: */
 
 #map {

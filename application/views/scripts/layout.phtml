@@ -37,8 +37,10 @@ $auth = Zend_Auth::getInstance();
 $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 
 // Fetch available funds for sidebar.
-$config = Zend_Registry::get('config');
-$funds  = App_Formatting::formatCurrency($config->getAvailableFunds());
+$config     = Zend_Registry::get('config');
+$funds      = $config->getAvailableFunds();
+$fundsStr   = App_Formatting::formatCurrency($funds);
+$fundsClass = ($funds < 0.0) ? 'error': '';
 
 // Fetch user schedule for sidebar.
 $scheduleEntries = Zend_Registry::get('schedule');
@@ -46,51 +48,37 @@ $scheduleEntries = Zend_Registry::get('schedule');
 
 <div class=container-fluid>
     <ul style="margin-top: 15px;"  class="nav nav-pills">
-        <li style="margin-right: 25px;"><h3><a href="<?php echo $this->escape($this->baseUrl('')); ?>">St. Vincent de Paul</a></h3></li>               
-            <?php
-                foreach ($this->navLinks as $path => $link) {
-                    echo '<li class=active >'
-                        . '<a href="'
-                        . $this->escape($this->baseUrl($path))
-                        . '">'
-                        . $this->escape($link['text'])
-                        . '</a>'
-                        . '</li>';
-                    }
+        <li style="margin-right: 25px;"><h3><a href="<?php echo $this->escape($this->baseUrl('')); ?>">St. Vincent de Paul</a></h3></li>
+        <?php
+        foreach ($this->navLinks as $path => $link) {
+            echo '<li class=active >'
+                . '<a href="'
+                . $this->escape($this->baseUrl($path))
+                . '">'
+                . $this->escape($link['text'])
+                . '</a>'
+                . '</li>';
+        }
 
-
-
-		   
-                   if( $role !== App_Roles::GENERAL)
-                   {
-
-		    echo '<li class="active pull-right">'
-		    . '<a href="'
-		    . $this->escape($this->baseUrl('login/logout'))
-		    . '">'
-		    . '<i class="icon-share icon-white"></i>'
-		    . 'Logout'
-		    . '</a>'
-		    . '<li>';
-
-
-
-                   }
-
-                    ?>
-            
-		    
-                </ul>  
-
-      
-   
+        if ($role !== App_Roles::GENERAL) {
+            echo '<li class=active>'
+            . '<a href="'
+            . $this->escape($this->baseUrl('login/logout'))
+            . '">'
+            . '<i class="icon-share icon-white"></i>'
+            . 'Logout'
+            . '</a>'
+            . '<li>';
+        }
+        ?>
+    </ul>
 
     <div class=row-fluid>
         <?php if ($auth->hasIdentity()){ ?>
-        <div class=span2> 
+        <div class=span2>
             <ul class="well nav nav-list">
                 <li class=nav-header>Available Funds</li>
-                <li class=sidebar-field><p><?php echo $this->escape($funds); ?></p></li>
+                <li class=sidebar-field><p class="<?php echo $this->escape($fundsClass); ?>"><?php echo $this->escape($fundsStr); ?></p></li>
 
                 <li class=divider></li>
 
