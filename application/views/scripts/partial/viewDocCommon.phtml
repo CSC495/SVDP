@@ -15,7 +15,7 @@ else
 			{ 
 				echo "<a href=\"" . $this->baseUrl(App_Resources::DOCUMENT 
 										.'/delete/id/' . urlencode($this->doc->getId())) . "\""  
-										. "class='btn btn-mini btn-danger' >Delete</a></td>";
+										. "class='btn btn-mini btn-danger' onclick='return confirmDelete()' >Delete</a></td>";
 			}
 		?>
 </tr>
