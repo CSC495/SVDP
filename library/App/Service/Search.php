@@ -144,9 +144,19 @@ class App_Service_Search
      */
     public function getOpenCheckReqs()
     {
+	
+		/*$select  = $this->initCaseSelect()
+            ->where('s.opened_user_id = ?', $userId)
+            ->where('s.status <> "Closed"');
+        $results = $this->_db->fetchAssoc($select);
+
+        return $this->buildCaseModels($results);
+		*/
+		
         // XXX: Check requests don't currently have a status field in the database, so we just
         // return all open check requests. This is not desired behavior, obviously!
-        $select  = $this->initCheckReqSelect();
+        $select  = $this->initCheckReqSelect()
+            ->where('r.status <> "I" AND r.status <> "D"');
         $results = $this->_db->fetchAssoc($select);
 
         return $this->buildCheckReqModels($results);
@@ -315,7 +325,7 @@ class App_Service_Search
     private function initCheckReqSelect()
     {
         return $this->_db->select()
-            ->from(array('r' => 'check_request'), array('r.checkrequest_id', 'r.request_date'))
+            ->from(array('r' => 'check_request'), array('r.checkrequest_id', 'r.request_date', 'r.status'))
             ->join(
                 array('n' => 'case_need'),
                 'r.caseneed_id = n.caseneed_id',
@@ -442,7 +452,8 @@ class App_Service_Search
             $checkReq
                 ->setId($dbResult['checkrequest_id'])
                 ->setRequestDate($dbResult['request_date'])
-                ->setCase($case);
+                ->setCase($case)
+				->setStatus($dbResult['status']);
 
             $checkReqs[] = $checkReq;
         }

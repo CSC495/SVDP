@@ -13,6 +13,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     private $_narrow;
 
+    private $_dirty;
+
     private $_legendMsg;
 
     private $_descriptionMsg;
@@ -20,6 +22,10 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
     private $_addRecordMsg;
 
     private $_noRecordsMsg;
+
+    private $_dirtyMsg;
+
+    private $_dirtyField;
 
     private $_removedRecordsField;
 
@@ -52,9 +58,12 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                     'labels' => &$this->_labels,
                     'readOnly' => &$this->_readOnly,
                     'narrow' => &$this->_narrow,
+                    'dirty' => &$this->_dirty,
                     'legendMsg' => &$this->_legendMsg,
                     'descriptionMsg' => &$this->_descriptionMsg,
                     'noRecordsMsg' => &$this->_noRecordsMsg,
+                    'dirtyMsg' => &$this->_dirtyMsg,
+                    'dirtyField' => &$this->_dirtyField,
                     'removedRecordsField' => &$this->_removedRecordsField,
                     'removedRecordsHashField' => &$this->_removedRecordsHashField,
                     'recordsSubForm' => &$this->_recordsSubForm,
@@ -88,10 +97,15 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         $this->_noRecordsMsg   = isset($options['noRecordsMsg'])
             ? $options['noRecordsMsg']
             : 'No records listed.';
+        $this->_dirtyMsg   = isset($options['dirtyMsg'])
+            ? $options['dirtyMsg']
+            : 'Click "Submit" to save changes.';
 
         // Create hidden elements to hold removed records across POST requests.
         if (!$this->_readOnly) {
             $safeSerializedEmptyArray = $this->_safeSerializeService->serialize(array());
+
+            $this->addElement('hidden', "{$this->_namespace}Dirty");
 
             $this->addElement('hidden', "{$this->_namespace}RecordsRemoved", array(
                 'value' => $safeSerializedEmptyArray['serial'],
@@ -101,6 +115,7 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                 'value' => $safeSerializedEmptyArray['hash'],
             ));
 
+            $this->_dirtyField = $this->getElement("{$this->_namespace}Dirty");
             $this->_removedRecordsField = $this->getElement("{$this->_namespace}RecordsRemoved");
             $this->_removedRecordsHashField
                 = $this->getElement("{$this->_namespace}RecordsRemovedHash");
@@ -137,6 +152,10 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 
     public function preValidate($data)
     {
+        if (isset($data["{$this->_namespace}Dirty"]) && $data["{$this->_namespace}Dirty"]) {
+            $this->_dirty = true;
+        }
+
         if (!$this->_readOnly && isset($data["{$this->_namespace}Records"])) {
             foreach ($data["{$this->_namespace}Records"] as $recordName => $recordData) {
                 $this->_recordsSubForm->addSubForm($this->createSubForm(), $recordName);
@@ -164,6 +183,9 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         if (isset($data["{$this->_namespace}RecordAdd"])) {
             $this->addEmptyRecord();
 
+            $this->_dirtyField->setValue('1');
+            $this->_dirty = true;
+
             return true;
         } else if (isset($data["{$this->_namespace}Records"])) {
             foreach ($data["{$this->_namespace}Records"] as $recordName => $recordData) {
@@ -188,6 +210,9 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                             );
                         }
                     }
+
+                    $this->_dirtyField->setValue('1');
+                    $this->_dirty = true;
 
                     return true;
                 }
