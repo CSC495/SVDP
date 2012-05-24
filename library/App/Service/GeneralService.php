@@ -24,6 +24,7 @@ class App_Service_GeneralService {
         return $this->buildScheduleEntryModels($results);
     }
     
+    //Returns the number of pending check requests
     public function getNumPendingCheckRequests(){
         $select = $this->_db->select()
                 ->from('check_request',
