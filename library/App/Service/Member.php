@@ -854,6 +854,15 @@ class App_Service_Member
             return null;
     }
     
+    //Returns the marriage status of the given client
+    private function getClientMarriageStatus($clientId){
+        $select = $this->_db->select()
+                ->from('client', 'marriage_status')
+                ->where('client_id = ?', $clientId);
+        $results = $this->_db->fetchRow($select);
+        return $results['marriage_status'];
+    }
+    
     private function getHouseholdersByHouseholdId($houseId){
         $hMembers = array();
         
@@ -892,7 +901,7 @@ class App_Service_Member
             $hMembers[] = $this->buildHouseholderModel($row);
         return $hMembers;
    }
-
+   
     /****** PRIVATE CREATE/INSERT QUERIES  ******/
 
     private function changeHouseholders($householdId, $householders)
