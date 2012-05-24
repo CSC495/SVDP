@@ -56,6 +56,9 @@ class App_Controller_Plugin_AuthPlugin extends Zend_Controller_Plugin_Abstract
 
         // User is logged in
         if ($auth->hasIdentity()) {
+            // Reset the timeout
+            $_SESSION['timeout_idle'] = time() + Zend_Registry::Get('timeout');
+            
             // Get users identity
             $identity = $auth->getIdentity();
             // Send user to change password page if change is required. User is only allowed to

@@ -16,9 +16,9 @@
  */
 class App_Acl extends Zend_Acl
 {
-	/**
-	 * Default constructore for the ACL rules
-	 */
+    /**
+     * Default constructore for the ACL rules
+     */
     public function __construct()
     {
         $this->createResources();

@@ -49,6 +49,23 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 
         Zend_Registry::set('schedule', $schedule);
     }
+    
+    protected function _initSession()
+    {
+        // Load options from application.ini
+        $options = $this->getOptions();
+        $sessionOptions = array(
+        'gc_probability'    =>    $options['resources']['session']['gc_probability'],
+        'gc_divisor'        =>    $options['resources']['session']['gc_divisor'],
+        'gc_maxlifetime'    =>    $options['resources']['session']['gc_maxlifetime']
+        );
+        
+        $idleTimeout = $options['resources']['session']['idle_timeout'];
+        
+        Zend_Session::setOptions($sessionOptions);
+        
+        Zend_Registry::set('timeout',$idleTimeout);
+    }
 
 }
 
