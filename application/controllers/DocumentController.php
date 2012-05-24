@@ -152,7 +152,6 @@ class DocumentController extends Zend_Controller_Action
             $fileNum = $fileNum + 1;
             // Change the documents URL
             $doc->setUrl($fileName . '(' . $fileNum . ')' . $ext);
-            var_dump($doc->getUrl());
         }
         
         // Set up file transfer        
