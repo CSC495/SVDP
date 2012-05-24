@@ -24,6 +24,15 @@ class App_Service_GeneralService {
         return $this->buildScheduleEntryModels($results);
     }
     
+    public function getNumPendingCheckRequests(){
+        $select = $this->_db->select()
+                ->from('check_request',
+                       array('totalReqs' => 'COUNT(*)'))
+                ->where("status = 'P'");
+        $results = $this->_db->fetchRow($select);
+        return $results['totalReqs'];
+    }
+    
     private function buildScheduleEntryModels($dbResults)
     {
         $scheduleEntries = array();
