@@ -362,7 +362,7 @@ class App_Service_Member
     
     //Gets all members of past & current households of client
     //Returns each list of household members as an array of Householder objects,
-    //each list is an element in a two dimensional array (ie. [][list])
+    //each list is an element in a two dimensional associative array (ie. [household_id][array of members])
     public function getClientHouseholdHistory($clientId){
         //Get list of all past & current client households
         $select = $this->_db->select()
@@ -373,7 +373,7 @@ class App_Service_Member
         
         //Get all the members in each household
         foreach($results as $row)
-            $arr[] = $this->getHouseholdersByHouseholdId($row['household_id']);
+            $arr[$row['household_id']] = $this->getHouseholdersByHouseholdId($row['household_id']);
         return $arr;
     }
 
