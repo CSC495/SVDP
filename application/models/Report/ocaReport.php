@@ -20,16 +20,18 @@ class Application_Model_Report_ocaReport extends Twitter_Bootstrap_Form_Vertical
                     'required' => true,
                     'filters' => array('StringTrim'),
                     'validators' => array(
-                        array('NotEmpty', true, array(
-                            'type' => 'string',
-                            'messages' => array('isEmpty' => 'Must choose a start date.'),
-                        )),
+                       array('Db_RecordExists', true, array(
+                    'table' => 'client',
+                    'field' => 'client_id',
+                    'messages' => array(
+                        'noRecordFound' => 'No client was found for that ID.'
+                    ),/*
                         array('Date', true, array(
                             'format' => 'MM/dd/yyyy',
                             'messages' => array(
                                 'dateInvalidDate' => 'Must be properly formatted.',
                                 'dateFalseFormat' => 'Must be a valid date.',
-                            ),
+                            ),*/
                         )),
                     ),
                     'maxlength' => 10,
@@ -40,16 +42,18 @@ class Application_Model_Report_ocaReport extends Twitter_Bootstrap_Form_Vertical
                     'required' => true,
                     'filters' => array('StringTrim'),
                     'validators' => array(
-                        array('NotEmpty', true, array(
-                            'type' => 'string',
-                            'messages' => array('isEmpty' => 'Must choose a end date.'),
-                        )),
+                       array('Db_RecordExists', true, array(
+                    'table' => 'client',
+                    'field' => 'client_id',
+                    'messages' => array(
+                        'noRecordFound' => 'No client was found for that ID.'
+                    ),/*
                         array('Date', true, array(
                             'format' => 'MM/dd/yyyy',
                             'messages' => array(
                                 'dateInvalidDate' => 'Must be properly formatted.',
                                 'dateFalseFormat' => 'Must be a valid date.',
-                            ),
+                            ),*/
                         )),
                     ),
                     'maxlength' => 10,
