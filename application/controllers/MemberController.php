@@ -324,6 +324,13 @@ class MemberController extends Zend_Controller_Action
             $this->view->pageTitle = 'New Client';
             $this->view->form = new Application_Model_Member_ClientForm();
 
+            $client = new Application_Model_Impl_Client();
+
+            // Possibly using name information from map action.
+            $client
+                ->setFirstName(App_Formatting::emptyToNull($this->_getParam('firstName')))
+                ->setLastName(App_Formatting::emptyToNull($this->_getParam('lastName')));
+
             if (!$request->isPost() && $this->_hasParam('street') && $this->_hasParam('city')
                     && $this->_hasParam('state')) {
                 // Using address information from map action.
@@ -336,11 +343,10 @@ class MemberController extends Zend_Controller_Action
                     ->setZip(App_Formatting::emptyToNull($this->_getParam('zip')))
                     ->setParish(App_Formatting::emptyToNull($this->_getParam('parish')));
 
-                $client = new Application_Model_Impl_Client();
                 $client->setCurrentAddr($addr);
-
-                $this->view->form->setClient($client);
             }
+
+            $this->view->form->setClient($client);
         }
 
         // If this isn't a post request, then we're done.

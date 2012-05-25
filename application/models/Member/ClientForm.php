@@ -558,7 +558,10 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         $this->homePhone->setValue($client->getFormattedHomePhone());
         $this->cellPhone->setValue($client->getFormattedCellPhone());
         $this->workPhone->setValue($client->getFormattedWorkPhone());
-        $this->addr->setAddr($client->getCurrentAddr());
+
+        if ($client->getCurrentAddr() !== null) {
+            $this->addr->setAddr($client->getCurrentAddr());
+        }
 
         if ($client->isMarried()) {
             $spouse = $client->getSpouse();
