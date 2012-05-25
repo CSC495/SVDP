@@ -44,6 +44,8 @@ class MemberController extends Zend_Controller_Action
                     'state' => $addr->getState(),
                     'zip' => $addr->getZip(),
                     'parish' => $addr->getParish(),
+                    'firstName' => $this->view->form->getFirstName(),
+                    'lastName' => $this->view->form->getLastName(),
                 )
             );
         }
