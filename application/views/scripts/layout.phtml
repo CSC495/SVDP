@@ -26,11 +26,10 @@ $this->headScript()->prependFile(
 $this->headScript()->prependFile('http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.7.2.min.js');
 
 // Render <head> elements.
-echo $this->doctype(),    "\n";
-echo $this->headMeta(),   "\n";
-echo $this->headTitle(),  "\n";
-echo $this->headLink(),   "\n";
-echo $this->headScript(), "\n";
+echo $this->doctype(),   "\n";
+echo $this->headMeta(),  "\n";
+echo $this->headTitle(), "\n";
+echo $this->headLink(),  "\n";
 
 // Fetch user role for later use.
 $auth = Zend_Auth::getInstance();
@@ -143,3 +142,4 @@ $scheduleEntries = Zend_Registry::get('schedule');
 
     <footer><p>© 2012 Society of St. Vincent de Paul</p></footer>
 </div>
+<?php echo $this->headScript(); ?>
