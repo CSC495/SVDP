@@ -181,8 +181,8 @@ class App_Service_AdminService {
     public function getNumAdmins(){
         $select = $this->_db->select()
                 ->from('user', array('numAdmins' => 'COUNT(*)'))
-                ->where('role = ?', 'A')
-                ->order();
+                ->where('role = ?', App_Roles::ADMIN)
+                ->where('active_flag = 1') ;
         $result = $this->_db->fetchRow($select);
         return $result['numAdmins'];
     }

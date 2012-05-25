@@ -289,7 +289,7 @@ class AdminController extends Zend_Controller_Action
         {
             $userId = $request->getParam('id');
         
-        
+            
             // Get the users data
             $service = new App_Service_AdminService();
             $user = $service->getUserById($userId);
@@ -342,12 +342,33 @@ class AdminController extends Zend_Controller_Action
             $error = true;
         }
         
+        $service = new App_Service_AdminService();
+        $user = $service->getUserById($form->getValue('userid'));
+        
+        // Check if this is the only admin.. this is a bit ugly..
+        $isOnlyAdmin = $service->getNumAdmins() == 1;
+        $isOnlyAdmin = $isOnlyAdmin && ($user->getRole() === App_Roles::ADMIN);
+        $isOnlyAdmin = $isOnlyAdmin && $user->isActive();
+
+        // Check if the only admins role is being changed
+        if( $isOnlyAdmin && $form->getValue('role') !== App_Roles::ADMIN )
+        {
+            $form->role->addError('');
+            $form->roleErr->addError('Only admin cannot have role changed.');
+            $error = true;
+        }
+        
+        if( $isOnlyAdmin && $form->getValue('status') != 1 )
+        {
+            $form->status->addError('Only admin cannot be set to inactive.');
+            $error = true;
+        }
+        
         // Return if there were any errors
         if($error)
             return $error;
         
         // Everything is good update in database
-        $service = new App_Service_AdminService();
         
         $user = new Application_Model_Impl_User();
         $user

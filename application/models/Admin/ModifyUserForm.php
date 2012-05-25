@@ -106,6 +106,11 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 						  App_Roles::TREASURER   => 'Treasurer',
 						  App_Roles::ADMIN       => 'Admin',)
 			,));
+	    // Used to indicate errors on role
+	    $roleErr = $this->addElement('hidden','roleErr', array(
+			'ignore'   => true,
+			'required' => false,
+			));
                
 	    // Users status
 	    $status = $this->addElement('select','status',array(

@@ -440,7 +440,7 @@ function initViewCaseForm() {
         // submit.
         if (confirmCloseCase.dialog('isOpen')) {
             confirmCloseCase.dialog('close');
-            return;
+            return true;
         }
 
         // Otherwise, we should show the confirmation dialog.
