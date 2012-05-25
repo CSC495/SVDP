@@ -6,19 +6,11 @@ class MemberController extends Zend_Controller_Action
 {
 
     /**
-     * Home page action: just redirects to the map search screen.
+     * Home page action that allows members to locate potential clients on a map.
      */
     public function indexAction()
     {
-        $this->_helper->redirector('map');
-    }
-
-    /**
-     * Action that allows members to locate potential clients on a map.
-     */
-    public function mapAction()
-    {
-        $this->view->pageTitle = 'Maps';
+        $this->view->pageTitle = 'Home';
         $this->view->form = new Application_Model_Member_MapForm();
 
         // Load the Google Maps JavaScript API.

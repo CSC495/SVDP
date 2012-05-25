@@ -17,7 +17,7 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
 
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
-        $this->setAction($baseUrl->baseUrl(App_Resources::MEMBER) . '/map')
+        $this->setAction($baseUrl->baseUrl(App_Resources::MEMBER))
              ->setMethod('get');
 
         $this->addSubForm(
