@@ -157,21 +157,6 @@ class App_Service_Search
         return $this->buildCaseModels($results);
     }
 
-    /**
-     * Retrieve a list of case history for the specified client.
-     *
-     * @param string $caseId
-     * @return Application_Model_Impl_Case[]
-     */
-    public function getCasesByClientId($clientId)
-    {
-        $select  = $this->initCaseSelect()
-            ->where('c.client_id = ?', $clientId);
-        $results = $this->_db->fetchAssoc($select);
-
-        return $this->buildCaseModels($results);
-    }
-
     /* Check request search methods: */
 
     /**

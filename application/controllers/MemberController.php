@@ -192,10 +192,9 @@ class MemberController extends Zend_Controller_Action
         $role     = $identity->role;
 
         $memberService = new App_Service_Member();
-        $searchService = new App_Service_Search();
 
         $client   = $memberService->getClientById($this->_getParam('id'));
-        $cases    = $searchService->getCasesByClientId($client->getId());
+        $cases    = $memberService->getCasesByClientId($client->getId());
         $comments = $memberService->getCommentsByClientId($client->getId());
 
         // A client is displayed read-only if the user is not a normal member (e.g., if they're a
