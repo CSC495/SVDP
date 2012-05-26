@@ -73,9 +73,6 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Account number must be provided.'),
                 )),
-                array('Digits', true, array(
-                    'messages' => array('notDigits' => 'Account number must be valid.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
@@ -85,6 +82,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Account number',
+            'description' => '(Enter "None" if unknown or not applicable)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
