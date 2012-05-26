@@ -15,6 +15,13 @@
 class App_Service_Search
 {
 
+    private static $_STREET_ADDR_DIRS = array('n', 'north', 'w', 'west', 's', 'south', 'e', 'east');
+
+    private static $_STREET_ADDR_SFXS = array(
+        'ave', 'av', 'avenue', 'cir', 'cr', 'circle', 'ct', 'courty', 'ln', 'lane', 'lp', 'loop',
+        'pkwy', 'pky', 'parkway', 'pl', 'place', 'rd', 'road', 'sq', 'square', 'st', 'street'
+    );
+
     private $_db;
 
     /**
@@ -103,17 +110,20 @@ class App_Service_Search
      */
     public function getSimilarClients($addr, $firstName = null, $lastName = null)
     {
-        $likeFirstName = ($firstName !== null)
-                       ? '%' . App_Escaping::escapeLike($firstName) . '%'
-                       : '';
-        $likeLastName = ($lastName !== null)
-                       ? '%' . App_Escaping::escapeLike($lastName) . '%'
-                       : '';
-        $select        = $this->_db->select()
+        $likeStreetName = '%'
+                        . App_Escaping::escapeLike(self::extractStreetName($addr->getStreet()))
+                        . '%';
+        $likeFirstName  = ($firstName !== null)
+                        ? '%' . App_Escaping::escapeLike($firstName) . '%'
+                        : '';
+        $likeLastName   = ($lastName !== null)
+                        ? '%' . App_Escaping::escapeLike($lastName) . '%'
+                        : '';
+        $select         = $this->_db->select()
             ->union(array(
                 $this->initClientSelect(true)
                     ->where(
-                        $this->_db->quoteInto('a.street = ? AND ', $addr->getStreet())
+                        $this->_db->quoteInto('a.street LIKE ? AND ', $likeStreetName)
                       . $this->_db->quoteInto('a.city = ? AND ', $addr->getCity())
                       . $this->_db->quoteInto('a.state = ?', $addr->getState())
                     ),
@@ -428,7 +438,7 @@ class App_Service_Search
         return $clients;
     }
 
-    public function buildCaseModels($dbResults)
+    private function buildCaseModels($dbResults)
     {
         $cases = array();
 
@@ -464,7 +474,7 @@ class App_Service_Search
         return $cases;
     }
 
-    public function buildCheckReqModels($dbResults)
+    private function buildCheckReqModels($dbResults)
     {
         $checkReqs = array();
 
@@ -497,5 +507,48 @@ class App_Service_Search
         }
 
         return $checkReqs;
+    }
+
+    /**
+     * Given a full street address, e.g., "30 N. Brainard St.", returns a best guess at the street
+     * name embedded therein, e.g., "Brainard".
+     */
+    private static function extractStreetName($street)
+    {
+        $chunks = explode(' ', $street);
+
+        // If there's more than one address chunk, try to strip house numbers and directions from
+        // the beginning of the address.
+        while (count($chunks) > 1) {
+            reset($chunks);
+
+            $firstChunk = strtolower(preg_replace('[^A-Za-z0-9]', '', current($chunks)));
+            // Before examining this street address chunk, strip nonalphanumeric characters and make
+            // the string lowercase.
+
+            // If a chunk begins with a number, then it's probably a house number---remove it.
+            if ($firstChunk !== '' && ctype_digit($firstChunk[0])) {
+                array_shift($chunks);
+                continue;
+            }
+
+            // If a chunk matches a direction name or abbreviation, remove it.
+            if (in_array($firstChunk, self::$_STREET_ADDR_DIRS)) {
+                array_shift($chunks);
+                continue;
+            }
+
+            break;
+        }
+
+        // If at least two chunks remain and the final chunk looks like a suffix, remove it.
+        $lastChunk = strtolower(preg_replace('[^A-Za-z0-9]', '', end($chunks)));
+
+        if (in_array($lastChunk, self::$_STREET_ADDR_SFXS)) {
+            array_pop($chunks);
+        }
+
+        // Return the remaining street address chunks, concatenated with spaces.
+        return implode(' ', $chunks);
     }
 }
