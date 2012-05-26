@@ -82,8 +82,8 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::GENERAL,App_Resources::INDEX);
         $this->allow(App_Roles::GENERAL,App_Resources::ERROR);
         $this->allow(App_Roles::GENERAL,App_Resources::REDIRECT);
-        // All logged in users have access to displaying a document
-        $this->allow(App_Roles::GENERAL,App_Resources::DOCUMENT,'display');
+        // All logged in users have access to listing and displaying documents
+        $this->allow(App_Roles::GENERAL,App_Resources::DOCUMENT,array('display','list'));
     }
 	/**
 	 * Sets the access for the MEMBER role.
@@ -103,8 +103,6 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::MEMBER,App_Resources::TREASURER,'checkReq');
         // Allow access to all actions in the reports controller
         $this->allow(App_Roles::MEMBER,App_Resources::REPORT);
-        // Allow access to list action in document controller
-        $this->allow(App_Roles::MEMBER,App_Resources::DOCUMENT,'list');
     }
 	/**
 	 * Sets the access for the TREASURER role.
@@ -124,8 +122,6 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::TREASURER,App_Resources::MEMBER,array('viewClient','viewCase'));
         // Allow access to all actions in the reports controller
         $this->allow(App_Roles::TREASURER,App_Resources::REPORT);
-        // Allow access to list action in document controller
-        $this->allow(App_Roles::TREASURER,App_Resources::DOCUMENT,'list');
     }
 	/**
 	 * Sets the access for the ADMIN role.
