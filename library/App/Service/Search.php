@@ -17,9 +17,10 @@ class App_Service_Search
 
     private static $_STREET_ADDR_DIRS = array('n', 'north', 'w', 'west', 's', 'south', 'e', 'east');
 
-    private static $_STREET_ADDR_SFXS = array(
+    private static $_STREET_ADDR_SUFFIXES = array(
         'ave', 'av', 'avenue', 'cir', 'cr', 'circle', 'ct', 'court', 'ln', 'lane', 'lp', 'loop',
-        'pkwy', 'pky', 'parkway', 'pl', 'place', 'rd', 'road', 'sq', 'square', 'st', 'street'
+        'pkwy', 'pky', 'parkway', 'pl', 'place', 'rd', 'road', 'sq', 'square', 'st', 'street',
+        'trl', 'trail'
     );
 
     private $_db;
@@ -512,43 +513,64 @@ class App_Service_Search
     /**
      * Given a full street address, e.g., "30 N. Brainard St.", returns a best guess at the street
      * name embedded therein, e.g., "Brainard".
+     *
+     * Test cases:
+     *
+     * * `extractStreetName('30 N. Brainard Street') === 'Brainard'
+     * * `extractStreetName('30 N. Brainard St.') === 'Brainard'
+     * * `extractStreetName('30 N Brainard St') === 'Brainard'
+     * * `extractStreetName('30 N Brainard') === 'Brainard'
+     * * `extractStreetName('30 Brainard') === 'Brainard'
+     * * `extractStreetName('29W365 Army Trail Rd') === 'Army Trail'
+     * * `extractStreetName('29W365 Army Trail') === 'Army'
+     * * `extractStreetName('123 North West St') === 'West'
+     * * `extractStreetName('123 North Ave') === 'North'
+     * * `extractStreetName('Cow') === 'Cow'
+     * * `extractStreetName('') === ''
+     *
+     * @param string $street
+     * @return string
      */
-    private static function extractStreetName($street)
+    public static function extractStreetName($street)
     {
         $chunks = explode(' ', $street);
 
-        // If there's more than one address chunk, try to strip house numbers and directions from
-        // the beginning of the address.
-        while (count($chunks) > 1) {
-            reset($chunks);
+        // Only proceed if there's at least one address chunk to work with.
+        if ($chunks) {
+            // If there's a trailing address chunk that looks like one of the usual USPS suffixes,
+            // set a flag to check later on.
+            $lastChunk = strtolower(preg_replace('/[^A-Za-z0-9]/', '', end($chunks)));
+            $hasSuffix = in_array($lastChunk, self::$_STREET_ADDR_SUFFIXES);
 
-            $firstChunk = strtolower(preg_replace('[^A-Za-z0-9]', '', current($chunks)));
-            // Before examining this street address chunk, strip nonalphanumeric characters and make
-            // the string lowercase.
+            // Try to strip house numbers and directions from the beginning of the address.
+            while (count($chunks) - $hasSuffix > 1) {
+                // Before examining this street address chunk, strip nonalphanumeric characters and make
+                // the string lowercase.
+                reset($chunks);
+                $firstChunk = strtolower(preg_replace('/[^A-Za-z0-9]/', '', current($chunks)));
 
-            // If a chunk begins with a number, then it's probably a house number---remove it.
-            if ($firstChunk !== '' && ctype_digit($firstChunk[0])) {
-                array_shift($chunks);
-                continue;
+                // If a chunk begins with a number, then it's probably a house number---remove it.
+                if ($firstChunk !== '' && ctype_digit($firstChunk[0])) {
+                    array_shift($chunks);
+                    continue;
+                }
+
+                // If a chunk matches a direction name or abbreviation, remove it.
+                if (in_array($firstChunk, self::$_STREET_ADDR_DIRS)) {
+                    array_shift($chunks);
+                    continue;
+                }
+
+                break;
             }
 
-            // If a chunk matches a direction name or abbreviation, remove it.
-            if (in_array($firstChunk, self::$_STREET_ADDR_DIRS)) {
-                array_shift($chunks);
-                continue;
+            // Finally, remove the suffix chunk, if any.
+            if ($hasSuffix) {
+                array_pop($chunks);
             }
-
-            break;
         }
 
-        // If at least two chunks remain and the final chunk looks like a suffix, remove it.
-        $lastChunk = strtolower(preg_replace('[^A-Za-z0-9]', '', end($chunks)));
-
-        if (in_array($lastChunk, self::$_STREET_ADDR_SFXS)) {
-            array_pop($chunks);
-        }
-
-        // Return the remaining street address chunks, concatenated with spaces.
+        // Return the remaining street address chunks, joined by spaces.
         return implode(' ', $chunks);
     }
 }
