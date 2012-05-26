@@ -1,7 +1,16 @@
 <?php
+/**
+ * Class represents the form which is used to create a new user
+ */
 class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizontal
 {
-	
+	/**
+	 * Default constructor for user form
+	 *
+	 * @param array $options Options to be passed to Super() constructor
+	 *
+	 * @return null
+	 */
 	public function __construct($options = null){
 		parent::__construct($options);
 		$this->setName('new');
@@ -44,61 +53,61 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
 				   'label'      => 'Last Name:',
 				 ));
 		
-                // Members phone number
-                $home = $this->addElement('text', 'home', array(
-                   'filters'    => array('StringTrim','Digits'),
-                   'required'   => false,
-		   'class'      => 'phone',
-                   'label'      => 'Home Phone:',
-		   'validators' => array(
-			array('StringLength', true, array(
-				'min' => 10,
-				'max' => 10,
-				'messages' => array(
-				'stringLengthTooShort' => 'Phone number must be 10 digits.',
-				'stringLengthTooLong' => 'Phone number must be 10 digits.',
-                    )))),
-                ));
+		// Members phone number
+		$home = $this->addElement('text', 'home', array(
+					'filters'    => array('StringTrim','Digits'),
+					'required'   => false,
+					'class'      => 'phone',
+					'label'      => 'Home Phone:',
+					'validators' => array(
+					array('StringLength', true, array(
+						'min' => 10,
+						'max' => 10,
+						'messages' => array(
+						'stringLengthTooShort' => 'Phone number must be 10 digits.',
+						'stringLengthTooLong' => 'Phone number must be 10 digits.',
+							)))),
+		));
         
 		// Members other phone
 		$cell = $this->addElement('text', 'cell', array(
                    'filters'    => array('StringTrim','Digits'),
                    'required'   => false,
-		   'class'      => 'phone',
+				   'class'      => 'phone',
                    'label'      => 'Cell Phone:',
-		   'validators' => array(
-			array('StringLength', true, array(
-				'min' => 10,
-				'max' => 10,
-				'messages' => array(
-				'stringLengthTooShort' => 'Phone number must be 10 digits.',
-				'stringLengthTooLong' => 'Phone number must be 10 digits.',
-                    )))),
+				   'validators' => array(
+					array('StringLength', true, array(
+						'min' => 10,
+						'max' => 10,
+						'messages' => array(
+						'stringLengthTooShort' => 'Phone number must be 10 digits.',
+						'stringLengthTooLong' => 'Phone number must be 10 digits.',
+							)))),
                 ));
 		
-		// IMemebers e-mail
-                $email = $this->addElement('text', 'email', array(
-			'filters'    => array('StringTrim'),
-			'validators' => array('EmailAddress'),
-			'required'   => true,
-			'label'      => 'Email:',
+		// Memebers e-mail
+		$email = $this->addElement('text', 'email', array(
+					'filters'    => array('StringTrim'),
+					'validators' => array('EmailAddress'),
+					'required'   => true,
+					'label'      => 'Email:',
                 ));
                
-	        // Type of memebr
-                $role = $this->addElement('select','role',array(
-			'label' => 'User Type:',
-			'value' => App_Roles::MEMBER,
-			'multiOptions' => array ( 'M'   => 'Member',
-						  App_Roles::ADMIN     => 'Admin',
-						  App_Roles::TREASURER => 'Treasurer',)
-			,));
+		// Type of memeber
+		$role = $this->addElement('select','role',array(
+					'label' => 'User Type:',
+					'value' => App_Roles::MEMBER,
+					'multiOptions' => array ( 'M'   => 'Member',
+								  App_Roles::ADMIN     => 'Admin',
+								  App_Roles::TREASURER => 'Treasurer',),
+					));
                
-                $adjust = $this->addElement('submit', 'submit', array(
-                   'required' => false,
-                   'ignore'   => true,
-                   'label'    => 'Add New User',
-                   'class'    => 'btn btn-success',
-		   'decorators' => array('ViewHelper'),
+		$adjust = $this->addElement('submit', 'submit', array(
+					'required' => false,
+                    'ignore'   => true,
+                    'label'    => 'Add New User',
+                    'class'    => 'btn btn-success',
+					'decorators' => array('ViewHelper'),
                 ));
                
 	}

@@ -70,8 +70,8 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must enter miles.'),
                 )),
-                array('Digits', true, array(
-                    'messages' => array('notDigits' => 'Must be an integer.'),
+                array('Float', true, array(
+                    'messages' => array('notFloat' => 'Must be a number.'),
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,
@@ -96,8 +96,8 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must enter hours.'),
                 )),
-                array('Digits', true, array(
-                    'messages' => array('notDigits' => 'Must be an integer.'),
+                array('Float', true, array(
+                    'messages' => array('notFloat' => 'Must be an number.'),
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,

@@ -48,7 +48,7 @@ class App_Service_Search
     {
         $likeName = '%' . App_Escaping::escapeLike($name) . '%';
         $select   = $this->initClientSelect()
-            ->where('c.last_name LIKE ? OR c.first_name LIKE ?', $likeName, $likeName);
+            ->where("CONCAT_WS(' ', c.first_name, c.last_name) LIKE ?", $likeName);
         $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildClientModels($results);
@@ -93,6 +93,41 @@ class App_Service_Search
         return $this->buildClientModels($results);
     }
 
+    /**
+     * Given a first name (optional), a last name (optional), and an address (required), retrieves a
+     * list of possible clients duplicating that information.
+     *
+     * @param string|null $firstName
+     * @param string|null $lastName
+     * @return Application_Model_Impl_Client[]
+     */
+    public function getSimilarClients($addr, $firstName = null, $lastName = null)
+    {
+        $likeFirstName = ($firstName !== null)
+                       ? '%' . App_Escaping::escapeLike($firstName) . '%'
+                       : '';
+        $likeLastName = ($lastName !== null)
+                       ? '%' . App_Escaping::escapeLike($lastName) . '%'
+                       : '';
+        $select        = $this->_db->select()
+            ->union(array(
+                $this->initClientSelect(true)
+                    ->where(
+                        $this->_db->quoteInto('a.street = ? AND ', $addr->getStreet())
+                      . $this->_db->quoteInto('a.city = ? AND ', $addr->getCity())
+                      . $this->_db->quoteInto('a.state = ?', $addr->getState())
+                    ),
+                $this->initClientSelect(true)
+                    ->where(
+                        $this->_db->quoteInto('c.first_name LIKE ? OR ', $likeFirstName)
+                      . $this->_db->quoteInto('c.last_name LIKE ?', $likeLastName)
+                    ),
+            ));
+        $results       = $this->_db->fetchAssoc($select);
+
+        return $this->buildClientModels($results);
+    }
+
     /* Case search methods: */
 
     /**
@@ -117,7 +152,8 @@ class App_Service_Search
      * @param string $caseId
      * @return Application_Model_Impl_Case[]
      */
-    public function getCasesByClientId($clientId) {
+    public function getCasesByClientId($clientId)
+    {
         $select  = $this->initCaseSelect()
             ->where('c.client_id = ?', $clientId);
         $results = $this->_db->fetchAssoc($select);
@@ -144,17 +180,6 @@ class App_Service_Search
      */
     public function getOpenCheckReqs()
     {
-	
-		/*$select  = $this->initCaseSelect()
-            ->where('s.opened_user_id = ?', $userId)
-            ->where('s.status <> "Closed"');
-        $results = $this->_db->fetchAssoc($select);
-
-        return $this->buildCaseModels($results);
-		*/
-		
-        // XXX: Check requests don't currently have a status field in the database, so we just
-        // return all open check requests. This is not desired behavior, obviously!
         $select  = $this->initCheckReqSelect()
             ->where('r.status <> "I" AND r.status <> "D"');
         $results = $this->_db->fetchAssoc($select);
@@ -172,9 +197,8 @@ class App_Service_Search
     {
         $likeName = '%' . App_Escaping::escapeLike($name) . '%';
         $select   = $this->initCheckReqSelect()
-            ->where('c.last_name LIKE ? OR c.first_name LIKE ? OR c2.last_name LIKE ?'
-                        .' OR c2.first_name LIKE ?',
-                    $likeName, $likeName, $likeName, $likeName);
+            ->where("CONCAT_WS(' ', c.first_name, c.last_name) LIKE ? "
+                  . "OR CONCAT_WS(' ', c2.first_name, c2.last_name) LIKE ?", $likeName, $likeName);
         $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildCheckReqModels($results);
@@ -254,9 +278,9 @@ class App_Service_Search
 
     /* Internal helper methods: */
 
-    private function initClientSelect()
+    private function initClientSelect($noOrder = false)
     {
-        return $this->_db->select()
+        $select = $this->_db->select()
             ->from(array('c' => 'client'), array(
                 'c.client_id',
                 'c.first_name',
@@ -280,8 +304,18 @@ class App_Service_Search
                 'c.client_id = d.client_id',
                 array('do_not_help_reason' => 'd.reason')
             )
-            ->where('h.current_flag = 1')
-            ->order(array('c.last_name', 'c.first_name', 'c.client_id'));
+            ->where('h.current_flag = 1');
+
+        if (!$noOrder) {
+            $this->orderClientSelect($select);
+        }
+
+        return $select;
+    }
+
+    private function orderClientSelect(Zend_Db_Select $select)
+    {
+        return $select->order(array('c.last_name', 'c.first_name', 'c.client_id'));
     }
 
     private function initCaseSelect()
@@ -325,7 +359,11 @@ class App_Service_Search
     private function initCheckReqSelect()
     {
         return $this->_db->select()
-            ->from(array('r' => 'check_request'), array('r.checkrequest_id', 'r.request_date', 'r.status'))
+            ->from(array('r' => 'check_request'), array(
+                'r.checkrequest_id',
+                'r.request_date',
+                'r.status',
+            ))
             ->join(
                 array('n' => 'case_need'),
                 'r.caseneed_id = n.caseneed_id',

@@ -1,7 +1,16 @@
 <?php
+/**
+ * Class implements the form to change a password
+ */
 class Application_Model_Login_ChangeForm extends Twitter_Bootstrap_Form_Vertical
 {
-	
+	/**
+	 * Default constructor to build form
+	 *
+	 * @param array $options Used to build super()
+	 *
+	 * @return null
+	 */
 	public function __construct($options = null){
 		parent::__construct($options);
 		$this->setName('change');
@@ -43,17 +52,17 @@ class Application_Model_Login_ChangeForm extends Twitter_Bootstrap_Form_Vertical
 				'filters'   => array('stringTrim'),
 				'label'      => 'Verify Password:',
 		));
-		
+		// Used to display error if any occurs
 		$err = $this->addElement('hidden','err',array(
 			'required' => false,
 		));
 		
-                $submit = $this->addElement('submit', 'submit', array(
+		$submit = $this->addElement('submit', 'submit', array(
                    'required' => false,
                    'ignore'   => true,
                    'label'    => 'Submit',
                    'class'    => 'btn-success btn',
-		   'decorators' => array('ViewHelper')
+				   'decorators' => array('ViewHelper')
                 ));
                
 	}

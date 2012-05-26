@@ -8,7 +8,10 @@
  */
 class Application_Model_Impl_CheckReq
 {
-
+    /**
+     * Unique id of the check request
+     * @var int
+     */
     private $_id = null;
     private $_caseneedId = null;
     //Actual name of the need (ie. food)

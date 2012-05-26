@@ -1,6 +1,16 @@
 <?php
+/**
+ * Class implements form which allows user to request a new password
+ */
 class Application_Model_Login_ForgotForm extends Twitter_Bootstrap_Form_Vertical
 {
+	/**
+	 * Default constructor to build form
+	 *
+	 * @param array $options Options to build super()
+	 *
+	 * @return null
+	 */
 	public function __construct($options = null){
 		
 		parent::__construct($options);

@@ -281,6 +281,27 @@ function renderMap(centerCoords, clientCoords) {
         }
     };
 
+    // Hide the list of similar clients by default, attaching show/hide handlers as appropriate.
+    $('#map-similar-toggle').replaceWith('<a id=map-similar-toggle href="#"></a>');
+
+    var similarClientsBlock = $('#map-similar');
+    var similarClientsLink  = $('#map-similar-toggle');
+
+    function updateSimilarClientsLink() {
+        if (similarClientsBlock.is(':visible')) {
+            similarClientsLink.html('Click to hide results.');
+        } else {
+            similarClientsLink.html('Click to show results.');
+        }
+    }
+
+    similarClientsLink.click(function () {
+        similarClientsBlock.slideToggle('fast', updateSimilarClientsLink);
+    });
+
+    similarClientsBlock.hide();
+    updateSimilarClientsLink();
+
     // Display the map.
     var mapElem = $('#map').get(0);
 
@@ -349,7 +370,8 @@ function renderMap(centerCoords, clientCoords) {
 	    });
 
         $('#newClient').addClass('btn-success');
-        $('#alerts').append('<p class="alert alert-success">' + alertMsg + '</p>');
+        $('#directions').addClass('btn-info');
+        $('#alerts').prepend('<p class="alert alert-success">' + alertMsg + '</p>');
     } else {
 	    polygons.stRaphael.setOptions({
 	        strokeColor: '#b94a48',
@@ -357,7 +379,8 @@ function renderMap(centerCoords, clientCoords) {
 	    });
 
         $('#newClient').addClass('btn-danger');
-        $('#alerts').append('<p class="alert alert-error">' + alertMsg + '</p>');
+        $('#directions').addClass('btn-inverse');
+        $('#alerts').prepend('<p class="alert alert-error">' + alertMsg + '</p>');
     }
 
     // When the map finises loading, add an address marker at the potential client's location.
@@ -410,6 +433,43 @@ function initEditClientForm() {
     changeTypeDropbox.change(update);
 
     update();
+}
+
+function initViewCaseForm() {
+    // Create a dialog to confirm the case close operation.
+    var closeCaseBtn = $('#closeCase');
+
+    var confirmCloseCase = $('<div/>')
+        .html('<p>Are you sure you want to close this case?</p>'
+            + '<p>The case cannot be reopened after closing.</p>')
+        .dialog({
+            autoOpen: false,
+            buttons: {
+                'Yes': function () {
+                    closeCaseBtn.trigger('click');
+                },
+                'No': function () {
+                    confirmCloseCase.dialog('close');
+                }
+            },
+            modal: true,
+            resizable: false,
+            title: 'Confirm Closing Case'
+        });
+
+    // Attach event handler to close button.
+    closeCaseBtn.click(function () {
+        // If the confirmation dialog is already open, we should hide the dialog and let the form
+        // submit.
+        if (confirmCloseCase.dialog('isOpen')) {
+            confirmCloseCase.dialog('close');
+            return true;
+        }
+
+        // Otherwise, we should show the confirmation dialog.
+        confirmCloseCase.dialog('open');
+        return false;
+    });
 }
 
 function initUiWidgets() {

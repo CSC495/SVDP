@@ -315,7 +315,7 @@ class App_Service_Member
                 $need->setReferralOrCheckReq($checkReq);
             }
 
-            $needs[] = $need;
+            $needs[$row['caseNeedId']] = $need;
         }
         return $needs;
     }
@@ -358,6 +358,23 @@ class App_Service_Member
         }
 
         return $visits;
+    }
+    
+    //Gets all members of past & current households of client
+    //Returns each list of household members as an array of Householder objects,
+    //each list is an element in a two dimensional associative array (ie. [household_id][array of members])
+    public function getClientHouseholdHistory($clientId){
+        //Get list of all past & current client households
+        $select = $this->_db->select()
+                ->from(array('h' => 'household'), 'household_id')
+                ->where('mainclient_id = ?', $clientId);
+        $results = $this->_db->fetchAll($select);
+        $arr = array();
+        
+        //Get all the members in each household
+        foreach($results as $row)
+            $arr[$row['household_id']] = $this->getHouseholdersByHouseholdId($row['household_id']);
+        return $arr;
     }
 
     /****** PUBLIC CREATE/INSERT QUERIES ******/
@@ -836,7 +853,55 @@ class App_Service_Member
         else
             return null;
     }
-
+    
+    //Returns the marriage status of the given client
+    private function getClientMarriageStatus($clientId){
+        $select = $this->_db->select()
+                ->from('client', 'marriage_status')
+                ->where('client_id = ?', $clientId);
+        $results = $this->_db->fetchRow($select);
+        return $results['marriage_status'];
+    }
+    
+    private function getHouseholdersByHouseholdId($houseId){
+        $hMembers = array();
+        
+        //Get spouse if exists
+        $select = $this->_db->select()
+                ->from('household', 'spouse_id')
+                ->where('household_id = ?', $houseId);
+        $results = $this->_db->fetchRow($select);
+        if($results['spouse_id']){
+            $householder = new Application_Model_Impl_Householder();
+            $select = $this->_db->select()
+                    ->from(array('c' => 'client'),
+                           array('client_id',
+                                 'first_name',
+                                 'last_name',
+                                 'birthdate'))
+                    ->where('c.client_id = ?', $results['spouse_id']);
+            $results = $this->_db->fetchRow($select);
+            $householder
+                ->setId($results['client_id'])
+                ->setFirstName($results['first_name'])
+                ->setLastName($results['last_name'])
+                ->setRelationship('Spouse')
+                ->setBirthDate($results['birthdate']);
+            $hMembers[] = $householder;
+        }
+        
+        //Get householders except spouse
+        $select = $this->_db->select()
+                ->from(array('hm' => 'hmember'))
+                ->join(array('h' => 'household'),
+                       'h.household_id = hm.household_id')
+                ->where('h.household_id = ?', $houseId);
+        $results = $this->_db->fetchAll($select);
+        foreach($results as $row)
+            $hMembers[] = $this->buildHouseholderModel($row);
+        return $hMembers;
+   }
+   
     /****** PRIVATE CREATE/INSERT QUERIES  ******/
 
     private function changeHouseholders($householdId, $householders)
@@ -1121,6 +1186,19 @@ class App_Service_Member
             ->setContactLastName($results['contact_lname']);
         return $request;
     }
+    
+    //Builds a singe householder model object
+    private function buildHouseholderModel($results){
+        $householder = new Application_Model_Impl_Householder();
+        $householder
+            ->setId($results['hmember_id'])
+            ->setFirstName($results['first_name'])
+            ->setLastName($results['last_name'])
+            ->setRelationship($results['relationship'])
+            ->setBirthDate($results['birthdate'])
+            ->setDepartDate($results['left_date']);
+        return $householder;
+    }
 
     /****** IMPL OBJECT DISASSEMBLERS  ******/
 
@@ -1225,6 +1303,7 @@ class App_Service_Member
                 ? $request->getSigneeUser()->getUserId() : null,
             'check_number' => $request->getCheckNumber(),
             'issue_date' => $request->getIssueDate(),
+            'status' => $request->getStatus(),
             'account_number' => $request->getAccountNumber(),
             'payee_name' => $request->getPayeeName(),
             'street' => $request->getAddress()->getStreet(),
