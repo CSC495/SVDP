@@ -29,6 +29,9 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
+        $firstName = $this->view->form->getFirstName();
+        $lastName  = $this->view->form->getLastName();
+
         // If the user wants to create a new client, redirect them to the appropriate place.
         if ($this->view->form->isNewClientRequest()) {
             $addr = $this->view->form->getAddr();
@@ -44,25 +47,26 @@ class MemberController extends Zend_Controller_Action
                     'state' => $addr->getState(),
                     'zip' => $addr->getZip(),
                     'parish' => $addr->getParish(),
-                    'firstName' => $this->view->form->getFirstName(),
-                    'lastName' => $this->view->form->getLastName(),
+                    'firstName' => $firstName,
+                    'lastName' => $lastName,
                 )
             );
         }
 
         // If we got this far, the address seems (vaguely) legit, and so we can get geocoding data.
-        $service = new App_Service_Map($this->view->form->getAddr());
+        $mapService    = new App_Service_Map($this->view->form->getAddr());
+        $searchService = new App_Service_Search();
 
         // Respond to geocoding errors.
-        if ($service->hasErrorMsg()) {
+        if ($mapService->hasErrorMsg()) {
             $this->_helper->flashMessenger(array(
                 'type' => 'error',
-                'text' => $service->getErrorMsg(),
+                'text' => $mapService->getErrorMsg(),
             ));
             return;
         }
 
-        if (!$service->hasResult()) {
+        if (!$mapService->hasResult()) {
             $this->_helper->flashMessenger(array(
                 'type' => 'error',
                 'text' => 'No results were found for that address.',
@@ -70,11 +74,24 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
+        // Check for existing clients with similar address and/or names.
+        $addr = $mapService->getAddr();
+
+        $similarClients = $searchService->getSimilarClients($addr, $firstName, $lastName);
+
+        if ($similarClients) {
+            $this->_helper->flashMessenger(array(
+                'type' => 'error',
+                'text' => '',
+            ));
+        }
+
         // Update the form with Google's reformatted address and prepare to show a Google map.
         $this->view->form->showNewClientButton();
-        $this->view->form->setAddr($service->getAddr());
-        $this->view->latitude = $service->getLatitude();
-        $this->view->longitude = $service->getLongitude();
+        $this->view->form->setAddr($addr);
+        $this->view->form->setSimilarClients($similarClients);
+        $this->view->latitude  = $mapService->getLatitude();
+        $this->view->longitude = $mapService->getLongitude();
     }
 
     /**

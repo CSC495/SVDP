@@ -16,6 +16,10 @@
     height: 400px;
 }
 
+#map-outer {
+    margin-top: 55px;
+}
+
 /* Styles for two column horizontal forms: */
 
 .twocol fieldset.row-fluid {

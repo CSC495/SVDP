@@ -348,7 +348,7 @@ function renderMap(centerCoords, clientCoords) {
 	        fillColor: '#468847'
 	    });
 
-        $('#newClient').addClass('btn-success');
+        $('.newClient').addClass('btn-success');
         $('#alerts').append('<p class="alert alert-success">' + alertMsg + '</p>');
     } else {
 	    polygons.stRaphael.setOptions({
@@ -356,7 +356,7 @@ function renderMap(centerCoords, clientCoords) {
 	        fillColor: '#b94a48'
 	    });
 
-        $('#newClient').addClass('btn-danger');
+        $('.newClient').addClass('btn-danger');
         $('#alerts').append('<p class="alert alert-error">' + alertMsg + '</p>');
     }
 

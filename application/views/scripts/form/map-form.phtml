@@ -1,0 +1,31 @@
+<?php if ($this->similarClients) { ?>
+<fieldset>
+    <legend>Similar clients:</legend>
+</fieldset>
+<div class=search-results>
+    <table class=search-results>
+        <?php
+        foreach ($this->similarClients as $client) {
+            echo $this->partial('partial/searchResultClient.phtml', array('client' => $client));
+        }
+        ?>
+    </table>
+</div>
+<div class=form-actions>
+    <input name=newClient type=submit value="New Client" class="btn newClient">
+</div>
+
+<?php } ?>
+<fieldset class=row-fluid>
+    <legend>Client information:</legend>
+    <div class=span6><?php echo $this->element->firstName; ?></div>
+    <div class=span6><?php echo $this->element->lastName; ?></div>
+</fieldset>
+<div class=row-fluid>
+    <div class=span6>
+        <?php echo $this->element->addr, $this->element->actions; ?>
+    </div>
+    <div class=span6><div id=map-outer class=well><div id=map>
+        <noscript><p>JavaScript must be enabled to display maps.</p></noscript>
+    </div></div></div>
+</div>

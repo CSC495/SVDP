@@ -8,24 +8,28 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
 
     private $_showNewClientButton = false;
 
+    private $_similarClients = array();
+
     /**
      * Instantiates a new instance of the `Application_Model_Member_MapForm` class.
      */
     public function __construct()
     {
-        parent::__construct();
-
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
-        $this
-            ->setAction($baseUrl->baseUrl(App_Resources::MEMBER))
-            ->setMethod('get');
-
-        // Elements to collect the potential client's address:
-        $this->addSubForm(
-            new Application_Model_Member_AddrSubForm("Client address:"),
-            'addr'
-        );
+        parent::__construct(array(
+            'action' => $baseUrl->baseUrl(App_Resources::MEMBER),
+            'method' => 'get',
+            'decorators' => array(
+                'PrepareElements',
+                array('ViewScript', array(
+                    'viewScript' => 'form/map-form.phtml',
+                    'similarClients' => &$this->_similarClients,
+                )),
+                'Form',
+            ),
+            'class' => 'form-horizontal twocol',
+        ));
 
         // Elements to collect general information about the potential client (optional):
         $this->addElement('text', 'firstName', array(
@@ -61,18 +65,22 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
             'dimension' => 3,
         ));
 
-        $this->addDisplayGroup(
-            array('firstName', 'lastName'),
-            'info',
-            array('legend' => 'Client name:'));
+        // Elements to collect the potential client's address:
+        $this->addSubForm(
+            new Application_Model_Member_AddrSubForm("Client address:"),
+            'addr'
+        );
 
         // Elements that perform form actions:
         $this->addElement('submit', 'search', array(
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
-            'label' => 'Search',
+            'label' => 'Submit',
         ));
 
-        $this->addElement('submit', 'newClient', array('label' => 'New Client'));
+        $this->addElement('submit', 'newClient', array(
+            'label' => 'New Client',
+            'class' => 'btn newClient',
+        ));
 
         $this->addDisplayGroup(
             array('search', 'newClient'),
@@ -154,6 +162,18 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
     public function setAddr($addr)
     {
         $this->addr->setAddr($addr);
+        return $this;
+    }
+
+    /**
+     * Sets the form's list of similar clients.
+     *
+     * @param Application_Model_Impl_Client[] $similarClients
+     * @return Application_Model_Member_MapForm
+     */
+    public function setSimilarClients($similarClients)
+    {
+        $this->_similarClients = $similarClients;
         return $this;
     }
 }
