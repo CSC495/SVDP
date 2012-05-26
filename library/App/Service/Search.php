@@ -18,7 +18,7 @@ class App_Service_Search
     private static $_STREET_ADDR_DIRS = array('n', 'north', 'w', 'west', 's', 'south', 'e', 'east');
 
     private static $_STREET_ADDR_SFXS = array(
-        'ave', 'av', 'avenue', 'cir', 'cr', 'circle', 'ct', 'courty', 'ln', 'lane', 'lp', 'loop',
+        'ave', 'av', 'avenue', 'cir', 'cr', 'circle', 'ct', 'court', 'ln', 'lane', 'lp', 'loop',
         'pkwy', 'pky', 'parkway', 'pl', 'place', 'rd', 'road', 'sq', 'square', 'st', 'street'
     );
 
