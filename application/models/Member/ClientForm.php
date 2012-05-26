@@ -40,7 +40,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             . (($id !== null) ? '/id/' . urlencode($id) : ''));
     }
 
-    public function __construct($id = null)
+    public function __construct($id = null, $readOnly = false)
     {
         $this->_id = $id;
         $this->_safeSerializeService = new App_Service_SafeSerialize();
@@ -53,6 +53,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 array('ViewScript', array(
                     'viewScript' => 'form/client-form.phtml',
                     'editing' => ($id !== null),
+                    'readOnly' => $readOnly,
                 )),
                 'Form',
             ),
@@ -413,14 +414,14 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         // Householders sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_HouseholderRecordListSubForm($id !== null),
+            new Application_Model_Member_HouseholderRecordListSubForm($id !== null, $readOnly),
             'householderRecordList'
         );
 
         // Employers sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_EmployerRecordListSubForm($id !== null),
+            new Application_Model_Member_EmployerRecordListSubForm($id !== null, $readOnly),
             'employerRecordList'
         );
 
@@ -431,6 +432,15 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'decorators' => array('ViewHelper'),
             'class' => 'btn btn-success',
         ));
+
+        // If necessary, mark all the form elements read only.
+        foreach ($this->getElements() as $element) {
+            if ($element instanceof Zend_Form_Element_Select) {
+                $element->setAttrib('disabled', $readOnly ? true : null);
+            } else {
+                $element->setAttrib('readonly', $readOnly ? true : null);
+            }
+        }
     }
 
     public function preValidate($data)

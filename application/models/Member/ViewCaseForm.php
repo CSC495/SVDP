@@ -6,8 +6,10 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
     private $_readOnly;
 
     public function __construct($userId, Application_Model_Impl_Case $case, array $comments,
-        array $users)
+        array $users, $readOnly)
     {
+        $this->_readOnly = $readOnly;
+
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
@@ -25,8 +27,6 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
         ));
-
-        $this->_readOnly = ($case->getStatus() === 'Closed');
 
         if (!$this->_readOnly) {
             $this->addElement('submit', 'closeCase', array(

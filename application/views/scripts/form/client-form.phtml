@@ -80,7 +80,9 @@ function isMissingPhone($element)
 <?php echo $this->element->householderRecordList; ?>
 
 <?php echo $this->element->employerRecordList; ?>
+<?php if (!$this->readOnly) { ?>
 
 <div class=form-actions>
     <?php echo $this->element->submit; ?>
 </div>
+<?php } ?>

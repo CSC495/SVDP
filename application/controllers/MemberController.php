@@ -187,7 +187,9 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Fetch client data for display.
-        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        $userId   = $identity->user_id;
+        $role     = $identity->role;
 
         $memberService = new App_Service_Member();
         $searchService = new App_Service_Search();
@@ -196,10 +198,14 @@ class MemberController extends Zend_Controller_Action
         $cases    = $searchService->getCasesByClientId($client->getId());
         $comments = $memberService->getCommentsByClientId($client->getId());
 
+        // A client is displayed read-only if the user is not a normal member (e.g., if they're a
+        // treasurer).
+        $readOnly = ($role === App_Roles::TREASURER);
+
         // Initialize the client view form.
         $this->view->pageTitle = 'View Client';
         $this->view->form      = new Application_Model_Member_ViewClientForm(
-            $userId, $client, $cases, $comments);
+            $userId, $client, $cases, $comments, $readOnly);
 
         // If this isn't a POST request or form validation fails, bail out.
         $request = $this->getRequest();
@@ -232,7 +238,9 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Fetch client data for display.
-        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        $userId   = $identity->user_id;
+        $role     = $identity->role;
 
         $service = new App_Service_Member();
 
@@ -240,10 +248,14 @@ class MemberController extends Zend_Controller_Action
         $comments = $service->getCommentsByCaseId($case->getId());
         $users    = $this->fetchMemberOptions($service);
 
+        // A case is displayed read-only if it's closed, and also if the user is not a normal member
+        // (e.g., if they're a treasurer).
+        $readOnly = ($case->getStatus() === 'Closed' || $role === App_Roles::TREASURER);
+
         // Initialize the case view form.
         $this->view->pageTitle = 'View Case';
         $this->view->form      = new Application_Model_Member_ViewCaseForm(
-            $userId, $case, $comments, $users);
+            $userId, $case, $comments, $users, $readOnly);
 
         // If this isn't a POST request, populate the form from the database and bail out.
         $request = $this->getRequest();
@@ -323,15 +335,22 @@ class MemberController extends Zend_Controller_Action
      */
     public function editclientAction()
     {
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        $role     = $identity->role;
+
         $request = $this->getRequest();
         $service = new App_Service_Member();
+
+        // A client is displayed read-only if the user is not a normal member (e.g., if they're a
+        // treasurer).
+        $readOnly = ($role === App_Roles::TREASURER);
 
         if ($this->_hasParam('id')) {
             // Editing an existing client.
             $id = $this->_getParam('id');
 
-            $this->view->pageTitle = 'Edit Client';
-            $this->view->form = new Application_Model_Member_ClientForm($id);
+            $this->view->pageTitle = $readOnly ? 'View Client' : 'Edit Client';
+            $this->view->form = new Application_Model_Member_ClientForm($id, $readOnly);
 
             if (!$request->isPost()) {
                 // If the user hasn't submitted the form yet, load client info from the database.
@@ -341,6 +360,10 @@ class MemberController extends Zend_Controller_Action
             }
         } else {
             // Adding a new client.
+            if ($readOnly) {
+                throw new DomainException('Only members can add new clients');
+            }
+
             $this->view->pageTitle = 'New Client';
             $this->view->form = new Application_Model_Member_ClientForm();
 
@@ -374,9 +397,14 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
-        $data = $request->getPost();
+        // Ensure that only members can edit clients.
+        if ($readOnly) {
+            throw new DomainException('Only members can edit existing clients');
+        }
 
         // Re-add existing form data.
+        $data = $request->getPost();
+
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 

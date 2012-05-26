@@ -119,7 +119,12 @@ class App_Acl extends Zend_Acl
             App_Resources::TREASURER,
         ));
         // Allow access to client and case view actions in the member controller
-        $this->allow(App_Roles::TREASURER,App_Resources::MEMBER,array('viewClient','viewCase'));
+        $this->allow(App_Roles::TREASURER,App_Resources::MEMBER,array(
+            'viewClient',
+            'editClient',
+            'clientHistory',
+            'viewCase',
+        ));
         // Allow access to all actions in the reports controller
         $this->allow(App_Roles::TREASURER,App_Resources::REPORT);
     }
