@@ -29,7 +29,7 @@
             <?php echo $this->element->search ?>
             <?php if ($this->showNewClientButton) { ?>
             <?php echo $this->element->newClient; ?>
-            <a href="<?php echo $this->escape($this->directionsUrl); ?>" target=_blank class="btn btn-info">Directions</a>
+            <a id=directions href="<?php echo $this->escape($this->directionsUrl); ?>" target=_blank class=btn>Directions</a>
             <?php } ?>
         </div>
     </div>

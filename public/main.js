@@ -370,6 +370,7 @@ function renderMap(centerCoords, clientCoords) {
 	    });
 
         $('#newClient').addClass('btn-success');
+        $('#directions').addClass('btn-info');
         $('#alerts').prepend('<p class="alert alert-success">' + alertMsg + '</p>');
     } else {
 	    polygons.stRaphael.setOptions({
@@ -378,6 +379,7 @@ function renderMap(centerCoords, clientCoords) {
 	    });
 
         $('#newClient').addClass('btn-danger');
+        $('#directions').addClass('btn-inverse');
         $('#alerts').prepend('<p class="alert alert-error">' + alertMsg + '</p>');
     }
 
