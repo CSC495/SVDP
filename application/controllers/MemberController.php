@@ -545,6 +545,11 @@ class MemberController extends Zend_Controller_Action
         $service = new App_Service_Member();
         $case    = $service->getCaseById($this->_getParam('caseId'));
 
+        // Don't allow any new referrals on needs in closed cases.
+        if ($case->getStatus() === 'Closed') {
+            throw new DomainException("Can't modify closed cases");
+        }
+
         // Create the referral form.
         $needId                = $this->_getParam('needId');
         $this->view->pageTitle = 'New Referral';
@@ -588,6 +593,11 @@ class MemberController extends Zend_Controller_Action
         // Get information on the case associated with this new check request.
         $service = new App_Service_Member();
         $case    = $service->getCaseById($this->_getParam('caseId'));
+
+        // Don't allow any new check requests on needs in closed cases.
+        if ($case->getStatus() === 'Closed') {
+            throw new DomainException("Can't modify closed cases");
+        }
 
         // Create the check request form.
         $needId                = $this->_getParam('needId');

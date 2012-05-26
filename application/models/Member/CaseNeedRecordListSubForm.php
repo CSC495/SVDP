@@ -244,12 +244,16 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             );
 
             $status  = '<span class="label label-important">Added</span>';
-            $status2 = '<a href="'
-                     . htmlspecialchars($newReferralUrl)
-                     . '" class="btn btn-info">Referral</a>'
-                     . ' <a href="'
-                     . htmlspecialchars($newCheckReqUrl)
-                     . '" class="btn btn-info">Req. Check</a>';
+            if (!$this->_readOnly) {
+                $status2 = '<a href="'
+                         . htmlspecialchars($newReferralUrl)
+                         . '" class="btn btn-info">Referral</a>'
+                         . ' <a href="'
+                         . htmlspecialchars($newCheckReqUrl)
+                         . '" class="btn btn-info">Req. Check</a>';
+            } else {
+                $status2 = '';
+            }
         }
 
         $caseNeedSubForm->status->setValue($status);
