@@ -47,18 +47,17 @@ class App_Service_DocumentService {
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
-                             'totalMiles' => new Zend_Db_Expr('SUM(cv.miles)')))
+                             'totalMiles' => 'cv.miles'))
                 ->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
                 ->where('cv.visit_date >= ?', $newStartDate)
-                ->where('cv.visit_date <= ?', $newEndDate)
-                ->group('cc.case_id');
+                ->where('cv.visit_date <= ?', $newEndDate);
         $results = $this->_db->fetchAll($select);
         $arr = array();
         foreach($results as $row){
             $report = new Application_Model_Impl_GenReport();
             $report->setCaseId($row['id']);
             $report->setTotalMiles($row['totalMiles']);
-            $arr[$row['id']] = $report;
+            $arr[] = $report;
         }
         $arr = $this->getNumMems($arr);
         return $arr;
@@ -115,6 +114,19 @@ class App_Service_DocumentService {
         return $this->getNumMems($this->getNumRefs($newStartDate, $newEndDate));
     }
     
+    public function getCheckReqsByCaseId($caseId){
+        $select = $this->_db->select()
+                ->from(array('cr' => 'check_request'))
+                ->join(array('cn' => 'case_need'), 'cn.caseneed_id = cr.caseneed_id')
+                ->join(array('cc' => 'client_case'), 'cn.case_id = cc.case_id')
+                ->where('cc.case_id = ?', $caseId);
+        $results = $this->_db->fetchAll($select);
+        $arr = array();
+        foreach($results as $row)
+            $arr[] = $this->buildCheckRequestModel($row);
+        return $arr;
+    }
+    
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
     
     // temp
@@ -164,18 +176,6 @@ class App_Service_DocumentService {
             $ids[$row['id']] = '0';
         }
         return $ids;
-    }
-     public function getCheckReqsByCaseId($caseId){
-        $select = $this->_db->select()
-                ->from(array('cr' => 'check_request'))
-                ->join(array('cn' => 'case_need'), 'cn.caseneed_id = cr.caseneed_id')
-                ->join(array('cc' => 'client_case'), 'cn.case_id = cc.case_id')
-                ->where('cc.case_id = ?', $caseId);
-        $results = $this->_db->fetchAll($select);
-        $arr = array();
-        foreach($results as $row)
-            $arr[] = $this->buildCheckRequestModel($row);
-        return $arr;
     }
     
     //Gets the total number of household members associated with each case
@@ -285,7 +285,8 @@ class App_Service_DocumentService {
             ->setAddress($address)
             ->setPhone($results['phone'])
             ->setContactFirstName($results['contact_fname'])
-            ->setContactLastName($results['contact_lname']);
+            ->setContactLastName($results['contact_lname'])
+            ->setStatus($results['status']);
         return $request;
     }  
 }

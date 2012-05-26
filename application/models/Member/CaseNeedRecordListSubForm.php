@@ -59,6 +59,8 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
         if ($showSubmitChanges) {
             $options['submitMsg'] = 'Submit';
+        } else {
+            $options['dirtyMsg'] = '';
         }
 
         parent::__construct($options);
@@ -241,17 +243,19 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 . urlencode($this->_caseId)
                 . '/needId/'
                 . urlencode($caseNeed->getId())
-                . '/amount/'
-                . urlencode($caseNeed->getAmount())
             );
 
             $status  = '<span class="label label-important">Added</span>';
-            $status2 = '<a href="'
-                     . htmlspecialchars($newReferralUrl)
-                     . '" class="btn btn-info">Referral</a>'
-                     . ' <a href="'
-                     . htmlspecialchars($newCheckReqUrl)
-                     . '" class="btn btn-info">Req. Check</a>';
+            if (!$this->_readOnly) {
+                $status2 = '<a href="'
+                         . htmlspecialchars($newReferralUrl)
+                         . '" class="btn btn-info">Referral</a>'
+                         . ' <a href="'
+                         . htmlspecialchars($newCheckReqUrl)
+                         . '" class="btn btn-info">Req. Check</a>';
+            } else {
+                $status2 = '';
+            }
         }
 
         $caseNeedSubForm->status->setValue($status);

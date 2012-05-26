@@ -21,7 +21,15 @@ class Application_Model_Report_reimbursementReport extends Twitter_Bootstrap_For
 			'filters'    => array('Digits'),
 			'required'   => true,
 			'class'	     => 'input-small',
-			));
+			'validators' => array(
+			array('Db_RecordExists', true, array(
+			    'table' => 'checkRequest',
+			    'field' => 'check_request',
+			    'messages' => array(
+				'noRecordFound' => 'No client was found for that ID.'
+				)),                
+			)),
+		));
 		
                $login = $this->addElement('submit', 'create', array(
                    'required' => false,

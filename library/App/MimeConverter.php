@@ -1,7 +1,13 @@
 <?php
-
+/**
+ * Class provides static method for retrieving the MIME type of a file
+ */
 class App_MimeConverter
 {
+    /**
+     * Map for retriving MIME types that PHP cannot identify correctly
+     * @var array
+     */
     private static $_extTypeMap = array(
         '.docm' => "application/vnd.ms-word.document.macroEnabled.12",
         '.docx' => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -25,17 +31,24 @@ class App_MimeConverter
         '.application' => "application/x-ms-application",
         '.deploy' => "application/octet-stream",
         '.xbap'   => "application/x-ms-xbap");
-    
+	/**
+	 * Function finds the extension of a file and uses that extension to find
+	 * the MIME type for the file
+	 *
+	 * @param string $file File name to find MIME type for
+	 * @return string MIME type for the file
+	 */
     public static function getMimeType($file)
     {
         // Find extension. Return null string if not found
         $ext = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
 
+		// If this extension exists in the map, get the type from there and return it
         if(array_key_exists($ext,App_MimeConverter::$_extTypeMap))
         {
             return App_MimeConverter::$_extTypeMap[$ext];
         }
-        else
+        else // Not in map, let PHP handle finding the mimetype
         {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime = finfo_file($finfo,$file,FILEINFO_MIME_TYPE);

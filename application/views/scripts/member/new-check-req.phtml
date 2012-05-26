@@ -1,1 +1,12 @@
+<p>Submit a check request for the selected need.</p>
+<fieldset>
+    <legend>Case summary:</legend>
+    <div class=search-results>
+        <table class=search-results>
+            <?php
+            echo $this->partial('partial/searchResultCase.phtml', array('case' => $this->case));
+            ?>
+        </table>
+    </div>
+</fieldset>
 <?php echo $this->form;

@@ -1,8 +1,16 @@
 <?php
-
+/**
+ * Class catches all exceptions the application throws
+ * and displays the appropriate error messages
+ */
 class ErrorController extends Zend_Controller_Action
 {
-
+	/**
+	* Action catches exceptions and displays the appropriate message.
+	* Action will also create messages in the log
+	*
+	* @return null
+	*/
     public function errorAction()
     {
         $this->view->pageTitle = 'Error Page';
@@ -48,6 +56,11 @@ class ErrorController extends Zend_Controller_Action
         $this->view->request   = $errors->request;
     }
 
+	/**
+	* Function returns the zend Log object
+	*
+	* @return Log
+	*/
     public function getLog()
     {
         $bootstrap = $this->getInvokeArg('bootstrap');

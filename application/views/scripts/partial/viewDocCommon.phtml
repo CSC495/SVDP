@@ -9,6 +9,14 @@ else
 
 <tr class='search-result'>
     <td class='search-cell'><a href="<?php echo $path?>"> <?php echo $this->escape($this->doc->getName())?></a></th>
-    <td class='search-cell last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->baseUrl(App_Resources::DOCUMENT .'/delete/id/' . urlencode($this->doc->getId())); ?>" class='btn btn-mini btn-danger'>Delete</a><?php } ?></td>
+    <td class='search-cell last'>
+		<?php 
+			if ($this->showEditBtn) 
+			{ 
+				echo "<a href=\"" . $this->baseUrl(App_Resources::DOCUMENT 
+										.'/delete/id/' . urlencode($this->doc->getId())) . "\""  
+										. "class='btn btn-mini btn-danger deleteDoc' >Delete</a></td>";
+			}
+		?>
 </tr>
-<?php } ?>
+<?php } //ends IF($this->internal ...)?>
