@@ -124,13 +124,8 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'contactFirstName', array(
-            'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a first name.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
@@ -144,13 +139,8 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'contactLastName', array(
-            'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a last name.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
