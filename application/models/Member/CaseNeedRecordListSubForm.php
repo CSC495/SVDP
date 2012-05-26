@@ -59,6 +59,8 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
         if ($showSubmitChanges) {
             $options['submitMsg'] = 'Submit';
+        } else {
+            $options['dirtyMsg'] = '';
         }
 
         parent::__construct($options);
