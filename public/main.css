@@ -17,7 +17,8 @@
 }
 
 #map-outer {
-    margin-top: 55px;
+    margin-left: 20px;
+    margin-top: 12px;
 }
 
 /* Styles for two column horizontal forms: */
@@ -134,7 +135,11 @@ form.form-horizontal td .control-group {
 }
 
 legend {
-    margin-bottom: 18px !important;
+    margin-bottom: 14px !important;
+}
+
+a.btn {
+  padding: 3px 10px 3px;
 }
 
 /* Base Bootstrap style: */

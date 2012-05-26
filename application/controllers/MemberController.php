@@ -81,8 +81,9 @@ class MemberController extends Zend_Controller_Action
 
         if ($similarClients) {
             $this->_helper->flashMessenger(array(
-                'type' => 'error',
-                'text' => '',
+                'text' => 'Clients with similar information were found.'
+                       . ' <span id=map-similar-toggle>Check the list below.</span>',
+                'noEscape' => true,
             ));
         }
 

@@ -10,6 +10,8 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
 
     private $_similarClients = array();
 
+    private $_directionsUrl = null;
+
     /**
      * Instantiates a new instance of the `Application_Model_Member_MapForm` class.
      */
@@ -25,6 +27,8 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
                 array('ViewScript', array(
                     'viewScript' => 'form/map-form.phtml',
                     'similarClients' => &$this->_similarClients,
+                    'showNewClientButton' => &$this->_showNewClientButton,
+                    'directionsUrl' => &$this->_directionsUrl,
                 )),
                 'Form',
             ),
@@ -43,7 +47,6 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
                 )),
             ),
             'label' => 'First name',
-            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
@@ -59,34 +62,25 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
                 )),
             ),
             'label' => 'Last name',
-            'description' => '(Optional)',
             'maxlength' => 30,
             'maxlength' => 30,
             'dimension' => 3,
         ));
 
         // Elements to collect the potential client's address:
-        $this->addSubForm(
-            new Application_Model_Member_AddrSubForm("Client address:"),
-            'addr'
-        );
+        $this->addSubForm(new Application_Model_Member_AddrSubForm('Client address:'), 'addr');
 
         // Elements that perform form actions:
         $this->addElement('submit', 'search', array(
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
             'label' => 'Submit',
+            'decorators' => array('ViewHelper'),
         ));
 
         $this->addElement('submit', 'newClient', array(
             'label' => 'New Client',
-            'class' => 'btn newClient',
+            'decorators' => array('ViewHelper'),
         ));
-
-        $this->addDisplayGroup(
-            array('search', 'newClient'),
-            'actions',
-            array('disableLoadDefaultDecorators' => true, 'decorators' => array('Actions'))
-        );
     }
 
     /**
@@ -162,6 +156,10 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
     public function setAddr($addr)
     {
         $this->addr->setAddr($addr);
+
+        $this->_directionsUrl = 'http://maps.google.com/maps?daddr='
+            . urlencode($addr->getFullAddr());
+
         return $this;
     }
 

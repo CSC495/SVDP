@@ -118,15 +118,19 @@ $scheduleEntries = Zend_Registry::get('schedule');
                     }
                     foreach ($messages as $message) {
                         if (is_array($message)) {
-                            $class = ' alert-' . $message['type'];
+                            $class = isset($message['type']) ? ' alert-' . $message['type'] : '';
                             $text  = $message['text'];
+
+                            if (empty($message['noEscape'])) {
+                                $text = $this->escape($text);
+                            }
                         } else {
                             $class = '';
-                            $text  = $message;
+                            $text  = $this->escape($message);
                         }
 
                         // Write each flash message as a top-level alert.
-                        echo '<p class="alert' . $class . '">' . $this->escape($text) . '</p>';
+                        echo '<p class="alert' . $class . '">' . $text . '</p>';
                     }
                 ?>
                 </div>

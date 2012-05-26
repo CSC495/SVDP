@@ -281,6 +281,27 @@ function renderMap(centerCoords, clientCoords) {
         }
     };
 
+    // Hide the list of similar clients by default, attaching show/hide handlers as appropriate.
+    $('#map-similar-toggle').replaceWith('<a id=map-similar-toggle href="#"></a>');
+
+    var similarClientsBlock = $('#map-similar');
+    var similarClientsLink  = $('#map-similar-toggle');
+
+    function updateSimilarClientsLink() {
+        if (similarClientsBlock.is(':visible')) {
+            similarClientsLink.html('Click to hide results.');
+        } else {
+            similarClientsLink.html('Click to show results.');
+        }
+    }
+
+    similarClientsLink.click(function () {
+        similarClientsBlock.slideToggle('fast', updateSimilarClientsLink);
+    });
+
+    similarClientsBlock.hide();
+    updateSimilarClientsLink();
+
     // Display the map.
     var mapElem = $('#map').get(0);
 
@@ -348,16 +369,16 @@ function renderMap(centerCoords, clientCoords) {
 	        fillColor: '#468847'
 	    });
 
-        $('.newClient').addClass('btn-success');
-        $('#alerts').append('<p class="alert alert-success">' + alertMsg + '</p>');
+        $('#newClient').addClass('btn-success');
+        $('#alerts').prepend('<p class="alert alert-success">' + alertMsg + '</p>');
     } else {
 	    polygons.stRaphael.setOptions({
 	        strokeColor: '#b94a48',
 	        fillColor: '#b94a48'
 	    });
 
-        $('.newClient').addClass('btn-danger');
-        $('#alerts').append('<p class="alert alert-error">' + alertMsg + '</p>');
+        $('#newClient').addClass('btn-danger');
+        $('#alerts').prepend('<p class="alert alert-error">' + alertMsg + '</p>');
     }
 
     // When the map finises loading, add an address marker at the potential client's location.
