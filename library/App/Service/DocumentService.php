@@ -114,6 +114,19 @@ class App_Service_DocumentService {
         return $this->getNumMems($this->getNumRefs($newStartDate, $newEndDate));
     }
     
+    public function getCheckReqsByCaseId($caseId){
+        $select = $this->_db->select()
+                ->from(array('cr' => 'check_request'))
+                ->join(array('cn' => 'case_need'), 'cn.caseneed_id = cr.caseneed_id')
+                ->join(array('cc' => 'client_case'), 'cn.case_id = cc.case_id')
+                ->where('cc.case_id = ?', $caseId);
+        $results = $this->_db->fetchAll($select);
+        $arr = array();
+        foreach($results as $row)
+            $arr[] = $this->buildCheckRequestModel($row);
+        return $arr;
+    }
+    
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
     
     // temp
@@ -284,7 +297,8 @@ class App_Service_DocumentService {
             ->setAddress($address)
             ->setPhone($results['phone'])
             ->setContactFirstName($results['contact_fname'])
-            ->setContactLastName($results['contact_lname']);
+            ->setContactLastName($results['contact_lname'])
+            ->setStatus($results['status']);
         return $request;
     }  
 }
