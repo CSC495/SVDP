@@ -315,7 +315,7 @@ class App_Service_Member
                 $need->setReferralOrCheckReq($checkReq);
             }
 
-            $needs[] = $need;
+            $needs[$row['caseNeedId']] = $need;
         }
         return $needs;
     }

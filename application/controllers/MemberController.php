@@ -541,11 +541,15 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No case need ID parameter provided');
         }
 
+        // Get information on the case associated with this new referral.
+        $service = new App_Service_Member();
+        $case    = $service->getCaseById($this->_getParam('caseId'));
+
         // Create the referral form.
-        $caseId                = $this->_getParam('caseId');
         $needId                = $this->_getParam('needId');
         $this->view->pageTitle = 'New Referral';
-        $this->view->form      = new Application_Model_Member_ReferralForm($caseId, $needId);
+        $this->view->case      = $case;
+        $this->view->form      = new Application_Model_Member_ReferralForm($case, $needId);
 
         // If this isn't a POST request or form validation fails, bail out.
         $request = $this->getRequest();
@@ -563,7 +567,7 @@ class MemberController extends Zend_Controller_Action
         $service->createReferral($needId, $referral);
 
         $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
-            'id' => $caseId,
+            'id' => $case->getId(),
         ));
     }
 
@@ -572,7 +576,7 @@ class MemberController extends Zend_Controller_Action
      */
     public function newcheckreqAction()
     {
-        // If no case ID, case need ID, or amount was provided, bail out.
+        // If no case ID or case need ID was provided, bail out.
         if (!$this->_hasParam('caseId')) {
             throw new UnexpectedValueException('No case ID parameter provided');
         }
@@ -581,26 +585,20 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No case need ID parameter provided');
         }
 
-        if (!$this->_hasParam('amount')) {
-            throw new UnexpectedValueException('No amount parameter provided');
-        }
+        // Get information on the case associated with this new check request.
+        $service = new App_Service_Member();
+        $case    = $service->getCaseById($this->_getParam('caseId'));
 
         // Create the check request form.
-        $caseId                = $this->_getParam('caseId');
         $needId                = $this->_getParam('needId');
-        $amount                = $this->_getParam('amount');
         $this->view->pageTitle = 'New Check Request';
-        $this->view->form      = new Application_Model_Member_CheckReqForm(
-            $caseId,
-            $needId,
-            $amount
-        );
+        $this->view->case      = $case;
+        $this->view->form      = new Application_Model_Member_CheckReqForm($case, $needId);
 
         // If this isn't a POST request or form validation fails, bail out.
         $request = $this->getRequest();
 
         if (!$request->isPost()) {
-            $this->view->form->setAmount($amount);
             return;
         }
 
@@ -620,11 +618,10 @@ class MemberController extends Zend_Controller_Action
             ->setRequestDate(date('Y-m-d'))
             ->setStatus('P');
 
-        $service = new App_Service_Member();
         $service->createCheckRequest($checkReq);
 
         $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
-            'id' => $caseId,
+            'id' => $case->getId(),
         ));
     }
 

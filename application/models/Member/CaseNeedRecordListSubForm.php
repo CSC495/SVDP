@@ -241,8 +241,6 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 . urlencode($this->_caseId)
                 . '/needId/'
                 . urlencode($caseNeed->getId())
-                . '/amount/'
-                . urlencode($caseNeed->getAmount())
             );
 
             $status  = '<span class="label label-important">Added</span>';
