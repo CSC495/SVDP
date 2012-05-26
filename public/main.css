@@ -23,7 +23,7 @@
 
 /* Styles for two column horizontal forms: */
 
-.twocol fieldset.row-fluid {
+.twocol .row-fluid {
     max-width: 960px;
 }
 
