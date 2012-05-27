@@ -294,7 +294,34 @@ class MemberController extends Zend_Controller_Action
             $changedNeeds = $this->view->form->getChangedNeeds();
             $removedNeeds = $this->view->form->getRemovedNeeds();
 
-            if (count($removedNeeds) - count($changedNeeds) === count($case->getNeeds())) {
+            self::updateCaseNeeds($case, $changedNeeds, $removedNeeds);
+
+            // Check for violations of parish limits.
+            if (!$this->_getParam('skipLimitCheck')) {
+                $limitService = new App_Service_Limit();
+                $needErrorMsg = self::getNeedLimitErrorMsg($limitService, $case);
+
+                if ($needErrorMsg) {
+                    $this->_helper->flashMessenger(array(
+                        'type' => 'error',
+                        'text' => "$needErrorMsg.",
+                    ));
+                }
+
+                if ($needErrorMsg !== null) {
+                    $this->_helper->flashMessenger(array(
+                        'text' =>
+                            'These case needs exceed parish limits.'
+                         . ' Submit again to change needs anyway.',
+                        'noEscape' => true,
+                    ));
+                    $this->view->form->setLimitViolation(true);
+                    return;
+                }
+            }
+
+            // Ensure that the case will be left with at least one need.
+            if (!$case->getNeeds()) {
                 $this->_helper->flashMessenger(array(
                     'type' => 'error',
                     'text' => 'A case must have at least one need.',
@@ -302,6 +329,8 @@ class MemberController extends Zend_Controller_Action
                 return;
             }
 
+            // If no limit violations occurred (or we skipped the check), then we need to write the
+            // new needs to the database.
             foreach ($changedNeeds as $changedNeed) {
                 $service->changeCaseNeed($case->getId(), $changedNeed);
             }
@@ -707,6 +736,34 @@ class MemberController extends Zend_Controller_Action
     }
 
     /**
+     * Adds, changes, and removes the needs from the given case model.
+     *
+     * @param Application_Model_Impl_Case $case
+     * @param Application_Model_Impl_CaseNeed[] $changedNeeds
+     * @param Application_Model_Impl_CaseNeed[] $removedNeeds
+     * @return Application_Model_Impl_Case
+     */
+    private static function updateCaseNeeds(Application_Model_Impl_Case $case, array $changedNeeds,
+        array $removedNeeds)
+    {
+        $needs = $case->getNeeds();
+
+        foreach ($removedNeeds as $removedNeed) {
+            unset($needs[$removedNeed->getId()]);
+        }
+
+        foreach ($changedNeeds as $changedNeed) {
+            $id = $changedNeed->getId();
+
+            if (!isset($needs[$id]) || !$needs[$id]->hasReferralOrCheckReq()) {
+                $needs[$id] = $changedNeed;
+            }
+        }
+
+        return $case->setNeeds($needs);
+    }
+
+    /**
      * Returns an error message if the specified case violates the associated client's lifetime
      * and/or yearly case limit, and returns `null` if no limit violation occurred.
      *
@@ -752,6 +809,33 @@ class MemberController extends Zend_Controller_Action
         $lifetimeNeedLimit = $parishParams->getLifeTimeLimit();
         $perCaseNeedLimit  = $parishParams->getCaseFundLimit();
         $lifetimeTotal     = $service->getPastNeedTotal($case->getClient()->getId());
+
+        $caseNeedTotal = 0.0;
+
+        foreach ($case->getNeeds() as $need) {
+            $referralOrCheckReq = $need->getReferralOrCheckReq();
+
+            // Don't count referred needs and needs associated with denied check requests.
+            if ($referralOrCheckReq instanceof Application_Model_Impl_Referral
+                || ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq
+                    && $referralOrCheckReq->getStatus() === 'D')) {
+                continue;
+            }
+
+            $caseNeedTotal += $need->getAmount();
+        }
+
+        if ($lifetimeTotal + $caseNeedTotal > $lifetimeNeedLimit) {
+            return 'Lifetime need limit of $'
+                 . number_format($lifetimeNeedLimit, 2)
+                 . ' per client exceeded';
+        }
+
+        if ($caseNeedTotal > $perCaseNeedLimit) {
+            return 'Need limit of $'
+                 . number_format($perCaseNeedLimit, 2)
+                 . ' per case exceeded';
+        }
 
         return null;
     }

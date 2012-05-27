@@ -40,6 +40,10 @@ class Application_Model_Impl_CaseNeed{
         return $this;
     }
 
+    public function hasReferralOrCheckReq(){
+        return $this->_referralOrCheckReq !== null;
+    }
+
     public function getReferralOrCheckReq(){
         return $this->_referralOrCheckReq;
     }
