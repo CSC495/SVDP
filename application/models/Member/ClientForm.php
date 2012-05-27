@@ -228,7 +228,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                     ),
                 )),
             ),
-            'label' => "Spouse's name",
+            'label' => "Spouse's first name",
             'maxlength' => 30,
             'dimension' => 3,
         ));
