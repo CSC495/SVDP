@@ -33,7 +33,7 @@ class App_Service_Limit
      * @param string $clientId
      * @return array
      */
-    public function getPastCaseTotal($clientId)
+    public function getPastCaseTotals($clientId)
     {
         $this->_db->setFetchMode(Zend_Db::FETCH_ASSOC);
 

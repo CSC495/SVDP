@@ -72,6 +72,23 @@ class App_Formatting
     }
 
     /**
+     * Automatically chooses between singular and plural nouns to generate strings like "1 cow" vs.
+     * "2 cows". By default, this function assumes that plurals are formed by appending an 's' to
+     * the singular noun; however, a custom plural form may be provided for special cases (e.g.,
+     * "1 cow" vs. "42 kine").
+     *
+     * @param int|double $num
+     * @param string $singular
+     * @param string|null $plural
+     * @return string
+     */
+    public static function inflectPlural($num, $singular, $plural = null)
+    {
+        return "$num "
+             . (($num == 1) ? $singular : (($plural !== null) ? $plural : "{$singular}s"));
+    }
+
+    /**
      * Truncates a string to the specific length, appending an ellipsis if truncate occurs.
      *
      * @param string $x

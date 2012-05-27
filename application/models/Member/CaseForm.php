@@ -4,6 +4,13 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
 
     private $_id;
 
+    /**
+     * `true` if a limit violation has occurred, otherwise `false`.
+     *
+     * @var bool
+     */
+    private $_limitViolation;
+
     public function __construct($clientId)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
@@ -30,6 +37,41 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
             'decorators' => array('ViewHelper'),
             'class' => 'btn btn-success',
         ));
+    }
+
+    /**
+     * Returns `true` if the limit violation flag is set, otherwise returns `false`.
+     *
+     * @return bool
+     */
+    public function isLimitViolation()
+    {
+        return $this->_limitViolation;
+    }
+
+    /**
+     * Sets a flag determining whether or not a limit violation has occurred. If the flag is set,
+     * the next form submission will bypass the limit check, allowing case creation anyway.
+     *
+     * @param bool $limitViolation
+     * @return self
+     */
+    public function setLimitViolation($limitViolation)
+    {
+        $this->_limitViolation = $limitViolation;
+
+        $action = preg_replace('|/skipLimitCheck/1|', '', $this->getAction());
+
+        if ($limitViolation) {
+            $action .= '/skipLimitCheck/1';
+            $this->submit->setAttrib('class', 'btn btn-danger');
+        } else {
+            $this->submit->setAttrib('class', 'btn btn-success');
+        }
+
+        $this->setAction($action);
+
+        return $this;
     }
 
     public function preValidate($data)

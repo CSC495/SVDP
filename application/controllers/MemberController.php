@@ -117,7 +117,7 @@ class MemberController extends Zend_Controller_Action
 
         $request = $this->getRequest();
         $service = new App_Service_Member();
-        $users   = $this->fetchMemberOptions($service);
+        $users   = self::fetchMemberOptions($service);
 
         $this->view->form = new Application_Model_Member_ScheduleForm($users);
 
@@ -245,7 +245,7 @@ class MemberController extends Zend_Controller_Action
 
         $case     = $service->getCaseById($this->_getParam('id'));
         $comments = $service->getCommentsByCaseId($case->getId());
-        $users    = $this->fetchMemberOptions($service);
+        $users    = self::fetchMemberOptions($service);
 
         // A case is displayed read-only if it's closed, and also if the user is not a normal member
         // (e.g., if they're a treasurer).
@@ -496,8 +496,8 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Initialize the new case form.
-        $service = new App_Service_Member();
-        $client  = $service->getClientById($this->_getParam('clientId'));
+        $memberService = new App_Service_Member();
+        $client  = $memberService->getClientById($this->_getParam('clientId'));
 
         $this->view->pageTitle = 'New Case';
         $this->view->client    = $client;
@@ -547,7 +547,40 @@ class MemberController extends Zend_Controller_Action
             ->setStatus('Open')
             ->setNeeds($needs);
 
-        $case = $service->createCase($case);
+        // Check for violations of parish limits.
+        if (!$this->_getParam('skipLimitCheck')) {
+            $limitService = new App_Service_Limit();
+            $caseErrorMsg = self::getCaseLimitErrorMsg($limitService, $case);
+            $needErrorMsg = self::getNeedLimitErrorMsg($limitService, $case);
+
+            if ($caseErrorMsg) {
+                $this->_helper->flashMessenger(array(
+                    'type' => 'error',
+                    'text' => "$caseErrorMsg.",
+                ));
+            }
+
+            if ($needErrorMsg) {
+                $this->_helper->flashMessenger(array(
+                    'type' => 'error',
+                    'text' => "$needErrorMsg.",
+                ));
+            }
+
+            if ($caseErrorMsg !== null || $needErrorMsg !== null) {
+                $this->_helper->flashMessenger(array(
+                    'text' =>
+                        'Creating this case would exceed parish limits.'
+                     . ' Submit again to create case anyway.',
+                    'noEscape' => true,
+                ));
+                $this->view->form->setLimitViolation(true);
+                return;
+            }
+        }
+
+        // If no limit violation occurred (or we skipped the check), create the new case.
+        $case = $memberService->createCase($case);
 
         $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
             'id' => $case->getId(),
@@ -662,7 +695,7 @@ class MemberController extends Zend_Controller_Action
         ));
     }
 
-    private function fetchMemberOptions(App_Service_Member $service)
+    private static function fetchMemberOptions(App_Service_Member $service)
     {
         $users = $service->getActiveMembers();
 
@@ -671,5 +704,55 @@ class MemberController extends Zend_Controller_Action
         }
 
         return array('' => '') + $users;
+    }
+
+    /**
+     * Returns an error message if the specified case violates the associated client's lifetime
+     * and/or yearly case limit, and returns `null` if no limit violation occurred.
+     *
+     * @param App_Service_Limit $service
+     * @param App_Model_Impl_Case $case
+     * @return string|null
+     */
+    private static function getCaseLimitErrorMsg(App_Service_Limit $service,
+        Application_Model_Impl_Case $case)
+    {
+        $parishParams      = Zend_Registry::get('config');
+        $lifetimeCaseLimit = $parishParams->getCaseLimit();
+        $yearlyCaseLimit   = $parishParams->getYearlyLimit();
+        $totals            = $service->getPastCaseTotals($case->getClient()->getId());
+
+        if ($totals['lifetimeCases'] >= $lifetimeCaseLimit) {
+            return 'Lifetime limit of '
+                 . App_Formatting::inflectPlural($lifetimeCaseLimit, 'case')
+                 . ' per client reached';
+        }
+
+        if ($totals['pastYearCases'] >= $yearlyCaseLimit) {
+            return 'Limit of '
+                 . App_Formatting::inflectPlural($yearlyCaseLimit, 'case')
+                 . ' per client in a one-year period reached';
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns an error message if the specified case violates the associated client's lifetime
+     * and/or per-case monetary limit, and returns `null` if no limit violation occurred.
+     *
+     * @param App_Service_Limit $service
+     * @param App_Model_Impl_Case $case
+     * @return string|null
+     */
+    private static function getNeedLimitErrorMsg(App_Service_Limit $service,
+        Application_Model_Impl_Case $case)
+    {
+        $parishParams      = Zend_Registry::get('config');
+        $lifetimeNeedLimit = $parishParams->getLifeTimeLimit();
+        $perCaseNeedLimit  = $parishParams->getCaseFundLimit();
+        $lifetimeTotal     = $service->getPastNeedTotal($case->getClient()->getId());
+
+        return null;
     }
 }
