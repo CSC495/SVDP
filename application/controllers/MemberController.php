@@ -6,6 +6,17 @@ class MemberController extends Zend_Controller_Action
 {
 
     /**
+     * Initializes the member controller's settings.
+     */
+    public function init()
+    {
+        $ajaxContext = $this->_helper->getHelper('AjaxContext');
+        $ajaxContext
+            ->addActionContext('checkLimits', 'json')
+            ->initContext();
+    }
+
+    /**
      * Home page action that allows members to locate potential clients on a map.
      */
     public function indexAction()
@@ -716,6 +727,67 @@ class MemberController extends Zend_Controller_Action
         $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
             'id' => $case->getId(),
         ));
+    }
+
+    /**
+     * AJAX-only action that preemptively checks for client and case limit violations.
+     */
+    public function checklimitsAction()
+    {
+        // Retrieve GET parameters.
+        $request = $this->getRequest();
+        $data    = $request->getQuery();
+
+        // If no ID was provided, bail out.
+        $clientId = isset($data['clientId']) ? $data['clientId'] : null;
+        $caseId   = isset($data['caseId']) ? $data['caseId'] : null;
+
+        if ($clientId === null && $caseId === null) {
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        // Prepopulate the case need form with the proper number of rows.
+        $caseId = $this->_getParam('caseId');
+        $form   = new Application_Model_Member_CaseNeedRecordListSubForm(false, false, $caseId);
+
+        $form->preValidate($data);
+
+        // If the form isn't even valid, bail out. (We'll let the form submit normally so the
+        // validation errors can be caught on the server-side.)
+        if (!$form->isValid($data)) {
+            return;
+        }
+
+        // Otherwise, fetch data on the specified case.
+        if ($clientId !== null) {
+            // We're making a new case.
+            $client = new Application_Model_Impl_Client();
+            $client->setId($clientId);
+
+            $case = new Application_Model_Impl_Case();
+            $case
+                ->setClient($client)
+                ->setNeeds($form->getChangedRecords());
+        } else {
+            // We're editing an existing case.
+            $memberService = new App_Service_Member();
+            $case          = $memberService->getCaseById($caseId);
+
+            self::updateCaseNeeds($case, $form->getChangedRecords(), $form->getRemovedRecords());
+        }
+
+        // Check for limit violations, returning an error message if appropriate.
+        $limitService = new App_Service_Limit();
+        $caseErrorMsg = ($clientId !== null)
+                      ? self::getCaseLimitErrorMsg($limitService, $case)
+                      : null;
+        $needErrorMsg = self::getNeedLimitErrorMsg($limitService, $case);
+
+        if ($caseErrorMsg !== null)
+            $this->view->caseErrorMsg = $caseErrorMsg;
+        if ($needErrorMsg !== null) {
+            $this->view->needErrorMsg = $needErrorMsg;
+        }
     }
 
     private static function fetchMemberOptions(App_Service_Member $service)
