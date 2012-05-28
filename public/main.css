@@ -6,15 +6,24 @@
     padding-left: 3ex;
 }
 
+.sidebar-field .error {
+    color: #b94a48;
+}
+
 /* Styles for map view: */
 
 #map {
     height: 400px;
 }
 
+#map-outer {
+    margin-left: 20px;
+    margin-top: 12px;
+}
+
 /* Styles for two column horizontal forms: */
 
-.twocol fieldset.row-fluid {
+.twocol .row-fluid {
     max-width: 960px;
 }
 
@@ -126,7 +135,11 @@ form.form-horizontal td .control-group {
 }
 
 legend {
-    margin-bottom: 18px !important;
+    margin-bottom: 14px !important;
+}
+
+a.btn {
+  padding: 3px 10px 3px;
 }
 
 /* Base Bootstrap style: */

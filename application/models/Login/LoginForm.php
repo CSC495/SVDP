@@ -1,7 +1,16 @@
 <?php
+/**
+ * Class provides the form which allows a user to log into the page
+ */
 class Application_Model_Login_LoginForm extends Twitter_Bootstrap_Form_Vertical
 {
-	
+	/**
+	 * Default constructor for form
+	 *
+	 * @param array $options Options to build super()
+	 *
+	 * @return null
+	 */
 	public function __construct($options = null){
 		parent::__construct($options);
 		$this->setName('login');
@@ -38,37 +47,40 @@ class Application_Model_Login_LoginForm extends Twitter_Bootstrap_Form_Vertical
 				   'class'      => 'input-large',
 				 ));
 		
-               // Password must consist of alphanumeric characters only
-               //          must be between 6 and 20 characters
-               $password = $this->addElement('password', 'password', array(
+	    // Password must consist of alphanumeric characters only
+	    // must be be atleast 8 characters and have 1 digit
+	    $password = $this->addElement('password', 'password', array(
                    'required'   => true,
                    'label'      => 'Password:',
-		   'class'      => 'input-large',
+				   'class'      => 'input-large',
                ));
         
+		// Used to indicate errors
 		$err = $this->addElement('hidden','err',array(
 			'required' => false,
 		));
 		
-		// Hidden element so next page knows referer
+		// Hidden element so next page knows referer. By the
+		// forgot action in login controller. Forgot action will
+		// only display if this prev=login is set
 		$prev = $this->addElement('hidden','prev', array(
 			'value' => 'login'
 		));
 		
-               $login = $this->addElement('submit', 'login', array(
+	    $login = $this->addElement('submit', 'login', array(
                    'required' => false,
                    'ignore'   => true,
                    'label'    => '        Login        ',
-		   'class'    => 'btn-success btn',
-		   'decorators' => array('ViewHelper'),
+				   'class'    => 'btn-success btn',
+		           'decorators' => array('ViewHelper'),
                 ));
                
-                $forgot = $this->addElement('submit','forgot', array(
+		$forgot = $this->addElement('submit','forgot', array(
                     'required' => false,
                     'ignore' => true,
                     'label' => 'Forgot Password',
-		    'class' => 'btn-info btn',
-		    'decorators' => array('ViewHelper'),
+					'class' => 'btn-info btn',
+					'decorators' => array('ViewHelper'),
                 ));
 	}
 }

@@ -21,7 +21,7 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
     /**
      * Instantiates a new instance of the `Application_Model_Member_AddrSubForm` class.
      */
-    public function __construct($title, $hasParishField = false, $zipCodeRequired = false)
+    public function __construct($title = null, $hasParishField = false, $zipCodeRequired = false)
     {
         parent::__construct();
 

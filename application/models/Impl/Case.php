@@ -9,15 +9,30 @@
  */
 class Application_Model_Impl_Case
 {
-
+    /**
+     * Unique id for this case
+     * @var int
+     */
     private $_id = null;
-
+    /**
+     * User that opened the case
+     * @var Application_Model_Impl_Case
+     */
     private $_openedUser = null;
-
+    /**
+     * Date the case was opened
+     * @var string
+     */
     private $_openedDate = null;
-
+    /**
+     * Status of the case Open or Closed
+     * @var string
+     */
     private $_status = null;
-
+    /**
+     * Total amount requested for case
+     * @var float
+     */
     private $_totalAmount = null;
 
     private $_needList = null;

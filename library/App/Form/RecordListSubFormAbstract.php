@@ -150,6 +150,33 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         }
     }
 
+    /**
+     * Returns `true` if the submit button should will be rendered with a "dangerous" appearance,
+     * and `false` otherwise.
+     *
+     * @return bool
+     */
+    public function isSubmitDanger()
+    {
+        return isset($this->_submitBtn)
+            && $this->_submitBtn->getAttrib('class') === 'btn btn-success';
+    }
+
+    /**
+     * Sets whether or not the submit button should be rendered with a "dangerous" appearance.
+     *
+     * @param bool $submitDanger
+     * @return self
+     */
+    public function setSubmitDanger($submitDanger)
+    {
+        if (isset($this->_submitBtn)) {
+            $this->_submitBtn->setAttrib('class',
+                'btn btn-' . ($submitDanger ? 'danger' : 'success'));
+        }
+        return $this;
+    }
+
     public function preValidate($data)
     {
         if (isset($data["{$this->_namespace}Dirty"]) && $data["{$this->_namespace}Dirty"]) {

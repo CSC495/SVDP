@@ -3,24 +3,33 @@
 class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horizontal
 {
 
-    public function __construct($caseId, $needId, $amount)
+    public function __construct(Application_Model_Impl_Case $case, $needId)
     {
+        $needs = $case->getNeeds();
+        $need  = $needs[$needId];
+
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
             'action' => $baseUrl->baseUrl(
                 App_Resources::MEMBER
                 . '/newCheckReq/caseId/'
-                . urlencode($caseId)
+                . urlencode($case->getId())
                 . '/needId/'
                 . urlencode($needId)
-                . '/amount/'
-                . urlencode($amount)
             ),
             'method' => 'post',
         ));
 
+        $this->addElement('text', 'need', array(
+            'value' => $need->getNeed(),
+            'label' => 'Need',
+            'dimension' => 2,
+            'readonly' => true,
+        ));
+
         $this->addElement('text', 'amount', array(
+            'value' => $need->getAmount(),
             'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
@@ -38,7 +47,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             ),
             'label' => 'Amount',
             'maxlength' => 10,
-            'class' => 'span2',
+            'dimension' => 2,
             'prepend' => '$',
         ));
 
@@ -51,7 +60,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addDisplayGroup(
-            array('amount', 'comment'),
+            array('need', 'amount', 'comment'),
             'generalInfo',
             array('legend' => 'General information:')
         );
@@ -64,9 +73,6 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Account number must be provided.'),
                 )),
-                array('Digits', true, array(
-                    'messages' => array('notDigits' => 'Account number must be valid.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
@@ -76,6 +82,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Account number',
+            'description' => '(Enter "None" if unknown or not applicable)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
@@ -124,13 +131,8 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'contactFirstName', array(
-            'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a first name.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
@@ -144,13 +146,8 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'contactLastName', array(
-            'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a last name.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
@@ -199,11 +196,5 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             ->setContactLastName(App_Formatting::emptyToNull($this->contactLastName->getValue()));
 
         return $checkReq;
-    }
-
-    public function setAmount($amount)
-    {
-        $this->amount->setValue($amount);
-        return $this;
     }
 }

@@ -1,7 +1,17 @@
 <?php
+/**
+ * Class creates a form which allows a user to adjust various
+ * Parish parameters such as Lifetime help limit, $ amount help limit per case
+ * Total aid receievable in their lifetime, and number of yearly cases a client may have
+ *
+ */
 class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 {
-	
+	/**
+	 * Default constructor for the form which creates all the elements
+	 *
+	 * @return null
+	 */
 	public function __construct($options = null){
 		parent::__construct($options);
 		$this->setName('adjust');
@@ -31,7 +41,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 			'Wrapper',
 		));
 		
-		// Input of total aid a client can recieve
+		// Input of total aid a client can receive
 		$aid = $this->addElement('text', 'aid', array(
 			'filters'    => array( new App_Filter_Money() ),
 			'validators' => array(
@@ -49,7 +59,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 
 
 		// Input of funds for a particular case
-               $casefund = $this->addElement('text', 'casefund', array(
+	    $casefund = $this->addElement('text', 'casefund', array(
 			'filters'    => array( new App_Filter_Money() ),
 			'validators' => array(
 					array('Float',true,array(
@@ -62,37 +72,37 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 			'label'      => 'Total Receivable Aid Per Case:',
 			'class'      => 'input-small',
 			'prepend'    => '$',
-               ));
+		   ));
 	       
-               // Input of lifetime cases a client can have
-               $lifetimecases = $this->addElement('text', 'lifetimecases', array(
-		   'validators' => array('Int',
+		// Input of lifetime cases a client can have
+	    $lifetimecases = $this->addElement('text', 'lifetimecases', array(
+		    'validators' => array('Int',
 				   array('GreaterThan',false,
 					 array("min" => -1, "messages" =>
 						array("notGreaterThan" => "Value must be 0 or greater")))),
-                   'required'   => true,
-                   'label'      => 'Lifetime Case Limit:',
-		   'class'      => 'input-small',
-               ));
+		    'required'   => true,
+		    'label'      => 'Lifetime Case Limit:',
+		    'class'      => 'input-small',
+		   ));
         
 		// Input of yearly cases a client can have
-               $yearlycases = $this->addElement('text', 'yearlycases', array(
+		$yearlycases = $this->addElement('text', 'yearlycases', array(
 		   'validators' => array('Int',
 				   array('GreaterThan',false,
 					 array("min" => -1, "messages" =>
 						array("notGreaterThan" => "Value must be 0 or greater")))),
-                   'required'   => true,
-                   'label'      => 'Yearly Cases Limit:',
-		   'class'      => 'input-small',
-               ));
+		    'required'   => true,
+		    'label'      => 'Yearly Cases Limit:',
+		    'class'      => 'input-small',
+		   ));
                
-               $adjust = $this->addElement('submit', 'adjust', array(
-                   'required' => false,
-                   'ignore'   => true,
-                   'label'    => 'Submit',
-		   'class'    => 'btn btn-success',
-		   'decorators' => array('ViewHelper'),
-                ));
+	    $adjust = $this->addElement('submit', 'adjust', array(
+		    'required' => false,
+		    'ignore'   => true,
+		    'label'    => 'Submit',
+		    'class'    => 'btn btn-success',
+		    'decorators' => array('ViewHelper'),
+		));
                
 	       //$jsparam = 'javascript:return adjust_validation(this)';
 	       //$this->addAttribs(array('onSubmit'=>$jsparam));

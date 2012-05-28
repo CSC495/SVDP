@@ -1,7 +1,13 @@
 <?php
-
+/**
+ * Class implements the form to upload a document to the server
+ */
 class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Vertical {
-
+	/**
+	 * Default constructor
+	 *
+	 * @return null
+	 */
     public function __construct()
     {
         parent::__construct();
@@ -32,11 +38,12 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
             'Wrapper',
         ));
 
+		// Display name for doc
         $this->addElement('text', 'name', array(
             'required' => true,
             'filters' => array('StringTrim'),
             ));
-          
+        // Link to doc
         $url = $this->addElement('file', 'url', array(
             'required' => true,
             'filters' => array('StringTrim'),
@@ -44,10 +51,12 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
             'decorators' => array('File'),
         ));
 
+		// Used to set an error if one occurs
         $this->addElement('hidden', 'err', array(
             'required' => false,
         ));
         
+		// Submit button
         $this->addElement('submit', 'submit', array(
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
             'decorators' => array('ViewHelper'),

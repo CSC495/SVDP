@@ -3,6 +3,8 @@ $editClientUrl = $this->baseUrl(App_Resources::MEMBER . '/editClient/id/'
     . urlencode($this->client->getId()));
 $historyUrl    = $this->baseUrl(App_Resources::MEMBER . '/clientHistory/id/'
     . urlencode($this->client->getId()));
+$directionsUrl = 'http://maps.google.com/maps?daddr='
+    . urlencode($this->client->getCurrentAddr()->getFullAddr());
 $newCaseUrl    = $this->baseUrl(App_Resources::MEMBER . '/newCase/clientId/'
     . urlencode($this->client->getId()));
 
@@ -29,9 +31,12 @@ if ($this->client->isMarried()) {
         </div>
         <div class=control-group>
             <div class=controls>
-                <a href="<?php echo $this->escape($editClientUrl); ?>" class="btn btn-info">View and Edit Details</a>
+                <a href="<?php echo $this->escape($editClientUrl); ?>" class="btn btn-info">View<?php if (!$this->readOnly) { ?> and Edit<?php } ?> Details</a>
                 <a href="<?php echo $this->escape($historyUrl); ?>" class="btn btn-info">View Household History</a>
+                <a href="<?php echo $this->escape($directionsUrl); ?>" target=_blank class="btn btn-info">Get Directions</a>
+                <?php if (!$this->readOnly) { ?>
                 <a href="<?php echo $this->escape($newCaseUrl); ?>" class="btn btn-success">Open New Case</a>
+                <?php } ?>
             </div>
         </div>
     </fieldset>

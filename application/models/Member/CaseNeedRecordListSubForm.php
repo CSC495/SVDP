@@ -37,6 +37,13 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
     private $_showStatus;
 
+    /**
+     * `true` if a limit violation has occurred, otherwise `false`.
+     *
+     * @var bool
+     */
+    private $_limitViolation;
+
     public function __construct($showSubmitChanges = false, $readOnly = false, $caseId = null)
     {
         $this->_readOnly   = $readOnly;
@@ -59,6 +66,8 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
         if ($showSubmitChanges) {
             $options['submitMsg'] = 'Submit';
+        } else {
+            $options['dirtyMsg'] = '';
         }
 
         parent::__construct($options);
@@ -189,6 +198,30 @@ class Application_Model_Member_CaseNeedRecordListSubForm
         }
     }
 
+    /**
+     * Returns `true` if the limit violation flag is set, otherwise returns `false`.
+     *
+     * @return bool
+     */
+    public function isLimitViolation()
+    {
+        return $this->_limitViolation;
+    }
+
+    /**
+     * Sets a flag determining whether or not a limit violation has occurred. If the flag is set,
+     * the next form submission will bypass the limit check, allowing case creation anyway.
+     *
+     * @param bool $limitViolation
+     * @return self
+     */
+    public function setLimitViolation($limitViolation)
+    {
+        $this->_limitViolation = $limitViolation;
+        $this->setSubmitDanger($limitViolation);
+        return $this;
+    }
+
     private function updateStatus($caseNeedSubForm, $caseNeed)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
@@ -241,17 +274,19 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 . urlencode($this->_caseId)
                 . '/needId/'
                 . urlencode($caseNeed->getId())
-                . '/amount/'
-                . urlencode($caseNeed->getAmount())
             );
 
             $status  = '<span class="label label-important">Added</span>';
-            $status2 = '<a href="'
-                     . htmlspecialchars($newReferralUrl)
-                     . '" class="btn btn-info">Referral</a>'
-                     . ' <a href="'
-                     . htmlspecialchars($newCheckReqUrl)
-                     . '" class="btn btn-info">Req. Check</a>';
+            if (!$this->_readOnly) {
+                $status2 = '<a href="'
+                         . htmlspecialchars($newReferralUrl)
+                         . '" class="btn btn-info">Referral</a>'
+                         . ' <a href="'
+                         . htmlspecialchars($newCheckReqUrl)
+                         . '" class="btn btn-info">Req. Check</a>';
+            } else {
+                $status2 = '';
+            }
         }
 
         $caseNeedSubForm->status->setValue($status);
