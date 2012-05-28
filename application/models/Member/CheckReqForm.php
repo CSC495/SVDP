@@ -141,6 +141,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Contact first name',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
@@ -156,6 +157,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Contast last name',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
