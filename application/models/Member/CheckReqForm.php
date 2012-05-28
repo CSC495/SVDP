@@ -31,7 +31,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         $this->addElement('text', 'amount', array(
             'value' => $need->getAmount(),
             'required' => true,
-            'filters' => array('StringTrim'),
+            'filters' => array('StringTrim', 'LocalizedToNormalized'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',

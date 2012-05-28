@@ -140,7 +140,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
         $caseNeedSubForm->addElement('text', 'amount', array(
             'required' => true,
-            'filters' => array('StringTrim'),
+            'filters' => array('StringTrim', 'LocalizedToNormalized'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
