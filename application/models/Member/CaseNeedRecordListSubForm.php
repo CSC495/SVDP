@@ -151,7 +151,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,
-                    'messages' => array('notGreaterThan' => 'Must not be negative.'),
+                    'messages' => array('notGreaterThan' => 'Must be positive.'),
                 )),
             ),
             'maxlength' => 10,

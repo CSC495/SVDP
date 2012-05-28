@@ -42,7 +42,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,
-                    'messages' => array('notGreaterThan' => 'Check amount not be negative.'),
+                    'messages' => array('notGreaterThan' => 'Check amount be a positive number.'),
                 )),
             ),
             'label' => 'Amount',
