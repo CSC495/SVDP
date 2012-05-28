@@ -745,8 +745,8 @@ class MemberController extends Zend_Controller_Action
         $data    = $request->getQuery();
 
         // If no ID was provided, bail out.
-        $clientId = isset($data['clientId']) ? $data['clientId'] : null;
-        $caseId   = isset($data['caseId']) ? $data['caseId'] : null;
+        $clientId = App_Formatting::emptyToNull(isset($data['clientId']) ? $data['clientId'] : '');
+        $caseId = App_Formatting::emptyToNull(isset($data['caseId']) ? $data['caseId'] : '');
 
         if ($clientId === null && $caseId === null) {
             throw new UnexpectedValueException('No ID parameter provided');
@@ -882,7 +882,8 @@ class MemberController extends Zend_Controller_Action
         $perCaseNeedLimit  = $parishParams->getCaseFundLimit();
         $lifetimeTotal     = $service->getPastNeedTotal($case->getClient()->getId());
 
-        $caseNeedTotal = 0.0;
+        $caseNeedTotal               = 0.0;
+        $caseNeedTotalMinusCheckReqs = 0.0;
 
         foreach ($case->getNeeds() as $need) {
             $referralOrCheckReq = $need->getReferralOrCheckReq();
@@ -895,9 +896,12 @@ class MemberController extends Zend_Controller_Action
             }
 
             $caseNeedTotal += $need->getAmount();
+            if (!($referralOrCheckReq instanceof Application_Model_Impl_CheckReq)) {
+                $caseNeedTotalMinusCheckReqs += $need->getAmount();
+            }
         }
 
-        if ($lifetimeTotal + $caseNeedTotal > $lifetimeNeedLimit) {
+        if ($lifetimeTotal + $caseNeedTotalMinusCheckReqs > $lifetimeNeedLimit) {
             return 'Lifetime need limit of $'
                  . number_format($lifetimeNeedLimit, 2)
                  . ' per client exceeded';
