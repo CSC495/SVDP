@@ -435,6 +435,90 @@ function initEditClientForm() {
     update();
 }
 
+function initCaseForm(actionLabel) {
+    // Get case needs form elements.
+    var needsForm              = $('#caseneedForm');
+    var needsFormAction        = needsForm.attr('action');
+    var needsFormSubmits       = $('[name="caseneedSubmit"]');
+    var needsFormPrimarySubmit = $('#caseneedSubmit');
+    var canSubmitNeedsForm     = false;
+
+    var caseIdMatches   = needsFormAction.match(/\/id\/([^/]*)/);
+    var clientIdMatches = needsFormAction.match(/\/clientId\/([^/]*)/);
+
+    // Create a dialog to confirm case creation when limit violations occur.
+    var confirmSubmitNeedsForm = $('<div/>')
+        .dialog({
+            autoOpen: false,
+            buttons: [
+                {
+                    'text': actionLabel + ' Anyway',
+                    'click': function () {
+                        confirmSubmitNeedsForm.dialog('close');
+
+                        // If the user wants to submit anyway, bypass the server-side limit check.
+                        needsForm.attr('action', needsFormAction + '/skipLimitCheck/1');
+
+                        canSubmitNeedsForm = true;
+                        needsFormPrimarySubmit.trigger('click');
+                    }
+                },
+                {
+                    'text': 'Cancel',
+                    'click': function () {
+                    confirmSubmitNeedsForm.dialog('close');
+                    }
+                }
+            ],
+            modal: true,
+            resizable: false,
+            title: 'Parish Limits Exceeded',
+            width: 500
+        });
+
+    // Bind handlers to catch case needs form submissions.
+    needsFormSubmits.click(function () {
+        // If we've already done the limits check, just submit.
+        if (canSubmitNeedsForm) {
+            return true;
+        }
+
+        // Otherwise, do an AJAX call to check for limit violations.
+        needsForm.ajaxSubmit({
+            data: {
+                format: 'json',
+                caseId: caseIdMatches ? caseIdMatches[1] : '',
+                clientId: clientIdMatches ? clientIdMatches[1] : ''
+            },
+            dataType: 'json',
+            error: function () {
+                // If the AJAX call failed for some reason, fall back on server-side limit checking.
+                canSubmitNeedsForm = true;
+                needsFormPrimarySubmit.click();
+            },
+            success: function (response) {
+                if (response.caseErrorMsg || response.needErrorMsg) {
+                    confirmSubmitNeedsForm.html(
+                        '<p>This action would exceed parish limits:</p><ul>'
+                      + (response.caseErrorMsg ? '<li>' + response.caseErrorMsg + '</li>' : '')
+                      + (response.needErrorMsg ? '<li>' + response.needErrorMsg + '</li>' : '')
+                      + '</ul><p>Proceed only under special circumstances.</p>'
+                    )
+                    confirmSubmitNeedsForm.dialog('open');
+                } else {
+                    canSubmitNeedsForm = true;
+                    needsFormPrimarySubmit.click();
+                }
+            },
+            type: 'GET',
+            url: needsFormAction.replace(/\/(?:newCase|viewCase)\/.*/, '/checkLimits')
+        });
+
+        // Don't let the form submit just yet.
+        return false;
+    });
+}
+
 function initViewCaseForm() {
     // Create a dialog to confirm the case close operation.
     var closeCaseBtn = $('#closeCase');
@@ -470,6 +554,9 @@ function initViewCaseForm() {
         confirmCloseCase.dialog('open');
         return false;
     });
+
+    // Set up AJAX-based case need limit checking.
+    initCaseForm('Submit');
 }
 
 function initUiWidgets() {

@@ -16,6 +16,7 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
+            'id' => 'caseneedForm',
             'action' => $baseUrl->baseUrl(App_Resources::MEMBER
                 . '/newCase/clientId/' . urlencode($clientId)),
             'method' => 'post',
@@ -32,7 +33,7 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
             'needRecordList'
         );
 
-        $this->addElement('submit', 'submit', array(
+        $this->addElement('submit', 'caseneedSubmit', array(
             'label' => 'Create Case',
             'decorators' => array('ViewHelper'),
             'class' => 'btn btn-success',
@@ -64,9 +65,9 @@ class Application_Model_Member_CaseForm extends Twitter_Bootstrap_Form_Horizonta
 
         if ($limitViolation) {
             $action .= '/skipLimitCheck/1';
-            $this->submit->setAttrib('class', 'btn btn-danger');
+            $this->caseneedSubmit->setAttrib('class', 'btn btn-danger');
         } else {
-            $this->submit->setAttrib('class', 'btn btn-success');
+            $this->caseneedSubmit->setAttrib('class', 'btn btn-success');
         }
 
         $this->setAction($action);
