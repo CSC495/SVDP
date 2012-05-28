@@ -28,6 +28,8 @@ class Application_Model_Member_CaseVisitRecordListSubForm
 
     protected function initSubForm($caseVisitSubForm)
     {
+        $caseVisitSubForm->addElementPrefixPath('App_Validate', 'App/Validate/', 'validate');
+
         $caseVisitSubForm->addElement('hidden', 'id', array(
             'decorators' => array(
                 'ViewHelper',
@@ -73,7 +75,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                 array('Float', true, array(
                     'messages' => array('notFloat' => 'Must be a number.'),
                 )),
-                array('GreaterThan', true, array(
+                array('GreaterThanOrEqualTo', true, array(
                     'min' => 0,
                     'messages' => array('notGreaterThan' => 'Must not be negative.'),
                 )),
@@ -101,7 +103,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,
-                    'messages' => array('notGreaterThan' => 'Must not be negative.'),
+                    'messages' => array('notGreaterThan' => 'Must be positive.'),
                 )),
             ),
             'decorators' => array(

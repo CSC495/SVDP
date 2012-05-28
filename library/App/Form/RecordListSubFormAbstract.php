@@ -190,6 +190,24 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
         }
     }
 
+    public function isValid($data)
+    {
+        $this->setDefaults($data);
+
+        // Don't validate read only records.
+        foreach ($this->_recordsSubForm->getSubForms() as $recordSubForm) {
+            if ($this->isSubFormReadOnly($recordSubForm)) {
+                foreach ($recordSubForm->getElements() as $element) {
+                    $element
+                        ->setRequired(false)
+                        ->clearValidators();
+                }
+            }
+        }
+
+        return parent::isValid($data);
+    }
+
     public function setDefaults(array $defaults)
     {
         parent::setDefaults($defaults);
