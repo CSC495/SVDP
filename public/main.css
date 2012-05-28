@@ -43,7 +43,7 @@ table.records.narrow {
 }
 
 table.records td {
-    vertical-align: middle;
+    line-height: 24px;
 }
 
 table.records tr.removed {
