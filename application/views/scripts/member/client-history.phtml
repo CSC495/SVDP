@@ -22,6 +22,11 @@
 			    $options['gotoLabel'] = 'Spouse';
 			}
 			
+			
+			foreach (array_values($this->history) as $i => $history) {
+			    echo $this->partial('partial/viewHouseholdHistory.phtml', array('i' => $i, 'history' => $history));
+			}
+						
 			echo $this->partial('partial/viewHouseholdHistory.phtml', $options);
 			?>
 			            <tr class="search-result <?php echo $rowStripeClass; ?>">
@@ -29,7 +34,6 @@
 		    <td colspan=5 class="search-cell bot"><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
 		    <td class="search-cell last"><?php if ($this->client->isDoNotHelp()) { ?><span class="label label-important">Do not help</span><?php } ?></td>
 			</tr>
-
         </table>
     </div>
 </fieldset>

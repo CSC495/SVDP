@@ -1,5 +1,5 @@
 <?php
-$clientId     = $this->escape($this->client->getId());
+$clientId = $this->escape($this->client->getId());
 
 if (isset($this->viewClientUrl)) {
     $preClientId  = '<a href="' . $this->escape($this->viewClientUrl) . '">';
@@ -28,6 +28,7 @@ if (isset($this->gotoUrl, $this->gotoLabel)) {
     <th class="search-cell top">Phone</th>
     <td class="search-cell top"><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
 <?php } ?>
+
     <td class="search-cell top last"><?php echo $gotoBtn; ?></td>
 <?php if (empty($this->noClientHeader)) { ?>
 </tr>

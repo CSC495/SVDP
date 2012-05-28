@@ -423,20 +423,14 @@ class MemberController extends Zend_Controller_Action
 
 	public function clienthistoryAction()
 	{
-		// If no client ID was provided, bail out.
-        if (!$this->_hasParam('id')) {
-            throw new UnexpectedValueException('No client ID parameter provided');
-        }
 
-        // Initialize the new client history form.
+        // Initialize the new client history view.
         $service = new App_Service_Member();
-        $client  = $service->getClientById($this->_getParam('id'));
-		
+        $client  = $service->getClientById($this->_getParam('clientId'));
 		
 		$this->view->pageTitle = 'View Household History';
 		$this->view->client    = $client;
-		$this->view->form      = new Application_Model_Member_CaseForm($client->getId());
-		
+		$this->view->history   = $service->getClientHouseholdHistory($this->_getParam('clientId'));
 	}
 
 
