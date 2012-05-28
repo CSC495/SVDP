@@ -31,7 +31,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         $this->addElement('text', 'amount', array(
             'value' => $need->getAmount(),
             'required' => true,
-            'filters' => array('StringTrim'),
+            'filters' => array('StringTrim', 'LocalizedToNormalized'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
@@ -42,7 +42,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,
-                    'messages' => array('notGreaterThan' => 'Check amount not be negative.'),
+                    'messages' => array('notGreaterThan' => 'Check amount be a positive number.'),
                 )),
             ),
             'label' => 'Amount',
@@ -141,6 +141,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Contact first name',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
@@ -156,6 +157,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Contast last name',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));

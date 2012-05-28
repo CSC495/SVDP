@@ -21,7 +21,7 @@
     </fieldset>
 </form>
 
-<form action="<?php echo $this->escape($this->action); ?>" method=post class=form-horizontal>
+<form id=caseneedForm action="<?php echo $this->escape($this->action); ?><?php if ($this->limitViolation) { echo '/skipLimitCheck/1'; } ?>" method=post class=form-horizontal>
     <input type=submit name=caseneedSubmit value="" class=hide>
     <?php echo $this->element->needRecordList; ?>
 </form>

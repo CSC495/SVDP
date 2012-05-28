@@ -253,7 +253,7 @@ class AdminController extends Zend_Controller_Action
                            '<br/>Username: <b>' . $userName . '</b>' .
                            '<br/>Password: <b>' . $password . '</b>' . '</br></br> Please note ' .
                            'you will be required to change your password on first login.' .
-                           '<br/><br/><i>If you believe you have recieved this message in error ' .
+                           '<br/><br/><i>If you believe you have received this message in error ' .
                            'please contact the sender.</i>');
         
         $mail->setFrom('bagura@noctrl.edu', 'System');
