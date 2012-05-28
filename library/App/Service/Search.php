@@ -15,6 +15,14 @@
 class App_Service_Search
 {
 
+    private static $_STREET_ADDR_DIRS = array('n', 'north', 'w', 'west', 's', 'south', 'e', 'east');
+
+    private static $_STREET_ADDR_SUFFIXES = array(
+        'ave', 'av', 'avenue', 'cir', 'cr', 'circle', 'ct', 'court', 'ln', 'lane', 'lp', 'loop',
+        'pkwy', 'pky', 'parkway', 'pl', 'place', 'rd', 'road', 'sq', 'square', 'st', 'street',
+        'trl', 'trail'
+    );
+
     private $_db;
 
     /**
@@ -103,17 +111,20 @@ class App_Service_Search
      */
     public function getSimilarClients($addr, $firstName = null, $lastName = null)
     {
-        $likeFirstName = ($firstName !== null)
-                       ? '%' . App_Escaping::escapeLike($firstName) . '%'
-                       : '';
-        $likeLastName = ($lastName !== null)
-                       ? '%' . App_Escaping::escapeLike($lastName) . '%'
-                       : '';
-        $select        = $this->_db->select()
+        $likeStreetName = '%'
+                        . App_Escaping::escapeLike(self::extractStreetName($addr->getStreet()))
+                        . '%';
+        $likeFirstName  = ($firstName !== null)
+                        ? '%' . App_Escaping::escapeLike($firstName) . '%'
+                        : '';
+        $likeLastName   = ($lastName !== null)
+                        ? '%' . App_Escaping::escapeLike($lastName) . '%'
+                        : '';
+        $select         = $this->_db->select()
             ->union(array(
                 $this->initClientSelect(true)
                     ->where(
-                        $this->_db->quoteInto('a.street = ? AND ', $addr->getStreet())
+                        $this->_db->quoteInto('a.street LIKE ? AND ', $likeStreetName)
                       . $this->_db->quoteInto('a.city = ? AND ', $addr->getCity())
                       . $this->_db->quoteInto('a.state = ?', $addr->getState())
                     ),
@@ -141,21 +152,6 @@ class App_Service_Search
         $select  = $this->initCaseSelect()
             ->where('s.opened_user_id = ?', $userId)
             ->where('s.status <> "Closed"');
-        $results = $this->_db->fetchAssoc($select);
-
-        return $this->buildCaseModels($results);
-    }
-
-    /**
-     * Retrieve a list of case history for the specified client.
-     *
-     * @param string $caseId
-     * @return Application_Model_Impl_Case[]
-     */
-    public function getCasesByClientId($clientId)
-    {
-        $select  = $this->initCaseSelect()
-            ->where('c.client_id = ?', $clientId);
         $results = $this->_db->fetchAssoc($select);
 
         return $this->buildCaseModels($results);
@@ -428,7 +424,7 @@ class App_Service_Search
         return $clients;
     }
 
-    public function buildCaseModels($dbResults)
+    private function buildCaseModels($dbResults)
     {
         $cases = array();
 
@@ -464,7 +460,7 @@ class App_Service_Search
         return $cases;
     }
 
-    public function buildCheckReqModels($dbResults)
+    private function buildCheckReqModels($dbResults)
     {
         $checkReqs = array();
 
@@ -497,5 +493,69 @@ class App_Service_Search
         }
 
         return $checkReqs;
+    }
+
+    /**
+     * Given a full street address, e.g., "30 N. Brainard St.", returns a best guess at the street
+     * name embedded therein, e.g., "Brainard".
+     *
+     * Test cases:
+     *
+     * * `extractStreetName('30 N. Brainard Street') === 'Brainard'
+     * * `extractStreetName('30 N. Brainard St.') === 'Brainard'
+     * * `extractStreetName('30 N Brainard St') === 'Brainard'
+     * * `extractStreetName('30 N Brainard') === 'Brainard'
+     * * `extractStreetName('30 Brainard') === 'Brainard'
+     * * `extractStreetName('29W365 Army Trail Rd') === 'Army Trail'
+     * * `extractStreetName('29W365 Army Trail') === 'Army'
+     * * `extractStreetName('123 North West St') === 'West'
+     * * `extractStreetName('123 North Ave') === 'North'
+     * * `extractStreetName('Cow') === 'Cow'
+     * * `extractStreetName('') === ''
+     *
+     * @param string $street
+     * @return string
+     */
+    public static function extractStreetName($street)
+    {
+        $chunks = explode(' ', $street);
+
+        // Only proceed if there's at least one address chunk to work with.
+        if ($chunks) {
+            // If there's a trailing address chunk that looks like one of the usual USPS suffixes,
+            // set a flag to check later on.
+            $lastChunk = strtolower(preg_replace('/[^A-Za-z0-9]/', '', end($chunks)));
+            $hasSuffix = in_array($lastChunk, self::$_STREET_ADDR_SUFFIXES);
+
+            // Try to strip house numbers and directions from the beginning of the address.
+            while (count($chunks) - $hasSuffix > 1) {
+                // Before examining this street address chunk, strip nonalphanumeric characters and make
+                // the string lowercase.
+                reset($chunks);
+                $firstChunk = strtolower(preg_replace('/[^A-Za-z0-9]/', '', current($chunks)));
+
+                // If a chunk begins with a number, then it's probably a house number---remove it.
+                if ($firstChunk !== '' && ctype_digit($firstChunk[0])) {
+                    array_shift($chunks);
+                    continue;
+                }
+
+                // If a chunk matches a direction name or abbreviation, remove it.
+                if (in_array($firstChunk, self::$_STREET_ADDR_DIRS)) {
+                    array_shift($chunks);
+                    continue;
+                }
+
+                break;
+            }
+
+            // Finally, remove the suffix chunk, if any.
+            if ($hasSuffix) {
+                array_pop($chunks);
+            }
+        }
+
+        // Return the remaining street address chunks, joined by spaces.
+        return implode(' ', $chunks);
     }
 }

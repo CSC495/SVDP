@@ -41,7 +41,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 			'Wrapper',
 		));
 		
-		// Input of total aid a client can recieve
+		// Input of total aid a client can receive
 		$aid = $this->addElement('text', 'aid', array(
 			'filters'    => array( new App_Filter_Money() ),
 			'validators' => array(

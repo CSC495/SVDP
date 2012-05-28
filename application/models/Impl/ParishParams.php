@@ -15,7 +15,7 @@ class Application_Model_Impl_ParishParams
      */
     private $_yearLimit;
     /**
-     * Dollar amount of aid a client may recieve in their lifetime
+     * Dollar amount of aid a client may receive in their lifetime
      * @var float
      */
     private $_lifeTimeLimit;
@@ -35,7 +35,7 @@ class Application_Model_Impl_ParishParams
      *
      * @param float $funds Total funds available for the parish
      * @param int $year Number of cases a client may have in a year
-     * @param float $lifetime Dollar amount of aid a client may recieve in their lifetime
+     * @param float $lifetime Dollar amount of aid a client may receive in their lifetime
      * @param int $caseLimit Number of cases a client may have in their lifetime
      * @param float $caseFundLimit Dollar amount limit a particular case may have
      */
@@ -85,9 +85,9 @@ class Application_Model_Impl_ParishParams
         return $this;
     }
     /**
-     * Sets the dollar amount of aid a client may recieve in their lifetime
+     * Sets the dollar amount of aid a client may receive in their lifetime
      *
-     * @param float $amt Amount of funds a client may recieve in their lifetime
+     * @param float $amt Amount of funds a client may receive in their lifetime
      * @return Application_Model_Impl_ParishParams this
      */
     public function setLifeTimeLimit($amt){
@@ -95,9 +95,9 @@ class Application_Model_Impl_ParishParams
         return $this;
     }
     /**
-     * Gets the dollar amount of aid a client may recieve in their lifetime
+     * Gets the dollar amount of aid a client may receive in their lifetime
      *
-     * @return float Dollar amount of aid a client may recieve in their lifetime
+     * @return float Dollar amount of aid a client may receive in their lifetime
      */
     public function getLifeTimeLimit(){
         return $this->_lifeTimeLimit;
