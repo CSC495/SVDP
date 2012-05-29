@@ -19,14 +19,14 @@ class TreasurerController extends Zend_Controller_Action
 	
 	public function updatefundsAction()
 	{
-		$this->view->pageTitle = "Update Current Funds";
+		$this->view->pageTitle = "Update Available Funds";
 		
 		$request = $this->getRequest();
 		$this->view->form = new Application_Model_Treasurer_FundsForm();
 		
 		if ($request->isPost()) {
 			$this->view->form->populate($_POST);
-			$service               = new App_Service_TreasurerService();
+			$service = new App_Service_TreasurerService();
 			
 			$amt = $this->view->form->getValue('funds');
 			$service->updateParishFunds($amt);
@@ -63,7 +63,8 @@ class TreasurerController extends Zend_Controller_Action
 				$this->_helper->redirector('index');
 			}
 			if($request->denyCheck){
-				//do something here, what I am not sure yet
+				$service->denyCheckRequest($request->checkID);
+				$this->_helper->redirector('index');
 			}
 			if($request->editCheck){
 				$this->view->form->editCheckReq($request->editCheck);

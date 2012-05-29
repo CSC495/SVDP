@@ -6,19 +6,22 @@ class MemberController extends Zend_Controller_Action
 {
 
     /**
-     * Home page action: just redirects to the map search screen.
+     * Initializes the member controller's settings.
      */
-    public function indexAction()
+    public function init()
     {
-        $this->_helper->redirector('map');
+        $ajaxContext = $this->_helper->getHelper('AjaxContext');
+        $ajaxContext
+            ->addActionContext('checkLimits', 'json')
+            ->initContext();
     }
 
     /**
-     * Action that allows members to locate potential clients on a map.
+     * Home page action that allows members to locate potential clients on a map.
      */
-    public function mapAction()
+    public function indexAction()
     {
-        $this->view->pageTitle = 'Maps';
+        $this->view->pageTitle = 'Home';
         $this->view->form = new Application_Model_Member_MapForm();
 
         // Load the Google Maps JavaScript API.
@@ -37,6 +40,9 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
+        $firstName = $this->view->form->getFirstName();
+        $lastName  = $this->view->form->getLastName();
+
         // If the user wants to create a new client, redirect them to the appropriate place.
         if ($this->view->form->isNewClientRequest()) {
             $addr = $this->view->form->getAddr();
@@ -52,23 +58,26 @@ class MemberController extends Zend_Controller_Action
                     'state' => $addr->getState(),
                     'zip' => $addr->getZip(),
                     'parish' => $addr->getParish(),
+                    'firstName' => $firstName,
+                    'lastName' => $lastName,
                 )
             );
         }
 
         // If we got this far, the address seems (vaguely) legit, and so we can get geocoding data.
-        $service = new App_Service_Map($this->view->form->getAddr());
+        $mapService    = new App_Service_Map($this->view->form->getAddr());
+        $searchService = new App_Service_Search();
 
         // Respond to geocoding errors.
-        if ($service->hasErrorMsg()) {
+        if ($mapService->hasErrorMsg()) {
             $this->_helper->flashMessenger(array(
                 'type' => 'error',
-                'text' => $service->getErrorMsg(),
+                'text' => $mapService->getErrorMsg(),
             ));
             return;
         }
 
-        if (!$service->hasResult()) {
+        if (!$mapService->hasResult()) {
             $this->_helper->flashMessenger(array(
                 'type' => 'error',
                 'text' => 'No results were found for that address.',
@@ -76,11 +85,25 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
+        // Check for existing clients with similar address and/or names.
+        $addr = $mapService->getAddr();
+
+        $similarClients = $searchService->getSimilarClients($addr, $firstName, $lastName);
+
+        if ($similarClients) {
+            $this->_helper->flashMessenger(array(
+                'text' => 'Clients with similar information were found.'
+                       . ' <span id=map-similar-toggle>Check the list below.</span>',
+                'noEscape' => true,
+            ));
+        }
+
         // Update the form with Google's reformatted address and prepare to show a Google map.
         $this->view->form->showNewClientButton();
-        $this->view->form->setAddr($service->getAddr());
-        $this->view->latitude = $service->getLatitude();
-        $this->view->longitude = $service->getLongitude();
+        $this->view->form->setAddr($addr);
+        $this->view->form->setSimilarClients($similarClients);
+        $this->view->latitude  = $mapService->getLatitude();
+        $this->view->longitude = $mapService->getLongitude();
     }
 
     /**
@@ -105,7 +128,7 @@ class MemberController extends Zend_Controller_Action
 
         $request = $this->getRequest();
         $service = new App_Service_Member();
-        $users   = $this->fetchMemberOptions($service);
+        $users   = self::fetchMemberOptions($service);
 
         $this->view->form = new Application_Model_Member_ScheduleForm($users);
 
@@ -175,19 +198,24 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Fetch client data for display.
-        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        $userId   = $identity->user_id;
+        $role     = $identity->role;
 
         $memberService = new App_Service_Member();
-        $searchService = new App_Service_Search();
 
         $client   = $memberService->getClientById($this->_getParam('id'));
-        $cases    = $searchService->getCasesByClientId($client->getId());
+        $cases    = $memberService->getCasesByClientId($client->getId());
         $comments = $memberService->getCommentsByClientId($client->getId());
+
+        // A client is displayed read-only if the user is not a normal member (e.g., if they're a
+        // treasurer).
+        $readOnly = ($role === App_Roles::TREASURER);
 
         // Initialize the client view form.
         $this->view->pageTitle = 'View Client';
         $this->view->form      = new Application_Model_Member_ViewClientForm(
-            $userId, $client, $cases, $comments);
+            $userId, $client, $cases, $comments, $readOnly);
 
         // If this isn't a POST request or form validation fails, bail out.
         $request = $this->getRequest();
@@ -220,18 +248,24 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Fetch client data for display.
-        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        $userId   = $identity->user_id;
+        $role     = $identity->role;
 
         $service = new App_Service_Member();
 
         $case     = $service->getCaseById($this->_getParam('id'));
         $comments = $service->getCommentsByCaseId($case->getId());
-        $users    = $this->fetchMemberOptions($service);
+        $users    = self::fetchMemberOptions($service);
+
+        // A case is displayed read-only if it's closed, and also if the user is not a normal member
+        // (e.g., if they're a treasurer).
+        $readOnly = ($case->getStatus() === 'Closed' || $role === App_Roles::TREASURER);
 
         // Initialize the case view form.
         $this->view->pageTitle = 'View Case';
         $this->view->form      = new Application_Model_Member_ViewCaseForm(
-            $userId, $case, $comments, $users);
+            $userId, $case, $comments, $users, $readOnly);
 
         // If this isn't a POST request, populate the form from the database and bail out.
         $request = $this->getRequest();
@@ -268,10 +302,50 @@ class MemberController extends Zend_Controller_Action
 
         // Handle requests to add, edit, and/or remove case needs.
         if ($this->view->form->isChangeNeedsRequest($data)) {
-            foreach ($this->view->form->getChangedNeeds() as $changedNeed) {
+            $changedNeeds = $this->view->form->getChangedNeeds();
+            $removedNeeds = $this->view->form->getRemovedNeeds();
+
+            self::updateCaseNeeds($case, $changedNeeds, $removedNeeds);
+
+            // Check for violations of parish limits.
+            if (!$this->_getParam('skipLimitCheck')) {
+                $limitService = new App_Service_Limit();
+                $needErrorMsg = self::getNeedLimitErrorMsg($limitService, $case);
+
+                if ($needErrorMsg) {
+                    $this->_helper->flashMessenger(array(
+                        'type' => 'error',
+                        'text' => "$needErrorMsg.",
+                    ));
+                }
+
+                if ($needErrorMsg !== null) {
+                    $this->_helper->flashMessenger(array(
+                        'text' =>
+                            'These case needs exceed parish limits.'
+                         . ' Submit again to change needs anyway.',
+                        'noEscape' => true,
+                    ));
+                    $this->view->form->setLimitViolation(true);
+                    return;
+                }
+            }
+
+            // Ensure that the case will be left with at least one need.
+            if (!$case->getNeeds()) {
+                $this->_helper->flashMessenger(array(
+                    'type' => 'error',
+                    'text' => 'A case must have at least one need.',
+                ));
+                return;
+            }
+
+            // If no limit violations occurred (or we skipped the check), then we need to write the
+            // new needs to the database.
+            foreach ($changedNeeds as $changedNeed) {
                 $service->changeCaseNeed($case->getId(), $changedNeed);
             }
-            $service->removeCaseNeeds($this->view->form->getRemovedNeeds());
+            $service->removeCaseNeeds($removedNeeds);
         }
 
         // Handle requests to add, edit, and/or remove case visits.
@@ -300,15 +374,22 @@ class MemberController extends Zend_Controller_Action
      */
     public function editclientAction()
     {
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        $role     = $identity->role;
+
         $request = $this->getRequest();
         $service = new App_Service_Member();
+
+        // A client is displayed read-only if the user is not a normal member (e.g., if they're a
+        // treasurer).
+        $readOnly = ($role === App_Roles::TREASURER);
 
         if ($this->_hasParam('id')) {
             // Editing an existing client.
             $id = $this->_getParam('id');
 
-            $this->view->pageTitle = 'Edit Client';
-            $this->view->form = new Application_Model_Member_ClientForm($id);
+            $this->view->pageTitle = $readOnly ? 'View Client' : 'Edit Client';
+            $this->view->form = new Application_Model_Member_ClientForm($id, $readOnly);
 
             if (!$request->isPost()) {
                 // If the user hasn't submitted the form yet, load client info from the database.
@@ -318,8 +399,19 @@ class MemberController extends Zend_Controller_Action
             }
         } else {
             // Adding a new client.
+            if ($readOnly) {
+                throw new DomainException('Only members can add new clients');
+            }
+
             $this->view->pageTitle = 'New Client';
             $this->view->form = new Application_Model_Member_ClientForm();
+
+            $client = new Application_Model_Impl_Client();
+
+            // Possibly using name information from map action.
+            $client
+                ->setFirstName(App_Formatting::emptyToNull($this->_getParam('firstName')))
+                ->setLastName(App_Formatting::emptyToNull($this->_getParam('lastName')));
 
             if (!$request->isPost() && $this->_hasParam('street') && $this->_hasParam('city')
                     && $this->_hasParam('state')) {
@@ -333,11 +425,10 @@ class MemberController extends Zend_Controller_Action
                     ->setZip(App_Formatting::emptyToNull($this->_getParam('zip')))
                     ->setParish(App_Formatting::emptyToNull($this->_getParam('parish')));
 
-                $client = new Application_Model_Impl_Client();
                 $client->setCurrentAddr($addr);
-
-                $this->view->form->setClient($client);
             }
+
+            $this->view->form->setClient($client);
         }
 
         // If this isn't a post request, then we're done.
@@ -345,9 +436,14 @@ class MemberController extends Zend_Controller_Action
             return;
         }
 
-        $data = $request->getPost();
+        // Ensure that only members can edit clients.
+        if ($readOnly) {
+            throw new DomainException('Only members can edit existing clients');
+        }
 
         // Re-add existing form data.
+        $data = $request->getPost();
+
         $this->view->form->preValidate($data);
         $this->view->form->populate($data);
 
@@ -410,6 +506,25 @@ class MemberController extends Zend_Controller_Action
         ));
     }
 
+	public function clienthistoryAction()
+	{
+		// If no client ID was provided, bail out.
+        if (!$this->_hasParam('id')) {
+            throw new UnexpectedValueException('No client ID parameter provided');
+        }
+
+        // Initialize the new client history form.
+        $service = new App_Service_Member();
+        $client  = $service->getClientById($this->_getParam('id'));
+		
+		
+		$this->view->pageTitle = 'View Household History';
+		$this->view->client    = $client;
+		$this->view->form      = new Application_Model_Member_CaseForm($client->getId());
+		
+	}
+
+
     /**
      * Action that allows members to add new cases.
      */
@@ -421,8 +536,8 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Initialize the new case form.
-        $service = new App_Service_Member();
-        $client  = $service->getClientById($this->_getParam('clientId'));
+        $memberService = new App_Service_Member();
+        $client  = $memberService->getClientById($this->_getParam('clientId'));
 
         $this->view->pageTitle = 'New Case';
         $this->view->client    = $client;
@@ -472,7 +587,40 @@ class MemberController extends Zend_Controller_Action
             ->setStatus('Open')
             ->setNeeds($needs);
 
-        $case = $service->createCase($case);
+        // Check for violations of parish limits.
+        if (!$this->_getParam('skipLimitCheck')) {
+            $limitService = new App_Service_Limit();
+            $caseErrorMsg = self::getCaseLimitErrorMsg($limitService, $case);
+            $needErrorMsg = self::getNeedLimitErrorMsg($limitService, $case);
+
+            if ($caseErrorMsg) {
+                $this->_helper->flashMessenger(array(
+                    'type' => 'error',
+                    'text' => "$caseErrorMsg.",
+                ));
+            }
+
+            if ($needErrorMsg) {
+                $this->_helper->flashMessenger(array(
+                    'type' => 'error',
+                    'text' => "$needErrorMsg.",
+                ));
+            }
+
+            if ($caseErrorMsg !== null || $needErrorMsg !== null) {
+                $this->_helper->flashMessenger(array(
+                    'text' =>
+                        'Creating this case would exceed parish limits.'
+                     . ' Submit again to create case anyway.',
+                    'noEscape' => true,
+                ));
+                $this->view->form->setLimitViolation(true);
+                return;
+            }
+        }
+
+        // If no limit violation occurred (or we skipped the check), create the new case.
+        $case = $memberService->createCase($case);
 
         $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
             'id' => $case->getId(),
@@ -493,11 +641,20 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No case need ID parameter provided');
         }
 
+        // Get information on the case associated with this new referral.
+        $service = new App_Service_Member();
+        $case    = $service->getCaseById($this->_getParam('caseId'));
+
+        // Don't allow any new referrals on needs in closed cases.
+        if ($case->getStatus() === 'Closed') {
+            throw new DomainException("Can't modify closed cases");
+        }
+
         // Create the referral form.
-        $caseId                = $this->_getParam('caseId');
         $needId                = $this->_getParam('needId');
         $this->view->pageTitle = 'New Referral';
-        $this->view->form      = new Application_Model_Member_ReferralForm($caseId, $needId);
+        $this->view->case      = $case;
+        $this->view->form      = new Application_Model_Member_ReferralForm($case, $needId);
 
         // If this isn't a POST request or form validation fails, bail out.
         $request = $this->getRequest();
@@ -515,7 +672,7 @@ class MemberController extends Zend_Controller_Action
         $service->createReferral($needId, $referral);
 
         $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
-            'id' => $caseId,
+            'id' => $case->getId(),
         ));
     }
 
@@ -524,7 +681,7 @@ class MemberController extends Zend_Controller_Action
      */
     public function newcheckreqAction()
     {
-        // If no case ID, case need ID, or amount was provided, bail out.
+        // If no case ID or case need ID was provided, bail out.
         if (!$this->_hasParam('caseId')) {
             throw new UnexpectedValueException('No case ID parameter provided');
         }
@@ -533,26 +690,25 @@ class MemberController extends Zend_Controller_Action
             throw new UnexpectedValueException('No case need ID parameter provided');
         }
 
-        if (!$this->_hasParam('amount')) {
-            throw new UnexpectedValueException('No amount parameter provided');
+        // Get information on the case associated with this new check request.
+        $service = new App_Service_Member();
+        $case    = $service->getCaseById($this->_getParam('caseId'));
+
+        // Don't allow any new check requests on needs in closed cases.
+        if ($case->getStatus() === 'Closed') {
+            throw new DomainException("Can't modify closed cases");
         }
 
         // Create the check request form.
-        $caseId                = $this->_getParam('caseId');
         $needId                = $this->_getParam('needId');
-        $amount                = $this->_getParam('amount');
         $this->view->pageTitle = 'New Check Request';
-        $this->view->form      = new Application_Model_Member_CheckReqForm(
-            $caseId,
-            $needId,
-            $amount
-        );
+        $this->view->case      = $case;
+        $this->view->form      = new Application_Model_Member_CheckReqForm($case, $needId);
 
         // If this isn't a POST request or form validation fails, bail out.
         $request = $this->getRequest();
 
         if (!$request->isPost()) {
-            $this->view->form->setAmount($amount);
             return;
         }
 
@@ -569,17 +725,78 @@ class MemberController extends Zend_Controller_Action
         $checkReq
             ->setCaseNeedId($needId)
             ->setUser($user)
-            ->setRequestDate(date('Y-m-d'));
+            ->setRequestDate(date('Y-m-d'))
+            ->setStatus('P');
 
-        $service = new App_Service_Member();
         $service->createCheckRequest($checkReq);
 
         $this->_helper->redirector('viewCase', App_Resources::MEMBER, null, array(
-            'id' => $caseId,
+            'id' => $case->getId(),
         ));
     }
 
-    private function fetchMemberOptions(App_Service_Member $service)
+    /**
+     * AJAX-only action that preemptively checks for client and case limit violations.
+     */
+    public function checklimitsAction()
+    {
+        // Retrieve GET parameters.
+        $request = $this->getRequest();
+        $data    = $request->getQuery();
+
+        // If no ID was provided, bail out.
+        $clientId = App_Formatting::emptyToNull(isset($data['clientId']) ? $data['clientId'] : '');
+        $caseId = App_Formatting::emptyToNull(isset($data['caseId']) ? $data['caseId'] : '');
+
+        if ($clientId === null && $caseId === null) {
+            throw new UnexpectedValueException('No ID parameter provided');
+        }
+
+        // Prepopulate the case need form with the proper number of rows.
+        $caseId = $this->_getParam('caseId');
+        $form   = new Application_Model_Member_CaseNeedRecordListSubForm(false, false, $caseId);
+
+        $form->preValidate($data);
+
+        // If the form isn't even valid, bail out. (We'll let the form submit normally so the
+        // validation errors can be caught on the server-side.)
+        if (!$form->isValid($data)) {
+            return;
+        }
+
+        // Otherwise, fetch data on the specified case.
+        if ($clientId !== null) {
+            // We're making a new case.
+            $client = new Application_Model_Impl_Client();
+            $client->setId($clientId);
+
+            $case = new Application_Model_Impl_Case();
+            $case
+                ->setClient($client)
+                ->setNeeds($form->getChangedRecords());
+        } else {
+            // We're editing an existing case.
+            $memberService = new App_Service_Member();
+            $case          = $memberService->getCaseById($caseId);
+
+            self::updateCaseNeeds($case, $form->getChangedRecords(), $form->getRemovedRecords());
+        }
+
+        // Check for limit violations, returning an error message if appropriate.
+        $limitService = new App_Service_Limit();
+        $caseErrorMsg = ($clientId !== null)
+                      ? self::getCaseLimitErrorMsg($limitService, $case)
+                      : null;
+        $needErrorMsg = self::getNeedLimitErrorMsg($limitService, $case);
+
+        if ($caseErrorMsg !== null)
+            $this->view->caseErrorMsg = $caseErrorMsg;
+        if ($needErrorMsg !== null) {
+            $this->view->needErrorMsg = $needErrorMsg;
+        }
+    }
+
+    private static function fetchMemberOptions(App_Service_Member $service)
     {
         $users = $service->getActiveMembers();
 
@@ -588,5 +805,114 @@ class MemberController extends Zend_Controller_Action
         }
 
         return array('' => '') + $users;
+    }
+
+    /**
+     * Adds, changes, and removes the needs from the given case model.
+     *
+     * @param Application_Model_Impl_Case $case
+     * @param Application_Model_Impl_CaseNeed[] $changedNeeds
+     * @param Application_Model_Impl_CaseNeed[] $removedNeeds
+     * @return Application_Model_Impl_Case
+     */
+    private static function updateCaseNeeds(Application_Model_Impl_Case $case, array $changedNeeds,
+        array $removedNeeds)
+    {
+        $needs = $case->getNeeds();
+
+        foreach ($removedNeeds as $removedNeed) {
+            unset($needs[$removedNeed->getId()]);
+        }
+
+        foreach ($changedNeeds as $changedNeed) {
+            $id = $changedNeed->getId();
+
+            if (!isset($needs[$id]) || !$needs[$id]->hasReferralOrCheckReq()) {
+                $needs[$id] = $changedNeed;
+            }
+        }
+
+        return $case->setNeeds($needs);
+    }
+
+    /**
+     * Returns an error message if the specified case violates the associated client's lifetime
+     * and/or yearly case limit, and returns `null` if no limit violation occurred.
+     *
+     * @param App_Service_Limit $service
+     * @param App_Model_Impl_Case $case
+     * @return string|null
+     */
+    private static function getCaseLimitErrorMsg(App_Service_Limit $service,
+        Application_Model_Impl_Case $case)
+    {
+        $parishParams      = Zend_Registry::get('config');
+        $lifetimeCaseLimit = $parishParams->getCaseLimit();
+        $yearlyCaseLimit   = $parishParams->getYearlyLimit();
+        $totals            = $service->getPastCaseTotals($case->getClient()->getId());
+
+        if ($totals['lifetimeCases'] >= $lifetimeCaseLimit) {
+            return 'Lifetime limit of '
+                 . App_Formatting::inflectPlural($lifetimeCaseLimit, 'case')
+                 . ' per client reached';
+        }
+
+        if ($totals['pastYearCases'] >= $yearlyCaseLimit) {
+            return 'Limit of '
+                 . App_Formatting::inflectPlural($yearlyCaseLimit, 'case')
+                 . ' per client in a one-year period reached';
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns an error message if the specified case violates the associated client's lifetime
+     * and/or per-case monetary limit, and returns `null` if no limit violation occurred.
+     *
+     * @param App_Service_Limit $service
+     * @param App_Model_Impl_Case $case
+     * @return string|null
+     */
+    private static function getNeedLimitErrorMsg(App_Service_Limit $service,
+        Application_Model_Impl_Case $case)
+    {
+        $parishParams      = Zend_Registry::get('config');
+        $lifetimeNeedLimit = $parishParams->getLifeTimeLimit();
+        $perCaseNeedLimit  = $parishParams->getCaseFundLimit();
+        $lifetimeTotal     = $service->getPastNeedTotal($case->getClient()->getId());
+
+        $caseNeedTotal               = 0.0;
+        $caseNeedTotalMinusCheckReqs = 0.0;
+
+        foreach ($case->getNeeds() as $need) {
+            $referralOrCheckReq = $need->getReferralOrCheckReq();
+
+            // Don't count referred needs and needs associated with denied check requests.
+            if ($referralOrCheckReq instanceof Application_Model_Impl_Referral
+                || ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq
+                    && $referralOrCheckReq->getStatus() === 'D')) {
+                continue;
+            }
+
+            $caseNeedTotal += $need->getAmount();
+            if (!($referralOrCheckReq instanceof Application_Model_Impl_CheckReq)) {
+                $caseNeedTotalMinusCheckReqs += $need->getAmount();
+            }
+        }
+
+        if ($lifetimeTotal + $caseNeedTotalMinusCheckReqs > $lifetimeNeedLimit) {
+            return 'Lifetime need limit of $'
+                 . number_format($lifetimeNeedLimit, 2)
+                 . ' per client exceeded';
+        }
+
+        if ($caseNeedTotal > $perCaseNeedLimit) {
+            return 'Need limit of $'
+                 . number_format($perCaseNeedLimit, 2)
+                 . ' per case exceeded';
+        }
+
+        return null;
     }
 }

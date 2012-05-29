@@ -177,6 +177,16 @@ class App_Service_AdminService {
         }
     }
     
+    //Returns the number of admin users
+    public function getNumAdmins(){
+        $select = $this->_db->select()
+                ->from('user', array('numAdmins' => 'COUNT(*)'))
+                ->where('role = ?', App_Roles::ADMIN)
+                ->where('active_flag = 1') ;
+        $result = $this->_db->fetchRow($select);
+        return $result['numAdmins'];
+    }
+    
     /***
      * Build User object from row result
      */

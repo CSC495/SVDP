@@ -3,26 +3,35 @@
 class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horizontal
 {
 
-    public function __construct($caseId, $needId, $amount)
+    public function __construct(Application_Model_Impl_Case $case, $needId)
     {
+        $needs = $case->getNeeds();
+        $need  = $needs[$needId];
+
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
             'action' => $baseUrl->baseUrl(
                 App_Resources::MEMBER
                 . '/newCheckReq/caseId/'
-                . urlencode($caseId)
+                . urlencode($case->getId())
                 . '/needId/'
                 . urlencode($needId)
-                . '/amount/'
-                . urlencode($amount)
             ),
             'method' => 'post',
         ));
 
+        $this->addElement('text', 'need', array(
+            'value' => $need->getNeed(),
+            'label' => 'Need',
+            'dimension' => 2,
+            'readonly' => true,
+        ));
+
         $this->addElement('text', 'amount', array(
+            'value' => $need->getAmount(),
             'required' => true,
-            'filters' => array('StringTrim'),
+            'filters' => array('StringTrim', 'LocalizedToNormalized'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
@@ -33,37 +42,13 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,
-                    'messages' => array('notGreaterThan' => 'Check amount not be negative.'),
+                    'messages' => array('notGreaterThan' => 'Check amount be a positive number.'),
                 )),
             ),
             'label' => 'Amount',
             'maxlength' => 10,
-            'class' => 'span2',
+            'dimension' => 2,
             'prepend' => '$',
-        ));
-
-        $this->addElement('text', 'accountNumber', array(
-            'required' => true,
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'Account number must be provided.'),
-                )),
-                array('Digits', true, array(
-                    'messages' => array('notDigits' => 'Account number must be valid.'),
-                )),
-                array('StringLength', true, array(
-                    'max' => 30,
-                    'messages' => array(
-                        'stringLengthTooLong'
-                            => 'Account number must be shorter than 30 characters.',
-                    ),
-                )),
-            ),
-            'label' => 'Account number',
-            'maxlength' => 30,
-            'dimension' => 3,
         ));
 
         $this->addElement('textarea', 'comment', array(
@@ -75,10 +60,32 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addDisplayGroup(
-            array('amount', 'accountNumber', 'comment'),
+            array('need', 'amount', 'comment'),
             'generalInfo',
             array('legend' => 'General information:')
         );
+
+        $this->addElement('text', 'accountNumber', array(
+            'required' => true,
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('NotEmpty', true, array(
+                    'type' => 'string',
+                    'messages' => array('isEmpty' => 'Account number must be provided.'),
+                )),
+                array('StringLength', true, array(
+                    'max' => 30,
+                    'messages' => array(
+                        'stringLengthTooLong'
+                            => 'Account number must be shorter than 30 characters.',
+                    ),
+                )),
+            ),
+            'label' => 'Account number',
+            'description' => '(Enter "None" if unknown or not applicable)',
+            'maxlength' => 30,
+            'dimension' => 3,
+        ));
 
         $this->addElement('text', 'payeeName', array(
             'required' => true,
@@ -124,13 +131,8 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'contactFirstName', array(
-            'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a first name.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
@@ -139,18 +141,14 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Contact first name',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
 
         $this->addElement('text', 'contactLastName', array(
-            'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'You must enter a last name.'),
-                )),
                 array('StringLength', true, array(
                     'max' => 30,
                     'messages' => array(
@@ -159,12 +157,13 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
                 )),
             ),
             'label' => 'Contast last name',
+            'description' => '(Optional)',
             'maxlength' => 30,
             'dimension' => 3,
         ));
 
         $this->addDisplayGroup(
-            array('payeeName', 'phone', 'contactFirstName', 'contactLastName'),
+            array('accountNumber', 'payeeName', 'phone', 'contactFirstName', 'contactLastName'),
             'general',
             array('legend' => 'Payee contact information:')
         );
@@ -199,11 +198,5 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             ->setContactLastName(App_Formatting::emptyToNull($this->contactLastName->getValue()));
 
         return $checkReq;
-    }
-
-    public function setAmount($amount)
-    {
-        $this->amount->setValue($amount);
-        return $this;
     }
 }

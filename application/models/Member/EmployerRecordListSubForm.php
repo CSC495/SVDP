@@ -3,7 +3,7 @@
 class Application_Model_Member_EmployerRecordListSubForm
     extends App_Form_RecordListSubFormAbstract {
 
-    public function __construct()
+    public function __construct($showDirtyMsg, $readOnly)
     {
         parent::__construct(array(
             'namespace' => 'employer',
@@ -13,9 +13,11 @@ class Application_Model_Member_EmployerRecordListSubForm
                 'Start Date',
                 'End Date (Optional)',
             ),
+            'readOnly' => $readOnly,
             'legend' => 'Employment status:',
             'addRecordMsg' => 'Add Another Employer',
             'noRecordsMsg' => 'No employers listed.',
+            'dirtyMsg' => $showDirtyMsg ? 'Click "Submit Changes" to save employers.' : '',
         ));
     }
 

@@ -4,7 +4,7 @@ class Application_Model_Member_ViewClientForm extends Twitter_Bootstrap_Form_Hor
 {
 
     public function __construct($userId, Application_Model_Impl_Client $client, array $cases,
-        array $comments)
+        array $comments, $readOnly)
     {
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
@@ -20,6 +20,7 @@ class Application_Model_Member_ViewClientForm extends Twitter_Bootstrap_Form_Hor
                     ),
                     'client' => $client,
                     'cases' => $cases,
+                    'readOnly' => $readOnly,
                 )),
             ),
         ));

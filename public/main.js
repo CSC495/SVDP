@@ -281,6 +281,27 @@ function renderMap(centerCoords, clientCoords) {
         }
     };
 
+    // Hide the list of similar clients by default, attaching show/hide handlers as appropriate.
+    $('#map-similar-toggle').replaceWith('<a id=map-similar-toggle href="#"></a>');
+
+    var similarClientsBlock = $('#map-similar');
+    var similarClientsLink  = $('#map-similar-toggle');
+
+    function updateSimilarClientsLink() {
+        if (similarClientsBlock.is(':visible')) {
+            similarClientsLink.html('Click to hide results.');
+        } else {
+            similarClientsLink.html('Click to show results.');
+        }
+    }
+
+    similarClientsLink.click(function () {
+        similarClientsBlock.slideToggle('fast', updateSimilarClientsLink);
+    });
+
+    similarClientsBlock.hide();
+    updateSimilarClientsLink();
+
     // Display the map.
     var mapElem = $('#map').get(0);
 
@@ -349,7 +370,8 @@ function renderMap(centerCoords, clientCoords) {
 	    });
 
         $('#newClient').addClass('btn-success');
-        $('#alerts').append('<p class="alert alert-success">' + alertMsg + '</p>');
+        $('#directions').addClass('btn-info');
+        $('#alerts').prepend('<p class="alert alert-success">' + alertMsg + '</p>');
     } else {
 	    polygons.stRaphael.setOptions({
 	        strokeColor: '#b94a48',
@@ -357,7 +379,8 @@ function renderMap(centerCoords, clientCoords) {
 	    });
 
         $('#newClient').addClass('btn-danger');
-        $('#alerts').append('<p class="alert alert-error">' + alertMsg + '</p>');
+        $('#directions').addClass('btn-inverse');
+        $('#alerts').prepend('<p class="alert alert-error">' + alertMsg + '</p>');
     }
 
     // When the map finises loading, add an address marker at the potential client's location.
@@ -375,9 +398,13 @@ function initEditClientForm() {
     // Attach event handlers.
     var maritalStatusDropbox = $('#maritalStatus');
     var doNotHelpCheckbox = $('#doNotHelp');
+    var changeTypeDropbox = $('#changeType');
 
     var memberSpouseDivs = $('.member-spouse');
     var memberDoNotHelpDiv = $('.member-donothelp');
+
+    var addrTextFields = $('#street, #apt, #city, #state, #zip');
+    var addrDropboxes = $('#resideParish');
 
     function update() {
         if (maritalStatusDropbox.val() == 'Married') {
@@ -391,12 +418,145 @@ function initEditClientForm() {
         } else {
             memberDoNotHelpDiv.addClass('invisible');
         }
+
+        if (changeTypeDropbox.val() == '') {
+            addrTextFields.attr('readonly', 'readonly');
+            addrDropboxes.attr('disabled', 'disabled');
+        } else {
+            addrTextFields.removeAttr('readonly');
+            addrDropboxes.removeAttr('disabled');
+        }
     }
 
     maritalStatusDropbox.change(update);
     doNotHelpCheckbox.click(update);
+    changeTypeDropbox.change(update);
 
     update();
+}
+
+function initCaseForm(actionLabel) {
+    // Get case needs form elements.
+    var needsForm              = $('#caseneedForm');
+    var needsFormAction        = needsForm.attr('action');
+    var needsFormSubmits       = $('[name="caseneedSubmit"]');
+    var needsFormPrimarySubmit = $('#caseneedSubmit');
+    var canSubmitNeedsForm     = false;
+
+    var caseIdMatches   = needsFormAction.match(/\/id\/([^/]*)/);
+    var clientIdMatches = needsFormAction.match(/\/clientId\/([^/]*)/);
+
+    // Create a dialog to confirm case creation when limit violations occur.
+    var confirmSubmitNeedsForm = $('<div/>')
+        .dialog({
+            autoOpen: false,
+            buttons: [
+                {
+                    'text': actionLabel + ' Anyway',
+                    'click': function () {
+                        confirmSubmitNeedsForm.dialog('close');
+
+                        // If the user wants to submit anyway, bypass the server-side limit check.
+                        needsForm.attr('action', needsFormAction + '/skipLimitCheck/1');
+
+                        canSubmitNeedsForm = true;
+                        needsFormPrimarySubmit.trigger('click');
+                    }
+                },
+                {
+                    'text': 'Cancel',
+                    'click': function () {
+                    confirmSubmitNeedsForm.dialog('close');
+                    }
+                }
+            ],
+            modal: true,
+            resizable: false,
+            title: 'Parish Limits Exceeded',
+            width: 500
+        });
+
+    // Bind handlers to catch case needs form submissions.
+    needsFormSubmits.click(function () {
+        // If we've already done the limits check, just submit.
+        if (canSubmitNeedsForm) {
+            return true;
+        }
+
+        // Otherwise, do an AJAX call to check for limit violations.
+        needsForm.ajaxSubmit({
+            data: {
+                format: 'json',
+                caseId: caseIdMatches ? caseIdMatches[1] : '',
+                clientId: clientIdMatches ? clientIdMatches[1] : ''
+            },
+            dataType: 'json',
+            error: function () {
+                // If the AJAX call failed for some reason, fall back on server-side limit checking.
+                canSubmitNeedsForm = true;
+                needsFormPrimarySubmit.click();
+            },
+            success: function (response) {
+                if (response.caseErrorMsg || response.needErrorMsg) {
+                    confirmSubmitNeedsForm.html(
+                        '<p>This action would exceed parish limits:</p><ul>'
+                      + (response.caseErrorMsg ? '<li>' + response.caseErrorMsg + '</li>' : '')
+                      + (response.needErrorMsg ? '<li>' + response.needErrorMsg + '</li>' : '')
+                      + '</ul><p>Proceed only under special circumstances.</p>'
+                    )
+                    confirmSubmitNeedsForm.dialog('open');
+                } else {
+                    canSubmitNeedsForm = true;
+                    needsFormPrimarySubmit.click();
+                }
+            },
+            type: 'GET',
+            url: needsFormAction.replace(/\/(?:newCase|viewCase)\/.*/, '/checkLimits')
+        });
+
+        // Don't let the form submit just yet.
+        return false;
+    });
+}
+
+function initViewCaseForm() {
+    // Create a dialog to confirm the case close operation.
+    var closeCaseBtn = $('#closeCase');
+
+    var confirmCloseCase = $('<div/>')
+        .html('<p>Are you sure you want to close this case?</p>'
+            + '<p>The case cannot be reopened after closing.</p>')
+        .dialog({
+            autoOpen: false,
+            buttons: {
+                'Yes': function () {
+                    closeCaseBtn.trigger('click');
+                },
+                'No': function () {
+                    confirmCloseCase.dialog('close');
+                }
+            },
+            modal: true,
+            resizable: false,
+            title: 'Confirm Closing Case'
+        });
+
+    // Attach event handler to close button.
+    closeCaseBtn.click(function () {
+        // If the confirmation dialog is already open, we should hide the dialog and let the form
+        // submit.
+        if (confirmCloseCase.dialog('isOpen')) {
+            confirmCloseCase.dialog('close');
+            return true;
+        }
+
+        // Otherwise, we should show the confirmation dialog.
+        confirmCloseCase.dialog('open');
+        return false;
+    });
+
+    // Set up AJAX-based case need limit checking.
+    initCaseForm('Submit');
 }
 
 function initUiWidgets() {

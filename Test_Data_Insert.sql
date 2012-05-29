@@ -1,4 +1,4 @@
-INSERT INTO user VALUES 
+INSERT INTO user VALUES
 ("asmith", "abc12345", "Addy",  "Smith", "asmith@123.com", 1231231234, 1231231234, 'M', 0, 1),
 ("badams", "abc12345", "Ben",  "Adams", "badams@123.com", 1231231234, 1231231234, 'M', 0, 1),
 ("jcombs", "abc12345", "Julie",  "Combs", "jcombs@123.com", 1231231234, 1231231234, 'M', 0, 1),
@@ -15,7 +15,7 @@ update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 2
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="cpassword";
 
 
-INSERT INTO client VALUES 
+INSERT INTO client VALUES
 (NULL, "badams", "John", "Doe", NULL, "Married", '1968-12-12', 1111, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Raphael", 1),
 (NULL, "badams", "Kathy", "Doe", NULL, "Married", '1968-1-1', 1114, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Raphael", 0),
 (NULL, "asmith", "Mary", "Stevens", "Jane", "Single", '1968-1-13', 1112, 1231231238, 1231231239, 1231231240, '2006-7-12', "SS. Peter & Paul", 0),
@@ -63,8 +63,8 @@ INSERT INTO client_case VALUES
 (NULL, 4, "asmith", '2010-3-8', "Closed");
 
 INSERT INTO case_visit VALUES
-(NULL, 1, '2008-12-22', 9, 3),
-(NULL, 2, '2010-3-20', 3, 4);
+(NULL, 1, '2008-12-22', 9.2, 3.3),
+(NULL, 2, '2010-3-20', 3.9, 4.5);
 
 INSERT INTO case_visitors VALUES
 (1, "badams"),
@@ -80,8 +80,9 @@ INSERT INTO case_need VALUES
 (NULL, 2, "Food", 100.00);
 
 INSERT INTO check_request VALUES
-(NULL, 1, "badams", '2009-1-9', 1000.00, "Please write this check quickly.", "jcombs", "7321", '2009-1-18', "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
-(NULL, 2, "asmith", '2010-3-25', 750.00, "Please write this check quickly.", null, null, null, "1370498509384", "Toyota", "123 abc street", "naperville", 'IL', '60560', 1231237890, "Mike", "Young");
+(NULL, 1, "badams", '2009-1-9', 100.00, "Please write this check quickly.", "jcombs", NULL, '2009-1-18', "D", "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
+(NULL, 1, "badams", '2009-1-9', 1000.00, "Please write this check quickly.", "jcombs", "7321", '2009-1-18', "I", "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
+(NULL, 2, "asmith", '2010-3-25', 750.00, "Please write this check quickly.", null, null, null, "P","1370498509384", "Toyota", "123 abc street", "naperville", 'IL', '60560', 1231237890, "Mike", "Young");
 
 INSERT INTO referral VALUES
 (NULL, 3, '2010-3-8', "Food", "Loaves & Fishes");
@@ -98,5 +99,3 @@ INSERT INTO schedule VALUES
 (3, '2012-3-14', "jcombs"),
 (4, '2012-3-21', "asmith"),
 (5, '2012-3-28', "badams");
-
-

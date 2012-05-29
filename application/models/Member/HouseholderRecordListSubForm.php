@@ -3,7 +3,7 @@
 class Application_Model_Member_HouseholderRecordListSubForm
     extends App_Form_RecordListSubFormAbstract {
 
-    public function __construct()
+    public function __construct($showDirtyMsg, $readOnly)
     {
         parent::__construct(array(
             'namespace' => 'householder',
@@ -14,9 +14,11 @@ class Application_Model_Member_HouseholderRecordListSubForm
                 'Birth Date (Optional)',
                 'Departure Date (Optional)',
             ),
+            'readOnly' => $readOnly,
             'legend' => 'Household members:',
             'addRecordMsg' => 'Add Another Household Member',
             'noRecordsMsg' => 'No household members listed.',
+            'dirtyMsg' => $showDirtyMsg ? 'Click "Submit Changes" to save household members.' : '',
         ));
     }
 

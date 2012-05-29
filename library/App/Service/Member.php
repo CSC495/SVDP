@@ -82,26 +82,20 @@ class App_Service_Member
     public function getCaseById($caseId)
     {
         $select = $this->_db->select()
-            ->from(array('s' => 'client_case'), array(
-                'caseID' => 's.case_id',
-                'dateRequested' => 's.opened_date',
-                'status' => 's.status',
-            ))
+            ->from(array('s' => 'client_case'), array('s.case_id', 's.opened_date', 's.status'))
             ->join(
                 array('u' => 'user'),
                 's.opened_user_id = u.user_id',
                 array(
-                    'addById' => 'u.user_id',
-                    'addByFirstName' => 'u.first_name',
-                    'addByLastName' => 'u.last_name',
+                    'u.user_id',
+                    'user_first_name' => 'u.first_name',
+                    'user_last_name' => 'u.last_name',
                 )
             )
             ->join(
                 array('h' => 'household'),
                 's.household_id = h.household_id',
-                array(
-                    'clientID' => 'h.mainclient_id',
-                )
+                array('client_id' => 'h.mainclient_id')
             )
             ->where('s.case_id = ?', $caseId);
 
@@ -199,32 +193,33 @@ class App_Service_Member
 
     //Given a client_id returns an array of populated Case objects for each case
     //associated with the client, returns all cases Opened and Closed
-    public function getCasesByClient($clientId){
-        $select = $this->_db->select()
-			->from(array('cc' => 'client_case'),
-				     array('caseID' => 'cc.case_id',
-					   'dateRequested' => 'cc.opened_date',
-					   'status' => 'cc.status',
-					   'hours' => 'hours',
-					   'miles' => 'miles'))
-            ->from(array('s' => 'client_case'), array(
-                'caseID' => 's.case_id',
-                'dateRequested' => 's.opened_date',
-                'status' => 's.status',
-            ))
-            ->joinInner(array('u' => 'user'), 's.opened_user_id = u.user_id',
+    public function getCasesByClientId($clientId){
+        $select  = $this->_db->select()
+            ->from(array('s' => 'client_case'), array('s.case_id', 's.opened_date', 's.status'))
+            ->join(
+                array('u' => 'user'),
+                's.opened_user_id = u.user_id',
                 array(
-                    'addById' => 'u.user_id',
-                    'addByFirstName' => 'u.first_name',
-                    'addByLastName' => 'u.last_name',
+                    'u.user_id',
+                    'user_first_name' => 'u.first_name',
+                    'user_last_name' => 'u.last_name',
                 )
             )
-			->joinInner(array('h' => 'household'), 'cc.household_id = h.household_id')
-			->joinInner(array('c' => 'client'), 'c.client_id = h.mainclient_id')
-			->joinInner(array('cn' => 'case_need'), 'cc.case_id = cn.case_id')
-			->joinLeft(array('cv' => 'case_visit'), 'cc.case_id = cv.case_id')
-			->group('cc.case_id')
-			->where('c.client_id = ?', $client_id);
+            ->join(array('h' => 'household'), 's.household_id = h.household_id', array())
+            ->join(
+                array('c' => 'client'),
+                'h.mainclient_id = c.client_id OR h.spouse_id = c.client_id',
+                array(
+                    'c.client_id',
+                    'c.first_name',
+                    'c.last_name',
+                    'c.cell_phone',
+                    'c.home_phone',
+                    'c.work_phone',
+                )
+            )
+            ->where('c.client_id = ?', $clientId)
+            ->order('s.opened_date DESC', 's.case_id');
 		$results = $this->_db->fetchAll($select);
 		return $this->buildCaseModels($results);
     }
@@ -315,7 +310,7 @@ class App_Service_Member
                 $need->setReferralOrCheckReq($checkReq);
             }
 
-            $needs[] = $need;
+            $needs[$row['caseNeedId']] = $need;
         }
         return $needs;
     }
@@ -358,6 +353,23 @@ class App_Service_Member
         }
 
         return $visits;
+    }
+    
+    //Gets all members of past & current households of client
+    //Returns each list of household members as an array of Householder objects,
+    //each list is an element in a two dimensional associative array (ie. [household_id][array of members])
+    public function getClientHouseholdHistory($clientId){
+        //Get list of all past & current client households
+        $select = $this->_db->select()
+                ->from(array('h' => 'household'), 'household_id')
+                ->where('mainclient_id = ?', $clientId);
+        $results = $this->_db->fetchAll($select);
+        $arr = array();
+        
+        //Get all the members in each household
+        foreach($results as $row)
+            $arr[$row['household_id']] = $this->getHouseholdersByHouseholdId($row['household_id']);
+        return $arr;
     }
 
     /****** PUBLIC CREATE/INSERT QUERIES ******/
@@ -836,7 +848,55 @@ class App_Service_Member
         else
             return null;
     }
-
+    
+    //Returns the marriage status of the given client
+    private function getClientMarriageStatus($clientId){
+        $select = $this->_db->select()
+                ->from('client', 'marriage_status')
+                ->where('client_id = ?', $clientId);
+        $results = $this->_db->fetchRow($select);
+        return $results['marriage_status'];
+    }
+    
+    private function getHouseholdersByHouseholdId($houseId){
+        $hMembers = array();
+        
+        //Get spouse if exists
+        $select = $this->_db->select()
+                ->from('household', 'spouse_id')
+                ->where('household_id = ?', $houseId);
+        $results = $this->_db->fetchRow($select);
+        if($results['spouse_id']){
+            $householder = new Application_Model_Impl_Householder();
+            $select = $this->_db->select()
+                    ->from(array('c' => 'client'),
+                           array('client_id',
+                                 'first_name',
+                                 'last_name',
+                                 'birthdate'))
+                    ->where('c.client_id = ?', $results['spouse_id']);
+            $results = $this->_db->fetchRow($select);
+            $householder
+                ->setId($results['client_id'])
+                ->setFirstName($results['first_name'])
+                ->setLastName($results['last_name'])
+                ->setRelationship('Spouse')
+                ->setBirthDate($results['birthdate']);
+            $hMembers[] = $householder;
+        }
+        
+        //Get householders except spouse
+        $select = $this->_db->select()
+                ->from(array('hm' => 'hmember'))
+                ->join(array('h' => 'household'),
+                       'h.household_id = hm.household_id')
+                ->where('h.household_id = ?', $houseId);
+        $results = $this->_db->fetchAll($select);
+        foreach($results as $row)
+            $hMembers[] = $this->buildHouseholderModel($row);
+        return $hMembers;
+   }
+   
     /****** PRIVATE CREATE/INSERT QUERIES  ******/
 
     private function changeHouseholders($householdId, $householders)
@@ -1018,18 +1078,18 @@ class App_Service_Member
     private function buildCaseModel($result){
         $user = new Application_Model_Impl_User();
         $user
-            ->setUserId($result['addById'])
-            ->setFirstName($result['addByFirstName'])
-            ->setLastName($result['addByLastName']);
+            ->setUserId($result['user_id'])
+            ->setFirstName($result['user_first_name'])
+            ->setLastName($result['user_last_name']);
         $case = new Application_Model_Impl_Case();
         $case
-            ->setId($result['caseID'])
-            ->setOpenedDate($result['dateRequested'])
+            ->setId($result['case_id'])
+            ->setOpenedDate($result['opened_date'])
             ->setStatus($result['status'])
             ->setOpenedUser($user)
-            ->setClient($this->getClientById($result['clientID']))
-            ->setVisits($this->getVisitsByCase($result['caseID']))
-            ->setNeeds($this->getNeedsByCase($result['caseID']));
+            ->setClient($this->getClientById($result['client_id']))
+            ->setVisits($this->getVisitsByCase($result['case_id']))
+            ->setNeeds($this->getNeedsByCase($result['case_id']));
         return $case;
     }
 
@@ -1120,6 +1180,19 @@ class App_Service_Member
             ->setContactFirstName($results['contact_fname'])
             ->setContactLastName($results['contact_lname']);
         return $request;
+    }
+    
+    //Builds a singe householder model object
+    private function buildHouseholderModel($results){
+        $householder = new Application_Model_Impl_Householder();
+        $householder
+            ->setId($results['hmember_id'])
+            ->setFirstName($results['first_name'])
+            ->setLastName($results['last_name'])
+            ->setRelationship($results['relationship'])
+            ->setBirthDate($results['birthdate'])
+            ->setDepartDate($results['left_date']);
+        return $householder;
     }
 
     /****** IMPL OBJECT DISASSEMBLERS  ******/
@@ -1225,6 +1298,7 @@ class App_Service_Member
                 ? $request->getSigneeUser()->getUserId() : null,
             'check_number' => $request->getCheckNumber(),
             'issue_date' => $request->getIssueDate(),
+            'status' => $request->getStatus(),
             'account_number' => $request->getAccountNumber(),
             'payee_name' => $request->getPayeeName(),
             'street' => $request->getAddress()->getStreet(),
