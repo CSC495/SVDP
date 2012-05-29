@@ -42,6 +42,18 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
         $this->addElement('text', 'name', array(
             'required' => true,
             'filters' => array('StringTrim'),
+            'validators' => array(
+                    array('NotEmpty', true, array(
+                        'type' => 'string',
+                        'messages' => array('isEmpty' => 'File name must be provided'),
+                    )),
+                    array('StringLength', true, array(
+                        'max' => 50,
+                        'messages' => array(
+                            'stringLengthTooLong' => 'File name must not exceed 50 characters',
+                        ),
+                    )),
+                ),
             ));
         // Link to doc
         $url = $this->addElement('file', 'url', array(
