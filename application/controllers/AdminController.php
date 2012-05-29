@@ -233,6 +233,15 @@ class AdminController extends Zend_Controller_Action
         $userName = substr($user->getFirstName(),0,1);
         $userName = $userName . $user->getLastName();
         $userName = strtolower($userName);
+        $num = $service->getNextIdNum($userName);
+        
+        // Ensure username fits in DB
+        $szNum = strlen(strval($num));
+        if( (strlen($userName) + $szNum) > 30 )
+        {
+            // Trim off the length of the number
+            $userName = substr($userName,0, $szNum * -1);
+        }
         $userName = $userName . $service->getNextIdNum($userName);
         // Store user name
         $user->setUserId($userName);
