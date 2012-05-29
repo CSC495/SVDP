@@ -23,6 +23,12 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         'None' => 'None',
     );
 
+    private $_CHANGE_TYPE_OPTIONS = array(
+        '' => '',
+        'move' => 'Moved',
+        'edit' => 'Edited Address',
+    );
+
     private $_id;
 
     private $_safeSerializeService;
@@ -34,7 +40,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             . (($id !== null) ? '/id/' . urlencode($id) : ''));
     }
 
-    public function __construct($id = null)
+    public function __construct($id = null, $readOnly = false)
     {
         $this->_id = $id;
         $this->_safeSerializeService = new App_Service_SafeSerialize();
@@ -47,6 +53,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 array('ViewScript', array(
                     'viewScript' => 'form/client-form.phtml',
                     'editing' => ($id !== null),
+                    'readOnly' => $readOnly,
                 )),
                 'Form',
             ),
@@ -221,7 +228,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                     ),
                 )),
             ),
-            'label' => "Spouse's name",
+            'label' => "Spouse's first name",
             'maxlength' => 30,
             'dimension' => 3,
         ));
@@ -388,9 +395,17 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         ));
 
         if ($id !== null) {
-            $this->addElement('checkbox', 'moved', array(
-                'required' => true,
-                'label' => 'Moved?',
+            $this->addElement('select', 'changeType', array(
+                'multiOptions' => $this->_CHANGE_TYPE_OPTIONS,
+                'validators' => array(
+                    array('InArray', true, array(
+                        'haystack' => array_keys($this->_CHANGE_TYPE_OPTIONS),
+                        'strict' => true,
+                        'messages' => array('notInArray' => 'Must choose a change type.'),
+                    )),
+                ),
+                'label' => 'Change type',
+                'dimension' => 2,
             ));
         }
 
@@ -399,14 +414,14 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         // Householders sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_HouseholderRecordListSubForm(),
+            new Application_Model_Member_HouseholderRecordListSubForm($id !== null, $readOnly),
             'householderRecordList'
         );
 
         // Employers sub form:
 
         $this->addSubForm(
-            new Application_Model_Member_EmployerRecordListSubForm(),
+            new Application_Model_Member_EmployerRecordListSubForm($id !== null, $readOnly),
             'employerRecordList'
         );
 
@@ -417,6 +432,15 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'decorators' => array('ViewHelper'),
             'class' => 'btn btn-success',
         ));
+
+        // If necessary, mark all the form elements read only.
+        foreach ($this->getElements() as $element) {
+            if ($element instanceof Zend_Form_Element_Select) {
+                $element->setAttrib('disabled', $readOnly ? true : null);
+            } else {
+                $element->setAttrib('readonly', $readOnly ? true : null);
+            }
+        }
     }
 
     public function preValidate($data)
@@ -504,15 +528,19 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
     public function setClient($client)
     {
         // Save fixed client IDs and other things that shouldn't be editable.
-        $fixedClientData = array(
-            'userId' => $client->getUser()->getUserId(),
-            'householdId' => $client->getHouseholdId(),
-            'maritalStatus' => $client->getMaritalStatus(),
-            'createdDate' => $client->getCreatedDate(),
-        );
+        if ($client->getUser() !== null) {
+            $fixedClientData = array(
+                'userId' => $client->getUser()->getUserId(),
+                'householdId' => $client->getHouseholdId(),
+                'maritalStatus' => $client->getMaritalStatus(),
+                'createdDate' => $client->getCreatedDate(),
+            );
 
-        if ($client->isMarried()) {
-            $fixedClientData['spouseId'] = $client->getSpouse()->getId();
+            if ($client->isMarried()) {
+                $fixedClientData['spouseId'] = $client->getSpouse()->getId();
+            }
+        } else {
+            $fixedClientData = null;
         }
 
         $safeSerializedFixedClientData = $this->_safeSerializeService->serialize($fixedClientData);
@@ -540,7 +568,10 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         $this->homePhone->setValue($client->getFormattedHomePhone());
         $this->cellPhone->setValue($client->getFormattedCellPhone());
         $this->workPhone->setValue($client->getFormattedWorkPhone());
-        $this->addr->setAddr($client->getCurrentAddr());
+
+        if ($client->getCurrentAddr() !== null) {
+            $this->addr->setAddr($client->getCurrentAddr());
+        }
 
         if ($client->isMarried()) {
             $spouse = $client->getSpouse();
@@ -582,7 +613,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
 
     public function isMove()
     {
-        return $this->_id !== null && $this->moved->isChecked();
+        return $this->_id !== null && $this->changeType->getValue() === 'move';
     }
 
     public function isMaritalStatusChange()

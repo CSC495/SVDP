@@ -20,7 +20,7 @@ class Application_Model_Member_CaseVisitRecordListSubForm
             'legend' => 'Case visits:',
             'addRecordMsg' => 'Add Another Visit',
             'noRecordsMsg' => 'No visits listed.',
-            'submitMsg' => 'Submit Changes',
+            'submitMsg' => 'Submit',
         ));
 
         $this->_users = $users;
@@ -28,6 +28,8 @@ class Application_Model_Member_CaseVisitRecordListSubForm
 
     protected function initSubForm($caseVisitSubForm)
     {
+        $caseVisitSubForm->addElementPrefixPath('App_Validate', 'App/Validate/', 'validate');
+
         $caseVisitSubForm->addElement('hidden', 'id', array(
             'decorators' => array(
                 'ViewHelper',
@@ -70,10 +72,10 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must enter miles.'),
                 )),
-                array('Digits', true, array(
-                    'messages' => array('notDigits' => 'Must be an integer.'),
+                array('Float', true, array(
+                    'messages' => array('notFloat' => 'Must be a number.'),
                 )),
-                array('GreaterThan', true, array(
+                array('GreaterThanOrEqualTo', true, array(
                     'min' => 0,
                     'messages' => array('notGreaterThan' => 'Must not be negative.'),
                 )),
@@ -96,12 +98,12 @@ class Application_Model_Member_CaseVisitRecordListSubForm
                     'type' => 'string',
                     'messages' => array('isEmpty' => 'Must enter hours.'),
                 )),
-                array('Digits', true, array(
-                    'messages' => array('notDigits' => 'Must be an integer.'),
+                array('Float', true, array(
+                    'messages' => array('notFloat' => 'Must be an number.'),
                 )),
                 array('GreaterThan', true, array(
                     'min' => 0,
-                    'messages' => array('notGreaterThan' => 'Must not be negative.'),
+                    'messages' => array('notGreaterThan' => 'Must be positive.'),
                 )),
             ),
             'decorators' => array(

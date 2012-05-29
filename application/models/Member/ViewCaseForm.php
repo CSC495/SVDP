@@ -5,9 +5,18 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
     private $_readOnly;
 
+    /**
+     * `true` if a limit violation has occurred, otherwise `false`.
+     *
+     * @var bool
+     */
+    private $_limitViolation;
+
     public function __construct($userId, Application_Model_Impl_Case $case, array $comments,
-        array $users)
+        array $users, $readOnly)
     {
+        $this->_readOnly = $readOnly;
+
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
         parent::__construct(array(
@@ -22,11 +31,10 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
                     ),
                     'case' => $case,
                     'readOnly' => &$this->_readOnly,
+                    'limitViolation' => &$this->_limitViolation,
                 )),
             ),
         ));
-
-        $this->_readOnly = ($case->getStatus() === 'Closed');
 
         if (!$this->_readOnly) {
             $this->addElement('submit', 'closeCase', array(
@@ -38,6 +46,7 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
 
         $this->addSubForm(
             new Application_Model_Member_CaseNeedRecordListSubForm(
+                true,
                 $this->_readOnly,
                 $case->getId()
             ),
@@ -53,6 +62,30 @@ class Application_Model_Member_ViewCaseForm extends Twitter_Bootstrap_Form_Horiz
             new Application_Model_Member_CommentsSubForm($userId, $comments),
             'commentsSubForm'
         );
+    }
+
+    /**
+     * Returns `true` if the limit violation flag is set, otherwise returns `false`.
+     *
+     * @return bool
+     */
+    public function isLimitViolation()
+    {
+        return $this->_limitViolation;
+    }
+
+    /**
+     * Sets a flag determining whether or not a limit violation has occurred. If the flag is set,
+     * the next form submission will bypass the limit check, allowing case creation anyway.
+     *
+     * @param bool $limitViolation
+     * @return self
+     */
+    public function setLimitViolation($limitViolation)
+    {
+        $this->_limitViolation = $limitViolation;
+        $this->needRecordList->setLimitViolation($limitViolation);
+        return $this;
     }
 
     public function preValidate(array $data)

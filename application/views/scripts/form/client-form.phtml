@@ -53,7 +53,7 @@ function isMissingPhone($element)
     <div class=span6><?php echo $this->element->homePhone; ?></div>
 
     <div class=span6><?php echo $this->element->workPhone; ?></div>
-    <div class=span6><div class="control-group<?php if (isMissingPhone($this->element)) { echo ' error'; } ?>"><div class=controls><p class=help-block>(at least one phone required)</p></div></div></div>
+    <div class=span6><div class="control-group<?php if (isMissingPhone($this->element)) { echo ' error'; } ?>"><div class=controls><p class=help-block>(At least one phone required)</p></div></div></div>
 </fieldset>
 
 <fieldset class=row-fluid>
@@ -61,7 +61,7 @@ function isMissingPhone($element)
 
     <?php
     if ($this->editing) {
-        echo $this->element->moved;
+        echo $this->element->changeType;
     }
 
     echo $this->element->addr->addrId;
@@ -80,7 +80,9 @@ function isMissingPhone($element)
 <?php echo $this->element->householderRecordList; ?>
 
 <?php echo $this->element->employerRecordList; ?>
+<?php if (!$this->readOnly) { ?>
 
 <div class=form-actions>
     <?php echo $this->element->submit; ?>
 </div>
+<?php } ?>

@@ -8,35 +8,79 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
 
     private $_showNewClientButton = false;
 
+    private $_similarClients = array();
+
+    private $_directionsUrl = null;
+
     /**
      * Instantiates a new instance of the `Application_Model_Member_MapForm` class.
      */
     public function __construct()
     {
-        parent::__construct();
-
         $baseUrl = new Zend_View_Helper_BaseUrl();
 
-        $this->setAction($baseUrl->baseUrl(App_Resources::MEMBER) . '/map')
-             ->setMethod('get');
-
-        $this->addSubForm(
-            new Application_Model_Member_AddrSubForm("Enter a client's address."),
-            'addr'
-        );
-
-        $this->addElement('submit', 'search', array(
-            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
-            'label' => 'Search',
+        parent::__construct(array(
+            'action' => $baseUrl->baseUrl(App_Resources::MEMBER),
+            'method' => 'get',
+            'decorators' => array(
+                'PrepareElements',
+                array('ViewScript', array(
+                    'viewScript' => 'form/map-form.phtml',
+                    'similarClients' => &$this->_similarClients,
+                    'showNewClientButton' => &$this->_showNewClientButton,
+                    'directionsUrl' => &$this->_directionsUrl,
+                )),
+                'Form',
+            ),
+            'class' => 'form-horizontal twocol',
         ));
 
-        $this->addElement('submit', 'newClient', array('label' => 'New Client'));
+        // Elements to collect general information about the potential client (optional):
+        $this->addElement('text', 'firstName', array(
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', true, array(
+                    'max' => 30,
+                    'messages' => array(
+                        'stringLengthTooLong' => 'First name must be shorter than 30 characters.',
+                    ),
+                )),
+            ),
+            'label' => 'First name',
+            'maxlength' => 30,
+            'dimension' => 3,
+        ));
 
-        $this->addDisplayGroup(
-            array('search', 'newClient'),
-            'actions',
-            array('disableLoadDefaultDecorators' => true, 'decorators' => array('Actions'))
-        );
+        $this->addElement('text', 'lastName', array(
+            'filters' => array('StringTrim'),
+            'validators' => array(
+                array('StringLength', true, array(
+                    'max' => 30,
+                    'messages' => array(
+                        'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
+                    ),
+                )),
+            ),
+            'label' => 'Last name',
+            'maxlength' => 30,
+            'maxlength' => 30,
+            'dimension' => 3,
+        ));
+
+        // Elements to collect the potential client's address:
+        $this->addSubForm(new Application_Model_Member_AddrSubForm('Client address:'), 'addr');
+
+        // Elements that perform form actions:
+        $this->addElement('submit', 'search', array(
+            'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_PRIMARY,
+            'label' => 'Submit',
+            'decorators' => array('ViewHelper'),
+        ));
+
+        $this->addElement('submit', 'newClient', array(
+            'label' => 'New Client',
+            'decorators' => array('ViewHelper'),
+        ));
     }
 
     /**
@@ -84,6 +128,26 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
     }
 
     /**
+     * Returns the value of the form's first name field, or `null` if no first name was provided.
+     *
+     * @return string|null
+     */
+    public function getFirstName()
+    {
+        return App_Formatting::emptyToNull($this->firstName->getValue());
+    }
+
+    /**
+     * Returns the value of the form's last name field, or `null` if no last name was provided.
+     *
+     * @return string|null
+     */
+    public function getLastName()
+    {
+        return App_Formatting::emptyToNull($this->lastName->getValue());
+    }
+
+    /**
      * Sets the form's current contents based on the specified address model object.
      *
      * @param Application_Model_Impl_Addr $addr
@@ -92,6 +156,22 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
     public function setAddr($addr)
     {
         $this->addr->setAddr($addr);
+
+        $this->_directionsUrl = 'http://maps.google.com/maps?daddr='
+            . urlencode($addr->getFullAddr());
+
+        return $this;
+    }
+
+    /**
+     * Sets the form's list of similar clients.
+     *
+     * @param Application_Model_Impl_Client[] $similarClients
+     * @return Application_Model_Member_MapForm
+     */
+    public function setSimilarClients($similarClients)
+    {
+        $this->_similarClients = $similarClients;
         return $this;
     }
 }

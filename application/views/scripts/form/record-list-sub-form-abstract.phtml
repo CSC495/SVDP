@@ -6,6 +6,7 @@
     }
     ?>
 
+    <?php echo $this->dirtyField; ?>
     <?php echo $this->removedRecordsField; ?>
     <?php echo $this->removedRecordsHashField; ?>
 
@@ -25,6 +26,11 @@
     <div class=control-group><div class=controls><p class=help-block><?php echo $this->escape($this->noRecordsMsg); ?></p></div></div>
     <?php } ?>
 
+    <?php if ($this->dirty && $this->dirtyMsg) { ?>
+    <div class=control-group><div class=controls>
+        <p class=help-block><?php echo $this->escape($this->dirtyMsg); ?></p>
+    </div></div>
+    <?php } ?>
     <?php if (!$this->readOnly) { ?>
     <div class=control-group><div class=controls>
         <?php echo $this->addRecordBtn; ?>

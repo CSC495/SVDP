@@ -1,0 +1,39 @@
+<?php if ($this->similarClients) { ?>
+<div id=map-similar class=search-results>
+    <table class=search-results>
+        <?php
+        foreach (array_values($this->similarClients) as $i => $client) {
+            echo $this->partial('partial/searchResultClient.phtml', array(
+                'i' => $i,
+                'client' => $client,
+            ));
+        }
+        ?>
+    </table>
+</div>
+
+<?php } else if (!$this->showNewClientButton) { ?>
+<p>Enter a name to check duplicate clients, and an address to check parish.</p>
+<?php } ?>
+
+<fieldset class=row-fluid>
+    <legend>Client information:</legend>
+    <div class=span6><?php echo $this->element->firstName; ?></div>
+    <div class=span6><?php echo $this->element->lastName; ?></div>
+</fieldset>
+
+<div class=row-fluid>
+    <div class=span6>
+        <?php echo $this->element->addr; ?>
+        <div class=form-actions>
+            <?php echo $this->element->search ?>
+            <?php if ($this->showNewClientButton) { ?>
+            <?php echo $this->element->newClient; ?>
+            <a id=directions href="<?php echo $this->escape($this->directionsUrl); ?>" target=_blank class=btn>Directions</a>
+            <?php } ?>
+        </div>
+    </div>
+    <div class=span6><div id=map-outer class=well><div id=map>
+        <noscript><p>JavaScript must be enabled to display maps.</p></noscript>
+    </div></div></div>
+</div>

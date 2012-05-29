@@ -1,7 +1,14 @@
 <?php
-
+/**
+ * Class implements form for adding an External document by URL
+ */
 class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical {
 
+	/**
+	 * Default constructor
+	 *
+	 * @return null
+	 */
     public function __construct()
     {
         parent::__construct();
@@ -31,13 +38,13 @@ class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical
             array('Label', array('class' => 'control-label')),
             'Wrapper',
         ));
-
+		// Display name for doc
         $this->addElement('text', 'name', array(
             'required' => true,
             'filters' => array('StringTrim'),
             'label'   => 'Name:',
             ));
-          
+        // URL to the document  
         $url = $this->addElement('text', 'url', array(
             'required' => true,
             'filters' => array('StringTrim'),
@@ -45,7 +52,7 @@ class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical
             'validators' => array( new App_Validate_Url()),
         ));
         
-
+		// Submit button
         $this->addElement('submit', 'submit', array(
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
             'decorators' => array('ViewHelper'),

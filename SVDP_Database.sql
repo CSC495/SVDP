@@ -49,7 +49,7 @@ CREATE TABLE client(
 	birthdate DATE,
 	ssn4 INT,
 	cell_phone CHAR(10),
-	home_phone CHAR(10),	
+	home_phone CHAR(10),
 	work_phone CHAR(10),
 	created_date DATE,
 	member_parish VARCHAR(50),
@@ -104,7 +104,7 @@ CREATE TABLE employment(
 	end_date DATE,
 	PRIMARY KEY (employment_id),
 	FOREIGN KEY (client_id) REFERENCES client(client_id)
-) ENGINE = InnoDB;	
+) ENGINE = InnoDB;
 
 
 CREATE TABLE client_comment(
@@ -124,7 +124,7 @@ CREATE TABLE client_case(
      household_id INT,
      opened_user_id VARCHAR(30),
      opened_date DATE,
-     status VARCHAR(10), 
+     status VARCHAR(10),
      PRIMARY KEY (case_id),
      FOREIGN KEY (household_id) REFERENCES household(household_id),
      FOREIGN KEY (opened_user_id) REFERENCES user(user_id)
@@ -134,8 +134,8 @@ CREATE TABLE case_visit(
 	visit_id INT NOT NULL AUTO_INCREMENT,
 	case_id INT,
 	visit_date DATE,
-     	miles INT,
-     	hours INT,
+     	miles DECIMAL(3,2),
+     	hours DECIMAL(3,2),
 	PRIMARY KEY (visit_id),
 	FOREIGN KEY (case_id) REFERENCES client_case(case_id)
 ) ENGINE = InnoDB;
@@ -180,6 +180,7 @@ CREATE TABLE check_request(
      	signee_userid VARCHAR(30),
      	check_number VARCHAR(15),
      	issue_date DATE,
+	status CHAR(1),
 	account_number VARCHAR(30),
      	payee_name VARCHAR(50),
      	street VARCHAR(100),
@@ -235,9 +236,7 @@ CREATE TABLE schedule(
 CREATE TABLE documents(
 	doc_id INT NOT NULL AUTO_INCREMENT,
 	filename VARCHAR(50),
-	url VARCHAR(50),
+	url VARCHAR(2083),
 	internal_flag TINYINT(1),
 	PRIMARY KEY (doc_id)
 ) ENGINE = InnoDB;
-
-	
