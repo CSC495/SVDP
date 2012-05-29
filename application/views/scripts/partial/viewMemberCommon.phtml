@@ -5,7 +5,7 @@
     <td class='search-cell top'><?php echo $this->escape($this->user->getUserId()); ?></td>
     <th class='search-cell top'>Email</th>
     <td class='search-cell top'><?php echo $this->escape($this->user->getEmail()); ?></td>
-    <td class='search-cell top last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId())); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
+    <td class='search-cell top last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->escape($this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId()))); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
     
 </tr>
 <tr class='search-result <?php echo $this->rowStripeClass; ?>'>
