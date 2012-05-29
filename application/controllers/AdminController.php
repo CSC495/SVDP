@@ -265,7 +265,7 @@ class AdminController extends Zend_Controller_Action
                            '<br/><br/><i>If you believe you have received this message in error ' .
                            'please contact the sender.</i>');
         
-        $mail->setFrom('bagura@noctrl.edu', 'System');
+        $mail->setFrom('noreply@st-raphael-svdp.org', 'System');
         $mail->addTo($user->getEmail());
         $mail->setSubject('SVDP Account Created');
         $mail->send($transport);

@@ -10,7 +10,7 @@
 </tr>
 <tr class='search-result <?php echo $this->rowStripeClass; ?>'>
     <th class='search-cell bot first name'>Home Phone</th>
-    <td class='search-cell bot'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getHomePhone())); ?></td>
+    <td class='search-cell bot name'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getHomePhone())); ?></td>
     <th class='search-cell bot name'>Cell Phone</th>
     <td class='search-cell bot name'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getCellPhone())); ?></td>
     <th class='search-cell bot name'><?php if ($this->showId) { echo "User Id"; }?></th>
