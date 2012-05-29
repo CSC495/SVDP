@@ -17,6 +17,7 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
         $this->setAction($baseUrl->baseUrl(App_Resources::DOCUMENT) . '/upload')
              ->setMethod('post');
         $this->setAttrib('class','twocol form-horizontal');
+        $this->setName('upload');
         $this->setDecorators(array(
 			array('ViewScript', array('viewScript' => 'document/uploadViewScript.phtml'))
 		));
@@ -42,6 +43,8 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
         $this->addElement('text', 'name', array(
             'required' => true,
             'filters' => array('StringTrim'),
+            'id'   => 'fname',
+            'class' => 'fname',
             'validators' => array(
                     array('NotEmpty', true, array(
                         'type' => 'string',

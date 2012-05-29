@@ -27,3 +27,19 @@ function initDocView() {
         });
     });
 }
+
+function initUploadForm(){
+	var test = $("#fname");
+	test.attr('class','required email');
+	var up = $("#upload");
+	$("#upload").validate({
+		invalidHandler:function(form,validator){
+			alert('test');
+			return false;
+		},
+		
+		onsubmit:function(){
+			alert('test sub');
+		}
+	});
+}
