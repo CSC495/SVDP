@@ -41,6 +41,10 @@ $funds  = App_Formatting::formatCurrency($config->getAvailableFunds());
 
 // Fetch user schedule for sidebar.
 $scheduleEntries = Zend_Registry::get('schedule');
+
+// Fetch number of non-issued check requests
+$service = new App_Service_GeneralService();
+$requests = $service->getNumPendingCheckRequests();
 ?>
 
 <div class=container-fluid>
@@ -83,6 +87,11 @@ $scheduleEntries = Zend_Registry::get('schedule');
 				<!-- displays amount of available funds -->
                 <li class=nav-header>Available Funds</li>
                 <li class=sidebar-field><p><?php echo $this->escape($funds); ?></p></li>
+
+                <li class=divider></li>
+
+		<li class=nav-header>Check Requests</li>
+                <li class=sidebar-field><p><?php echo $this->escape($requests); ?></p></li>
 
                 <li class=divider></li>
 				
