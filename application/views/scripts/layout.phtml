@@ -44,7 +44,9 @@ $scheduleEntries = Zend_Registry::get('schedule');
 
 // Fetch number of non-issued check requests
 $service = new App_Service_GeneralService();
-$requests = $service->getNumPendingCheckRequests();
+$requestsAmt = $service->getPendingCheckRequestsAmount();
+$aFunds = $funds - $requestsAmt;
+$aFundsStr = App_Formatting::formatCurrency($aFunds);
 ?>
 
 <div class=container-fluid>
@@ -85,13 +87,13 @@ $requests = $service->getNumPendingCheckRequests();
             <ul class="well nav nav-list">
 			
 				<!-- displays amount of available funds -->
-                <li class=nav-header>Available Funds</li>
+                <li class=nav-header>Total Funds</li>
                 <li class=sidebar-field><p><?php echo $this->escape($funds); ?></p></li>
 
                 <li class=divider></li>
 
-		<li class=nav-header>Check Requests</li>
-                <li class=sidebar-field><p><?php echo $this->escape($requests); ?></p></li>
+		<li class=nav-header>Available Funds</li>
+                <li class=sidebar-field><p><?php echo $this->escape($aFundsStr); ?></p></li>
 
                 <li class=divider></li>
 				
