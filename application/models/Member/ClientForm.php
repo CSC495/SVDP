@@ -411,7 +411,11 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             ));
         }
 
-        $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
+        $this->addSubForm(new Application_Model_Member_AddrSubForm(array(
+            'hasParishField' => true,
+            'readOnly' => $readOnly,
+            'zipRequired' => true,
+        )), 'addr');
 
         // Householders sub form:
 
