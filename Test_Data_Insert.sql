@@ -80,7 +80,7 @@ INSERT INTO case_need VALUES
 (NULL, 2, "Food", 100.00);
 
 INSERT INTO check_request VALUES
-(NULL, 1, "badams", '2009-1-9', 100.00, "Please write this check quickly.", "jcombs", NULL, 2009-1-18', "D", "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
+(NULL, 1, "badams", '2009-1-9', 100.00, "Please write this check quickly.", "jcombs", NULL, '2009-1-18', "D", "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
 (NULL, 1, "badams", '2009-1-9', 1000.00, "Please write this check quickly.", "jcombs", "7321", '2009-1-18', "I", "1370498509384", "Lener Apts", "123 abc street", "naperville", 'IL', '60560', 1231237890, "John", "Lener"),
 (NULL, 2, "asmith", '2010-3-25', 750.00, "Please write this check quickly.", null, null, null, "P","1370498509384", "Toyota", "123 abc street", "naperville", 'IL', '60560', 1231237890, "Mike", "Young");
 
