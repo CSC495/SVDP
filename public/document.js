@@ -25,3 +25,37 @@ function initDocView() {
         });
     });
 }
+
+function initDocAdd(){
+	
+	$(document).ready(function(){
+		$("#add").validate({
+			rules: {
+				name: {
+					required: true,
+					maxlength: 50
+				},
+				url: {
+					required: true,
+					maxlength: 2083
+				}
+			},
+			messages: {
+				name: {
+					required: "File name must be provided",
+					maxlength: "File name cannot exceed 50 characters"
+				},
+				url: {
+					required: "URL must be provided",
+					maxlength: "URL cannot exceed 2083 characters"
+				}
+			},
+			submitHandler: function(form) {
+				alert('test');
+				form.submit();
+			}
+		});//end validate
+	});// end ready
+	
+	//url,name,add
+}
