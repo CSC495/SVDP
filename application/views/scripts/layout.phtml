@@ -36,7 +36,7 @@ echo $this->headLink(),  "\n";
 $auth = Zend_Auth::getInstance();
 $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 
-// Fetch available funds for sidebar.
+// Fetch total  funds for sidebar.
 $config     = Zend_Registry::get('config');
 $funds      = $config->getAvailableFunds();
 $fundsStr   = App_Formatting::formatCurrency($funds);
@@ -44,6 +44,12 @@ $fundsClass = ($funds < 0.0) ? 'error': '';
 
 // Fetch user schedule for sidebar.
 $scheduleEntries = Zend_Registry::get('schedule');
+
+// Fetch available funds for sidebar
+$service = new App_Service_GeneralService();
+$requestsAmt = $service->getPendingCheckRequestsAmount();
+$aFunds - $funds = $requestsAmt;
+$aFundsStr = App_Formatting::formatCurrency($aFunds);
 ?>
 
 <div class=container-fluid>
@@ -77,19 +83,29 @@ $scheduleEntries = Zend_Registry::get('schedule');
         <?php if ($auth->hasIdentity()){ ?>
         <div class=span2>
             <ul class="well nav nav-list">
-                <li class=nav-header>Available Funds</li>
+				<!-- displays amount of total funds -->
+                <li class=nav-header>Total Funds</li>
                 <li class=sidebar-field><p class="<?php echo $this->escape($fundsClass); ?>"><?php echo $this->escape($fundsStr); ?></p></li>
+				
+				<li class=divider></li>
+
+				<!-- displays amount of available funds after pending check requests are issued -->
+				<li class=nav-header>Available Funds</li>
+				<li class=sidebar-field><p><?php echo $this->escape($aFundsStr); ?></p></li>
 
                 <li class=divider></li>
 
+				<!-- displays schedule - begins with "Week of: " followed by dates with names on following line -->
                 <li class=nav-header>Member Schedule</li>
+				<p>Week of:</p>
                 <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
-                <li><p>Week of <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?>:</p></li>
+                <li> <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></li>
                 <li class=sidebar-field><p><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
                 <?php } ?>
 
                 <li class=divider></li>
 
+				<!-- list of common links -->
                 <li class=nav-header>Quick Links</li>
                 <li><a href="http://www.dupagepads.org/">DuPage PADS</a></li>
                 <li><a href="http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
