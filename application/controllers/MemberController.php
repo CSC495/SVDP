@@ -511,11 +511,11 @@ class MemberController extends Zend_Controller_Action
 
         // Initialize the new client history view.
         $service = new App_Service_Member();
-        $client  = $service->getClientById($this->_getParam('clientId'));
+        $client  = $service->getClientById($this->_getParam('id'));
 		
 		$this->view->pageTitle = 'View Household History';
-		$this->view->client    = $client;
-		$this->view->history   = $service->getClientHouseholdHistory($this->_getParam('clientId'));
+		$this->view->client = $client;
+		$this->view->history = $service->getClientHouseholdHistory($client->getId());
 	}
 
 
