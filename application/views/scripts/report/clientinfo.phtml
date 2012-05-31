@@ -1,18 +1,12 @@
 <?php
-//include "dompdf.php";
-include "dompdf_config.inc.php";
-
-$dompdf = new DOMPDF();
-
-$html =
-  '<html><body>'.
-  '<p>Put your html here, or generate it with your favourite '.
-  'templating system.</p>'.
-  '</body></html>';
- 
-$dompdf = new DOMPDF(); 
-$dompdf->load_html($html);
-$dompdf->render();
-$dompdf->stream("sample.pdf");
-
-?>
+    
+    require("html2fpdf-3.0.2b/html2fpdf.php");
+    $htmlFile = "<html>
+                <head></head><body>
+                    Hello World</body>
+                </html>";
+    //$buffer = file_get_contents($htmlFile);
+    $pdf = new HTML2FPDF('P', 'mm', 'Letter');
+    $pdf->AddPage();
+    $pdf->WriteHTML($htmlFile);
+    $pdf->Output('test.pdf', 'D'); 

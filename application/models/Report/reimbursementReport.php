@@ -11,7 +11,7 @@ class Application_Model_Report_reimbursementReport extends Twitter_Bootstrap_For
 		
 		$baseUrl = new Zend_View_Helper_BaseUrl();
 		//$this->setAction($baseUrl->baseUrl('/report/reimbursementresults/'));
-		$this->setAction($baseUrl->baseUrl('/report/reimbursementresults/'));
+		$this->setAction($baseUrl->baseUrl('/report/exceltest/'));
 		
 		/*$this->setDecorators(array(
 			array('ViewScript', array('viewScript' => 'report/reimbursementViewScript.phtml'))

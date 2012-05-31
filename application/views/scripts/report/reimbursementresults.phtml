@@ -13,6 +13,8 @@
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
+    <?php if($this->request[0] != null) ?>
+        
     <tr>        
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Created By:&nbsp;<?php echo $this->escape($this->request[0]->getUser())  ?>&nbsp;</td>
         <td>&nbsp;</td>
@@ -120,3 +122,4 @@
     ?>
    
 </table>
+
