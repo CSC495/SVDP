@@ -372,7 +372,7 @@ class App_Service_Member
         
         //Get all the members in each household
         foreach($results as $row){
-            $arr[$row['household_id']] = $this->getHouseholdersByHouseholdId($row['household_id']);
+            $arr[$row['household_id']] = $this->getHouseholdersByHouseClientIds($row['household_id'], $clientId);
             array_unshift($arr[$row['household_id']], $this->buildAddrModel($row));
         }
         return $arr;
@@ -864,15 +864,20 @@ class App_Service_Member
         return $results['marriage_status'];
     }
     
-    private function getHouseholdersByHouseholdId($houseId, $clientId){
+    private function getHouseholdersByHouseClientIds($houseId, $clientId){
         $hMembers = array();
         
-        //Get spouse if exists
+        //Get spouse if exists, need to grab both id's
         $select = $this->_db->select()
-                ->from('household', 'spouse_id')
+                ->from('household', array('mainclient_id', 'spouse_id'))
                 ->where('household_id = ?', $houseId);
         $results = $this->_db->fetchRow($select);
-        if($results['spouse_id']){
+        
+        //If the clientId matches the spouse_id then given client was added as a spouse
+        //need to indicated thier spouse as the main client
+        $spouseId = ($results['spouse_id'] === $clientId) ?
+            $results['mainclient_id'] : $results['spouse_id'];
+        if($spouseId){
             $householder = new Application_Model_Impl_Householder();
             $select = $this->_db->select()
                     ->from(array('c' => 'client'),
@@ -880,7 +885,7 @@ class App_Service_Member
                                  'first_name',
                                  'last_name',
                                  'birthdate'))
-                    ->where('c.client_id = ?', $results['spouse_id']);
+                    ->where('c.client_id = ?', $spouseId);
             $results = $this->_db->fetchRow($select);
             $householder
                 ->setId($results['client_id'])
