@@ -29,9 +29,7 @@ function initDocView() {
 }
 
 function initUploadForm(){
-	var test = $("#fname");
-	test.attr('class','required email');
-	var up = $("#upload");
+	$("#fname").attr('class','required email');
 	$("#upload").validate({
 		invalidHandler:function(form,validator){
 			alert('test');

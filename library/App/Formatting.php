@@ -17,6 +17,9 @@ class App_Formatting
 
         case App_Roles::ADMIN:
             return 'Admin';
+        
+        case App_Roles::DATAMIGRATION:
+            return 'Data Migrator';
 
         default:
             return '';

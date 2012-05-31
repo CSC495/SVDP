@@ -135,9 +135,10 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 	    // Users role
 	    $role = $this->addElement('select','role',array(
 			'label' => 'Role:',
-			'multiOptions' => array ( App_Roles::MEMBER      => 'Member',
-						  App_Roles::TREASURER   => 'Treasurer',
-						  App_Roles::ADMIN       => 'Admin',)
+			'multiOptions' => array ( App_Roles::MEMBER        => 'Member',
+						  App_Roles::TREASURER     => 'Treasurer',
+						  App_Roles::ADMIN         => 'Admin',
+						  App_Roles::DATAMIGRATION => 'Data Migrator',)
 			,));
 	    // Used to indicate errors on role
 	    $roleErr = $this->addElement('hidden','roleErr', array(

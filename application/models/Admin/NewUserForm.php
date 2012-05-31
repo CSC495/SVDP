@@ -131,9 +131,10 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
 		$role = $this->addElement('select','role',array(
 					'label' => 'User Type:',
 					'value' => App_Roles::MEMBER,
-					'multiOptions' => array ( 'M'   => 'Member',
-								  App_Roles::ADMIN     => 'Admin',
-								  App_Roles::TREASURER => 'Treasurer',),
+					'multiOptions' => array ( App_Roles::MEMBER        => 'Member',
+								  App_Roles::ADMIN         => 'Admin',
+								  App_Roles::TREASURER     => 'Treasurer',
+								  App_Roles::DATAMIGRATION => 'Data Migrator',),
 					));
                
 		$adjust = $this->addElement('submit', 'submit', array(
