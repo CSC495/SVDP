@@ -25,7 +25,48 @@ function initDocView() {
         });
     });
 }
-
+function initDocUpload(){
+	$(document).ready(function(){
+		$("#upload").validate({
+			rules: {
+				name: {
+					required: true,
+					maxlength: 50
+				},
+				url: {
+					required: true,
+				}
+			},
+			messages: {
+				name: {
+					required: "File name must be provided",
+					maxlength: "File name must not exceed 50 characters"
+				},
+				url: {
+					required: "No File Specified",
+				}
+			},
+			submitHandler: function(form) {
+				form.submit();
+			},
+			errorElement: "span",
+			errorPlacement: function(error, element){;
+				error.addClass('help-inline');	
+				if( element.attr('id') == 'url'){
+					var parent = $('#err').parent().parent();
+					parent.addClass('error');
+					error.insertAfter( $('#err') );
+				}
+				else
+				{
+					var parent = element.parent().parent();
+					parent.addClass('error');
+					error.insertAfter(element);
+				}
+			}
+		});//end validate
+	});// end ready
+}
 function initDocAdd(){
 	//url,name,add
 	$("#url").keypress(function() {
