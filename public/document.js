@@ -1,5 +1,3 @@
-var targetUrl;
-
 function initDocView() {
     // Create a dialog to confirm the case close operation.
     var deleteDoc = $('.deleteDoc');
@@ -26,18 +24,4 @@ function initDocView() {
             title: 'Confirm Delete Document'
         });
     });
-}
-
-function initUploadForm(){
-	$("#fname").attr('class','required email');
-	$("#upload").validate({
-		invalidHandler:function(form,validator){
-			alert('test');
-			return false;
-		},
-		
-		onsubmit:function(){
-			alert('test sub');
-		}
-	});
 }

@@ -14,5 +14,5 @@
     <td class='search-cell bot name'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getCellPhone())); ?></td>
     <th class='search-cell bot name'><?php if ($this->showId) { echo "User Id"; }?></th>
     <td class='search-cell bot'><?php if($this->showId) { echo $this->escape($this->user->getUserId()); }?></td>
-    <td class="search-cell icon last"><?php if (!$this->user->isActive() && $this->showActive) { ?><span class="label label-important">Inactive</span><?php } ?></td>
+    <td class="search-cell icon last"><?php if (!$this->user->isActive()) { ?><span class="label label-important">Inactive</span><?php } ?></td>
 </tr>
