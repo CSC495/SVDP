@@ -234,11 +234,15 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             $referral = $referralOrCheckReq;
 
             $status  = '<span class="label label-info">Referred</span>';
-            $status2 = 'Referral: '
+            $status2 = '<abbr title="'
+                     . htmlspecialchars($referral->getReason())
+                     . '">'
+                     . 'Referral: '
                      . htmlspecialchars($referral->getReferredTo())
                      . ' ('
                      . htmlspecialchars(App_Formatting::formatDate($referral->getDate()))
-                     . ')';
+                     . ')'
+                     . '</abbr>';
         } else if ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq) {
             $this->setSubFormReadOnly($caseNeedSubForm, true);
 
