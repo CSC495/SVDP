@@ -22,16 +22,16 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'need', array(
-            'value' => $need->getNeed(),
             'label' => 'Need',
+            'value' => $need->getNeed(),
             'dimension' => 2,
             'readonly' => true,
         ));
 
         $this->addElement('text', 'amount', array(
-            'value' => $need->getAmount(),
+            'value' => App_Formatting::formatCurrency($need->getAmount()),
             'required' => true,
-            'filters' => array('StringTrim', 'LocalizedToNormalized'),
+            'filters' => array('StringTrim'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
@@ -183,6 +183,13 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             'actions',
             array('disableLoadDefaultDecorators' => true, 'decorators' => array('Actions'))
         );
+    }
+
+    public function isValid($data)
+    {
+        $this->amount->addFilter('LocalizedToNormalized');
+
+        return parent::isValid($data);
     }
 
     public function getCheckReq()
