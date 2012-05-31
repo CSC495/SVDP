@@ -382,14 +382,14 @@ class MemberController extends Zend_Controller_Action
 
         // A client is displayed read-only if the user is not a normal member (e.g., if they're a
         // treasurer).
-        $readOnly = ($role === App_Roles::TREASURER);
+        $this->view->readOnly = ($role === App_Roles::TREASURER);
 
         if ($this->_hasParam('id')) {
             // Editing an existing client.
             $id = $this->_getParam('id');
 
-            $this->view->pageTitle = $readOnly ? 'View Client' : 'Edit Client';
-            $this->view->form = new Application_Model_Member_ClientForm($id, $readOnly);
+            $this->view->pageTitle = $this->view->readOnly ? 'View Client' : 'Edit Client';
+            $this->view->form = new Application_Model_Member_ClientForm($id, $this->view->readOnly);
 
             if (!$request->isPost()) {
                 // If the user hasn't submitted the form yet, load client info from the database.
@@ -399,7 +399,7 @@ class MemberController extends Zend_Controller_Action
             }
         } else {
             // Adding a new client.
-            if ($readOnly) {
+            if ($this->view->readOnly) {
                 throw new DomainException('Only members can add new clients');
             }
 
@@ -437,7 +437,7 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Ensure that only members can edit clients.
-        if ($readOnly) {
+        if ($this->view->readOnly) {
             throw new DomainException('Only members can edit existing clients');
         }
 
@@ -739,8 +739,8 @@ class MemberController extends Zend_Controller_Action
         $data    = $request->getQuery();
 
         // If no ID was provided, bail out.
-        $clientId = isset($data['clientId']) ? $data['clientId'] : null;
-        $caseId   = isset($data['caseId']) ? $data['caseId'] : null;
+        $clientId = App_Formatting::emptyToNull(isset($data['clientId']) ? $data['clientId'] : '');
+        $caseId = App_Formatting::emptyToNull(isset($data['caseId']) ? $data['caseId'] : '');
 
         if ($clientId === null && $caseId === null) {
             throw new UnexpectedValueException('No ID parameter provided');
@@ -876,7 +876,8 @@ class MemberController extends Zend_Controller_Action
         $perCaseNeedLimit  = $parishParams->getCaseFundLimit();
         $lifetimeTotal     = $service->getPastNeedTotal($case->getClient()->getId());
 
-        $caseNeedTotal = 0.0;
+        $caseNeedTotal               = 0.0;
+        $caseNeedTotalMinusCheckReqs = 0.0;
 
         foreach ($case->getNeeds() as $need) {
             $referralOrCheckReq = $need->getReferralOrCheckReq();
@@ -889,9 +890,12 @@ class MemberController extends Zend_Controller_Action
             }
 
             $caseNeedTotal += $need->getAmount();
+            if (!($referralOrCheckReq instanceof Application_Model_Impl_CheckReq)) {
+                $caseNeedTotalMinusCheckReqs += $need->getAmount();
+            }
         }
 
-        if ($lifetimeTotal + $caseNeedTotal > $lifetimeNeedLimit) {
+        if ($lifetimeTotal + $caseNeedTotalMinusCheckReqs > $lifetimeNeedLimit) {
             return 'Lifetime need limit of $'
                  . number_format($lifetimeNeedLimit, 2)
                  . ' per client exceeded';

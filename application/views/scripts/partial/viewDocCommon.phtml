@@ -13,8 +13,8 @@ else
 		<?php 
 			if ($this->showEditBtn) 
 			{ 
-				echo "<a href=\"" . $this->baseUrl(App_Resources::DOCUMENT 
-										.'/delete/id/' . urlencode($this->doc->getId())) . "\""  
+				echo "<a href=\"" . $this->escape($this->baseUrl(App_Resources::DOCUMENT 
+										.'/delete/id/' . urlencode($this->doc->getId()))) . "\""  
 										. "class='btn btn-mini btn-danger deleteDoc' >Delete</a></td>";
 			}
 		?>

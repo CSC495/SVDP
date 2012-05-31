@@ -1,6 +1,12 @@
-<?php $this->headScript()->captureStart(); ?>
+<?php
+if (!$this->readOnly) {
+    $this->headScript()->captureStart();
+?>
 $(function() {
-    initEditClientForm();
+    initClientForm();
 });
-<?php $this->headScript()->captureEnd(); ?>
+<?php
+    $this->headScript()->captureEnd();
+}
+?>
 <?php echo $this->form; ?>
