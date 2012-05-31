@@ -18,6 +18,7 @@ class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical
         $this->setAction($baseUrl->baseUrl(App_Resources::DOCUMENT) . '/add')
              ->setMethod('post');
         $this->setAttrib('class','twocol form-horizontal');
+	$this->setName('add');
         $this->setDecorators(array(
 			array('ViewScript', array('viewScript' => 'document/addViewScript.phtml'))
 		));

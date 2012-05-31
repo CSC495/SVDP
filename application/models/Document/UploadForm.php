@@ -43,8 +43,6 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
         $this->addElement('text', 'name', array(
             'required' => true,
             'filters' => array('StringTrim'),
-            'id'   => 'fname',
-            'class' => 'fname',
             'validators' => array(
                     array('NotEmpty', true, array(
                         'type' => 'string',
