@@ -28,7 +28,7 @@ class App_Service_GeneralService {
      *Returns an array of populated ScheduleEntry objects representing the schedule entries in the
      *database, ordering them by start_date.
      *
-     *@return application/models/Impl/ScheduleEntry[]
+     *@return array of Application_Model_Impl_SheduleEntry
     */
     public function getScheduleEntries()
     {
@@ -77,11 +77,11 @@ class App_Service_GeneralService {
     /**
      *Builds a ScheduleEntry object.
      *
-     *Creates a ScheduleEntry object, populates it with the data in the given associative arra
+     *Creates a ScheduleEntry object, populates it with the data in the given associative array
      *, and returns the object
      *
      *@param mixed[string]
-     *@return application/models/Impl/ScheduleEntry
+     *@return Application_Model_Impl_SheduleEntry
     */
     private function buildScheduleEntryModels($dbResults)
     {
