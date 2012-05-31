@@ -147,6 +147,27 @@ class ReportController extends Zend_Controller_Action
 	}
 	$this->view->request = $chkRequest;
     }
+    public function exceltestAction(){
+	//$this->view->form = new Application_Model_Report_ocaReport();
+	$this->view->pageTitle = "Reimbursement Report";         
+	$form = new Application_Model_Report_reimbursementReport();
+	$form->populate($_POST);
+	$caseId = $form->caseId->getValue();
+	$chkRequest = array();
+	
+	$service2 = new App_Service_Member();	
+	$service = new App_Service_DocumentService();
+	$this->view->client = $service2->getClientById($caseId);
+	$results = $service->getCheckReqsByCaseId($caseId);
+	
+	$ctr = 0;
+	foreach($results as $row)
+	{
+	    $chkRequest[$ctr] = $row;
+	    $ctr += 1;
+	}
+	$this->view->request = $chkRequest;
+    }
 
 }
 

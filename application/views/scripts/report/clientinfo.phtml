@@ -1,7 +1,18 @@
-<p>Please Enter The Following Client Information</p>
+<?php
+//include "dompdf.php";
+include "dompdf_config.inc.php";
 
-<div id="clientInfo">
-    <?php
-        echo $this->form;
-    ?>
-</div>
+$dompdf = new DOMPDF();
+
+$html =
+  '<html><body>'.
+  '<p>Put your html here, or generate it with your favourite '.
+  'templating system.</p>'.
+  '</body></html>';
+ 
+$dompdf = new DOMPDF(); 
+$dompdf->load_html($html);
+$dompdf->render();
+$dompdf->stream("sample.pdf");
+
+?>
