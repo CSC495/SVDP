@@ -54,4 +54,9 @@ class App_Resources
      * @var string
      */
     const REDIRECT  = 'redirect';
+        /**
+     * Name of the MIGRATION controller
+     * @var string
+     */
+    const MIGRATION  = 'migration';
 }
