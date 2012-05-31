@@ -1,15 +1,33 @@
 <?php
-
+/**
+ *@package ServiceFilePackage
+*/
+/**
+ *Admin Service File
+ *
+ *Holds methods that the admin controller needs to access the database
+ *@package ServiceFilePackage
+ */
 class App_Service_AdminService {
+    /**
+     *Holds connection to DB
+    */
     private $_db;
     
+    /**
+     *Creates a connection to the DB available to the class
+     *@return void
+    */
     function __construct(){
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
     
     /**
-     *  Function retrieves the parish parameters which indicate global limits
-     *  when evaluating if a case is to be accepted or not
+     *Gets the Parish Aid Limits
+     *
+     *Function retrieves the parish parameters which indicate global limits
+     *when evaluating if a case is to be accepted or not
+     *@return void
      */
     public function getParishParams(){
         $select = $this->_db->select()->from('parish_funds');
@@ -19,6 +37,13 @@ class App_Service_AdminService {
         return $this->buildParishParams($results);
     }
     
+    /**
+     *Gets the indicated user's information.
+     *
+     *Returns a User object populated with the indicated user's information
+     *@param string the user_id of the indicated user
+     *@return application/models/Impl/User
+    */
     public function getUserById($userId){
 	$select = $this->_db->select()
 		->from('user')
@@ -26,8 +51,12 @@ class App_Service_AdminService {
 	$results = $this->_db->fetchRow($select);
 	return $this->buildUserModel($results);
     }
-    /****
-     *  Function creates a Parish funds object from the result set
+    
+    /**
+     *Builds a ParishParams object.
+     *Creates a Parish funds object from the result set
+     *@param mixed[string]
+     *@return application/models/Impl/ParishParams
      */
     private function buildParishParams($result){
         $params = new Application_Model_Impl_ParishParams(
@@ -39,9 +68,12 @@ class App_Service_AdminService {
         
         return($params);
     }
-    /******
-     *  Function takes a parish params object and updates the
-     *  table with the respective values
+    /**
+     *Updates parish aid limits.
+     *Takes a parish params object and updates the
+     *table with the respective values
+     *@param mixed[string]
+     *@return void
      */
     public function updateParishParams($params)
     {
@@ -49,14 +81,28 @@ class App_Service_AdminService {
         $this->_db->update('parish_funds',$data,'1');
     }
     
+    /**
+     *Updates user information.
+     *Updates indicated user's information with the data contained
+     *in the User object
+     *@param application/models/Impl/User
+     *@return void
+     */    
     public function updateUserInfo($user){
 	$userData = $this->disassembleUserModel($user);
 	$where = $this->_db->quoteInto('user_id = ?', $user->getUserId());
 	$this->_db->update('user', $userData, $where);
     }
     
-    public function updateUserPassword($userId, $newPass){
-	//Salting goes here when it is to be implemented
+    /**
+     *Updates user password.
+     *Updates the indicated user's password with the given password after salting and hashing
+     *@param string indicated user's _id
+     *@param string | int new password before salting and hash
+     *@return void
+     */  
+    public function updateUserPassword($userId, $newPass)
+    {
 	$hashPass =  hash('SHA256', App_Password::saltIt($newPass));
 	$change = array(
 		    'password' => $hashPass,
@@ -65,6 +111,9 @@ class App_Service_AdminService {
 	$this->_db->update('user', $change, $where);
     }
 
+    /**
+     *
+    */
     public function getAllUsers(){
         $select = $this->_db->select()
 		->from('user')
