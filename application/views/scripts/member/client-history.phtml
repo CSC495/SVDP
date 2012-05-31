@@ -2,10 +2,10 @@
     <legend>Household History:</legend>
     <div class=search-results>
         <table class='search-results'>
+        	
             <?php
-            
-			$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
-						
+			$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';		
+			
 			foreach (array_values($this->history) as $i => $history):?>
 				<tr class="search-result <?php echo $rowStripeClass; ?>">
 		    	<th class="search-cell bot first">Householder</th>

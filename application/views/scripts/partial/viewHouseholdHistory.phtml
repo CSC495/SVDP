@@ -1,15 +1,15 @@
 
 <?php foreach (array_values($this->history) as $i => $history):?>
-<tr class='search-result'>
-    <th class='search-cell top first name'>Name</th>
-    <td class='search-cell top '><?php echo $this->escape($history->getFullName()); ?></td>
-    <th class='search-cell top relationship'>Relationship</th>
-    <td class='search-cell top'><?php echo $this->escape($history->getRelationship()); ?></td>
-    <th class='search-cell top birthdate'>Birthdate</th>
-    <td class='search-cell top'><?php echo $this->escape($history->getBirthDate()); ?></td>
-    <?php if($history->getDepartDate()):?>
-    <th class='search-cell top left date'>Departed Date</th>
-    <td class='search-cell top'><?php echo $this->escape($history->getDepartDate()); ?></td>
-    <?php endif; ?>
-</tr>
+	<tr class='search-result'>
+	    <th class='search-cell top first name'>Name</th>
+	    <td class='search-cell top '><?php echo $this->escape($history->getFullName()); ?></td>
+	    <th class='search-cell top relationship'>Relationship</th>
+	    <td class='search-cell top'><?php echo $this->escape($history->getRelationship()); ?></td>
+	    <th class='search-cell top birthdate'>Birthdate</th>
+	    <td class='search-cell top'><?php echo $this->escape($history->getBirthDate()); ?></td>
+	    <?php if($history->getDepartDate()):?>
+	    	<th class='search-cell top left date'>Departed Date</th>
+	    	<td class='search-cell top'><?php echo $this->escape($history->getDepartDate()); ?></td>
+	    <?php endif; ?>
+	</tr>
 <?php endforeach; ?>
