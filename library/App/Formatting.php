@@ -1,11 +1,17 @@
 <?php
 
+/**
+ * Static helper methods that format various things in various ways for display or database storage.
+ */
 class App_Formatting
 {
 
     /**
      * Formats a user role constant from `App_Roles` into a user-friendly string. Unrecognized roles
      * will be mapped to the empty string.
+     *
+     * @param string $role
+     * @return string
      */
     public static function formatRole($role) {
         switch ($role) {
@@ -27,7 +33,8 @@ class App_Formatting
     }
 
     /**
-     * Formats a 10-digit United States phone number.
+     * Formats a 10-digit United States phone number. If the specified phone number is `null`, then
+     * the empty string will be returned.
      *
      * @param string $phone
      * @return string
@@ -36,7 +43,7 @@ class App_Formatting
     {
         if($phone === null || $phone === '')
             return '';
-        
+
         $phone1 = substr($phone, 0, 3);
         $phone2 = substr($phone, 3, 3);
         $phone3 = substr($phone, 6, 4);
@@ -54,24 +61,52 @@ class App_Formatting
         return '$' . number_format($amount, 2);
     }
 
+    /**
+     * Formats a date from the database for display. If the specified date is `null`, then the empty
+     * string will be returned.
+     *
+     * @param string $date
+     * @return string
+     */
     public static function formatDate($date)
     {
         return ($date !== null) ? date('m/d/Y', strtotime($date)) : '';
     }
 
+    /**
+     * Formats a date and time from the database for display. If the specified date and time is
+     * `null`, then the empty string will be returned.
+     *
+     * @param string $dateTime
+     * @return string
+     */
     public static function formatDateTime($dateTime)
     {
         return ($dateTime !== null) ? date('m/d/Y g:i A', strtotime($dateTime)) : '';
     }
 
+    /**
+     * Formats a date for storage in the database. If the specified date is the empty string, then
+     * `null` will be returned.
+     *
+     * @param string $date
+     * @return string
+     */
     public static function unformatDate($date)
     {
         return ($date !== '') ? date('Y-m-d', strtotime($date)) : null;
     }
 
+    /**
+     * Formats a date and time for storage in the database. If the specified date and time is the
+     * empty string, then `null` will be returned.
+     *
+     * @param string $dateTime
+     * @return string
+     */
     public static function unformatDateTime($dateTime)
     {
-        return ($dateTime !== null) ? date('Y-m-d H:i:s', strtotime($dateTime)) : '';
+        return ($dateTime !== '') ? date('Y-m-d H:i:s', strtotime($dateTime)) : null;
     }
 
     /**
@@ -92,21 +127,34 @@ class App_Formatting
     }
 
     /**
-     * Truncates a string to the specific length, appending an ellipsis if truncate occurs.
+     * Truncates a string to the specific length, appending an ellipsis if truncation occurs.
      *
      * @param string $x
+     * @param int $len
      * @return string
      */
-    public static function truncateString($x)
+    public static function truncateString($x, $len)
     {
-        return (strlen($x) > 18) ? substr_replace($x, '…', 18) : $x;
+        return (strlen($x) > $len) ? substr_replace($x, '…', $len) : $x;
     }
 
+    /**
+     * Converts the empty string to `null`, leaving other values unchanged.
+     *
+     * @param mixed $x
+     * @return mixed
+     */
     public static function emptyToNull($x)
     {
         return ($x !== '') ? $x : null;
     }
 
+    /**
+     * Checks if the specified string consists only of whitespace.
+     *
+     * @param string $x
+     * @return bool
+     */
     public static function isBlank($x)
     {
         return trim($x) === '';

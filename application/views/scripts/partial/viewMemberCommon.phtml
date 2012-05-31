@@ -5,8 +5,7 @@
     <td class='search-cell top name'><?php echo $this->escape($this->user->getEmail()); ?></td>
     <th class='search-cell top'>Role</th>
     <td class='search-cell top'><?php echo $this->escape(App_Formatting::formatRole($this->user->getRole())); ?></td>
-    <td class='search-cell top icon last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId())); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
-    
+    <td class='search-cell top icon last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->escape($this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId()))); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
 </tr>
 <tr class='search-result <?php echo $this->rowStripeClass; ?>'>
     <th class='search-cell bot first name'>Home Phone</th>

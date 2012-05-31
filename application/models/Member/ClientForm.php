@@ -60,7 +60,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'class' => 'form-horizontal twocol',
         ));
 
-        // Hidden element storing IDs and things across edit requests.
+        // Hidden element storing IDs and things across edit requests:
+
         $safeSerializedNull = $this->_safeSerializeService->serialize(null);
 
         $this->addElement('hidden', 'fixedClientData', array(
@@ -73,7 +74,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             'decorators' => array('ViewHelper'),
         ));
 
-        // General summary elements for clients with existing database entries.
+        // General summary elements for clients with existing database entries:
+
         if ($id !== null) {
             $this->addElement('text', 'clientId', array(
                 'label' => 'Client ID',
@@ -409,7 +411,11 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             ));
         }
 
-        $this->addSubForm(new Application_Model_Member_AddrSubForm(null, true, true), 'addr');
+        $this->addSubForm(new Application_Model_Member_AddrSubForm(array(
+            'hasParishField' => true,
+            'readOnly' => $readOnly,
+            'zipRequired' => true,
+        )), 'addr');
 
         // Householders sub form:
 
@@ -434,11 +440,14 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         ));
 
         // If necessary, mark all the form elements read only.
-        foreach ($this->getElements() as $element) {
-            if ($element instanceof Zend_Form_Element_Select) {
-                $element->setAttrib('disabled', $readOnly ? true : null);
-            } else {
-                $element->setAttrib('readonly', $readOnly ? true : null);
+
+        if ($readOnly) {
+            foreach ($this->getElements() as $element) {
+                if ($element instanceof Zend_Form_Element_Select) {
+                    $element->setAttrib('disabled', true);
+                } else {
+                    $element->setAttrib('readonly', true);
+                }
             }
         }
     }

@@ -60,7 +60,7 @@ function isMissingPhone($element)
     <legend>Current address:</legend>
 
     <?php
-    if ($this->editing) {
+    if ($this->editing && !$this->readOnly) {
         echo $this->element->changeType;
     }
 
