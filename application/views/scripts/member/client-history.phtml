@@ -1,21 +1,35 @@
+<?php
+$clientId     = $this->escape($this->client->getId());
+$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
+var_dump($this->client->getHouseholdId());
+var_dump($this->history[$this->client->getHouseholdId()][0]);
+?>
+
 <fieldset>
-    <legend>Household History:</legend>
+    <legend>Current Household:</legend>
     <div class=search-results>
         <table class='search-results'>
         	
-            <?php
-			$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';		
+            <?php		
 			
 			foreach (array_values($this->history) as $i => $history):?>
 				<tr class="search-result <?php echo $rowStripeClass; ?>">
-		    	<th class="search-cell bot first">Householder</th>
-		    	<td class="search-cell bot"><?php echo $this->escape($this->client->getFullName()); ?></td>
-		    	<th class="search-cell bot first">Address</th>
-		    	<td colspan=5 class="search-cell bot"><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
+			    <th colspan=2 class="search-cell top name">Client ID</th>
+			    <td class="search-cell top clientid"><?php echo $clientId; ?></td>
+			    <th colspan=2 class="search-cell top name">Name</th>
+			    <td class="search-cell top fullname"><?php echo $this->escape($this->client->getFullName()); ?></td>
+			    <th class="search-cell top name">Birth Date</th>
+			    <td colspan=3 class="search-cell top birthdate"><?php echo $this->escape($this->client->getBirthDate()); ?></td>
+		    </tr>
+		    	<tr class="search-result <?php echo $rowStripeClass; ?>">
+	    		<th colspan=2 class="search-cell top name">Phone</th>
+			    <td colspan=2 class="search-cell top phone"><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
+		    	<th class="search-cell top name">Address</th>
+    			<td colspan=5 class="search-cell top address"><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
 				</tr>
-				<?php echo $this->partial('partial/viewHouseholdHistory.phtml', array('i' => $i, 'history' => $history));
+				<?php echo $this->partial('partial/viewHouseholdHistory.phtml', array(
+					'i' => $i, 'history' => $history, 'rowStripeClass' => $rowStripeClass));
 			endforeach; ?>
-			
         </table>
     </div>
 </fieldset>

@@ -1,15 +1,19 @@
+<?php
+//$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
 
-<?php foreach (array_values($this->history) as $i => $history):?>
-	<tr class='search-result'>
-	    <th class='search-cell top first name'>Name</th>
-	    <td class='search-cell top '><?php echo $this->escape($history->getFullName()); ?></td>
-	    <th class='search-cell top relationship'>Relationship</th>
-	    <td class='search-cell top'><?php echo $this->escape($history->getRelationship()); ?></td>
-	    <th class='search-cell top birthdate'>Birthdate</th>
-	    <td class='search-cell top'><?php echo $this->escape($history->getBirthDate()); ?></td>
+foreach (array_values($this->history) as $i => $history):?>
+	<tr class="search-result <?php echo $this->rowStripeClass; ?>">
+	    <th colspan=2 class='search-cell top name'>Name</th>
+	    <td class='search-cell top fullname'><?php echo $this->escape($history->getFullName()); ?></td>
+	    <th colspan=2 class='search-cell top name'>Relationship</th>
+	    <td class='search-cell top'><?php echo $this->escape(ucfirst($history->getRelationship())); ?></td>
+	    <th class='search-cell top name'>Birth Date</th>
+	    <td class='search-cell top birthdate'><?php echo $this->escape($history->getBirthDate()); ?></td>
 	    <?php if($history->getDepartDate()):?>
-	    	<th class='search-cell top left date'>Departed Date</th>
-	    	<td class='search-cell top'><?php echo $this->escape($history->getDepartDate()); ?></td>
+	    	<th class='search-cell top name'>Departed Date</th>
+	    	<td colspan=1 class='search-cell top leftdate'><?php echo $this->escape($history->getDepartDate()); ?></td>
+	    <?php else:?>
+	    	<td colspan=2 class='search-cell top leftdate'></td>
 	    <?php endif; ?>
 	</tr>
 <?php endforeach; ?>
