@@ -48,7 +48,7 @@ $scheduleEntries = Zend_Registry::get('schedule');
 // Fetch available funds for sidebar
 $service = new App_Service_GeneralService();
 $requestsAmt = $service->getPendingCheckRequestsAmount();
-$aFunds - $funds = $requestsAmt;
+$aFunds = $funds - $requestsAmt;
 $aFundsStr = App_Formatting::formatCurrency($aFunds);
 ?>
 

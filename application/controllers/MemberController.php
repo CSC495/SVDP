@@ -170,7 +170,10 @@ class MemberController extends Zend_Controller_Action
 
         $this->view->users = array();
         $lastRowLetter     = null;
-
+	
+	// remove inactive memebers
+	$users = array_filter($users, function($usr) { return $usr->isActive();} );
+	
         foreach ($users as $userId => $user) {
             $firstName = $user->getFirstName();
 

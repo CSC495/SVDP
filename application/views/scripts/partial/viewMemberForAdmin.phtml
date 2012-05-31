@@ -7,7 +7,6 @@ echo $this->partial('partial/viewMemberCommon.phtml', array(
     'rowStripeClass' => $rowStripeClass,
     'showEditBtn' => true,
     'showId' => true,
-    'showActive' => true,
     'user' => $this->user,
     'rowId' => ($this->rowLetter !== null) ? 'id="' . $this->escape($this->rowLetter) . '" ' : '',
 ));
