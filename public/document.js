@@ -27,7 +27,9 @@ function initDocView() {
 }
 
 function initDocAdd(){
-	
+	//url,name,add
+	$("#url").keypress(function() { $(this).parent().parent().removeClass('error'); $(this).next().remove(); });
+	$("#name").keypress(function() { $(this).parent().parent().removeClass('error'); $(this).next().remove(); });
 	$(document).ready(function(){
 		$("#add").validate({
 			rules: {
@@ -37,25 +39,31 @@ function initDocAdd(){
 				},
 				url: {
 					required: true,
-					maxlength: 2083
+					maxlength: 2083,
+					url: true
 				}
 			},
 			messages: {
 				name: {
 					required: "File name must be provided",
-					maxlength: "File name cannot exceed 50 characters"
+					maxlength: "File name must not exceed 50 characters"
 				},
 				url: {
 					required: "URL must be provided",
-					maxlength: "URL cannot exceed 2083 characters"
+					maxlength: "URL cannot exceed 2083 characters",
+					url: "URL is invalid. Did you forget \"http://\"?"
 				}
 			},
 			submitHandler: function(form) {
-				alert('test');
 				form.submit();
+			},
+			errorElement: "span",
+			errorPlacement: function(error, element){
+				var parent = element.parent().parent();
+				parent.addClass('error');
+				error.insertAfter(element);
+				error.addClass('help-inline');
 			}
 		});//end validate
 	});// end ready
-	
-	//url,name,add
 }

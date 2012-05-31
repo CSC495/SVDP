@@ -23,7 +23,7 @@ class App_Formatting
 
         case App_Roles::ADMIN:
             return 'Admin';
-        
+
         case App_Roles::DATAMIGRATION:
             return 'Data Migrator';
 
@@ -51,14 +51,15 @@ class App_Formatting
     }
 
     /**
-     * Formats a United States dollar amount.
+     * Formats a United States dollar amount. If the given amount is non-numeric, then the empty
+     * string shall be returned.
      *
-     * @param float $amount
+     * @param mixed $amount
      * @return string
      */
     public static function formatCurrency($amount)
     {
-        return '$' . number_format($amount, 2);
+        return is_numeric($amount) ? number_format($amount, 2) : '';
     }
 
     /**
