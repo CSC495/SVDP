@@ -69,14 +69,14 @@ function initDocUpload(){
 }
 function initDocAdd(){
 	//url,name,add
-	$("#url").keypress(function() {
-		$(this).parent().parent().removeClass('error');
-		$(this).next().remove();
-	});
-	$("#name").keypress(function() {
-		$(this).parent().parent().removeClass('error');
-		$(this).next().remove();
-	});
+	//$("#url").keypress(function() {
+	//	$(this).parent().parent().removeClass('error');
+	//	$(this).next().remove();
+	//});
+	//$("#name").keypress(function() {
+	//	$(this).parent().parent().removeClass('error');
+	//	$(this).next().remove();
+	//});
 	$(document).ready(function(){
 		$("#add").validate({
 			rules: {
@@ -101,13 +101,22 @@ function initDocAdd(){
 					url: "URL is invalid. Did you forget \"http://\"?"
 				}
 			},
+			highlight: function(element, errorClass, validClass){
+				element.parent().parent().addClass('error');
+			},
+			unhighlight: function(element, errorClass, validClass){
+				var parent = element.parent().get(0);
+				parent = parent.parent();
+				element.parent().parent().removeClass('error');
+			},
 			submitHandler: function(form) {
 				form.submit();
 			},
+			focusCleanup: true,
 			errorElement: "span",
 			errorPlacement: function(error, element){
-				var parent = element.parent().parent();
-				parent.addClass('error');
+				//var parent = element.parent().parent();
+				//parent.addClass('error');
 				error.insertAfter(element);
 				error.addClass('help-inline');
 			}
