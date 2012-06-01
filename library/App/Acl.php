@@ -49,6 +49,7 @@ class App_Acl extends Zend_Acl
         $this->add(new Zend_Acl_Resource(App_Resources::REPORT));
         $this->add(new Zend_Acl_Resource(App_Resources::DOCUMENT));
         $this->add(new Zend_Acl_Resource(App_Resources::REDIRECT));
+        $this->add(new Zend_Acl_Resource(App_Resources::MIGRATION));
     }
 
     /**
@@ -103,6 +104,8 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::MEMBER,App_Resources::TREASURER,'checkReq');
         // Allow access to all actions in the reports controller
         $this->allow(App_Roles::MEMBER,App_Resources::REPORT);
+        // Allow access to all actions in migration controller
+        $this->allow(App_Roles::MEMBER,App_Resources::MIGRATION);
     }
 	/**
 	 * Sets the access for the TREASURER role.
