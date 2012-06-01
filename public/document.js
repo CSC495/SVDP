@@ -69,14 +69,6 @@ function initDocUpload(){
 }
 function initDocAdd(){
 	//url,name,add
-	//$("#url").keypress(function() {
-	//	$(this).parent().parent().removeClass('error');
-	//	$(this).next().remove();
-	//});
-	//$("#name").keypress(function() {
-	//	$(this).parent().parent().removeClass('error');
-	//	$(this).next().remove();
-	//});
 	$(document).ready(function(){
 		$("#add").validate({
 			rules: {
