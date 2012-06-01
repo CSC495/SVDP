@@ -1,8 +1,8 @@
 <?php
 $clientId     = $this->escape($this->client->getId());
 $rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
-var_dump($this->client->getHouseholdId());
-var_dump($this->history[$this->client->getHouseholdId()][0]);
+//var_dump($this->client->getHouseholdId());
+//var_dump($this->history[$this->client->getHouseholdId()][0]);
 ?>
 
 <fieldset>
@@ -28,7 +28,7 @@ var_dump($this->history[$this->client->getHouseholdId()][0]);
     			<td colspan=5 class="search-cell top address"><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
 				</tr>
 				<?php echo $this->partial('partial/viewHouseholdHistory.phtml', array(
-					'i' => $i, 'history' => $history, 'rowStripeClass' => $rowStripeClass));
+					'i' => $i, 'history' => $history, 'rowStripeClass' => $rowStripeClass, 'client' => $this->client));
 			endforeach; ?>
         </table>
     </div>

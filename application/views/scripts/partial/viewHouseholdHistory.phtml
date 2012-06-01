@@ -1,7 +1,10 @@
+
+
 <?php
 //$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
 
-foreach (array_values($this->history) as $i => $history):?>
+foreach (array_values($this->history) as $i => $history):
+if(get_class($history) !='Application_Model_Impl_Addr'): ?>
 	<tr class="search-result <?php echo $this->rowStripeClass; ?>">
 	    <th colspan=2 class='search-cell top name'>Name</th>
 	    <td class='search-cell top fullname'><?php echo $this->escape($history->getFullName()); ?></td>
@@ -14,6 +17,7 @@ foreach (array_values($this->history) as $i => $history):?>
 	    	<td colspan=1 class='search-cell top leftdate'><?php echo $this->escape($history->getDepartDate()); ?></td>
 	    <?php else:?>
 	    	<td colspan=2 class='search-cell top leftdate'></td>
-	    <?php endif; ?>
+	    <?php endif; 
+	    endif; ?>
 	</tr>
 <?php endforeach; ?>
