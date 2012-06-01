@@ -170,7 +170,10 @@ class MemberController extends Zend_Controller_Action
 
         $this->view->users = array();
         $lastRowLetter     = null;
-
+	
+	// remove inactive memebers
+	$users = array_filter($users, function($usr) { return $usr->isActive();} );
+	
         foreach ($users as $userId => $user) {
             $firstName = $user->getFirstName();
 
@@ -382,14 +385,14 @@ class MemberController extends Zend_Controller_Action
 
         // A client is displayed read-only if the user is not a normal member (e.g., if they're a
         // treasurer).
-        $readOnly = ($role === App_Roles::TREASURER);
+        $this->view->readOnly = ($role === App_Roles::TREASURER);
 
         if ($this->_hasParam('id')) {
             // Editing an existing client.
             $id = $this->_getParam('id');
 
-            $this->view->pageTitle = $readOnly ? 'View Client' : 'Edit Client';
-            $this->view->form = new Application_Model_Member_ClientForm($id, $readOnly);
+            $this->view->pageTitle = $this->view->readOnly ? 'View Client' : 'Edit Client';
+            $this->view->form = new Application_Model_Member_ClientForm($id, $this->view->readOnly);
 
             if (!$request->isPost()) {
                 // If the user hasn't submitted the form yet, load client info from the database.
@@ -399,7 +402,7 @@ class MemberController extends Zend_Controller_Action
             }
         } else {
             // Adding a new client.
-            if ($readOnly) {
+            if ($this->view->readOnly) {
                 throw new DomainException('Only members can add new clients');
             }
 
@@ -437,7 +440,7 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Ensure that only members can edit clients.
-        if ($readOnly) {
+        if ($this->view->readOnly) {
             throw new DomainException('Only members can edit existing clients');
         }
 
@@ -508,20 +511,14 @@ class MemberController extends Zend_Controller_Action
 
 	public function clienthistoryAction()
 	{
-		// If no client ID was provided, bail out.
-        if (!$this->_hasParam('id')) {
-            throw new UnexpectedValueException('No client ID parameter provided');
-        }
 
-        // Initialize the new client history form.
+        // Initialize the new client history view.
         $service = new App_Service_Member();
         $client  = $service->getClientById($this->_getParam('id'));
 		
-		
 		$this->view->pageTitle = 'View Household History';
-		$this->view->client    = $client;
-		$this->view->form      = new Application_Model_Member_CaseForm($client->getId());
-		
+		$this->view->client = $client;
+		$this->view->history = $service->getClientHouseholdHistory($client->getId());
 	}
 
 

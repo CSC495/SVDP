@@ -72,16 +72,61 @@ class App_Controller_Plugin_AuthPlugin extends Zend_Controller_Plugin_Abstract
                 $request->setControllerName(App_Resources::LOGIN)
                         ->setActionName('change');
             }
+
             // Check if role allows access to controller and action
-            $isAllowed = $this->_acl->isAllowed($identity->role,
-                                         $request->getControllerName(),
-                                         $request->getActionName());
+            try{
+                $isAllowed = $this->_acl->isAllowed($identity->role,
+                                             $request->getControllerName(),
+                                             $request->getActionName());
+            }catch(Zend_Acl_Exception $e){
+                // Check if the error was a resource not found error
+                if( strstr($e->getMessage(),'not found') == TRUE )
+                {
+                    return $this->notFoundError($request,$e);   
+                }
+                else // Different error, pass to error handler
+                    throw $e;
+            }
             
             // Check if user does not have permission and send to error page
             if (!$isAllowed) {
-                $redirector = Zend_Controller_Action_HelperBroker::getStaticHelper('Redirector');
-                $redirector->gotoUrlAndExit('/error/error');
+                $this->forbiddenError($request);
             }
         }
+    }
+    /**
+     * Sets a request to be have a resource not found error
+     * @param Zend_Acl_Exception $e Exception that caused error
+     * @param Zend_Controller_Request_Abstract $request
+     * @return void
+     */
+    private function notFoundError($request,$e)
+    {
+        // redirect request
+        $request->setControllerName('error');
+        $request->setActionName('error');
+        // set params
+        $error = new Zend_Controller_Plugin_ErrorHandler();
+        $error->type = Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE;
+        $error->request = clone($request);
+        $error->exception = $e;
+        $request->setParam('error_handler',$error);
+    }
+    /**
+     * Sets a request to be have a forbidden error 
+     * @param Zend_Controller_Request_Abstract $request
+     * @return void
+     */
+    private function forbiddenError($request)
+    {
+        // redirect request
+        $request->setControllerName('error');
+        $request->setActionName('error');
+        // set params
+        $error = new Zend_Controller_Plugin_ErrorHandler();
+        $error->type = App_ErrorType::FORBIDDEN;
+        $error->request = clone($request);
+        $error->exception = new Exception('You are not authorized to view this content',403);
+        $request->setParam('error_handler',$error);
     }
 }

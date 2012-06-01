@@ -6,10 +6,26 @@
 class App_Service_Map
 {
 
+    /**
+     * Contains an address model if geocoding succeeded and `null` otherwise.
+     *
+     * @var Application_Model_Impl_Addr|null
+     */
     private $_addr = null;
 
+    /**
+     * Contains an object with `latitude` and `longitude` properties if geocoding succeeded and
+     * `null` otherwise.
+     *
+     * @var object|null
+     */
     private $_coords = null;
 
+    /**
+     * Contains `null` if geocoding succeeded and an error message otherwise.
+     *
+     * @var string|null
+     */
     private $_errorMsg = null;
 
     /**
@@ -18,7 +34,7 @@ class App_Service_Map
      *
      * @param Application_Model_Impl_Addr $addr
      */
-    public function __construct($addr)
+    public function __construct(Application_Model_Impl_Addr $addr)
     {
         // Prepare the geocoding request.
         $httpClient = new Zend_Http_Client('http://maps.googleapis.com/maps/api/geocode/json');
