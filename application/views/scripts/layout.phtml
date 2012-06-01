@@ -45,17 +45,10 @@ $fundsClass = ($funds < 0.0) ? 'error': '';
 // Fetch user schedule for sidebar.
 $scheduleEntries = Zend_Registry::get('schedule');
 
-<<<<<<< HEAD
 // Fetch number of non-issued check requests
 $service = new App_Service_GeneralService();
 $requestsAmt = $service->getPendingCheckRequestsAmount();
 $aFunds = $funds - $requestsAmt;
-=======
-// Fetch available funds for sidebar
-$service = new App_Service_GeneralService();
-$requestsAmt = $service->getPendingCheckRequestsAmount();
-$aFunds - $funds = $requestsAmt;
->>>>>>> 2798ea5b738c190861ce36fc6753ae3bd9b27b36
 $aFundsStr = App_Formatting::formatCurrency($aFunds);
 ?>
 
@@ -92,11 +85,10 @@ $aFundsStr = App_Formatting::formatCurrency($aFunds);
         <?php if ($auth->hasIdentity()){ ?>
         <div class=span2>
             <ul class="well nav nav-list">
-<<<<<<< HEAD
 			
 				<!-- displays amount of available funds -->
                 <li class=nav-header>Total Funds</li>
-                <li class=sidebar-field><p><?php echo $this->escape($funds); ?></p></li>
+                <li class=sidebar-field><p><?php echo $this->escape($fundsStr); ?></p></li>
 
                 <li class=divider></li>
 
@@ -110,42 +102,15 @@ $aFundsStr = App_Formatting::formatCurrency($aFunds);
 				<p>Week of:</p>
                 <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
                 <li><?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></li>
-=======
-				<!-- displays amount of total funds -->
-                <li class=nav-header>Total Funds</li>
-                <li class=sidebar-field><p class="<?php echo $this->escape($fundsClass); ?>"><?php echo $this->escape($fundsStr); ?></p></li>
-				
-				<li class=divider></li>
-
-				<!-- displays amount of available funds after pending check requests are issued -->
-				<li class=nav-header>Available Funds</li>
-				<li class=sidebar-field><p><?php echo $this->escape($aFundsStr); ?></p></li>
-
-                <li class=divider></li>
-
-				<!-- displays schedule - begins with "Week of: " followed by dates with names on following line -->
-                <li class=nav-header>Member Schedule</li>
-				<p>Week of:</p>
-                <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
-                <li> <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></li>
->>>>>>> 2798ea5b738c190861ce36fc6753ae3bd9b27b36
                 <li class=sidebar-field><p><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
                 <?php } ?>
 
                 <li class=divider></li>
-<<<<<<< HEAD
-				
-				<!-- list of common links -->
-                <li class=nav-header>Quick Links</li>
-				<li><a href="http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
-                <li><a href="http://www.dupagepads.org/">DuPage PADS</a></li>
-=======
 
 				<!-- list of common links -->
                 <li class=nav-header>Quick Links</li>
->>>>>>> 2798ea5b738c190861ce36fc6753ae3bd9b27b36
-                <li><a href="http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
                 <li><a href="http://www.dupagepads.org/">DuPage PADS</a></li>
+                <li><a href="http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
                 <li><a href="http://www.napervilletownship.com/">LIHEAP</a></li>
 				<li><a href="http://www.lisletownshipassessor.com/SD/Lisle/content/Detail.aspx?ID=4&CID=c2169f4f-f265-4548-85e5-f8d6fdd4f56b">Lisle Property Lookup</a></li>
                 <li><a href="http://www.loaves-fishes.org/">Loaves &amp; Fishes</a></li>
