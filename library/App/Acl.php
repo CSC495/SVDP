@@ -107,8 +107,6 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::MEMBER,App_Resources::TREASURER,'checkReq');
         // Allow access to all actions in the reports controller
         $this->allow(App_Roles::MEMBER,App_Resources::REPORT);
-        // Allow access to all actions in migration controller
-        $this->allow(App_Roles::MEMBER,App_Resources::MIGRATION);
     }
 	/**
 	 * Sets the access for the TREASURER role.
