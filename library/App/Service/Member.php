@@ -228,16 +228,12 @@ class App_Service_Member
     public function getActiveMembers()
     {
         $select = $this->_db->select()
-            ->from(array('u' => 'user'), array(
-                'u.user_id',
-                'u.first_name',
-                'u.last_name',
-            ))
-            ->where('u.active_flag = ?', 1)
-            ->where('u.role = ?', 'M')
-            ->order(array('u.first_name', 'u.last_name', 'u.user_id'));
+            ->from('user')
+            ->where('active_flag = ?', 1)
+            ->where('role = ?', 'M')
+            ->order(array('first_name', 'last_name', 'user_id'));
 
-        $results = $this->_db->fetchAssoc($select);
+        $results = $this->_db->fetchAll($select);
         return $this->buildUserModels($results);
     }
 
@@ -377,6 +373,7 @@ class App_Service_Member
         }
         return $arr;
     }
+    
 
     /****** PUBLIC CREATE/INSERT QUERIES ******/
 
@@ -1134,14 +1131,16 @@ class App_Service_Member
 
         foreach ($dbResults as $dbResult) {
             $user = new Application_Model_Impl_User();
-            $user
-                ->setUserId($dbResult['user_id'])
+            $user->setUserId($dbResult['user_id'])
                 ->setFirstName($dbResult['first_name'])
-                ->setLastName($dbResult['last_name']);
-
+                ->setLastName($dbResult['last_name'])
+                ->setEmail($dbResult['email'])
+                ->setCellPhone($dbResult['cell_phone'])
+                ->setHomePhone($dbResult['home_phone'])
+                ->setRole($dbResult['role'])
+                ->setActive($dbResult['active_flag']);
             $users[$dbResult['user_id']] = $user;
         }
-
         return $users;
     }
 
