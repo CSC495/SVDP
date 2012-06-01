@@ -374,6 +374,18 @@ class App_Service_Member
         return $arr;
     }
     
+    //Returns an array of populated User objects for each active user
+    public function getActiveUsers()
+    {
+        $select = $this->_db->select()
+            ->from('user')
+            ->where('active_flag = ?', 1)
+            ->order(array('first_name', 'last_name', 'user_id'));
+
+        $results = $this->_db->fetchAll($select);
+        return $this->buildUserModels($results);
+    }
+    
 
     /****** PUBLIC CREATE/INSERT QUERIES ******/
 
