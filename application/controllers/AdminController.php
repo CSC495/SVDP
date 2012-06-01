@@ -188,8 +188,9 @@ class AdminController extends Zend_Controller_Action
         
         $error = false;
         if(!$form->isValid($_POST))
+        {
             $error = true;
-            
+        }   
         // Check to ensure atleast one phone number was provided
         if($form->getValue('cell') === '' && $form->getValue('home') === '')
         {
@@ -198,7 +199,7 @@ class AdminController extends Zend_Controller_Action
             
             $error = true;
         }
-            
+
         // If theres an error return
         if($error)
             return;

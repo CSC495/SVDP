@@ -44,6 +44,8 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
                                    'filters'    => array('StringTrim'),
 				   'required'   => true,
 				   'label'      => 'First Name:',
+				   'name'       => 'fname',
+				   'id'         => 'fname',
 				   'validators' => array(
 				array('NotEmpty', true, array(
 				    'type' => 'string',
@@ -62,6 +64,8 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
                                    'filters'    => array('StringTrim'),
 				   'required'   => true,
 				   'label'      => 'Last Name:',
+				   'name'       => 'lname',
+				   'id'         => 'lname',
 				   'validators' => array(
 				array('NotEmpty', true, array(
 				    'type' => 'string',
@@ -79,8 +83,10 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
 		$home = $this->addElement('text', 'home', array(
 					'filters'    => array('StringTrim','Digits'),
 					'required'   => false,
-					'class'      => 'phone',
+					'class'      => 'phone required_group',
 					'label'      => 'Home Phone:',
+					'id'         => 'hphone',
+					'name'       => 'hphone',
 					'validators' => array(
 					array('StringLength', true, array(
 						'min' => 10,
@@ -95,7 +101,9 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
 		$cell = $this->addElement('text', 'cell', array(
                    'filters'    => array('StringTrim','Digits'),
                    'required'   => false,
-				   'class'      => 'phone',
+		   'class'      => 'phone required_group',
+		   'id'         => 'cphone',
+		   'name'       => 'cphone',
                    'label'      => 'Cell Phone:',
 				   'validators' => array(
 					array('StringLength', true, array(

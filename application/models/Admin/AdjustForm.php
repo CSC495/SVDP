@@ -55,6 +55,8 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 			'label'      => 'Total Receivable Lifetime Aid:',
 			'class'      => 'input-small',
 			'prepend'    => '$',
+			'name'       => 'aid',
+			'id'         => 'aid',
 		));
 
 
@@ -72,6 +74,8 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 			'label'      => 'Total Receivable Aid Per Case:',
 			'class'      => 'input-small',
 			'prepend'    => '$',
+			'name'       => 'casefund',
+			'id'         => 'casefund',
 		   ));
 	       
 		// Input of lifetime cases a client can have
@@ -83,6 +87,8 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 		    'required'   => true,
 		    'label'      => 'Lifetime Case Limit:',
 		    'class'      => 'input-small',
+		    'name'       => 'lifetimecases',
+		    'id'         => 'lifetimecases',
 		   ));
         
 		// Input of yearly cases a client can have
@@ -94,6 +100,8 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 		    'required'   => true,
 		    'label'      => 'Yearly Cases Limit:',
 		    'class'      => 'input-small',
+		    'name'       => 'yearlycases',
+		    'id'         => 'yearlycases',
 		   ));
                
 		$adjust = $this->addElement('submit', 'adjust', array(

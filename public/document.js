@@ -49,6 +49,14 @@ function initDocUpload(){
 			submitHandler: function(form) {
 				form.submit();
 			},
+		    highlight: function(element, errorClass, validClass){
+				$(element).parent("div").parent("div").addClass(errorClass).removeClass(validClass);
+			},
+			unhighlight: function(element, errorClass, validClass){
+				$(element).parent("div").parent("div").removeClass(errorClass).addClass(validClass);
+			},
+			errorClass: "error",
+			validClass: "success",
 			errorElement: "span",
 			errorPlacement: function(error, element){;
 				error.addClass('help-inline');	
@@ -94,17 +102,16 @@ function initDocAdd(){
 				}
 			},
 			highlight: function(element, errorClass, validClass){
-				element.parent().parent().addClass('error');
+				$(element).parent("div").parent("div").addClass(errorClass).removeClass(validClass);
 			},
 			unhighlight: function(element, errorClass, validClass){
-				var parent = element.parent().get(0);
-				parent = parent.parent();
-				element.parent().parent().removeClass('error');
+				$(element).parent("div").parent("div").removeClass(errorClass).addClass(validClass);
 			},
 			submitHandler: function(form) {
 				form.submit();
 			},
-			focusCleanup: true,
+			errorClass: "error",
+			validClass: "success",
 			errorElement: "span",
 			errorPlacement: function(error, element){
 				//var parent = element.parent().parent();
