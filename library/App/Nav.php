@@ -37,6 +37,10 @@ class App_Nav
             '/report'                => 'Reports',
             '/document/list'         => 'Documents',
         ),
+        // Navigation for data migration.
+        App_Roles::DATAMIGRATION => array(
+            'migration' => 'Add Client Info',
+        ),
     );
 
     /**

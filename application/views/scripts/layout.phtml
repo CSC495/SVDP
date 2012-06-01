@@ -48,16 +48,6 @@ $funds      = $config->getAvailableFunds();
 $fundsStr   = '$' . App_Formatting::formatCurrency($funds);
 $fundsClass = ($funds < 0.0) ? 'error': '';
 
-<<<<<<< HEAD
-// Fetch user schedule for sidebar.
-$scheduleEntries = Zend_Registry::get('schedule');
-
-// Fetch number of non-issued check requests
-$service = new App_Service_GeneralService();
-$requestsAmt = $service->getPendingCheckRequestsAmount();
-$aFunds = $funds - $requestsAmt;
-$aFundsStr = App_Formatting::formatCurrency($aFunds);
-=======
 // Fetch available funds for sidebar
 $service     = new App_Service_GeneralService();
 $requestsAmt = $service->getPendingCheckRequestsAmount();
@@ -67,7 +57,6 @@ $aFundsClass = ($aFunds < 0.0) ? 'error' : '';
 
 // Fetch user schedule for sidebar.
 $scheduleEntries = Zend_Registry::get('schedule');
->>>>>>> 059012b06ee3a27ede3cd7e4bc1f80f39727c371
 ?>
 
 <div class=container-fluid>
@@ -113,11 +102,6 @@ $scheduleEntries = Zend_Registry::get('schedule');
 				<!-- displays amount of available funds after pending check requests are issued -->
 				<li class=nav-header>Available Funds</li>
                 <li class=sidebar-field><p class="<?php echo $this->escape($aFundsClass); ?>"><?php echo $this->escape($aFundsStr); ?></p></li>
-
-                <li class=divider></li>
-
-		<li class=nav-header>Available Funds</li>
-                <li class=sidebar-field><p><?php echo $this->escape($aFundsStr); ?></p></li>
 
                 <li class=divider></li>
 				
