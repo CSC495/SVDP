@@ -120,6 +120,10 @@ th.search-cell {
     margin-top: 18px;
 }
 
+.nav-pills > .active > a:hover {
+    background-color: #1c6ba0 !important;
+}
+
 .hero-unit .help-block {
     font-size: 13px;
     line-height: 18px;
