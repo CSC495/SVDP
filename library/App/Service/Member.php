@@ -69,7 +69,11 @@ class App_Service_Member
             ->joinLeft(
                 array('d' => 'do_not_help'),
                 'c.client_id = d.client_id',
-                array('do_not_help_reason' => 'd.reason')
+                array(
+                    'do_not_help_user_id' => 'd.create_user_id',
+                    'do_not_help_date' => 'd.added_date',
+                    'do_not_help_reason' => 'd.reason',
+                )
             )
             ->where('h.current_flag = 1')
             ->where('c.client_id = ?', $clientId);
@@ -391,7 +395,7 @@ class App_Service_Member
                     'client_id' => $client->getId(),
                     'create_user_id' => $client->getUser()->getUserId(),
                     'added_date' => $client->getCreatedDate(),
-                    'reason' => $client->getDoNotHelpReason(),
+                    'reason' => $client->getDoNotHelp()->getReason(),
                 ));
             }
 
@@ -528,12 +532,14 @@ class App_Service_Member
             );
 
             if ($client->isDoNotHelp()) {
-                // If the client is marked do-not-help, insert do-not-help record.
+                // If the client is marked do-not-help, insert or update do-not-help record.
+                $doNotHelp = $client->getDoNotHelp();
+
                 $this->_db->insert('do_not_help', array(
                     'client_id' => $client->getId(),
-                    'create_user_id' => $client->getUser()->getUserId(),
-                    'added_date' => $client->getCreatedDate(),
-                    'reason' => $client->getDoNotHelpReason(),
+                    'create_user_id' => $doNotHelp->getUser()->getUserId(),
+                    'added_date' => $doNotHelp->getDateAdded(),
+                    'reason' => $doNotHelp->getReason(),
                 ));
             }
 
@@ -1003,6 +1009,19 @@ class App_Service_Member
             ->setFirstName($dbResult['user_first_name'])
             ->setLastName($dbResult['user_last_name']);
 
+        if ($dbResult['do_not_help_reason'] !== null) {
+            $doNotHelpUser = new Application_Model_Impl_User();
+            $doNotHelpUser->setUserId($dbResult['do_not_help_user_id']);
+
+            $doNotHelp = new Application_Model_Impl_DoNotHelp();
+            $doNotHelp
+                ->setUser($doNotHelpUser)
+                ->setDateAdded($dbResult['do_not_help_date'])
+                ->setReason($dbResult['do_not_help_reason']);
+        } else {
+            $doNotHelp = null;
+        }
+
         $client = new Application_Model_Impl_Client();
         $client
             ->setId($dbResult['client_id'])
@@ -1022,7 +1041,7 @@ class App_Service_Member
             ->setSpouse($spouse)
             ->setHouseholdId($dbResult['household_id'])
             ->setCurrentAddr($addr)
-            ->setDoNotHelpReason($dbResult['do_not_help_reason']);
+            ->setDoNotHelp($doNotHelp);
 
         return $client;
     }

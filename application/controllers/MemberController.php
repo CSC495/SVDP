@@ -480,6 +480,14 @@ class MemberController extends Zend_Controller_Action
                     ->setCreatedDate(date('Y-m-d'));
             }
 
+            if ($client->isDoNotHelp() && $client->getDoNotHelp()->getUser() === null) {
+                // If an existing client was added to the do-not-help list, then we need to track
+                // the date added and adding user.
+                $client->getDoNotHelp()
+                    ->setUser($user)
+                    ->setDateAdded(date('Y-m-d'));
+            }
+
             $client = $service->editClient(
                 $client,
                 $changedHouseholders,
