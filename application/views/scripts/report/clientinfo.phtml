@@ -1,12 +1,7 @@
-<?php
-    
-    require("html2fpdf-3.0.2b/html2fpdf.php");
-    $htmlFile = "<html>
-                <head></head><body>
-                    Hello World</body>
-                </html>";
-    //$buffer = file_get_contents($htmlFile);
-    $pdf = new HTML2FPDF('P', 'mm', 'Letter');
-    $pdf->AddPage();
-    $pdf->WriteHTML($htmlFile);
-    $pdf->Output('test.pdf', 'D'); 
+<p>Please Enter The Following Client Information</p>
+
+<div id="clientInfo">
+    <?php
+        echo $this->form;
+    ?>
+</div>

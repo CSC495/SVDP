@@ -1,4 +1,12 @@
-<table border="1">
+ <html>
+    <?php $baseUrl = new Zend_View_Helper_BaseUrl(); ?>
+    
+    <form action="<?php echo $baseUrl->baseUrl('/report/clientpdf/')?>" method=post>
+        <input type="hidden" name="clientid" value="<?php echo $this->client->getId() ?>">
+        <input type="submit" value="Generate PDF">
+        
+    </form>
+    <table border="1">
     <tr>
         <td>&nbsp;</td><td><h3>&nbsp;&nbsp;St. Vincent de Paul</h3></td><td>&nbsp;</td>      
     </tr>
@@ -56,3 +64,6 @@
         <td>&nbsp;Zip Code:&nbsp;<?php echo $this->escape($this->client->getCurrentAddr()->getZip()) ?>&nbsp;</td>
     </tr>
 </table>
+
+    
+ </html>
