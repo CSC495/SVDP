@@ -514,7 +514,8 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
             $this->fixedClientDataHash->getValue()
         );
 
-        if (isset($doNotHelp['userId'], $doNotHelp['householdId'], $doNotHelp['createdDate'])) {
+        if (isset($fixedClientData['userId'], $fixedClientData['householdId'],
+                $fixedClientData['createdDate'])) {
             $user = new Application_Model_Impl_User();
             $user->setUserId($fixedClientData['userId']);
 
