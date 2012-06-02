@@ -2,21 +2,16 @@
     //Location to be download to
     $fName = $this->client->getFirstName();
     $lName = $this->client->getLastName();
+    $format = new App_Formatting();
     
     require("html2fpdf-3.0.2b/html2fpdf.php");
     $htmlFile =
         "<table>
             <tr>
-                <td>&nbsp;</td><td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td>      
+                <td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td><td>&nbsp;</td>      
             </tr>
             <tr>
-                <td>&nbsp;</td><td><h4><center>Client Information Report&nbsp;</center></h4></td><td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td><h4><center>Client Information Report&nbsp;</center></h4></td><td>&nbsp;</td><td>&nbsp;</td>
             </tr>
             <tr>
                 <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -31,8 +26,9 @@
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
             </tr>
+            
             <tr>        
-                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date Created:&nbsp;". $this->client->getCreatedDate() . "&nbsp;</td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date Created:&nbsp;". $format->formatDate($this->client->getCreatedDate()) . "&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
             </tr>

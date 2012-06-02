@@ -50,13 +50,21 @@ class ReportController extends Zend_Controller_Action
 	$this->view->pageTitle = "Client Information Report"; 
         $this->view->form = new Application_Model_Report_clientReport(); 
     }
+    public function errorAction(){
+	$this->view->pageTitle = "Client Information Report"; 
+        $this->view->form = new Application_Model_Report_clientReport(); 
+    }
     public function clientresultsAction(){
 	$this->view->pageTitle = "Client Information Report";
 	$form = new Application_Model_Report_clientReport();
 	$form->populate($_POST);
 	$cId = $form->clientid->getValue();
 	$service = new App_Service_Member();	
-	$this->view->client = $service->getClientById($cId);	
+	$this->view->client = $service->getClientById($cId);
+	if($this->view->client == null)
+	{
+	    $this->_helper->redirector('error');
+	}
     }
     public function clientpdfAction(){
 	$this->view->pageTitle = "Client Information Report";
@@ -64,7 +72,11 @@ class ReportController extends Zend_Controller_Action
 	$form->populate($_POST);
 	$cId = $form->clientid->getValue();
 	$service = new App_Service_Member();	
-	$this->view->client = $service->getClientById($cId);	
+	$this->view->client = $service->getClientById($cId);
+	if($this->view->client == null)
+	{
+	    $this->_helper->redirector('error');
+	}
     }
     public function ocactivitiesAction(){
 	$this->view->pageTitle = "On Call Activities Report";
@@ -127,8 +139,7 @@ class ReportController extends Zend_Controller_Action
 	}
 	
 	$this->view->referrals = $referrals;
-	$this->view->referHelped = $referHelped;
-	
+	$this->view->referHelped = $referHelped;	
     }
     public function ocapdfAction(){
 	$this->view->pageTitle = "On Call Activities Report";
@@ -213,9 +224,12 @@ class ReportController extends Zend_Controller_Action
 	    $ctr += 1;
 	}
 	$this->view->request = $chkRequest;
+	if($this->view->request == null)
+	{
+	    $this->_helper->redirector('error');
+	}
     }
-    public function exceltestAction(){
-	//$this->view->form = new Application_Model_Report_ocaReport();
+    public function reimbursepdfAction(){
 	$this->view->pageTitle = "Reimbursement Report";         
 	$form = new Application_Model_Report_reimbursementReport();
 	$form->populate($_POST);
@@ -226,7 +240,6 @@ class ReportController extends Zend_Controller_Action
 	$service = new App_Service_DocumentService();
 	$this->view->client = $service2->getClientById($caseId);
 	$results = $service->getCheckReqsByCaseId($caseId);
-	
 	$ctr = 0;
 	foreach($results as $row)
 	{
@@ -234,6 +247,10 @@ class ReportController extends Zend_Controller_Action
 	    $ctr += 1;
 	}
 	$this->view->request = $chkRequest;
+	if($this->view->client == null)
+	{
+	    $this->_helper->redirector('error');
+	}
     }
 
 }
