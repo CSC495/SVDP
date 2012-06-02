@@ -228,16 +228,12 @@ class App_Service_Member
     public function getActiveMembers()
     {
         $select = $this->_db->select()
-            ->from(array('u' => 'user'), array(
-                'u.user_id',
-                'u.first_name',
-                'u.last_name',
-            ))
-            ->where('u.active_flag = ?', 1)
-            ->where('u.role = ?', 'M')
-            ->order(array('u.first_name', 'u.last_name', 'u.user_id'));
+            ->from('user')
+            ->where('active_flag = ?', 1)
+            ->where('role = ?', 'M')
+            ->order(array('first_name', 'last_name', 'user_id'));
 
-        $results = $this->_db->fetchAssoc($select);
+        $results = $this->_db->fetchAll($select);
         return $this->buildUserModels($results);
     }
 
@@ -356,21 +352,40 @@ class App_Service_Member
     }
     
     //Gets all members of past & current households of client
-    //Returns each list of household members as an array of Householder objects,
-    //each list is an element in a two dimensional associative array (ie. [household_id][array of members])
+    //Returns each list of household members as an array of Householder objects with the household address object as the first element.
+    //Each list is an element in a two dimensional associative array (ie. [household_id][array of members])
     public function getClientHouseholdHistory($clientId){
         //Get list of all past & current client households
         $select = $this->_db->select()
                 ->from(array('h' => 'household'), 'household_id')
-                ->where('mainclient_id = ?', $clientId);
+                ->joinLeft(array('a' => 'address'),
+                            'h.address_id = a.address_id')
+                ->where('mainclient_id = ?', $clientId)
+                ->orWhere('spouse_id = ?', $clientId);
         $results = $this->_db->fetchAll($select);
         $arr = array();
+        $temp = array();
         
         //Get all the members in each household
-        foreach($results as $row)
-            $arr[$row['household_id']] = $this->getHouseholdersByHouseholdId($row['household_id']);
+        foreach($results as $row){
+            $arr[$row['household_id']] = $this->getHouseholdersByHouseClientIds($row['household_id'], $clientId);
+            array_unshift($arr[$row['household_id']], $this->buildAddrModel($row));
+        }
         return $arr;
     }
+    
+    //Returns an array of populated User objects for each active user
+    public function getActiveUsers()
+    {
+        $select = $this->_db->select()
+            ->from('user')
+            ->where('active_flag = ?', 1)
+            ->order(array('first_name', 'last_name', 'user_id'));
+
+        $results = $this->_db->fetchAll($select);
+        return $this->buildUserModels($results);
+    }
+    
 
     /****** PUBLIC CREATE/INSERT QUERIES ******/
 
@@ -858,15 +873,20 @@ class App_Service_Member
         return $results['marriage_status'];
     }
     
-    private function getHouseholdersByHouseholdId($houseId){
+    private function getHouseholdersByHouseClientIds($houseId, $clientId){
         $hMembers = array();
         
-        //Get spouse if exists
+        //Get spouse if exists, need to grab both id's
         $select = $this->_db->select()
-                ->from('household', 'spouse_id')
+                ->from('household', array('mainclient_id', 'spouse_id'))
                 ->where('household_id = ?', $houseId);
         $results = $this->_db->fetchRow($select);
-        if($results['spouse_id']){
+        
+        //If the clientId matches the spouse_id then given client was added as a spouse
+        //need to indicated thier spouse as the main client
+        $spouseId = ($results['spouse_id'] === $clientId) ?
+            $results['mainclient_id'] : $results['spouse_id'];
+        if($spouseId){
             $householder = new Application_Model_Impl_Householder();
             $select = $this->_db->select()
                     ->from(array('c' => 'client'),
@@ -874,7 +894,7 @@ class App_Service_Member
                                  'first_name',
                                  'last_name',
                                  'birthdate'))
-                    ->where('c.client_id = ?', $results['spouse_id']);
+                    ->where('c.client_id = ?', $spouseId);
             $results = $this->_db->fetchRow($select);
             $householder
                 ->setId($results['client_id'])
@@ -1123,14 +1143,16 @@ class App_Service_Member
 
         foreach ($dbResults as $dbResult) {
             $user = new Application_Model_Impl_User();
-            $user
-                ->setUserId($dbResult['user_id'])
+            $user->setUserId($dbResult['user_id'])
                 ->setFirstName($dbResult['first_name'])
-                ->setLastName($dbResult['last_name']);
-
+                ->setLastName($dbResult['last_name'])
+                ->setEmail($dbResult['email'])
+                ->setCellPhone($dbResult['cell_phone'])
+                ->setHomePhone($dbResult['home_phone'])
+                ->setRole($dbResult['role'])
+                ->setActive($dbResult['active_flag']);
             $users[$dbResult['user_id']] = $user;
         }
-
         return $users;
     }
 
@@ -1193,6 +1215,17 @@ class App_Service_Member
             ->setBirthDate($results['birthdate'])
             ->setDepartDate($results['left_date']);
         return $householder;
+    }
+    
+    private function buildAddrModel($results){
+        $addr = new Application_Model_Impl_Addr();
+        $addr
+            ->setId($results['address_id'])
+            ->setStreet($results['street'])
+            ->setCity($results['city'])
+            ->setState($results['state'])
+            ->setZip($results['zipcode']);
+        return $addr;
     }
 
     /****** IMPL OBJECT DISASSEMBLERS  ******/
