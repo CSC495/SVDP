@@ -44,6 +44,8 @@ class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical
             'required' => true,
             'filters' => array('StringTrim'),
             'label'   => 'Name:',
+	    'name'    => 'name',
+	    'id'      => 'name',
 	    'validators' => array(
 			array('NotEmpty', true, array(
 			    'type' => 'string',
@@ -62,6 +64,8 @@ class Application_Model_Document_AddForm extends Twitter_Bootstrap_Form_Vertical
             'required' => true,
             'filters' => array('StringTrim'),
             'label'   => 'Url:',
+	    'name'    => 'url',
+	    'id'      => 'url',
             'validators' => array(
 				  new App_Validate_Url(),
 				array('StringLength', true, array(

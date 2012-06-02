@@ -164,15 +164,11 @@ class MemberController extends Zend_Controller_Action
     public function contactsAction()
     {
         $this->view->pageTitle = 'Member Contact List';
-
-        $service = new App_Service_AdminService();
-        $users   = $service->getAllUsers();
+	$service = new App_Service_Member();
+        $users   = $service->getActiveUsers();
 
         $this->view->users = array();
         $lastRowLetter     = null;
-
-    // remove inactive memebers
-    $users = array_filter($users, function($usr) { return $usr->isActive();} );
 
         foreach ($users as $userId => $user) {
             $firstName = $user->getFirstName();

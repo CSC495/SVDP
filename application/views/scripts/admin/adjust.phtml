@@ -1,2 +1,7 @@
-<?php
+<?php $this->headScript()->captureStart(); ?>
+$(function() {
+    initAdminLimits();
+});
+<?php $this->headScript()->captureEnd();
+
 echo $this->form;
