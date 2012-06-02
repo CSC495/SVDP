@@ -1,35 +1,25 @@
-<?php
-$clientId     = $this->escape($this->client->getId());
-$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
-//var_dump($this->client->getHouseholdId());
-//var_dump($this->history[$this->client->getHouseholdId()][0]);
-?>
+<fieldset>
+    <legend>Current household:</legend>
+    <?php
+    echo $this->partial('partial/clientHistoryEntry.phtml', array(
+        'addr' => $this->client->getCurrentAddr(),
+        'spouse' => $this->client->getSpouse(),
+        'householders' => $this->householders,
+        'client' => $this->client,
+    ));
+    ?>
+</fieldset>
 
 <fieldset>
-    <legend>Current Household:</legend>
-    <div class=search-results>
-        <table class='search-results'>
-        	
-            <?php		
-			
-			foreach (array_values($this->history) as $i => $history):?>
-				<tr class="search-result <?php echo $rowStripeClass; ?>">
-			    <th colspan=2 class="search-cell top name">Client ID</th>
-			    <td class="search-cell top clientid"><?php echo $clientId; ?></td>
-			    <th colspan=2 class="search-cell top name">Name</th>
-			    <td class="search-cell top fullname"><?php echo $this->escape($this->client->getFullName()); ?></td>
-			    <th class="search-cell top name">Birth Date</th>
-			    <td colspan=3 class="search-cell top birthdate"><?php echo $this->escape($this->client->getBirthDate()); ?></td>
-		    </tr>
-		    	<tr class="search-result <?php echo $rowStripeClass; ?>">
-	    		<th colspan=2 class="search-cell top name">Phone</th>
-			    <td colspan=2 class="search-cell top phone"><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
-		    	<th class="search-cell top name">Address</th>
-    			<td colspan=5 class="search-cell top address"><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
-				</tr>
-				<?php echo $this->partial('partial/viewHouseholdHistory.phtml', array(
-					'i' => $i, 'history' => $history, 'rowStripeClass' => $rowStripeClass, 'client' => $this->client));
-			endforeach; ?>
-        </table>
-    </div>
+    <legend>Previous households:</legend>
+
+    <?php
+    if ($this->history) {
+        foreach ($this->history as $historyEntry) {
+            echo $this->partial('partial/clientHistoryEntry.phtml', $historyEntry);
+        }
+    } else {
+    ?>
+    <p class="search-results help-block">No previous households on record.</p>
+    <?php } ?>
 </fieldset>
