@@ -407,6 +407,13 @@ class App_Service_Search
                 ->setState($dbResult['state'])
                 ->setZip($dbResult['zipcode']);
 
+            if ($dbResult['do_not_help_reason'] !== null) {
+                $doNotHelp = new Application_Model_Impl_DoNotHelp();
+                $doNotHelp->setReason($dbResult['do_not_help_reason']);
+            } else {
+                $doNotHelp = null;
+            }
+
             $client = new Application_Model_Impl_Client();
             $client
                 ->setId($dbResult['client_id'])
@@ -416,7 +423,7 @@ class App_Service_Search
                 ->setHomePhone($dbResult['home_phone'])
                 ->setWorkPhone($dbResult['work_phone'])
                 ->setCurrentAddr($addr)
-                ->setDoNotHelpReason($dbResult['do_not_help_reason']);
+                ->setDoNotHelp($doNotHelp);
 
             $clients[] = $client;
         }

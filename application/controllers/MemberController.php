@@ -164,9 +164,8 @@ class MemberController extends Zend_Controller_Action
     public function contactsAction()
     {
         $this->view->pageTitle = 'Member Contact List';
-
-        $service = new App_Service_AdminService();
-        $users   = $service->getAllUsers();
+	$service = new App_Service_Member();
+        $users   = $service->getActiveUsers();
 
         $this->view->users = array();
         $lastRowLetter     = null;
@@ -477,6 +476,14 @@ class MemberController extends Zend_Controller_Action
                     ->setCreatedDate(date('Y-m-d'));
             }
 
+            if ($client->isDoNotHelp() && $client->getDoNotHelp()->getUser() === null) {
+                // If an existing client was added to the do-not-help list, then we need to track
+                // the date added and adding user.
+                $client->getDoNotHelp()
+                    ->setUser($user)
+                    ->setDateAdded(date('Y-m-d'));
+            }
+
             $client = $service->editClient(
                 $client,
                 $changedHouseholders,
@@ -506,24 +513,27 @@ class MemberController extends Zend_Controller_Action
         ));
     }
 
-	public function clienthistoryAction()
-	{
-		// If no client ID was provided, bail out.
+    /**
+     * Action that displays complete household history for a client, including any previously added
+     * household members and/or spouses.
+     */
+    public function clienthistoryAction()
+    {
+        // If no client ID was provided, bail out.
         if (!$this->_hasParam('id')) {
             throw new UnexpectedValueException('No client ID parameter provided');
         }
 
-        // Initialize the new client history form.
-        $service = new App_Service_Member();
-        $client  = $service->getClientById($this->_getParam('id'));
-		
-		
-		$this->view->pageTitle = 'View Household History';
-		$this->view->client    = $client;
-		$this->view->form      = new Application_Model_Member_CaseForm($client->getId());
-		
-	}
+        $clientId = $this->_getParam('id');
 
+        // Pass current and past client and household history.
+        $service = new App_Service_Member();
+
+        $this->view->pageTitle    = 'View Household History';
+        $this->view->client       = $service->getClientById($clientId);
+        $this->view->householders = $service->getHouseholdersByClientId($clientId);
+        $this->view->history      = $service->getClientHouseholdHistory($clientId);
+    }
 
     /**
      * Action that allows members to add new cases.

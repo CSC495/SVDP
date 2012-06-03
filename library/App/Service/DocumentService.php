@@ -1,8 +1,23 @@
 <?php
-
+/**
+ *@package ServiceFilePackage
+*/
+/**
+ *Document Service File
+ *
+ *Holds methods nessesary to get information from the database used to generate reports
+ *@package ServiceFilePackage
+ */
 class App_Service_DocumentService {
+    /**
+     *Holds connection to DB
+    */
     private $_db;
     
+    /**
+     *Creates a connection to the DB available to the class
+     *@return void
+    */
     function __construct(){
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
@@ -10,7 +25,8 @@ class App_Service_DocumentService {
     /******* PUBLIC GET QUERIES *******/
     
     /***
-     * Get list of all the documents
+     * Get list of all the documents.
+     * @return array of Application_Model_Impl_Document
      */
     public function getDocuments()
     {
@@ -22,7 +38,8 @@ class App_Service_DocumentService {
     }
     
     /***
-     * Gets information about a single document
+     * Gets information about a single document.
+     * @return Application_Model_Impl_Document
      */
     public function getDocument($id)
     {
@@ -33,11 +50,19 @@ class App_Service_DocumentService {
         return( $this->buildDocument($result) );
     }
     
-    //Given a timespan bouned by the given start and end date
-    //Gets the total miles of each case's visits within the timespan
-    //Returns an associative array with the case_id as key and total miles as value
-    //DOES NOT DISCRIMINATE BETWEEN OPEN AND CLOSED CASES
-    public function getCaseVisitMiles($startDate, $endDate){
+    /**
+     *Gets total miles of case visits within time span.
+     *
+     *Given a timespan bouned by the given start and end date
+     *Gets the total miles of each case's visits within the timespan
+     *Returns an associative array with the case_id as key and total miles as value
+     *Does not discriminate between open and closed cases
+     *@param DateTime $startDate lower bound of time span
+     *@param DateTime $endDate upper bound of time span
+     *@return associative array key => case_id value => total miles
+    */
+    public function getCaseVisitMiles($startDate, $endDate)
+    {
         $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
         $newStartDate = $newStartDate->get('YYYY-MM-dd');
         
@@ -62,12 +87,20 @@ class App_Service_DocumentService {
         $arr = $this->getNumMems($arr);
         return $arr;
     }
-    
-    //Given a timespan bouned by the given start and end date
-    //Gets the total hours of each case's visits within the timespan
-    //Returns an associative array with the case_id as key and total hours as value
-    //DOES NOT DISCRIMINATE BETWEEN OPEN AND CLOSED CASES
-    public function getCaseVisitHours($startDate, $endDate){
+       
+    /**
+     *Gets total hours of case visits within time span.
+     *
+     *Given a timespan bouned by the given start and end date
+     *Gets the total hours of each case's visits within the timespan
+     *Returns an associative array with the case_id as key and total hours as value
+     *Does not discriminate between open and closed cases
+     *@param DateTime $startDate lower bound of time span
+     *@param DateTime $endDate upper bound of time span
+     *@return associative array key => case_id value => total hours
+    */
+    public function getCaseVisitHours($startDate, $endDate)
+    {
         $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
         $newStartDate = $newStartDate->get('YYYY-MM-dd');
         
@@ -89,9 +122,12 @@ class App_Service_DocumentService {
         return $arr;
     }
     
-    //Gets all closed check requests (have an issue date)
-    //Returns an array of populated CheckReq objects
-    public function getClosedCheckReqs(){
+    /**
+     *Gets all closed check requests (have an issue date).
+     *@return array of Application_Model_Impl_CheckReq
+    */
+    public function getClosedCheckReqs()
+    {
         $select = $this->_db->select()
                 ->from('check_request')
                 ->where('issue_date IS NOT NULL');
@@ -102,10 +138,16 @@ class App_Service_DocumentService {
         return $closedReqs;
     }
     
-    //Gets the number of references and number of hmembers per case
-    //Returns an array of populated GenReport objects
-    //THIS WILL BE RENAMED TO REFLECT THE SPECIFIC REPORT THAT USES IT
-    public function getGenReports($startDate, $endDate){
+    /**
+     *Gets the number of references and number of household members per case
+     *withing the given time span.
+     *@param DateTime $startDate lower bound of time span
+     *@param DateTime $endDate upper bound of time span
+     *@return array of Application_Model_Impl_GenReport
+     */
+    //THIS SHOULD BE RENAMED
+    public function getGenReports($startDate, $endDate)
+    {
         $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
         $newStartDate = $newStartDate->get('YYYY-MM-dd');
         
@@ -114,7 +156,13 @@ class App_Service_DocumentService {
         return $this->getNumMems($this->getNumRefs($newStartDate, $newEndDate));
     }
     
-    public function getCheckReqsByCaseId($caseId){
+    /**
+     *Gets all check requests of a given case.
+     *@param int $caseId
+     *@return array of Application_Model_Impl_CheckReq
+    */
+    public function getCheckReqsByCaseId($caseId)
+    {
         $select = $this->_db->select()
                 ->from(array('cr' => 'check_request'))
                 ->join(array('cn' => 'case_need'), 'cn.caseneed_id = cr.caseneed_id')
@@ -122,8 +170,11 @@ class App_Service_DocumentService {
                 ->where('cc.case_id = ?', $caseId);
         $results = $this->_db->fetchAll($select);
         $arr = array();
-        foreach($results as $row)
-            $arr[] = $this->buildCheckRequestModel($row);
+        foreach($results as $row){
+            $check = $this->buildCheckRequestModel($row);
+            $check->setCaseNeedName($row['need']);
+            $arr[] = $check;
+        }
         return $arr;
     }
     

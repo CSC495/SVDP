@@ -188,8 +188,9 @@ class AdminController extends Zend_Controller_Action
         
         $error = false;
         if(!$form->isValid($_POST))
+        {
             $error = true;
-            
+        }   
         // Check to ensure atleast one phone number was provided
         if($form->getValue('cell') === '' && $form->getValue('home') === '')
         {
@@ -198,7 +199,7 @@ class AdminController extends Zend_Controller_Action
             
             $error = true;
         }
-            
+
         // If theres an error return
         if($error)
             return;
@@ -256,7 +257,7 @@ class AdminController extends Zend_Controller_Action
                            '<br/><br/><i>If you believe you have received this message in error ' .
                            'please contact the sender.</i>');
         
-        $mail->setFrom('bagura@noctrl.edu', 'System');
+        $mail->setFrom('noreply@raphaelsvdp.org', 'System');
         $mail->addTo($user->getEmail());
         $mail->setSubject('SVDP Account Created');
         $mail->send($transport);

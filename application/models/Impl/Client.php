@@ -95,10 +95,10 @@ class Application_Model_Impl_Client
      */
     private $_currentAddr = null;
     /**
-     * Reason the client is on do not help list if any
-     * @var string|null
+     * The client's do-not-help list entry, if any
+     * @var Application_Model_Impl_DoNotHelp|null
      */
-    private $_doNotHelpReason = null;
+    private $_doNotHelp = null;
 
     /* Generic get/set methods: */
 
@@ -443,23 +443,23 @@ class Application_Model_Impl_Client
         return $this;
     }
     /**
-     * If client is on the do not help list returns reason, else null
+     * Gets the client's do-not-help list entry, if any
      *
-     * @return string|null null if not on do not help list or reason on list
+     * @return string|null null if not on do not help list or entry on list
      */
-    public function getDoNotHelpReason()
+    public function getDoNotHelp()
     {
-        return $this->_doNotHelpReason;
+        return $this->_doNotHelp;
     }
     /**
-     * Sets the reason the client is on the do not help list
+     * Sets the client's do-not-help list entry
      *
-     * @param string $doNotHelpReason
+     * @param Application_Model_Impl_DoNotHelp|null $doNotHelp
      * @return Application_Model_Impl_Client this
      */
-    public function setDoNotHelpReason($doNotHelpReason)
+    public function setDoNotHelp($doNotHelp)
     {
-        $this->_doNotHelpReason = $doNotHelpReason;
+        $this->_doNotHelp = $doNotHelp;
         return $this;
     }
 
@@ -549,6 +549,6 @@ class Application_Model_Impl_Client
      */
     public function isDoNotHelp()
     {
-        return $this->_doNotHelpReason !== null;
+        return $this->_doNotHelp !== null;
     }
 }
