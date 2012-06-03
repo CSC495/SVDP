@@ -157,4 +157,23 @@ class Application_Model_Impl_Householder
         $this->_departDate = $departDate;
         return $this;
     }
+    
+    /**
+     * Returns the full name of this client, i.e., the client's first name followed by the client's
+     * last name. If either portion is `null`, it shall be omitted. If both names are `null`, the
+     * empty string shall be returned.
+     *
+     * @return string
+     */
+     
+    public function getFullName()
+    {
+        if ($this->_firstName === null) {
+            return (string) $this->_lastName;
+        }
+        if ($this->_lastName === null) {
+            return (string) $this->_firstName;
+        }
+        return $this->_firstName . ' ' . $this->_lastName;
+    }
 }

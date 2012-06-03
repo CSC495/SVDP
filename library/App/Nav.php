@@ -32,9 +32,9 @@ class App_Nav
             '/document/list'         => 'Documents',
         ),
         // Navigation for data migration.
-        App_Roles::DATAMIGRATION => array(
-            'migration' => 'Add Client Info',
-        ),
+        //App_Roles::DATAMIGRATION => array(
+        //    'migration' => 'Add Client Info',
+        //),
     );
 
     /**
