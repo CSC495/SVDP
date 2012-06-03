@@ -1,9 +1,17 @@
+<?php $baseUrl = new Zend_View_Helper_BaseUrl();
+    $format = new App_Formatting();?>
 <table>
     <tr>
-        <td>&nbsp;</td><td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td>      
+        <td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td>
+        <td>
+            <form action="<?php echo $baseUrl->baseUrl('/report/reimbursepdf/')?>" method=post>
+                <input type="hidden" name="caseId" value="<?php echo $this->escape($this->request[0]->getId()) ?>">
+                <input type="submit" value="Generate PDF">
+            </form>
+        </td>
     </tr>
     <tr>
-        <td>&nbsp;</td><td><h4><center>Reimbursement Report&nbsp;</center></h4></td><td>&nbsp;</td>
+        <td><h4><center>Reimbursement Report&nbsp;</center></h4></td><td>&nbsp;</td>
     </tr>
     <tr>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
@@ -13,6 +21,8 @@
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
+    <?php if($this->request[0] != null) ?>
+        
     <tr>        
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Created By:&nbsp;<?php echo $this->request[0]->getUser()  ?>&nbsp;</td>
         <td>&nbsp;</td>
@@ -39,12 +49,7 @@
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type of Visit:&nbsp;<?php  ?>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-    </tr>
-    <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visit Date:&nbsp;<?php  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type of Visit:&nbsp;Home&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
@@ -60,6 +65,12 @@
         $checkTotal = 0;
         foreach($this->request as $row)
         {
+            echo '<tr>';
+            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Case Need:&nbsp;';
+            echo $this->escape($row->getCaseNeedName());
+            echo '</td><td>&nbsp;</td>';
+            echo '</tr>';
+            
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Payee:&nbsp;';
             echo $row->getPayeeName();
@@ -77,7 +88,7 @@
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check Amount:&nbsp;';
-            echo $row->getAmount();
+            echo $format->formatCurrency($this->escape($row->getAmount()));
             $checkTotal += $row->getAmount();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
@@ -96,7 +107,7 @@
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Issue Date:&nbsp;';
-            echo $row->getIssueDate();
+            echo $format->formatDate($this->escape($row->getIssueDate()));
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
@@ -112,11 +123,19 @@
             
             
         }
+            
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total:&nbsp;';
-            echo $checkTotal;
+            echo $format->formatCurrency($this->escape($checkTotal));
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
     ?>
    
 </table>
+
+<p><br />Excel Reimbursement Form will only include consider the following check types:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Rent <br />
+&nbsp;&nbsp;&nbsp;&nbsp;Water <br />
+&nbsp;&nbsp;&nbsp;&nbsp;Gas <br />
+&nbsp;&nbsp;&nbsp;&nbsp;Electric</p>
+

@@ -159,7 +159,7 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
 
         $this->_directionsUrl = 'http://maps.google.com/maps?daddr='
             . urlencode($addr->getFullAddr());
-
+                            
         return $this;
     }
 

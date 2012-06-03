@@ -10,11 +10,9 @@ class Application_Model_Report_reimbursementReport extends Twitter_Bootstrap_For
 		$this->setMethod('post');
 		
 		$baseUrl = new Zend_View_Helper_BaseUrl();
+		//$this->setAction($baseUrl->baseUrl('/report/reimbursementresults/'));
 		$this->setAction($baseUrl->baseUrl('/report/reimbursementresults/'));
 		
-		$this->setDecorators(array(
-			array('ViewScript', array('viewScript' => 'report/reimbursementViewScript.phtml'))
-		));	
 		
 		// Client Id(Integer)
 		$caseID = $this->addElement('text', 'caseId', array(
