@@ -1,12 +1,6 @@
 <?php
 /**
- *@package ServiceFilePackage
-*/
-/**
- *Admin Service File
- *
- *Holds methods that the admin controller needs to access the database
- *@package ServiceFilePackage
+ *Service file providing the admin controller database access.
  */
 class App_Service_AdminService {
     /**

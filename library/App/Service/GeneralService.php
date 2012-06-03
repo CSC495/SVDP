@@ -1,12 +1,6 @@
 <?php
 /**
- *@package ServiceFilePackage
-*/
-/**
- *General Service File
- *
- *Holds methods that all controllers will need to use
- *@package ServiceFilePackage
+ *Service file providing database queries that many controllers need.
  */
 class App_Service_GeneralService {
     /**

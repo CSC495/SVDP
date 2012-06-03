@@ -1,5 +1,7 @@
 <?php
-
+/**
+ *Servive file providing the member controller database access.
+ */
 class App_Service_Member
 {
     /**

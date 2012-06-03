@@ -1,5 +1,7 @@
 <?php
-
+/**
+ *Servive file providing the treasurer controller database access.
+ */
 class App_Service_TreasurerService {
     /**
      *Database adapter for service methods.

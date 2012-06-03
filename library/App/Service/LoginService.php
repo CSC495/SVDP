@@ -1,5 +1,7 @@
 <?php
-
+/**
+ *Servive file providing the login controller database access.
+ */
 class App_Service_LoginService {
     
     /**

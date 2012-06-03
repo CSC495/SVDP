@@ -1,12 +1,6 @@
 <?php
 /**
- *@package ServiceFilePackage
-*/
-/**
- *Document Service File
- *
- *Holds methods nessesary to get information from the database used to generate reports
- *@package ServiceFilePackage
+ *Service file providing the document controller database access.
  */
 class App_Service_DocumentService {
     /**
@@ -28,7 +22,7 @@ class App_Service_DocumentService {
     
     /******* PUBLIC GET QUERIES *******/
     
-    /***
+    /**
      * Get list of all the documents.
      * 
      * @return array of Application_Model_Impl_Document
@@ -42,7 +36,7 @@ class App_Service_DocumentService {
         return( $this->buildDocuments($results) );
     }
     
-    /***
+    /**
      * Gets information about a single document.
      * 
      * @return Application_Model_Impl_Document
@@ -320,7 +314,7 @@ class App_Service_DocumentService {
     
     /****** IMPL OBJECT BUILDERS  ******/
     
-    /***
+    /**
      * Builds the list of docuemnts from a row set.
      * 
      * @param mixed[]
@@ -339,7 +333,7 @@ class App_Service_DocumentService {
         return($list);
     }
     
-    /***
+    /**
      * Builds a single document.
      * 
      * @param mixed[]
