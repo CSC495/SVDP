@@ -10,15 +10,19 @@
  */
 class App_Service_AdminService {
     /**
-     *Holds connection to DB
+     *Database adapter for service methods.
+     *
+     * @var Zend_Db_Adapter_Abstract
     */
     private $_db;
     
     /**
-     *Creates a connection to the DB available to the class
+     *Creates a connection to the DB available to the class.
+     *
      *@return void
     */
-    function __construct(){
+    function __construct()
+    {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
     
@@ -27,6 +31,7 @@ class App_Service_AdminService {
      *
      *Function retrieves the parish parameters which indicate global limits
      *when evaluating if a case is to be accepted or not
+     *
      *@return Application_Model_Impl_ParishParams
      */
     public function getParishParams(){
@@ -41,6 +46,7 @@ class App_Service_AdminService {
      *Gets the indicated user's information.
      *
      *Returns a User object populated with the indicated user's information
+     *
      *@param string the user_id of the indicated user
      *@return Application_Model_Impl_User
     */
@@ -55,6 +61,7 @@ class App_Service_AdminService {
     /**
      *Builds a ParishParams object.
      *Creates a Parish funds object from the result set
+     *
      *@param mixed[string]
      *@return Application_Model_Impl_ParishParams
      */
@@ -72,6 +79,7 @@ class App_Service_AdminService {
      *Updates parish aid limits.
      *Takes a parish params object and updates the
      *table with the respective values
+     *
      *@param mixed[string]
      *@return void
      */
@@ -85,6 +93,7 @@ class App_Service_AdminService {
      *Updates user information.
      *Updates indicated user's information with the data contained
      *in the User object
+     *
      *@param Application_Model_Impl_User
      *@return void
      */    
@@ -97,6 +106,7 @@ class App_Service_AdminService {
     /**
      *Updates user password.
      *Updates the indicated user's password with the given password after salting and hashing
+     *
      *@param string indicated user's _id
      *@param string | int new password before salting and hash
      *@return void
@@ -114,6 +124,7 @@ class App_Service_AdminService {
     /**
      *Gets all current users.
      *Returns information of all users in an array of User objects
+     *
      *@return array of Application_Model_Impl_User
     */
     public function getAllUsers()
@@ -130,6 +141,7 @@ class App_Service_AdminService {
      *	
      *  Builds an array of all memebers of the parish
      *  from a row set
+     *  
      *	@param mixed[string]
      *  @return array of Application_Model_Impl_User
      */
@@ -148,6 +160,7 @@ class App_Service_AdminService {
      *	
      *  Builds a User object populated with information from
      *  from a row set
+     *  
      *  @param mixed[string]
      *  @return Application_Model_Impl_User
      */
@@ -176,6 +189,7 @@ class App_Service_AdminService {
     
     /**
      *Inserts a new user into the database.
+     *
      *@param Application_Model_Impl_User
      *@param int | string password before salting and hashing
      *@return void
@@ -198,6 +212,7 @@ class App_Service_AdminService {
     
     /**
      *  Updates a users information.
+     *  
      *	@param Application_Model_Impl_User
      *  @return void
      */
@@ -216,7 +231,8 @@ class App_Service_AdminService {
     }
     
     /**
-     *  Resets a users password
+     *  Resets a users password.
+     *  
      *	@param string user_id
      *	@param int | string password before salting and hashing
      *  @return void
@@ -235,6 +251,7 @@ class App_Service_AdminService {
      *Given a new user id will return null if the id is not already
      *in the database, if present will return the next available
      *number to append after the id
+     *
      *@param string user_id
      *@return int | void the next available trailing number if not void
     */
@@ -274,7 +291,7 @@ class App_Service_AdminService {
     }
     
     /**
-     * Build User object from row result
+     * Build User object from row result.
      *
      * @return Application_Model_Impl_User
      */
@@ -295,7 +312,7 @@ class App_Service_AdminService {
     }
     
     /**
-     *Extract properties of a ParishParams object
+     *Extract properties of a ParishParams object.
      *
      *@return mixed[string]
     */
@@ -309,7 +326,7 @@ class App_Service_AdminService {
     }
     
     /**
-     *Extract properties of a User object
+     *Extract properties of a User object.
      *
      *@return mixed[string]
     */

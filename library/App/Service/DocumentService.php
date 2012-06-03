@@ -10,15 +10,19 @@
  */
 class App_Service_DocumentService {
     /**
-     *Holds connection to DB
+     *Database adapter for service methods.
+     *
+     * @var Zend_Db_Adapter_Abstract
     */
     private $_db;
     
     /**
-     *Creates a connection to the DB available to the class
+     *Creates a connection to the DB available to the class.
+     *
      *@return void
     */
-    function __construct(){
+    function __construct()
+    {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
     
@@ -26,6 +30,7 @@ class App_Service_DocumentService {
     
     /***
      * Get list of all the documents.
+     * 
      * @return array of Application_Model_Impl_Document
      */
     public function getDocuments()
@@ -39,6 +44,7 @@ class App_Service_DocumentService {
     
     /***
      * Gets information about a single document.
+     * 
      * @return Application_Model_Impl_Document
      */
     public function getDocument($id)
@@ -57,6 +63,7 @@ class App_Service_DocumentService {
      *Gets the total miles of each case's visits within the timespan
      *Returns an associative array with the case_id as key and total miles as value
      *Does not discriminate between open and closed cases
+     *
      *@param DateTime $startDate lower bound of time span
      *@param DateTime $endDate upper bound of time span
      *@return associative array key => case_id value => total miles
@@ -95,6 +102,7 @@ class App_Service_DocumentService {
      *Gets the total hours of each case's visits within the timespan
      *Returns an associative array with the case_id as key and total hours as value
      *Does not discriminate between open and closed cases
+     *
      *@param DateTime $startDate lower bound of time span
      *@param DateTime $endDate upper bound of time span
      *@return associative array key => case_id value => total hours
@@ -124,6 +132,7 @@ class App_Service_DocumentService {
     
     /**
      *Gets all closed check requests (have an issue date).
+     *
      *@return array of Application_Model_Impl_CheckReq
     */
     public function getClosedCheckReqs()
@@ -139,8 +148,8 @@ class App_Service_DocumentService {
     }
     
     /**
-     *Gets the number of references and number of household members per case
-     *withing the given time span.
+     *Gets the number of references and number of household members per case withing the given time span.
+     *
      *@param DateTime $startDate lower bound of time span
      *@param DateTime $endDate upper bound of time span
      *@return array of Application_Model_Impl_GenReport
@@ -158,6 +167,7 @@ class App_Service_DocumentService {
     
     /**
      *Gets all check requests of a given case.
+     *
      *@param int $caseId
      *@return array of Application_Model_Impl_CheckReq
     */
@@ -180,15 +190,23 @@ class App_Service_DocumentService {
     
     /****** PUBLIC EDIT/UPDATE/DELETE QUERIES  ******/
     
-    // temp
+    /**
+     *Deletes a document from the database.
+     *
+     *@param Application_Model_Impl_Document
+     *@return int number of rows affected by delete operation
+    */
     public function deleteDocument($doc)
     {
         $result = $this->_db->delete('documents','doc_id =' . $doc->getId());
         return $result;
     }
     
-    /***
-     * Updates information about a particular document
+    /**
+     * Updates information about a particular document.
+     * 
+     * @param Application_Model_Impl_Document
+     * @return void
      */
     public function updateDocument($doc)
     {
@@ -204,7 +222,10 @@ class App_Service_DocumentService {
     /****** PUBLIC CREATE/INSERT QUERIES ******/
     
     /**
-     * Creates a new document
+     * Creates a new document.
+     * 
+     * @param Application_Model_Impl_Document
+     * @return void
      */
     public function createDocument($doc)
     {
@@ -217,8 +238,13 @@ class App_Service_DocumentService {
     
     /****** PRIVATE GET QUERIES  ******/
     
-    //Returns an associative array with every case_id as key and 0 as value
-    private function getAssocOfCases(){
+    /**
+     *Returns an associative array with every case_id as key and 0 as value.
+     *
+     *@return associative array key => case_id value => 0
+    */
+    private function getAssocOfCases()
+    {
         $select = $this->_db->select()
                 ->from('client_case', array('id' => 'case_id'));
         $results = $this->_db->fetchAll($select);
@@ -229,9 +255,15 @@ class App_Service_DocumentService {
         return $ids;
     }
     
-    //Gets the total number of household members associated with each case
-    //Returns an array of GenReport objects with _caseId & _numHMembers populated
-    private function getNumMems($arr){
+    /**
+     *Gets the total number of household members associated with each case.
+     *Returns an array of GenReport objects with _caseId & _numHMembers populated
+     *
+     *@param array of Application_Model_Impl_GenReport
+     *@return array of Application_Model_Impl_GenReport
+    */
+    private function getNumMems($arr)
+    {
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
@@ -253,10 +285,17 @@ class App_Service_DocumentService {
         return $arr;
     }
     
-    //Given a time span bounded by a start date and an end date (assured to be in international notation)
-    //Gets the total number of referrals associated with each case
-    //Returns an associative array with the key as 
-    private function getNumRefs($newStartDate, $newEndDate){
+    /**
+     *Gets the total number of referrals associated with each case.
+     *Given a time span bounded by a start date and an end date (assured to be in international notation)
+     *Gets the total number of referrals associated with each case
+     *
+     *@param Date start date
+     *@param Date end date
+     *@return array of Application_Model_Impl_GenReport
+    */
+    private function getNumRefs($newStartDate, $newEndDate)
+    {
         $select = $this->_db->select()
                 ->from(array('cc' => 'client_case'),
                        array('id' => 'cc.case_id',
@@ -282,7 +321,10 @@ class App_Service_DocumentService {
     /****** IMPL OBJECT BUILDERS  ******/
     
     /***
-     * Builds the list of docuemnts from a row set
+     * Builds the list of docuemnts from a row set.
+     * 
+     * @param mixed[]
+     * @return array of Application_Model_Impl_Document objects
      */
     private function buildDocuments($rowset)
     {
@@ -298,7 +340,10 @@ class App_Service_DocumentService {
     }
     
     /***
-     * Builds a single document
+     * Builds a single document.
+     * 
+     * @param mixed[]
+     * @return Application_Model_Impl_Document
      */
     private function buildDocument($row)
     {
@@ -312,7 +357,12 @@ class App_Service_DocumentService {
         return($doc);
     }
     
-    //User and SigneeUser are the ids of the users, can change to objects if need be
+    /**
+     *Builds Application_Model_Impl_CheckReq.
+     *
+     *@param mixed[] data to populate CheckReq object
+     *@return Application_Model_Impl_CheckReq
+    */
     private function buildCheckRequestModel($results){
         $request = new Application_Model_Impl_CheckReq();
         $address = new Application_Model_Impl_Addr();
