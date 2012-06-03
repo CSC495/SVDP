@@ -1,7 +1,8 @@
 <?php
     
-    
+    //service variable for formatting dates
     $format = new App_Formatting();
+    //file name of excel document
     $fileName = $this->client->getLastName() . $this->client->getFirstName()
                     . "CaseID" . $this->client->getId() . "Reimburse.xls";
                     
@@ -39,7 +40,9 @@
             $checkSum += $water->getAmount();
         }
     }
+    //holds sum of what parish will pay(30% of total)
     $covered = $checkSum * .3;
+    //the difference of total and what parish will pay
     $requested = $checkSum - $covered;
 ?>
 <html>

@@ -61,7 +61,7 @@ class ReportController extends Zend_Controller_Action
 	$cId = $form->clientid->getValue();
 	$service = new App_Service_Member();	
 	$this->view->client = $service->getClientById($cId);
-	if($this->view->client == null)
+	if($this->view->client->getFullName() == null)
 	{
 	    $this->_helper->redirector('error');
 	}
