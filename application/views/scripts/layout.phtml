@@ -68,7 +68,7 @@ $scheduleEntries = Zend_Registry::get('schedule');
         <?php
 		/* retrieving navigation based on role */
         foreach ($this->navLinks as $path => $link) {
-            echo '<li class=active >'
+            echo '<li class="active">'
                 . '<a href="'
                 . $this->escape($this->baseUrl($path))
                 . '">'
@@ -78,14 +78,14 @@ $scheduleEntries = Zend_Registry::get('schedule');
         }
 		/* returns to login if role not found */
         if ($role !== App_Roles::GENERAL) {
-            echo '<li class=active>'
+            echo '<li class="active logout">'
             . '<a href="'
             . $this->escape($this->baseUrl('login/logout'))
             . '">'
             . '<i class="icon-share icon-white"></i>'
             . 'Logout'
             . '</a>'
-            . '<li>';
+            . '</li>';
         }
         ?>
     </ul>

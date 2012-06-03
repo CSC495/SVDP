@@ -146,6 +146,10 @@ th.search-cell {
     background-color: #1c6ba0 !important;
 }
 
+/*.nav-pills > .logout {
+    float:right;
+}*/
+
 .hero-unit .help-block {
     font-size: 13px;
     line-height: 18px;
