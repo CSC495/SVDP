@@ -1,13 +1,35 @@
 <?php
-
+/**
+ *Servive file providing the login controller database access.
+ */
 class App_Service_LoginService {
+    
+    /**
+     *Database adapter for service methods.
+     *
+     * @var Zend_Db_Adapter_Abstract
+    */
     private $_db;
     
-    function __construct(){
+    /**
+     *Creates a connection to the DB available to the class.
+     *
+     *@return void
+    */
+    function __construct()
+    {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
 
-    public function updateUserPassword($userId, $password){
+    /**
+     *Updates a user's password.
+     *
+     *@param string id of user's password to change
+     *@param int | string new password before salting and hashing
+     *@return void
+    */
+    public function updateUserPassword($userId, $password)
+    {
         $shaker = new App_Password();
         //salt the password
         $saltedPass = $shaker->saltIt($password);
@@ -19,14 +41,31 @@ class App_Service_LoginService {
         $this->_db->update('user', $change, $where);
     }
     
-    public function updateDocument($id, $doc){
+    /**
+     *Updates a particular document.
+     *Updates the indicated document's information with the information stored
+     *in the passed document object
+     *
+     *@param int id of document to update
+     *@param Application_Model_Impl_Document
+    */
+    public function updateDocument($id, $doc)
+    {
         $docData = $this->disassembleDocument($doc);
         $docData['doc_id'] = $id;
         $where = $this->_db->quoteInto('doc_id = ?', $id);
         $this->_db->update('documents', $docData, $where);
     }
     
-    public function getUserInfo($userId){
+    /**
+     *Gets the indicated user's information.
+     *Returns a User object populated with the indicated user's information
+     *
+     *@param string user's id
+     *@return Application_Model_Impl_User
+    */
+    public function getUserInfo($userId)
+    {
         $select = $this->_db->select()
                 ->from('user')
                 ->where('user_id = ?', $userId);
@@ -34,7 +73,15 @@ class App_Service_LoginService {
         return $this->buildMemeber($results);
     }
     
-    public function getDocumentById($id){
+    /**
+     *Gets the indicated document's information.
+     *Returns a document object populated with the indicated document's information
+     *
+     *@param int document's id
+     *@return Application_Model_Impl_Document
+    */
+    public function getDocumentById($id)
+    {
         $select = $this->_db->select()
                 ->from('documents')
                 ->where('doc_id = ?', $id);
@@ -42,12 +89,27 @@ class App_Service_LoginService {
         return $this->buildDocument($results);
     }
     
-    public function deleteDocument($id){
+    /**
+     *Deletes the indicated document.
+     *
+     *@param int id of the document to be deleted
+     *@return void
+    */
+    public function deleteDocument($id)
+    {
         $where = $this->_db->quoteInto('doc_id = ?', $id);
         $this->_db->delete('documents', $where);
     }
     
-    public function getAuthAdapter($userId, $password){
+    /**
+     *Creates and configures an auth adapter for the login.
+     *
+     *@param string id of the user loging in
+     *@param int | string user's password
+     *@return configured Zend_Auth_Adapter_DbTable
+    */
+    public function getAuthAdapter($userId, $password)
+    {
         // Get the database adapter
         $db = Zend_Db_Table::getDefaultAdapter();
         $adapter = new Zend_Auth_Adapter_DbTable($db);
@@ -64,8 +126,11 @@ class App_Service_LoginService {
         return $adapter;
     }
         
-    /***
-     * Build User object from row result
+    /**
+     * Builds a User object from row result.
+     * 
+     * @param mixed[] data to populated User object
+     * @return Application_Model_Impl_User
      */
     private function buildMemeber($row)
     {
@@ -83,6 +148,12 @@ class App_Service_LoginService {
         return($user);
     }
     
+    /**
+     * Builds a User object from row result.
+     * 
+     * @param mixed[] data to populated Document object
+     * @return Application_Model_Impl_Document
+     */
     private function buildDocument($row){
         $doc = new Application_Model_Impl_Document();
         $doc
@@ -93,6 +164,11 @@ class App_Service_LoginService {
         return $doc;
     }
     
+    /**
+     *Extracts properties of a ParishParams object.
+     *
+     *@return mixed[string]
+    */
     private function disassembleDocument($doc){
         $docData = array(
                          'filename' => $doc->getName(),

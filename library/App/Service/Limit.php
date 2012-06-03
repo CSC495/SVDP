@@ -6,7 +6,6 @@
  */
 class App_Service_Limit
 {
-
     /**
      * Database adapter for service methods.
      *
@@ -15,8 +14,9 @@ class App_Service_Limit
     private $_db;
 
     /**
-     * Constructs a new `App_Service_Limit` object.
-     */
+     *Creates a connection to the DB available to the class
+     *@return void
+    */
     public function __construct()
     {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
