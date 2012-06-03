@@ -42,6 +42,8 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
 		// Display name for doc
         $this->addElement('text', 'name', array(
             'required' => true,
+            'name'     => 'name',
+            'id'       => 'name',
             'filters' => array('StringTrim'),
             'validators' => array(
                     array('NotEmpty', true, array(
@@ -62,11 +64,15 @@ class Application_Model_Document_UploadForm extends Twitter_Bootstrap_Form_Verti
             'filters' => array('StringTrim'),
             'label'  => 'Url:',
             'decorators' => array('File'),
+            'name' => 'url',
+            'id'   => 'url',
         ));
 
 		// Used to set an error if one occurs
         $this->addElement('hidden', 'err', array(
             'required' => false,
+            'id' => 'err',
+            'name' => 'err',
         ));
         
 		// Submit button
