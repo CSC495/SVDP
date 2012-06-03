@@ -1,3 +1,5 @@
+var targetUrl;
+
 function initDocView() {
     // Create a dialog to confirm the case close operation.
     var deleteDoc = $('.deleteDoc');
@@ -24,52 +26,4 @@ function initDocView() {
             title: 'Confirm Delete Document'
         });
     });
-}
-
-function initDocAdd(){
-	//url,name,add
-	$("#url").keypress(function() {
-		$(this).parent().parent().removeClass('error');
-		$(this).next().remove();
-	});
-	$("#name").keypress(function() {
-		$(this).parent().parent().removeClass('error');
-		$(this).next().remove();
-	});
-	$(document).ready(function(){
-		$("#add").validate({
-			rules: {
-				name: {
-					required: true,
-					maxlength: 50
-				},
-				url: {
-					required: true,
-					maxlength: 2083,
-					url: true
-				}
-			},
-			messages: {
-				name: {
-					required: "File name must be provided",
-					maxlength: "File name must not exceed 50 characters"
-				},
-				url: {
-					required: "URL must be provided",
-					maxlength: "URL cannot exceed 2083 characters",
-					url: "URL is invalid. Did you forget \"http://\"?"
-				}
-			},
-			submitHandler: function(form) {
-				form.submit();
-			},
-			errorElement: "span",
-			errorPlacement: function(error, element){
-				var parent = element.parent().parent();
-				parent.addClass('error');
-				error.insertAfter(element);
-				error.addClass('help-inline');
-			}
-		});//end validate
-	});// end ready
 }

@@ -15,30 +15,18 @@ class App_Validate_Password extends Zend_Validate_Abstract
      */
     const MSG_DIGIT   = 'msgDigit';
     
-        /**
-     * Constant for defining which error occured
-     * @var string
-     */
-    const MSG_MAXIMUM = 'msgMaximum';
 	/**
      * Constant for defining required password length
-     * @var int
+     * @var string
      */
-    protected $_minimum = 8;
-    
-        /**
-     * Constant for degining max password length
-     * @var int
-     */
-    protected $_maximum = 256;
+    const $minimum = 8;
     
 	/**
      * Constant for defining message variables
      * @var array
      */
     protected $_messageVariables = array(
-        'min' => '_minimum',
-        'max' => '_maximum',
+        'min' => 'minimum',
     );
 	/**
      * Error messages if validation fails
@@ -46,8 +34,7 @@ class App_Validate_Password extends Zend_Validate_Abstract
      */
     protected $_messageTemplates = array(
         self::MSG_DIGIT   => "Password requires a single digit",
-        self::MSG_MINIMUM => "Password must have a length of atleast %min%",
-        self::MSG_MAXIMUM => "Password length cannot exceed %max% characters",
+        self::MSG_MINIMUM => "Password must have a length of atleast '%min%'"
     );
 	/**
      * Checks to see if a value is a valid password
@@ -61,13 +48,8 @@ class App_Validate_Password extends Zend_Validate_Abstract
         $this->_setValue($value);
         
         // Check if the password is less than the minimum length
-        if( strlen($value) < $this->_minimum ){
+        if( strlen($value) < $this->minimum ){
             $this->_error(self::MSG_MINIMUM);
-            return false;
-        }
-        
-        if( strlen($value) > $this->_maximum ){
-            $this->_error(self::MSG_MAXIMUM);
             return false;
         }
         

@@ -6,12 +6,6 @@
 class App_Controller_Plugin_NavPlugin extends Zend_Controller_Plugin_Abstract
 {
 
-    /**
-     * Runs after the front controller has dispatched the requested action, allowing us to determine
-     * the active navigation link after any pre-dispatch forwards take place.
-     *
-     * @param Zend_Controller_Request_Abstract $request
-     */
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
         // Get navigation links for the current user role.

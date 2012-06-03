@@ -394,7 +394,7 @@ function renderMap(centerCoords, clientCoords) {
     });
 }
 
-function initClientForm() {
+function initEditClientForm() {
     // Attach event handlers.
     var maritalStatusDropbox = $('#maritalStatus');
     var doNotHelpCheckbox = $('#doNotHelp');

@@ -1,15 +1,34 @@
+<?php
+$clientId     = $this->escape($this->client->getId());
 
-<?php foreach (array_values($this->history) as $i => $history):?>
-	<tr class='search-result'>
-	    <th class='search-cell top first name'>Name</th>
-	    <td class='search-cell top '><?php echo $this->escape($history->getFullName()); ?></td>
-	    <th class='search-cell top relationship'>Relationship</th>
-	    <td class='search-cell top'><?php echo $this->escape($history->getRelationship()); ?></td>
-	    <th class='search-cell top birthdate'>Birthdate</th>
-	    <td class='search-cell top'><?php echo $this->escape($history->getBirthDate()); ?></td>
-	    <?php if($history->getDepartDate()):?>
-	    	<th class='search-cell top left date'>Departed Date</th>
-	    	<td class='search-cell top'><?php echo $this->escape($history->getDepartDate()); ?></td>
-	    <?php endif; ?>
-	</tr>
-<?php endforeach; ?>
+if (isset($this->viewClientUrl)) {
+    $preClientId  = '<a href="' . $this->escape($this->viewClientUrl) . '">';
+    $postClientId =  '</a>';
+} else {
+    $preClientId  = '';
+    $postClientId = '';
+}
+
+if (isset($this->gotoUrl, $this->gotoLabel)) {
+    $gotoBtn = '<a href="'
+             . $this->escape($this->gotoUrl)
+             . '" class="btn btn-mini btn-info">Go to '
+             . $this->escape($this->gotoLabel)
+             . '</a>';
+} else {
+    $gotoBtn = '';
+}
+?>
+<?php if (empty($this->noClientHeader)) { ?>
+<tr class="search-result <?php echo $this->rowStripeClass; ?>">
+    <th class="search-cell top first">Client ID</th>
+    <td class="search-cell top id"><?php echo $preClientId, $clientId, $postClientId; ?></td>
+    <th class="search-cell top">Name</th>
+    <td class="search-cell top name"><?php echo $this->escape($this->client->getFullName()); ?></td>
+    <th class="search-cell top">Phone</th>
+    <td class="search-cell top"><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
+<?php } ?>
+    <td class="search-cell top last"><?php echo $gotoBtn; ?></td>
+<?php if (empty($this->noClientHeader)) { ?>
+</tr>
+<?php } ?>

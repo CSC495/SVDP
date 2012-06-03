@@ -36,15 +36,15 @@ class Application_Model_Member_ReferralForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'need', array(
-            'label' => 'Need',
             'value' => $need->getNeed(),
+            'label' => 'Need',
             'dimension' => 2,
             'readonly' => true,
         ));
 
         $this->addElement('text', 'amount', array(
+            'value' => $need->getAmount(),
             'label' => 'Amount',
-            'value' => App_Formatting::formatCurrency($need->getAmount()),
             'dimension' => 2,
             'prepend' => '$',
             'readonly' => true,
@@ -60,7 +60,7 @@ class Application_Model_Member_ReferralForm extends Twitter_Bootstrap_Form_Horiz
                     'messages' => array('isEmpty' => 'You must enter a referral reason.'),
                 )),
             ),
-            'dimension' => 5,
+            'class' => 'span5',
         ));
 
         $this->addElement('select', 'referredTo', array(

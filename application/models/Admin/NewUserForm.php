@@ -44,17 +44,6 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
                                    'filters'    => array('StringTrim'),
 				   'required'   => true,
 				   'label'      => 'First Name:',
-				   'validators' => array(
-				array('NotEmpty', true, array(
-				    'type' => 'string',
-				    'messages' => array('isEmpty' => 'You must enter a first name.'),
-				)),
-				array('StringLength', true, array(
-				    'max' => 30,
-				    'messages' => array(
-					'stringLengthTooLong' => 'First name must be shorter than 30 characters.',
-				    ),
-				)),),
 				 ));
 		
 		// The memebrs name
@@ -62,17 +51,6 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
                                    'filters'    => array('StringTrim'),
 				   'required'   => true,
 				   'label'      => 'Last Name:',
-				   'validators' => array(
-				array('NotEmpty', true, array(
-				    'type' => 'string',
-				    'messages' => array('isEmpty' => 'You must enter a last name.'),
-				)),
-				array('StringLength', true, array(
-				    'max' => 30,
-				    'messages' => array(
-					'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
-				    ),
-				)),),
 				 ));
 		
 		// Members phone number
@@ -109,32 +87,19 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
 		
 		// Memebers e-mail
 		$email = $this->addElement('text', 'email', array(
-			'filters'    => array('StringTrim'),
-			'required'   => true,
-			'label'      => 'Email:',
-			'validators' => array(
-				array('NotEmpty', true, array(
-				    'type' => 'string',
-				    'messages' => array('isEmpty' => 'Email must be provided'),
-				)),
-				array('StringLength', true, array(
-				    'max' => 1000,
-				    'messages' => array(
-					'stringLengthTooLong' => 'Email must be shorter than 100 characters.',
-				    ),
-				)),
-				'EmailAddress',
-			),
+					'filters'    => array('StringTrim'),
+					'validators' => array('EmailAddress'),
+					'required'   => true,
+					'label'      => 'Email:',
                 ));
                
 		// Type of memeber
 		$role = $this->addElement('select','role',array(
 					'label' => 'User Type:',
 					'value' => App_Roles::MEMBER,
-					'multiOptions' => array ( App_Roles::MEMBER        => 'Member',
-								  App_Roles::ADMIN         => 'Admin',
-								  App_Roles::TREASURER     => 'Treasurer',
-								  App_Roles::DATAMIGRATION => 'Data Migrator',),
+					'multiOptions' => array ( 'M'   => 'Member',
+								  App_Roles::ADMIN     => 'Admin',
+								  App_Roles::TREASURER => 'Treasurer',),
 					));
                
 		$adjust = $this->addElement('submit', 'submit', array(

@@ -28,7 +28,7 @@ echo $this->partial('partial/searchResultCommon.phtml', array(
     <th class='search-cell bot first'>Request ID</th>
     <td class='search-cell bot'><a href="<?php echo $this->escape($viewCheckReqUrl); ?>"><?php echo $this->escape($this->checkReq->getId()); ?></a></td>
     <th class='search-cell bot first'>Amount</th>
-    <td class="search-cell bot">$<?php echo $this->escape(number_format($this->checkReq->getCase()->getTotalAmount(), 2)); ?></td>
+    <td class='search-cell bot'>$<?php echo $this->escape($this->checkReq->getCase()->getTotalAmount()); ?></td>
     <th class='search-cell bot'>Needs</th>
     <td class='search-cell bot'><?php echo $this->escape($this->checkReq->getCase()->getNeedList()); ?></td>
 </tr>

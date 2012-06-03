@@ -17,8 +17,6 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
 
     /**
      * Search query types shared by all subclasses.
-     *
-     * @var string[][]
      */
     private $_types = array(
         self::TYPE_CLIENT_NAME => array('label' => 'Client Name'),
@@ -29,10 +27,6 @@ abstract class Application_Model_Search_FormAbstract extends Twitter_Bootstrap_F
     /**
      * Initializes a new instance of the `Application_Model_SearchFormAbstract` class having the
      * specified form action and additional set of search types.
-     *
-     * @param string $action
-     * @param string $listAllLabel
-     * @param string[][] $additionalTypes
      */
     public function __construct($action, $listAllLabel, $additionalTypes)
     {

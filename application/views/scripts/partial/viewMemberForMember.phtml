@@ -4,7 +4,6 @@ $rowStripeClass = (!isset($this->partialCounter) || $this->partialCounter % 2) ?
 echo $this->partial('partial/viewMemberCommon.phtml', array(
     'rowStripeClass' => $rowStripeClass,
     'showEditBtn' => false,
-    'showId' => false,
     'user' => $this->user,
     'rowId' => ($this->rowLetter !== null) ? 'id="' . $this->escape($this->rowLetter) . '" ' : '',
 ));

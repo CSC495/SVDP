@@ -14,27 +14,27 @@
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Created By:&nbsp;<?php echo $this->escape($this->request[0]->getUser())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Created By:&nbsp;<?php echo $this->request[0]->getUser()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name:&nbsp;<?php echo $this->escape($this->client->getFullName())   ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name:&nbsp;<?php echo $this->client->getFullName()   ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cell Phone:&nbsp;<?php echo $this->escape($this->client->getFormattedCellPhone())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cell Phone:&nbsp;<?php echo $this->client->getFormattedCellPhone()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home Phone:&nbsp;<?php echo $this->escape($this->client->getFormattedHomePhone())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home Phone:&nbsp;<?php echo $this->client->getFormattedHomePhone()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Work Phone:&nbsp;<?php echo $this->escape($this->client->getFormattedWorkPhone())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Work Phone:&nbsp;<?php echo $this->client->getFormattedWorkPhone()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
@@ -62,47 +62,47 @@
         {
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Payee:&nbsp;';
-            echo $this->escape($row->getPayeeName());
+            echo $row->getPayeeName();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Address:&nbsp;';
-            echo $this->escape($row->getAddress()->getStreet());
-            echo '&nbsp;';echo $this->escape($row->getAddress()->getCity());
-            echo '&nbsp;';echo $this->escape($row->getAddress()->getState());
-            echo '&nbsp;';echo $this->escape($row->getAddress()->getZip());
+            echo $row->getAddress()->getStreet();
+            echo '&nbsp;';echo $row->getAddress()->getCity();
+            echo '&nbsp;';echo $row->getAddress()->getState();
+            echo '&nbsp;';echo $row->getAddress()->getZip();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check Amount:&nbsp;';
-            echo $this->escape($row->getAmount());
+            echo $row->getAmount();
             $checkTotal += $row->getAmount();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check Number:&nbsp;';
-            echo $this->escape($row->getCheckNumber());
+            echo $row->getCheckNumber();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acount Number:&nbsp;';
-            echo $this->escape($row->getAccountNumber());
+            echo $row->getAccountNumber();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Issue Date:&nbsp;';
-            echo $this->escape($row->getIssueDate());
+            echo $row->getIssueDate();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Comments:&nbsp;';
-            echo $this->escape($row->getComment());
+            echo $row->getComment();
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
             
@@ -114,7 +114,7 @@
         }
             echo '<tr>';
             echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total:&nbsp;';
-            echo $this->escape($checkTotal);
+            echo $checkTotal;
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
     ?>
