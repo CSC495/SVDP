@@ -388,7 +388,12 @@ class App_Service_Member
                            'cn.amount'))
                     ->joinLeft(array('cr' => 'check_request'),
                                'cn.caseneed_id = cr.caseneed_id',
-                               array('cr.checkrequest_id', 'cr.request_date', 'cr.issue_date'))
+                               array(
+                                   'cr.checkrequest_id',
+                                   'cr.request_date',
+                                   'cr.issue_date',
+                                   'cr.status',
+                               ))
                     ->joinLeft(array('r' => 'referral'),
                                'cn.caseneed_id = r.caseneed_id',
                                array('r.referred_date', 'r.reason', 'r.referred_to'))
@@ -413,7 +418,8 @@ class App_Service_Member
                 $checkReq
                     ->setId($row['checkrequest_id'])
                     ->setRequestDate($row['request_date'])
-                    ->setIssueDate($row['issue_date']);
+                    ->setIssueDate($row['issue_date'])
+                    ->setStatus($row['status']);
                 $need->setReferralOrCheckReq($checkReq);
             }
 
@@ -1483,6 +1489,7 @@ class App_Service_Member
             ->setSigneeUser($results['signee_userid'])
             ->setCheckNumber($results['check_number'])
             ->setIssueDate($results['issue_date'])
+            ->setStatus($results['status'])
             ->setAccountNumber($results['account_number'])
             ->setPayeeName($results['payee_name'])
             ->setAddress($address)
