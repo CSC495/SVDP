@@ -14,6 +14,8 @@ class ReportController extends Zend_Controller_Action
         $this->view->pageTitle = "Report Controller";
          $this->view->form = new Application_Model_Report_reportForm(); 
     }
+    /**
+     * processes report form and finds out which report to generate*/
      public function processAction(){
    	$request = $this->getRequest();
     	
@@ -46,6 +48,7 @@ class ReportController extends Zend_Controller_Action
 	    
         
     }
+    /**displays for for client info*/
     public function clientinfoAction(){
 	$this->view->pageTitle = "Client Information Report"; 
         $this->view->form = new Application_Model_Report_clientReport(); 
@@ -54,24 +57,26 @@ class ReportController extends Zend_Controller_Action
 	$this->view->pageTitle = "Client Information Report"; 
         $this->view->form = new Application_Model_Report_clientReport(); 
     }
+    /**queries database information on given client id displays in html*/
     public function clientresultsAction(){
 	$this->view->pageTitle = "Client Information Report";
 	$form = new Application_Model_Report_clientReport();
 	$form->populate($_POST);
 	$cId = $form->clientid->getValue();
-	$service = new App_Service_Member();	
+	$service = new App_Service_Member();
 	$this->view->client = $service->getClientById($cId);
 	if($this->view->client->getFullName() == null)
 	{
 	    $this->_helper->redirector('error');
 	}
     }
+    /**queries database information on given client id displays in pdf*/    
     public function clientpdfAction(){
 	$this->view->pageTitle = "Client Information Report";
 	$form = new Application_Model_Report_clientReport();
 	$form->populate($_POST);
 	$cId = $form->clientid->getValue();
-	$service = new App_Service_Member();	
+	$service = new App_Service_Member();
 	$this->view->client = $service->getClientById($cId);
 	if($this->view->client == null)
 	{
@@ -82,6 +87,7 @@ class ReportController extends Zend_Controller_Action
 	$this->view->pageTitle = "On Call Activities Report";
 	$this->view->form = new Application_Model_Report_ocaReport();
     }
+    /**queries database on call activities information displays in html*/ 
     public function ocactivitiesresultsAction(){
 	$this->view->pageTitle = "On Call Activities Report";
 	$form = new Application_Model_Report_ocaReport();
@@ -141,6 +147,7 @@ class ReportController extends Zend_Controller_Action
 	$this->view->referrals = $referrals;
 	$this->view->referHelped = $referHelped;	
     }
+    /**queries database on call activities information displays in pdf*/ 
     public function ocapdfAction(){
 	$this->view->pageTitle = "On Call Activities Report";
 	$form = new Application_Model_Report_ocaReport();
@@ -205,6 +212,7 @@ class ReportController extends Zend_Controller_Action
 	$this->view->pageTitle = "Reimbursement Report"; 
         $this->view->form = new Application_Model_Report_reimbursementReport(); 
     }
+    /**queries database on given case id for checkrequest for reimbursement displays in html*/ 
     public function reimbursementresultsAction(){
 	$this->view->pageTitle = "Reimbursement Report";         
 	$form = new Application_Model_Report_reimbursementReport();
@@ -229,6 +237,7 @@ class ReportController extends Zend_Controller_Action
 	    $this->_helper->redirector('error');
 	}
     }
+    /**queries database on given case id for checkrequest for reimbursement displays in pdf*/     
     public function reimbursepdfAction(){
 	$this->view->pageTitle = "Reimbursement Report";         
 	$form = new Application_Model_Report_reimbursementReport();
@@ -241,6 +250,8 @@ class ReportController extends Zend_Controller_Action
 	$this->view->client = $service2->getClientById($caseId);
 	$results = $service->getCheckReqsByCaseId($caseId);
 	$ctr = 0;
+	$this->view->caseid = $caseId;
+	/**@param $chkRequest array of checkreqest for case id*/
 	foreach($results as $row)
 	{
 	    $chkRequest[$ctr] = $row;

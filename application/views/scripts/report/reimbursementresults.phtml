@@ -65,62 +65,64 @@
         $checkTotal = 0;
         foreach($this->request as $row)
         {
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Case Need:&nbsp;';
-            echo $this->escape($row->getCaseNeedName());
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Payee:&nbsp;';
-            echo $this->escape($row->getPayeeName());
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Address:&nbsp;';
-            echo $this->escape($row->getAddress()->getStreet());
-            echo '&nbsp;';echo $this->escape($row->getAddress()->getCity());
-            echo '&nbsp;';echo $this->escape($row->getAddress()->getState());
-            echo '&nbsp;';echo $this->escape($row->getAddress()->getZip());
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check Amount:&nbsp;';
-            echo $format->formatCurrency($this->escape($row->getAmount()));
-            $checkTotal += $row->getAmount();
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check Number:&nbsp;';
-            echo $this->escape($row->getCheckNumber());
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acount Number:&nbsp;';
-            echo $this->escape($row->getAccountNumber());
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Issue Date:&nbsp;';
-            echo $format->formatDate($this->escape($row->getIssueDate()));
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Comments:&nbsp;';
-            echo $this->escape($row->getComment());
-            echo '</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
-            echo '<tr>';
-            echo '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>';
-            echo '</tr>';
-            
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Case Need:&nbsp;';
+                echo $this->escape($row->getCaseNeedName());
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Payee:&nbsp;';
+                echo $this->escape($row->getPayeeName());
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Address:&nbsp;';
+                echo $this->escape($row->getAddress()->getStreet());
+                echo '&nbsp;';echo $this->escape($row->getAddress()->getCity());
+                echo '&nbsp;';echo $this->escape($row->getAddress()->getState());
+                echo '&nbsp;';echo $this->escape($row->getAddress()->getZip());
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check Amount:&nbsp;';
+                echo $format->formatCurrency($this->escape($row->getAmount()));
+                $checkTotal += $row->getAmount();
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check Number:&nbsp;';
+                echo $this->escape($row->getCheckNumber());
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Acount Number:&nbsp;';
+                echo $this->escape($row->getAccountNumber());
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Issue Date:&nbsp;';
+                echo $format->formatDate($this->escape($row->getIssueDate()));
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Comments:&nbsp;';
+                echo $this->escape($row->getComment());
+                echo '</td><td>&nbsp;</td>';
+                echo '</tr>';
+                
+                echo '<tr>';
+                echo '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>';
+                echo '</tr>';
+            }
             
         }
             
@@ -133,7 +135,7 @@
    
 </table>
 
-<p><br />Excel Reimbursement Form will only include consider the following check types:<br />
+<p><br />Excel Reimbursement Form will only include consider the following types:<br />
 &nbsp;&nbsp;&nbsp;&nbsp;Rent <br />
 &nbsp;&nbsp;&nbsp;&nbsp;Water <br />
 &nbsp;&nbsp;&nbsp;&nbsp;Gas <br />
