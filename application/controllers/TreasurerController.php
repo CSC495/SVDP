@@ -181,6 +181,7 @@ class TreasurerController extends Zend_Controller_Action
         // Ensure check number provided
         if( !$checkNum->isValid( $checkNum->getValue()) ){
             $checkNum->setAttrib('readonly', null);
+            $form->setInitialButtons();
             return;
         }
 
