@@ -423,8 +423,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
     {
 	$service = new App_Service_TreasurerService();
 	$check = $service->getCheckReqById($this->id->getValue());
-	var_dump($check);
-	exit();
 	$check
 	    ->setPayeeName($this->payeeName->getValue())
 	    ->setContactFirstName($this->contactfname->getValue())

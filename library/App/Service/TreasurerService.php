@@ -50,8 +50,6 @@ class App_Service_TreasurerService {
     
     public function updateCheckRequest($reqObj){
 	$reqData = $this->disassembleCheckRequestModel($reqObj);
-	var_dump($reqData);
-	exit();
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $reqObj->getId());
 	$this->_db->update('check_request', $reqData, $where);
     }
@@ -68,9 +66,10 @@ class App_Service_TreasurerService {
 	$this->_db->update('check_request', $change, $where);
     }
     
-    public function denyCheckRequest($id){
+    public function denyCheckRequest($id, $userId){
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $id);
-	$change = array('status' => 'D');
+	$change = array('status' => 'D',
+			'signee_userid' => $userId);
 	$this->_db->update('check_request', $change, $where);
     }
     
@@ -125,8 +124,6 @@ class App_Service_TreasurerService {
             ->setContactFirstName($results['contact_fname'])
             ->setContactLastName($results['contact_lname'])
 	    ->setStatus($results['status']);
-	    var_dump($request);
-	    exit();
         return $request;
     }
     
@@ -141,7 +138,7 @@ class App_Service_TreasurerService {
             'comment' => $request->getComment(),
             'signee_userid' => ($request->getSigneeUserId() !== null)
                 ? $request->getSigneeUserId() : null,
-            'check_number' => $request->getCheckNumber(),
+            'check_number' => App_Formatting::emptyToNull($request->getCheckNumber()),
             'issue_date' => $request->getIssueDate(),
             'account_number' => $request->getAccountNumber(),
             'payee_name' => $request->getPayeeName(),

@@ -77,6 +77,9 @@ class TreasurerController extends Zend_Controller_Action
                 case 'submit_comment':
                     $this->submitComment($this->view->form,$service);
                     break;
+                case 'cancel_comment':
+                    $this->view->form = new Application_Model_Treasurer_CheckForm($check);
+                    break;
                 default:
                     break;
             }
@@ -124,40 +127,52 @@ class TreasurerController extends Zend_Controller_Action
                     return;
                 case 'submit_edits':
                     $this->submitEdits($this->view->form,$service);
+                    break;
+                case 'deny_check':
+                    $this->denyCheck($this->view->form,$service);
+                    return;
+                case 'issue_check':
+                    $this->issueCheck($this->view->form,$service);
+                    return;
+                case 'cancel_edits':
+                case 'cancel_comment':
+                    $this->view->form = new Application_Model_Treasurer_CheckForm($check);
+                    break;
                 default:
                     break;
             }
             
             $this->view->form->setInitialButtons();
-            //
-            //$form->setMemberView();
-            //if($request->denyCheck){
-            //        $service->denyCheckRequest($request->checkID);
-            //        $this->_helper->redirector('index');
-            //}
-            //if($request->editCheck === 'Edit Check Request'){
-            //    $this->view->form->editCheckReq($request->editCheck);
-            //}
-            //if($request->editCheck === 'Submit Edits'){
-            //        var_dump('this should persist');
-            //        exit();
-            //}
-            //if($request->addComment){
-            //        $this->view->form->addAComment($request->addComment);
-            //}
-            //        
-            //return;
         }	
+    }
+    private function denyCheck($form,$service)
+    {
+        $identity = Zend_Auth::getInstance()->getIdentity();
+        
+        $check = $form->getCheckReq();
+        $service->denyCheckRequest($check->getId(),$identity->user_id);
+        
+        return $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Check Request Has Been Denied!',
+                               'time' => 2,
+                               'controller' => App_Resources::TREASURER,
+                               'action' => 'index')); 
     }
     private function submitEdits($form,$service)
     {
         $check = $form->getCheckReq();
         $service->updateCheckRequest($check);
     }
-    private function issueCheck()
+    private function issueCheck($form,$service)
     {
         $identity = Zend_Auth::getInstance()->getIdentity();
-        $service->closeCheckRequest($identity->user_id, $request->checkID, $request->checkNum);
-        $this->_helper->redirector('index');
+        $check = $form->getCheckReq();
+        $service->closeCheckRequest($identity->user_id, $check->getId(), $check->getCheckNumber());
+        
+        return $this->_forward('index', App_Resources::REDIRECT, null,
+                        Array( 'msg' => 'Check Request Has Been Issued!',
+                               'time' => 2,
+                               'controller' => App_Resources::TREASURER,
+                               'action' => 'index')); 
     }
 }
