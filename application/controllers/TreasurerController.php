@@ -176,6 +176,14 @@ class TreasurerController extends Zend_Controller_Action
     }
     private function issueCheck($form,$service)
     {
+        $checkNum = $form->checkNum;
+        $checkNum->setRequired(true);
+        // Ensure check number provided
+        if( !$checkNum->isValid( $checkNum->getValue()) ){
+            $checkNum->setAttrib('readonly', null);
+            return;
+        }
+
         $identity = Zend_Auth::getInstance()->getIdentity();
         $check = $form->getCheckReq();
         $service->closeCheckRequest($identity->user_id, $check->getId(), $check->getCheckNumber());
