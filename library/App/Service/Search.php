@@ -15,14 +15,29 @@
 class App_Service_Search
 {
 
+    /**
+     * Supported street address directions, in lowercase with no punctuation.
+     *
+     * @var string[]
+     */
     private static $_STREET_ADDR_DIRS = array('n', 'north', 'w', 'west', 's', 'south', 'e', 'east');
 
+    /**
+     * Supported street name suffixes, in lowercase with no punctuation.
+     *
+     * @var string[]
+     */
     private static $_STREET_ADDR_SUFFIXES = array(
         'ave', 'av', 'avenue', 'cir', 'cr', 'circle', 'ct', 'court', 'ln', 'lane', 'lp', 'loop',
         'pkwy', 'pky', 'parkway', 'pl', 'place', 'rd', 'road', 'sq', 'square', 'st', 'street',
         'trl', 'trail'
     );
 
+    /**
+     * Database adapter for queries.
+     *
+     * @var Zend_Db_Adapter_Abstract
+     */
     private $_db;
 
     /**
@@ -74,8 +89,7 @@ class App_Service_Search
         $select   = $this->initClientSelect()
             ->where(
                 'a.street LIKE ? OR a.apt LIKE ? OR a.city LIKE ? OR a.state LIKE ?'
-                    . ' OR a.zipcode LIKE ?',
-                $likeAddr, $likeAddr, $likeAddr, $likeAddr, $likeAddr
+                    . ' OR a.zipcode LIKE ?', $likeAddr
             );
         $results  = $this->_db->fetchAssoc($select);
 
@@ -93,8 +107,7 @@ class App_Service_Search
         $likePhone = '%' . App_Escaping::escapeLike($phone) . '%';
         $select    = $this->initClientSelect()
             ->where(
-                'c.cell_phone LIKE ? OR c.home_phone LIKE ? OR c.work_phone LIKE ?',
-                $likePhone, $likePhone, $likePhone
+                'c.cell_phone LIKE ? OR c.home_phone LIKE ? OR c.work_phone LIKE ?', $likePhone
             );
         $results   = $this->_db->fetchAssoc($select);
 
@@ -134,7 +147,7 @@ class App_Service_Search
                       . $this->_db->quoteInto('c.last_name LIKE ?', $likeLastName)
                     ),
             ));
-        $results       = $this->_db->fetchAssoc($select);
+        $results       = $this->_db->fetchAssoc($this->orderClientSelect($select));
 
         return $this->buildClientModels($results);
     }
@@ -194,7 +207,7 @@ class App_Service_Search
         $likeName = '%' . App_Escaping::escapeLike($name) . '%';
         $select   = $this->initCheckReqSelect()
             ->where("CONCAT_WS(' ', c.first_name, c.last_name) LIKE ? "
-                  . "OR CONCAT_WS(' ', c2.first_name, c2.last_name) LIKE ?", $likeName, $likeName);
+                  . "OR CONCAT_WS(' ', c2.first_name, c2.last_name) LIKE ?", $likeName);
         $results  = $this->_db->fetchAssoc($select);
 
         return $this->buildCheckReqModels($results);
@@ -213,8 +226,7 @@ class App_Service_Search
             ->join(array('a' => 'address'), 'a.address_id = h.address_id', array())
             ->where(
                 'a.street LIKE ? OR a.apt LIKE ? OR a.city LIKE ? OR a.state LIKE ?'
-                    . ' OR a.zipcode LIKE ?',
-                $likeAddr, $likeAddr, $likeAddr, $likeAddr, $likeAddr
+                    . ' OR a.zipcode LIKE ?', $likeAddr
             );
         $results = $this->_db->fetchAssoc($select);
 
@@ -235,7 +247,7 @@ class App_Service_Search
             ->where(
                 'c.cell_phone LIKE ? OR c.home_phone LIKE ? OR c.work_phone LIKE ?'
                     . ' OR c2.cell_phone LIKE ? OR c2.home_phone = ? OR c2.work_phone = ?',
-                $likePhone, $likePhone, $likePhone, $likePhone, $likePhone, $likePhone
+                $likePhone
             );
         $results = $this->_db->fetchAssoc($select);
 
@@ -251,7 +263,7 @@ class App_Service_Search
     public function getCheckReqsByClientId($clientId)
     {
         $select  = $this->initCheckReqSelect()
-            ->where('c.client_id = ? OR c2.client_id = ?', $clientId, $clientId);
+            ->where('c.client_id = ? OR c2.client_id = ?', $clientId);
         $results = $this->_db->fetchAssoc($select);
 
         return $this->buildCheckReqModels($results);
@@ -274,6 +286,13 @@ class App_Service_Search
 
     /* Internal helper methods: */
 
+    /**
+     * Initializes a new SELECT object for client search queries, optionally skipping the ORDER BY
+     * clause to allow use in UNION queries.
+     *
+     * @param bool $noOrder
+     * @return Zend_Db_Select
+     */
     private function initClientSelect($noOrder = false)
     {
         $select = $this->_db->select()
@@ -302,18 +321,25 @@ class App_Service_Search
             )
             ->where('h.current_flag = 1');
 
-        if (!$noOrder) {
-            $this->orderClientSelect($select);
-        }
-
-        return $select;
+        return $noOrder ? $select : self::orderClientSelect($select);
     }
 
-    private function orderClientSelect(Zend_Db_Select $select)
+    /**
+     * Applies an ORDER BY clause to the specified client SELECT query.
+     *
+     * @param Zend_Db_Select $select
+     * @return Zend_Db_Select
+     */
+    private static function orderClientSelect(Zend_Db_Select $select)
     {
-        return $select->order(array('c.last_name', 'c.first_name', 'c.client_id'));
+        return $select->order(array('last_name', 'first_name', 'client_id'));
     }
 
+    /**
+     * Initializes a new SELECT object for case search queries.
+     *
+     * @return Zend_Db_Select
+     */
     private function initCaseSelect()
     {
         return $this->_db->select()
@@ -352,6 +378,11 @@ class App_Service_Search
             ->order('s.opened_date DESC', 's.case_id');
     }
 
+    /**
+     * Initializes a new SELECT object for check request search queries.
+     *
+     * @return Zend_Db_Select
+     */
     private function initCheckReqSelect()
     {
         return $this->_db->select()
@@ -393,7 +424,13 @@ class App_Service_Search
             ));
     }
 
-    private function buildClientModels($dbResults)
+    /**
+     * Assembles an array of client model objects from an array of client DB rows.
+     *
+     * @param array $dbResults
+     * @return Application_Model_Impl_Client[]
+     */
+    private static function buildClientModels(array $dbResults)
     {
         $clients = array();
 
@@ -407,6 +444,13 @@ class App_Service_Search
                 ->setState($dbResult['state'])
                 ->setZip($dbResult['zipcode']);
 
+            if ($dbResult['do_not_help_reason'] !== null) {
+                $doNotHelp = new Application_Model_Impl_DoNotHelp();
+                $doNotHelp->setReason($dbResult['do_not_help_reason']);
+            } else {
+                $doNotHelp = null;
+            }
+
             $client = new Application_Model_Impl_Client();
             $client
                 ->setId($dbResult['client_id'])
@@ -416,15 +460,21 @@ class App_Service_Search
                 ->setHomePhone($dbResult['home_phone'])
                 ->setWorkPhone($dbResult['work_phone'])
                 ->setCurrentAddr($addr)
-                ->setDoNotHelpReason($dbResult['do_not_help_reason']);
+                ->setDoNotHelp($doNotHelp);
 
-            $clients[] = $client;
+            $clients[$dbResult['client_id']] = $client;
         }
 
         return $clients;
     }
 
-    private function buildCaseModels($dbResults)
+    /**
+     * Assembles an array of case model objects from an array of client DB rows.
+     *
+     * @param array $dbResults
+     * @return Application_Model_Impl_Case[]
+     */
+    private static function buildCaseModels($dbResults)
     {
         $cases = array();
 
@@ -454,13 +504,19 @@ class App_Service_Search
                 ->setTotalAmount($dbResult['total_amount'])
                 ->setClient($client);
 
-            $cases[] = $case;
+            $cases[$dbResult['case_id']] = $case;
         }
 
         return $cases;
     }
 
-    private function buildCheckReqModels($dbResults)
+    /**
+     * Assembles an array of check request model objects from an array of client DB rows.
+     *
+     * @param array $dbResults
+     * @return Application_Model_Impl_CheckReq[]
+     */
+    private static function buildCheckReqModels($dbResults)
     {
         $checkReqs = array();
 
@@ -489,7 +545,7 @@ class App_Service_Search
                 ->setCase($case)
 				->setStatus($dbResult['status']);
 
-            $checkReqs[] = $checkReq;
+            $checkReqs[$dbResult['checkrequest_id']] = $checkReq;
         }
 
         return $checkReqs;
@@ -529,8 +585,8 @@ class App_Service_Search
 
             // Try to strip house numbers and directions from the beginning of the address.
             while (count($chunks) - $hasSuffix > 1) {
-                // Before examining this street address chunk, strip nonalphanumeric characters and make
-                // the string lowercase.
+                // Before examining this street address chunk, strip nonalphanumeric characters and
+                // make the string lowercase.
                 reset($chunks);
                 $firstChunk = strtolower(preg_replace('/[^A-Za-z0-9]/', '', current($chunks)));
 

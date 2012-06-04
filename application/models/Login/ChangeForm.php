@@ -43,6 +43,8 @@ class Application_Model_Login_ChangeForm extends Twitter_Bootstrap_Form_Vertical
 				'required'   => true,
 				'filters'   => array('stringTrim'),
 				'label'      => 'New Password:',
+				'name'       => 'password',
+				'id'         => 'password',
 		));
 	
 		// verify the users input
@@ -51,10 +53,14 @@ class Application_Model_Login_ChangeForm extends Twitter_Bootstrap_Form_Vertical
 				'required'   => true,
 				'filters'   => array('stringTrim'),
 				'label'      => 'Verify Password:',
+				'name'       => 'verify',
+				'id'         => 'verify',
 		));
 		// Used to display error if any occurs
 		$err = $this->addElement('hidden','err',array(
 			'required' => false,
+			'name'     => 'err',
+			'id'       => 'err',
 		));
 		
 		$submit = $this->addElement('submit', 'submit', array(

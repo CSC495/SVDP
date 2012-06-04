@@ -1,3 +1,7 @@
-<?php
+<?php $this->headScript()->captureStart(); ?>
+$(function() {
+    initDocUpload();
+});
+<?php $this->headScript()->captureEnd();
 
 echo $this->form;

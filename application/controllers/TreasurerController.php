@@ -19,7 +19,7 @@ class TreasurerController extends Zend_Controller_Action
 	
 	public function updatefundsAction()
 	{
-		$this->view->pageTitle = "Update Available Funds";
+		$this->view->pageTitle = "Update Total Funds";
 		
 		$request = $this->getRequest();
 		$this->view->form = new Application_Model_Treasurer_FundsForm();
@@ -48,10 +48,8 @@ class TreasurerController extends Zend_Controller_Action
 			$check = $service->getCheckReqById($request->id);
 			$this->view->form = new Application_Model_Treasurer_CheckForm($check);
 		}
-		
-		
+			
 		if ($request->isPost()) {
-		
 			$check = $service->getCheckReqById($request->checkID);
 			$this->view->form = new Application_Model_Treasurer_CheckForm($check);
 
@@ -59,22 +57,42 @@ class TreasurerController extends Zend_Controller_Action
 			
 			
 			if($request->issueCheck){
-				$service->closeCheckRequest(27, $request->checkID, $request->checkNum);
-				$this->_helper->redirector('index');
+				if($request->checkNum == null){
+					$this->view->form->requireCheckNum();
+				}
+				else{
+				
+					$service->closeCheckRequest(Zend_Auth::getInstance()->getIdentity()->user_id, 
+													$request->checkID, $request->checkNum);
+					$this->_helper->redirector('index');
+				}
 			}
+			
 			if($request->denyCheck){
 				$service->denyCheckRequest($request->checkID);
 				$this->_helper->redirector('index');
 			}
+			
 			if($request->editCheck){
-				$this->view->form->editCheckReq($request->editCheck);
-			}
-			if($request->addComment){
-				$this->view->form->addAComment($request->addComment);
+				
+				$ret = $this->view->form->editCheckReq($request->editCheck, $check);
+				$ret->setUserId($ret->getUser());
+				
+				$service->updateCheckRequest($ret);
+				
+				if($request->editCheck === 'Submit Edits'){
+					$this->_helper->redirector('index');
+				}
 			}
 			
-            return;
+			if($request->addComment){
+				// Re-add existing form data.
+				$data = $request->getPost();
+
+				$com = $this->view->form->addAComment($request->addComment);
+				
+				$service->updateCheckReqComment($com, $request->checkID);
+			}
         }
-		
 	}
 }

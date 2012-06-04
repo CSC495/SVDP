@@ -15,12 +15,7 @@ class ErrorController extends Zend_Controller_Action
     {
         $this->view->pageTitle = 'Error Page';
         $errors = $this->_getParam('error_handler');
-        
-        if (!$errors || !$errors instanceof ArrayObject) {
-            $this->view->message = 'You have reached the error page';
-            return;
-        }
-        
+
         switch ($errors->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
@@ -30,15 +25,16 @@ class ErrorController extends Zend_Controller_Action
                 $priority = Zend_Log::NOTICE;
                 $this->view->message = 'Page not found';
                 break;
-            case 'NotAuthorizedException':
-                $this->getResponse()->setHttpResponseCode(403);
-                $this->view->message = 'You are not authorized to view this content';
+            case App_ErrorType::FORBIDDEN:
+                $this->getResponse()->setHttpResponseCode($errors->exception->getCode());
+                $priority = Zend_Log::NOTICE;
+                $this->view->message = $errors->exception->getMessage();
                 break;
             default:
                 // application error
                 $this->getResponse()->setHttpResponseCode(500);
                 $priority = Zend_Log::CRIT;
-                $this->view->message = 'Application error';
+                $this->view->message = 'Sorry! There was an error processing request';
                 break;
         }
         
@@ -47,12 +43,11 @@ class ErrorController extends Zend_Controller_Action
             $log->log($this->view->message, $priority, $errors->exception);
             $log->log('Request Parameters', $priority, $errors->request->getParams());
         }
-        
+
         // conditionally display exceptions
         if ($this->getInvokeArg('displayExceptions') == true) {
             $this->view->exception = $errors->exception;
         }
-        
         $this->view->request   = $errors->request;
     }
 

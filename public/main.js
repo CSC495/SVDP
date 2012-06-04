@@ -394,7 +394,7 @@ function renderMap(centerCoords, clientCoords) {
     });
 }
 
-function initEditClientForm() {
+function initClientForm() {
     // Attach event handlers.
     var maritalStatusDropbox = $('#maritalStatus');
     var doNotHelpCheckbox = $('#doNotHelp');
@@ -419,7 +419,7 @@ function initEditClientForm() {
             memberDoNotHelpDiv.addClass('invisible');
         }
 
-        if (changeTypeDropbox.val() == '') {
+        if (!changeTypeDropbox.length || changeTypeDropbox.val() == '') {
             addrTextFields.attr('readonly', 'readonly');
             addrDropboxes.attr('disabled', 'disabled');
         } else {
