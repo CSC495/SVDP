@@ -442,10 +442,12 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    array_push($this->_activeButtons,$this->issueCheck);
 	    array_push($this->_activeButtons,$this->denyCheck);
 	    array_push($this->_activeButtons,$this->editCheck);
+	    
+	    $this->checkNum->setAttrib('readonly', null);
 	}
 	array_push($this->_activeButtons,$this->addComment);
 	
-
+	
     }
     public function getComment()
     {

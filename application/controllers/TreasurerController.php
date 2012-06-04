@@ -57,8 +57,8 @@ class TreasurerController extends Zend_Controller_Action
         
         // Set forms action to this action
         $baseUrl = new Zend_View_Helper_BaseUrl();
-        $action = $baseUrl->baseUrl(App_Resources::TREASURER) . '/view';
-        $this->view->form->setAction($action);
+        $actionUrl = $baseUrl->baseUrl(App_Resources::TREASURER) . '/view';
+        $this->view->form->setAction($actionUrl);
             
         if(!$request->isPost()) {
             $this->view->form->setMemberView();
@@ -79,6 +79,7 @@ class TreasurerController extends Zend_Controller_Action
                     break;
                 case 'cancel_comment':
                     $this->view->form = new Application_Model_Treasurer_CheckForm($check);
+		    $this->view->form->setAction($actionUrl);
                     break;
                 default:
                     break;
@@ -185,7 +186,6 @@ class TreasurerController extends Zend_Controller_Action
         $checkNum->setRequired(true);
         // Ensure check number provided
         if( !$checkNum->isValid( $checkNum->getValue()) ){
-            $checkNum->setAttrib('readonly', null);
             $form->setInitialButtons();
             return;
         }
