@@ -55,15 +55,25 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		$this->clientName->setValue($case->getClient()->getFullName());
 		
 		
-		$this->addElement('text', 'contact',  array(
+		$this->addElement('text', 'contactFirst',  array(
 				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
-				'label'      => 'Contact Name',
+				'label'      => 'Contact First Name',
 				'size'		 => 7,
 		));
-		$this->contact->setValue($check->getContactFirstName() . ' ' . $check->getContactLastName());
+		$this->contactFirst->setValue($check->getContactFirstName());
+		
+		$this->addElement('text', 'contactLast',  array(
+				'filters'    => array('StringTrim'),
+				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'readonly'   => true,
+				'required'   => true,
+				'label'      => 'Contact Last Name',
+				'size'		 => 7,
+		));
+		$this->contactLast->setValue($check->getContactLastName());
 		
 		
 		$this->addElement('text', 'contactPhone',  array(
@@ -243,7 +253,8 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		if($t === 'Edit Check Request'){
 			$this->payeeName->setAttrib('readonly', null);
 			$this->payeeAccount->setAttrib('readonly', null);
-			$this->contact->setAttrib('readonly', null);
+			$this->contactFirst->setAttrib('readonly', null);
+			$this->contactLast->setAttrib('readonly', null);
 			$this->contactPhone->setAttrib('readonly', null);
 			
 			$this->checkNum->setAttrib('readonly', null);
@@ -257,17 +268,17 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		}
 		
 		if($t === 'Submit Edits'){
-			$cont = trim($this->contact->getValue());
-			$num = strpos($cont, ' ');
-			$fir = substr($cont, 0, $num);
-			$las = substr($cont, $num);
+			//$cont = trim($this->contact->getValue());
+			//$num = strpos($cont, ' ');
+			//$fir = substr($cont, 0, $num);
+			//$las = substr($cont, $num);
 			$ph = str_replace(array(' ', '(', ')', '-'), "", $this->contactPhone->getValue());
 			
 			
 			$chk->setPayeeName($this->payeeName->getValue());
 			$chk->setAccountNumber($this->payeeAccount->getValue());
-			$chk->setContactFirstName(trim($fir));
-			$chk->setContactLastName(trim($las));
+			$chk->setContactFirstName($this->contactFirst->getValue());
+			$chk->setContactLastName($this->contactLast->getValue());
 			$chk->setPhone($ph);
 			
 			$chk->setCheckNumber($this->checkNum->getValue());
