@@ -4,13 +4,13 @@ function initAdminLimits(){
 			rules: {
 				aid: {
 					required: true,
-					min: 0,
-                    number: true
+                    number: true,
+					min: 0
 				},
                 casefund: {
                     required: true,
-                    min: 0,
-                    number: true
+                    number: true,
+                    min: 0
                 },
                 lifetimecases: {
                     required: true,
