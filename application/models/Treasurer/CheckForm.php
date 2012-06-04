@@ -17,11 +17,16 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
      * The list of all the buttons associated with the form
      */
     private $_buttons = array();
+    /**
+     * Holds state of the check that the form is being constructed for
+     */
+    private $_checkStatus = 'P';
     
     public function __construct($check, $state = Application_Model_Treasurer_CheckForm::READONLY)
     {
 	// Set the state of the form
 	$this->_state = $state;
+	$this->_checkStatus = $check->getStatus();
 	
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		
@@ -431,8 +436,8 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
     }
     public function setInitialButtons()
     {
-	// Only show issue or deny if check is not issued
-	if($this->issueDate->getValue() === '' || $this->issueDate->getValue() === null)
+	// Only show issue, deny, edit if check if pending
+	if($this->_checkStatus === 'P')
 	{
 	    array_push($this->_activeButtons,$this->issueCheck);
 	    array_push($this->_activeButtons,$this->denyCheck);
