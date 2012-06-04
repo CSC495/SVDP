@@ -1,0 +1,78 @@
+<?php    
+    /** @param $fName first name */
+    $fName = $this->client->getFirstName();
+    /** @param $lName last name */
+    $lName = $this->client->getLastName();
+    
+    $format = new App_Formatting();
+    
+    require("html2fpdf-3.0.2b/html2fpdf.php");
+    $htmlFile =
+        "<table>
+            <tr>
+                <td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td><td>&nbsp;</td>      
+            </tr>
+            <tr>
+                <td><h4><center>Client Information Report&nbsp;</center></h4></td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Client Information &nbsp;</strong></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Client ID:&nbsp;". $this->client->getId() . "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date Created:&nbsp;". $format->formatDate($this->client->getCreatedDate()) . "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Client Name:&nbsp;".$this->client->getFullName(). "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current Address:&nbsp;".$this->client->getCurrentAddr()->getStreet()
+                ." " . $this->client->getCurrentAddr()->getCity()
+                ." " . $this->client->getCurrentAddr()->getState()
+                .", " . $this->client->getCurrentAddr()->getZip(). "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home Phone:&nbsp;".$this->client->getFormattedHomePhone(). "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cell Phone:&nbsp;".$this->client->getFormattedCellPhone(). "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Work Phone:&nbsp;".$this->client->getFormattedWorkPhone(). "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parish:&nbsp;".$this->client->getParish(). "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>";
+    /** @param $pdf new pdf object*/
+    $pdf = new HTML2FPDF('P', 'mm', 'Letter');
+    $pdf->AddPage();
+    $pdf->WriteHTML($htmlFile);
+    $pdf->Output('C:/SVDPReports/' . $lName . $fName . 'InfoReport.pdf', 'F');
+ ?>
+ <p>The Report has been successfully created.<br />
+    It was saved as '<?php echo $lName; echo $fName;?>InfoReport.pdf'</p>

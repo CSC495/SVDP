@@ -1,0 +1,288 @@
+<html xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://jasperreports.sourceforge.net/jasperreports">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JasperReports 4.6.0 - jCharts Sample</title>
+<style type="text/css">
+.title {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 28px;
+	font-weight: normal;
+}
+
+.toc {
+	font-family: Courier New, Courier, serif;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.name {
+	font-family: Courier New, Courier, serif;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.label {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	font-style: italic;
+}
+
+.description {
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.value {
+	font-family: Courier New, Courier, serif;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.element {
+	font-family: Courier New, Courier, serif;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.attribute {
+	font-family: Courier New, Courier, serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.code {
+	font-family: Courier New, Courier, serif;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.copy {
+	font-decoration: none;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 8pt;
+	font-style: normal;
+	color: #000000;
+}
+
+.subtitle {
+	font-family: inherit;
+	font-size: inherit;
+	font-style: inherit;
+	font-weight: bold;
+	text-decoration: none;
+	color: inherit;
+}
+
+</style>
+</head>
+<body bgcolor="#FFFFFF">
+<a name="top"></a>
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
+<tr>
+<td colspan="2" align="right"><span class="element"><a href="../../JasperReports-Ultimate-Guide-3.pdf">JasperReports Ultimate Guide</a> - <a href="../../sample.reference.html">Sample Reference</a> - <a href="../../schema.reference.html">Schema Reference</a> - <a href="../../config.reference.html">Configuration Reference</a> - <a href="http://jasperreports.sourceforge.net/api/index.html">API (Javadoc)</a></span>
+<br>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<hr size="1">
+</td>
+</tr>
+<tr valign="middle">
+<td nowrap="true"><span class="title">JasperReports - jCharts Sample (version 4.6.0)</span></td><td align="right"><img src="../../resources/jasperreports.png" border="0"></td>
+</tr>
+<tr>
+<td colspan="2">
+<hr size="1">
+</td>
+</tr>
+</table>
+<br>
+<span class="description"><span class="description">Shows how third-party charting APIs could be used for rendering charts as images.</span></span>
+<br>
+<br>
+<span class="element"><a href="http://sourceforge.net/projects/jasperreports/files/jasperreports/JasperReports%204.6.0/jasperreports-4.6.0-project.zip/download" target="_blank">Download All Sample Source Files</a></span>
+<br>
+<span class="element"><a href="http://jasperforge.org/scm/viewvc.php/tags/jr-4-6-0/jasperreports/demo/samples/jcharts/?root=jasperreports" target="_blank">Browse Sample Source Files on SVN</a></span>
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td style="width: 20px;">
+<br>
+</td><td>
+<br>
+</td>
+</tr>
+<tr>
+<td colspan="2"><span class="label">Main Features in This Sample</span></td>
+</tr>
+<tr>
+<td>
+<br>
+</td><td><span class="element"><a href="#jcharts">Rendering Images Using Third Party APIs (jCharts Library)</a></span></td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td><img src="../../resources/px.gif" border="0" width="20" height="1"></td><td><img src="../../resources/px.gif" border="0" width="20" height="1"></td><td><img src="../../resources/px.gif" border="0" width="20" height="1"></td><td><img src="../../resources/px.gif" border="0" width="20" height="1"></td><td width="80%">
+<br>
+</td><td width="20%">
+<br>
+</td>
+</tr>
+<tr>
+<td colspan="6" align="right"><a name="jcharts"></a><a href="#top" class="toc">top</a></td>
+</tr>
+<tr>
+<td colspan="6">
+<hr size="1">
+</td>
+</tr>
+<tr valign="top">
+<td><img src="../../resources/jr-16x16.png" border="0"></td><td colspan="4"><span class="name">Rendering Images Using Third Party APIs (jCharts Library)</span></td><td align="right"><span class="copy">Documented by 
+	<a href="mailto:shertage@users.sourceforge.net" class="copy">Sanda Zaharia</a></span></td>
+</tr>
+<tr>
+<td colspan="6">
+<br>
+</td>
+</tr>
+<tr valign="top">
+<td>
+<br>
+</td><td nowrap="true"><span class="label">Description / Goal</span></td><td>
+<br>
+</td><td colspan="3"><span class="description">
+How to render images using the <a href="http://jcharts.sourceforge.net/" target="_blank" class="element">jCharts</a> library.
+    </span></td>
+</tr>
+<tr valign="top">
+<td>
+<br>
+</td><td colspan="1"><span class="label">Since</span></td><td>
+<br>
+</td><td colspan="3"><span class="description">0.6.0</span></td>
+</tr>
+<tr valign="top">
+<td>
+<br>
+</td><td nowrap="true"><span class="label">Other Samples</span></td><td>
+<br>
+</td><td colspan="3">
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td><span class="element"><a href="../scriptlets/index.html">/demo/samples/scriptlets</a></span></td>
+</tr>
+<tr>
+<td><span class="element"><a href="../jfreechart/index.html">/demo/samples/jfreechart</a></span></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td colspan="6">
+<br>
+</td>
+</tr>
+<tr>
+<td>
+<br>
+</td><td colspan="5"><span class="description">
+<a name="overview" href="../../sample.reference/jcharts/index.html#overview" class="subtitle">The JCharts Sample</a>
+
+<br>
+
+<br>
+This sample illustrates an interesting example of report scriptlets working in collaboration with third-party APIs, in order to output 
+a chart image generated with the jCharts library.
+<br>
+First let's see the <span class="code"><code>JChartsReport.jrxml</code></span> template in the <span class="code"><code>samples/jcharts/reports</code></span> directory. It provides a 
+<span class="code"><code>scriptletClass="JChartsScriptlet"</code></span> attribute, and a parametrized image element:
+<pre>
+&lt;image scaleImage="Clip" hAlign="Center"&gt;
+  &lt;reportElement x="0" y="70" width="515" height="350"/&gt;
+  &lt;graphicElement/&gt;
+  &lt;imageExpression class="java.awt.Image"&gt;&lt;![CDATA[$V{ChartImage}]] &gt;&lt;/imageExpression&gt;
+&lt;/image&gt;</pre>
+The <span class="code"><code>java.awt.Image</code></span> object is stored in the <span class="code"><code>ChartImage</code></span> report variable:
+<pre>
+&lt;variable name="ChartImage" class="java.awt.Image" calculation="System"/&gt;</pre>
+To see how the <span class="code"><code>ChartImage</code></span> variable was "calculated", let's dig a little into the <span class="code"><code>JChartsScriptlet.java</code></span> file in the 
+<span class="code"><code>src</code></span> directory:
+<pre>
+public void afterReportInit() throws JRScriptletException 
+{
+  try 
+  {
+    AreaChartProperties areaChartProperties = new AreaChartProperties();
+
+    double[][] data = {{10, 15, 30, 53}, {6, 30, 10, 21}, {20, 25, 20, 8}};
+    Paint[] paints = {new Color( 0, 255, 0, 100 ), new Color( 255, 0, 0, 100 ), new Color( 0, 0, 255, 100 )};
+    String[] legendLabels = {"Games", "Events", "Players" };
+    AxisChartDataSet axisChartDataSet = new AxisChartDataSet(data, legendLabels, paints, ChartType.AREA, areaChartProperties);
+
+    String[] axisLabels = {"January", "March", "May", "June"};
+    DataSeries dataSeries = new DataSeries(axisLabels, "Months", "People", "Popular Events");
+    dataSeries.addIAxisPlotDataSet(axisChartDataSet);
+
+    ChartProperties chartProperties = new ChartProperties();
+    AxisProperties axisProperties = new AxisProperties();
+    axisProperties.setYAxisRoundValuesToNearest(0);
+    LegendProperties legendProperties = new LegendProperties();
+
+    AxisChart axisChart = new AxisChart(dataSeries, chartProperties, axisProperties, legendProperties, 500, 350);
+
+    BufferedImage bufferedImage = new BufferedImage(500, 350, BufferedImage.TYPE_INT_RGB);
+
+    axisChart.setGraphics2D(bufferedImage.createGraphics());
+    axisChart.render();
+
+    super.setVariableValue("ChartImage", bufferedImage);
+  }
+  catch(ChartDataException chartDataException) 
+  {
+    throw new JRScriptletException(chartDataException);
+  }
+}</pre>
+Here an area chart is created after the report initialization, using APIs in the jCharts library. The chart is rendered as <span class="code"><code>java.awt.Image</code></span> and 
+stored in the <span class="code"><code>ChartImage</code></span> variable. From now on, the chart image is ready to be used by the report filler when needed. 
+<br>
+And that's all the story here. With only a report scriptlet and a third-party library, one could embed interesting, complex, spectacular objects in a given report.
+<br>
+
+<br>
+
+<b>Running the Sample</b>
+
+<br>
+
+<br>
+Running the sample requires the <a href="http://ant.apache.org/" target="_blank" class="element">Apache Ant</a> library. Make sure that <span class="code"><code>ant</code></span> is already installed on your system (version 1.5 or later).
+<br>
+In a command prompt/terminal window set the current folder to <span class="code"><code>demo/samples/jcharts</code></span> within the JasperReports source project and run the <span class="code"><code>&gt; ant test view</code></span> command.
+<br>
+It will generate all supported document types containing the sample report in the <span class="code"><code>demo/samples/jcharts/build/reports</code></span> directory. 
+<br>
+Then the report will open in the JasperReports internal viewer.
+    </span></td>
+</tr>
+<tr>
+<td colspan="6">
+<br>
+</td>
+</tr>
+</table>
+<br>
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
+<tr>
+<td>
+<hr size="1">
+</td>
+</tr>
+<tr>
+<td align="center"><span class="copy">&copy; 2001-<script language="javascript">document.write((new Date()).getFullYear())</script> Jaspersoft Corporation <a href="http://www.jaspersoft.com" target="_blank" class="copy">www.jaspersoft.com</a></span></td>
+</tr>
+</table>
+</body>
+</html>

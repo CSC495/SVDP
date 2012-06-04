@@ -1,0 +1,240 @@
+<?php
+    
+    /** @param $format service variable for formatting dates*/
+    $format = new App_Formatting();
+    /** @param $fileName file name of excel document based on lastname,firstname,caseid,andclientid. saved to downloads*/
+    $fileName = $this->client->getLastName() . $this->client->getFirstName()
+                    . "CaseID" . $this->client->getId() . "Reimburse.xls";
+                    
+    
+    header("Content-type: application/vnd.ms-excel");
+    header('Content-Disposition: attachment; filename="'.$fileName.'"');
+    
+    $rent = null;
+    $gas = null;
+    $elec = null;
+    $water = null;
+    
+    /**@param $checkSum holds total of all checks for reimbursement*/
+    $checkSum = 0;
+    
+    /**Checks to see if check request is applicable for reimbursement and if it is Issued*/
+    foreach($this->request as $row)
+    {
+        if(strcmp($row->getCaseNeedName(), "Rent")==0)
+        {
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $rent = $row;
+                $checkSum += $rent->getAmount();
+            }            
+        }
+        else if(strcmp($row->getCaseNeedName(), "Gas")==0)
+        {
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $gas = $row;
+                $checkSum += $gas->getAmount();
+            }            
+        }
+        else if(strcmp($row->getCaseNeedName(), "Electricity")==0)
+        {
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $elec = $row;
+                $checkSum += $elec->getAmount();
+            }            
+        }
+        else if(strcmp($row->getCaseNeedName(), "Water")==0)
+        {
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $water = $row;
+                $checkSum += $water->getAmount();
+            }            
+        }
+    }
+    /**@param $covered holds sum of what parish will pay(30% of total)*/
+    $covered = $checkSum * .3;
+    /**@param $request the difference of total and what parish will pay*/
+    $requested = $checkSum - $covered;
+?>
+<html>
+    <table border="1">
+        <font >
+            <tr>
+                <td align="center" colspan="11" ><strong>St. Vincent dePaul Society -- Financial Assistance Fund</strong></td>
+            </tr>
+            <tr>
+                <td align="center" colspan="11">213 Main Street, West Chicago, IL 60185
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Phone:&nbsp;630-293-9755&nbsp;&nbsp;Fax:&nbsp;630-293-9881</td>
+            </tr
+            <tr>        
+                <td align="center" colspan="11"><strong>Reimbursement Report</strong></td>           
+            </tr>
+            <tr></tr>
+            <tr>        
+                <td><strong>Conference:</strong></td>
+                <td colspan="6" align="center"><strong>St. Rapheal:</strong></td>
+                <td><strong>Conference Case #:</strong></td>
+                <td><?php echo $this->caseid?></td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td align="center" colspan="11" bgcolor="#A8A8A8">Assistance Given To</td>
+            </tr>
+            <tr>        
+                <td>Last Name:</td>
+                <td colspan="2"><?php echo $this->client->getLastName()   ?></td>
+                <td>First Name:</td>
+                <td colspan="2"><?php echo $this->client->getFirstName()   ?> </td>
+                <td>Spouse Name:</td>
+                <td colspan="2"><?php if($this->client->isMarried())
+                                        {echo $this->client->getSpouse()->getFullName();} ?> </td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr></tr>
+            <tr>        
+                <td>Street:</td>
+                <td colspan="3"><?php echo $this->client->getCurrentAddr()->getStreet() ?> </td>
+                <td>City/State:</td>
+                <td colspan="2"><?php echo $this->client->getCurrentAddr()->getCity();
+                        echo ", "; echo $this->client->getCurrentAddr()->getState(); ?> </td>
+                <td>Zip:</td>
+                <td><?php echo $this->client->getCurrentAddr()->getZip() ?> </td><td>&nbsp;</td>
+            </tr>
+            <tr></tr>
+            <tr>        
+                <td>Phone #:</td>
+                <td colspan="2"><?php echo $this->client->getFormattedCellPhone() ?> </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr></tr>
+            <tr>        
+                <td>SVDP Member:</td>
+                <td colspan="2"><?php echo $this->request[0]->getUser()  ?> </td>
+                <td>Contact #:</td>
+                <td colspan="2"> </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr></tr>
+            <tr>        
+                <td>Home Visit?:</td>
+                <td>&nbsp;&nbsp;X&nbsp;&nbsp;&nbsp;</td>
+                <td>Phone Interview?</td>
+                <td> </td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td align="center" colspan="11" bgcolor="#A8A8A8">Paid By Parish To</td>
+            </tr>
+            <tr>        
+                <td></td>
+                <td></td><td></td>
+                <td>&nbsp;</td>
+                <td align="center" bgcolor="#A8A8A8" colspan="2">Check #:</td>
+                <td align="center" bgcolor="#A8A8A8" colspan="2">Amount</td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td colspan="2">Mortgage/Landlord Name</td>
+                <td colspan="2"><?php if($rent != null){echo $rent->getPayeeName();} ?></td>
+                <td colspan="2"><?php if($rent != null){echo $rent->getAccountNumber();} ?></td>
+                <td colspan="2"><?php if($rent != null){echo $format->formatCurrency($rent->getAmount());} ?></td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>Street:</td>
+                <td colspan="3"><?php if($rent != null){echo $rent->getAddress()->getStreet();} ?></td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>City/State:</td>
+                <td><?php if($rent != null){echo $rent->getAddress()->getCity();
+                            echo $rent->getAddress()->getState();} ?></td>
+                <td>Zip:</td>
+                <td><?php if($rent != null){echo $rent->getAddress()->getZip();} ?></td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr></tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td align="center" bgcolor="#A8A8A8" colspan="3">Utility Name</td>
+                <td align="center" bgcolor="#A8A8A8" colspan="2">Account Number</td>
+                <td align="center" bgcolor="#A8A8A8">Check #</td>
+                <td align="center" bgcolor="#A8A8A8" colspan="2">Amount</td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>Electric:</td>
+                <td align="center" colspan="3"><?php if($elec != null){echo $elec->getPayeeName();} ?></td>
+                <td align="center" colspan="2"><?php if($elec != null){echo $elec->getAccountNumber();} ?></td>
+                <td align="center" ><?php if($elec != null){echo $elec->getCheckNumber();} ?></td>
+                <td align="center" colspan="2"><?php if($elec != null){echo $format->formatCurrency($elec->getAmount());} ?></td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>Gas:</td>
+                <td align="center" colspan="3"><?php if($gas != null){echo $gas->getPayeeName();} ?></td>
+                <td align="center" colspan="2"><?php if($gas != null){echo $gas->getAccountNumber();} ?></td>
+                <td align="center" ><?php if($gas != null){echo $gas->getCheckNumber();} ?></td>
+                <td align="center" colspan="2"><?php if($gas != null){echo $format->formatCurrency($gas->getAmount());} ?></td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>Water:</td>
+                <td align="center" colspan="3"><?php if($water != null){echo $water->getPayeeName();} ?></td>
+                <td align="center" colspan="2"><?php if($water != null){echo $water->getAccountNumber();} ?></td>
+                <td align="center" ><?php if($water != null){echo $water->getCheckNumber();} ?></td>
+                <td align="center" colspan="2"><?php if($water != null){echo $format->formatCurrency($water->getAmount());} ?></td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td>
+                <td align="right" colspan="5">Parish Check's Total:</td>
+                <td colspan="2"><?php echo $format->formatCurrency($checkSum)?></td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td>
+                <td align="right" colspan="5">Covered by Conference(Must be atleast 30% of Parish Check:</td>
+                <td colspan="2"><?php echo $format->formatCurrency($covered)?></td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td>
+                <td align="right" colspan="5">Requested from Financial Assistance Fund:</td>
+                <td colspan="2"><?php echo $format->formatCurrency($requested)?></td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>Send Check To:</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="2">Kathy Clolinger</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="2">2324 Gleneagles Drive</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="2">Naperville, Il 60565</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td align="center" bgcolor="#00FF00" colspan="11">**OFFICE USE ONLY: Please Do Not
+                                                        Write Below This Line; LEAVE BLANK**</td>
+            </tr>
+            
+        </font>
+    </table>
+</html>

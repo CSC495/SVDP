@@ -1,0 +1,118 @@
+    <?php    
+    //Location to be download to
+    $file = $this->start;
+    
+    require("html2fpdf-3.0.2b/html2fpdf.php");
+    
+    $htmlFile =
+        "<table>
+            <tr>
+                <td>&nbsp;</td><td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td>      
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td><h4><center>On Call Activities Report&nbsp;</center></h4></td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td><center>".$this->start ."&nbsp; - &nbsp;" . $this->end ."</center></td>        
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Home Visits &nbsp;</strong></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Home Visits:&nbsp;&nbsp;&nbsp;&nbsp;"
+                . $this->home . "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>        
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;"
+                . $this->homeHelped . "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Telephone Contact &nbsp;</strong></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Phone Visits:&nbsp;&nbsp;&nbsp;"
+                . $this->tele ."&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;"
+                . $this->teleHelped ."</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>    
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Referrals &nbsp;</strong></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of Referrals:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                . $this->referrals . "&nbsp;</td>
+                <td>&nbsp;</td>        
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# of People Helped:&nbsp;"
+                . $this->referHelped . "&nbsp;</td>
+                <td>&nbsp;</td>        
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Total People Helped: </strong>&nbsp;";
+                
+    $sum = $this->referHelped + $this->teleHelped
+                + $this->homeHelped;
+    $htmlFile .= $sum
+            ."&nbsp;</td>
+            <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Estimated # of Hours: </strong>&nbsp;"
+                .$this->totalHours . "&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><strong>Estimated # of Miles: </strong>&nbsp;&nbsp;"
+                .$this->totalMiles ."&nbsp;</td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>";
+    
+    
+    $pdf = new HTML2FPDF('P', 'mm', 'Letter');
+    $pdf->AddPage();
+    $pdf->WriteHTML($htmlFile);
+    $pdf->Output('C:/SVDPReports/OCAReport.pdf', 'F');
+ ?>
+ 
+  <p>The Report has been successfully created.<br />
+    It was saved as 'OCAReport.pdf'</p>
