@@ -170,7 +170,7 @@ class App_Service_DocumentService {
         $select = $this->_db->select()
                 ->from(array('cr' => 'check_request'))
                 ->join(array('cn' => 'case_need'), 'cn.caseneed_id = cr.caseneed_id')
-                ->join(array('cc' => 'client_case'), 'cn.case_id = cc.case_id')
+                ->join(array('cc' => 'client_case'), 'cn.case_id = cc.case_id', array())
                 ->where('cc.case_id = ?', $caseId);
         $results = $this->_db->fetchAll($select);
         $arr = array();

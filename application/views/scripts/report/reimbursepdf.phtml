@@ -1,8 +1,8 @@
 <?php
     
-    //service variable for formatting dates
+    /** @param $format service variable for formatting dates*/
     $format = new App_Formatting();
-    //file name of excel document
+    /** @param $fileName file name of excel document based on lastname,firstname,caseid,andclientid. saved to downloads*/
     $fileName = $this->client->getLastName() . $this->client->getFirstName()
                     . "CaseID" . $this->client->getId() . "Reimburse.xls";
                     
@@ -14,35 +14,49 @@
     $gas = null;
     $elec = null;
     $water = null;
+    
+    /**@param $checkSum holds total of all checks for reimbursement*/
     $checkSum = 0;
     
-    
+    /**Checks to see if check request is applicable for reimbursement and if it is Issued*/
     foreach($this->request as $row)
     {
-        if(strcmp($row->getCaseNeedName(), "rent")==0)
+        if(strcmp($row->getCaseNeedName(), "Rent")==0)
         {
-            $rent = $row;
-            $checkSum += $rent->getAmount();
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $rent = $row;
+                $checkSum += $rent->getAmount();
+            }            
         }
-        else if(strcmp($row->getCaseNeedName(), "gas")==0)
+        else if(strcmp($row->getCaseNeedName(), "Gas")==0)
         {
-            $gas = $row;
-            $checkSum += $gas->getAmount();
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $gas = $row;
+                $checkSum += $gas->getAmount();
+            }            
         }
-        else if(strcmp($row->getCaseNeedName(), "electric")==0)
+        else if(strcmp($row->getCaseNeedName(), "Electricity")==0)
         {
-            $elec = $row;
-            $checkSum += $elec->getAmount();
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $elec = $row;
+                $checkSum += $elec->getAmount();
+            }            
         }
-        else if(strcmp($row->getCaseNeedName(), "water")==0)
+        else if(strcmp($row->getCaseNeedName(), "Water")==0)
         {
-            $water = $row;
-            $checkSum += $water->getAmount();
+            if(strcmp($row->getStatusFull(), "Issued")==0)
+            {
+                $water = $row;
+                $checkSum += $water->getAmount();
+            }            
         }
     }
-    //holds sum of what parish will pay(30% of total)
+    /**@param $covered holds sum of what parish will pay(30% of total)*/
     $covered = $checkSum * .3;
-    //the difference of total and what parish will pay
+    /**@param $request the difference of total and what parish will pay*/
     $requested = $checkSum - $covered;
 ?>
 <html>
@@ -63,7 +77,7 @@
                 <td><strong>Conference:</strong></td>
                 <td colspan="6" align="center"><strong>St. Rapheal:</strong></td>
                 <td><strong>Conference Case #:</strong></td>
-                <td> </td><td>&nbsp;</td><td>&nbsp;</td>
+                <td><?php echo $this->caseid?></td><td>&nbsp;</td><td>&nbsp;</td>
             </tr>
             <tr>
                 <td align="center" colspan="11" bgcolor="#A8A8A8">Assistance Given To</td>

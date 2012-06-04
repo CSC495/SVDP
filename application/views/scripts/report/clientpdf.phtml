@@ -1,7 +1,9 @@
 <?php    
-    //Location to be download to
+    /** @param $fName first name */
     $fName = $this->client->getFirstName();
+    /** @param $lName last name */
     $lName = $this->client->getLastName();
+    
     $format = new App_Formatting();
     
     require("html2fpdf-3.0.2b/html2fpdf.php");
@@ -66,7 +68,7 @@
                 <td>&nbsp;</td>
             </tr>
         </table>";
-
+    /** @param $pdf new pdf object*/
     $pdf = new HTML2FPDF('P', 'mm', 'Letter');
     $pdf->AddPage();
     $pdf->WriteHTML($htmlFile);

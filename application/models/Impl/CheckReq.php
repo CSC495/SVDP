@@ -245,15 +245,15 @@ class Application_Model_Impl_CheckReq
     }
 	
 	public function getStatusFull(){
-		if($this->_status === 'I')
-			return 'Issued';
-		
-		if($this->_status === 'D')
-			return 'Denied';
-		
-        if($this->_status === 'P')
-			return 'Pending';
-		
-		return $this->_status;
+            if($this->_status === 'I')
+                    return 'Issued';
+            
+            if($this->_status === 'D')
+                    return 'Denied';
+            
+            if($this->_status === 'P')
+                    return 'Pending';
+            
+            return $this->_status;
     }
 }
