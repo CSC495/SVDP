@@ -374,8 +374,8 @@ class AdminController extends Zend_Controller_Action
         $user = new Application_Model_Impl_User();
         $user
             ->setUserId($form->getValue('userid')) // Normalize first and last name
-            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
-            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
+            ->setFirstName(ucfirst($form->getValue('firstname')))
+            ->setLastName(ucfirst($form->getValue('lastname')))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))

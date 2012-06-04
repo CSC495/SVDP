@@ -43,7 +43,8 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 		
 		// Input of total aid a client can receive
 		$aid = $this->addElement('text', 'aid', array(
-			'filters'    => array( new App_Filter_Money() ),
+			'filters'    => array( new App_Filter_Money(),
+					      array('LocalizedToNormalized', false, array('precision', 2))),
 			'validators' => array(
 					array('Float',true,array(
 						'messages' => array('notFloat' =>
@@ -61,8 +62,9 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 
 
 		// Input of funds for a particular case
-	    $casefund = $this->addElement('text', 'casefund', array(
-			'filters'    => array( new App_Filter_Money() ),
+		$casefund = $this->addElement('text', 'casefund', array(
+			'filters'    => array( new App_Filter_Money(),
+					      array('LocalizedToNormalized', false, array('precision', 2)),),
 			'validators' => array(
 					array('Float',true,array(
 							'messages' => array('notFloat' =>
