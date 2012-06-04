@@ -91,5 +91,12 @@
     </div>
     
 </fieldset>
-<?php foreach( $this->element->getButtons() as $value) { echo $value; } ?>
+
+<fieldset class="row-fluid>
+    <div class="span6">
+        <?php echo $this->element->commentText ?>
+	<?php foreach( $this->element->getButtons() as $value) { echo $value; } ?>
+    </div>
+</fieldset>
+
 </form>

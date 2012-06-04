@@ -420,7 +420,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	$this->contactlname->setAttrib('readonly', null);
 	$this->contactPhone->setAttrib('readonly', null);
 	$this->checkNum->setAttrib('readonly', null);
-	$this->issueDate->setAttrib('readonly', null);
 	$this->commentText->setAttrib('readonly', null);
 	$this->addr->addrId->setAttrib('readonly', null);
 	$this->addr->street->setAttrib('readonly', null);
@@ -432,10 +431,15 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
     }
     public function setInitialButtons()
     {
-	array_push($this->_activeButtons,$this->issueCheck);
-	array_push($this->_activeButtons,$this->denyCheck);
+	// Only show issue or deny if check is not issued
+	if($this->issueDate->getValue() === '' || $this->issueDate->getValue() === null)
+	{
+	    array_push($this->_activeButtons,$this->issueCheck);
+	    array_push($this->_activeButtons,$this->denyCheck);
+	    array_push($this->_activeButtons,$this->editCheck);
+	}
 	array_push($this->_activeButtons,$this->addComment);
-	array_push($this->_activeButtons,$this->editCheck);
+	
 
     }
     public function getComment()
