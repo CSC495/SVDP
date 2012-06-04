@@ -46,6 +46,10 @@ class TreasurerController extends Zend_Controller_Action
         $this->view->pageTitle = 'Viewing Check Request';
         $request = $this->getRequest();
         
+        // Check if there is param
+        if( !$request->id )
+            $this->_helper->redirector('index');
+            
         // Get check request
         $service = new App_Service_TreasurerService();
         $check = $service->getCheckReqById($request->id);
@@ -61,7 +65,7 @@ class TreasurerController extends Zend_Controller_Action
         }
         
         if($request->isPost() && $this->view->form->isValid($_POST)){            
-            
+
             $this->view->form->populate($_POST);
             $action = $this->view->form->getAction();
             
@@ -99,13 +103,11 @@ class TreasurerController extends Zend_Controller_Action
                 
         $check = $service->getCheckReqById($request->id);
         $this->view->form = new Application_Model_Treasurer_CheckForm($check);
-        
+
         if(!$request->isPost()) {
                 $this->view->form->setInitialButtons();
         }
-        
-        
-        if ($request->isPost() && $this->view->form->isValid($_POST)) {
+        elseif($request->isPost() && $this->view->form->isValid($_POST)) {
             $this->view->form->populate($_POST);
             $action = $this->view->form->getAction();
             
@@ -120,6 +122,8 @@ class TreasurerController extends Zend_Controller_Action
                 case 'edit_check':
                     $this->view->form->setEditState();
                     return;
+                case 'submit_edits':
+                    $this->submitEdits($this->view->form,$service);
                 default:
                     break;
             }
@@ -145,7 +149,11 @@ class TreasurerController extends Zend_Controller_Action
             //return;
         }	
     }
-    
+    private function submitEdits($form,$service)
+    {
+        $check = $form->getCheckReq();
+        $service->updateCheckRequest($check);
+    }
     private function issueCheck()
     {
         $identity = Zend_Auth::getInstance()->getIdentity();

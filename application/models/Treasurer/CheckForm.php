@@ -38,7 +38,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('text', 'id',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'validators' => array('Alnum',),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Check ID',
@@ -59,19 +59,31 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('text', 'contactfname',  array(
 				'filters'    => array('StringTrim'),
+				'validators' => array(
+				    array('StringLength', true, array(
+					'max' => 30,
+					'messages' => array(
+					'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
+				    ),)),
+				),
 				'readonly'   => true,
 				'required'   => false,
 				'label'      => 'Contact First Name',
-				'size'		 => 7,
 		));
 		$this->contactfname->setValue($check->getContactFirstName());
 		
 		$this->addElement('text', 'contactlname',  array(
 				'filters'    => array('StringTrim'),
 				'readonly'   => true,
+				'validators' => array(
+				    array('StringLength', true, array(
+					'max' => 30,
+					'messages' => array(
+					'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
+				    ),)),
+				),
 				'required'   => false,
 				'label'      => 'Contact Last Name',
-				'size'		 => 7,
 		));
 		$this->contactlname->setValue($check->getContactLastName());
 		
@@ -109,7 +121,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('text', 'caseID',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'validators' => array('Alnum'),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Case ID',
@@ -132,7 +144,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Check Requested',
-				'value' 	 => '',
 				'size'		 => 10,
 		));
 		$this->requestDate->setValue(App_Formatting::formatDate($check->getRequestDate()));
@@ -141,11 +152,10 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('text', 'checkNum',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
-				'readonly'   => true,
+				'validators' => array('Alnum'),
+				'readonly'   => false,
 				'required'   => false,
 				'label'      => 'Real Check Number',
-				'size'		 => 7,
 		));
 		$this->checkNum->setValue($check->getCheckNumber());
 		
@@ -182,9 +192,8 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		$addr = $check->getAddress();
 		$this->addElement('text', 'address',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
-				'required'   => true,
+				'required'   => false,
 				'label'      => 'Payee Address',
 				'size'		 => 7,
 		));
@@ -206,7 +215,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Case Need',
-				'size'		 => 7,
 		));
 		$this->caseNeed->setValue($check->getCaseNeedName());
 		//$this->caseNeed->setValue($this->escape($check->getCase()->getNeedList()));
@@ -217,12 +225,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
                 'label' => 'Comment',
                 'required' => false,
                 'filters' => array('StringTrim'),
-                'validators' => array(
-                    array('NotEmpty', true, array(
-                        'type' => 'string',
-                        'messages' => array('isEmpty' => 'You must enter a comment.'),
-                    )),
-                ),
                 'dimension' => 7,
                 'rows' => 4,
 				'readonly' => true,
@@ -244,23 +246,12 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		$this->->setValue($check->get());
 		*/
 		
-		$this->addElement('text', 'funds', array(
-				'filters'    => array('StringTrim',
-				array('LocalizedToNormalized', false, array('precision', 2))),
-				'validators' => array(
-						'Alnum',
-						array('StringLength', false, array(1, 7)),
-				),
-				'required'   => true,
-				'label'      => 'Current Funds:',
-				'size'		 => 7,
-		));
-		
 	    $this->addElement('submit', 'issueCheck', array(
 		    'label' => 'Issue Check Request',
 		    'decorators' => array('ViewHelper'),
 		    'class' => 'btn btn-success',
 		    'id' => 'issue_check',
+		    'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->issueCheck);
 	    
@@ -269,6 +260,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		    'decorators' => array('ViewHelper'),
 		    'class' => 'btn btn-success',
 		    'id' => 'deny_check',
+		    'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->denyCheck);
 	    
@@ -277,6 +269,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		    'decorators' => array('ViewHelper'),
 		    'class' => 'btn btn-success',
 		    'id' => 'add_comment',
+		    'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->addComment);
 	    
@@ -285,6 +278,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		    'decorators' => array('ViewHelper'),
 		    'class' => 'btn btn-success',
 		    'id' => 'edit_check',
+		    'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->editCheck);
 	    
@@ -293,6 +287,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'decorators' => array('ViewHelper'),
 				'class' => 'btn btn-success',
 				'id' => 'submit_edits',
+				'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->submitEdits);
 	    
@@ -301,6 +296,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'decorators' => array('ViewHelper'),
 				'class' => 'btn btn-danger',
 				'id' => 'cancel_edits',
+				'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->cancelEdits);
 	    
@@ -309,6 +305,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		'id' => 'submit_comment',
 		'decorators' => array('ViewHelper'),
 		'class' => 'btn btn-success',
+		'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->submitComment);
 	    
@@ -317,6 +314,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		'id' => 'cancel_comment',
 		'decorators' => array('ViewHelper'),
 		'class' => 'btn btn-danger',
+		'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->cancelComment);
 	    
@@ -325,6 +323,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		'id' => 'add_comment',
 		'decorators' => array('ViewHelper'),
 		'class' => 'btn btn-success',
+		'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->addComment);
 		
@@ -424,7 +423,8 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
     {
 	$service = new App_Service_TreasurerService();
 	$check = $service->getCheckReqById($this->id->getValue());
-	
+	var_dump($check);
+	exit();
 	$check
 	    ->setPayeeName($this->payeeName->getValue())
 	    ->setContactFirstName($this->contactfname->getValue())

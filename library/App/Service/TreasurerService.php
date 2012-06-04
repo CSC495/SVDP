@@ -50,6 +50,8 @@ class App_Service_TreasurerService {
     
     public function updateCheckRequest($reqObj){
 	$reqData = $this->disassembleCheckRequestModel($reqObj);
+	var_dump($reqData);
+	exit();
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $reqObj->getId());
 	$this->_db->update('check_request', $reqData, $where);
     }
@@ -106,7 +108,7 @@ class App_Service_TreasurerService {
             ->setId($results['checkrequest_id'])
             ->setCaseNeedId($results['caseneed_id'])
 	    ->setCaseNeedName($results['caseneedName'])
-            ->setUser($results['user_id'])
+            ->setUserId($results['user_id'])
 	    ->setUserFName($results['userFName'])
 	    ->setUserLName($results['userLName'])
             ->setRequestDate($results['request_date'])
@@ -123,6 +125,8 @@ class App_Service_TreasurerService {
             ->setContactFirstName($results['contact_fname'])
             ->setContactLastName($results['contact_lname'])
 	    ->setStatus($results['status']);
+	    var_dump($request);
+	    exit();
         return $request;
     }
     
