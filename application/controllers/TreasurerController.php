@@ -143,7 +143,18 @@ class TreasurerController extends Zend_Controller_Action
             }
             
             $this->view->form->setInitialButtons();
-        }	
+        }
+        elseif(!$this->view->form->isValid($_POST)){
+            $action = $this->view->form->getAction();
+            // reset form if user wanted to cancel
+            if( $action === 'cancel_edits' ){
+                $this->view->form = new Application_Model_Treasurer_CheckForm($check);
+                return $this->view->form->setInitialButtons();
+            }
+            //@TODO it may be bad to assume we are in edit mode if there
+            // is something wrong?...
+            $this->view->form->setEditState();
+        }
     }
     private function denyCheck($form,$service)
     {

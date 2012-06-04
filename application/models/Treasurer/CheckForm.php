@@ -326,7 +326,17 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->addComment);
-		
+	    
+	    // Set up address
+	    $this->addSubForm(new Application_Model_Member_AddrSubForm(array(
+            'title' => 'Payee address:',
+            'zipRequired' => true,
+	    'readOnly' => true,
+	    )), 'addr' );
+	    
+	    $address = $check->getAddress();
+	    $this->addr->setAddr($address);
+	    
 	    if($check->getStatus() === 'P'){
 		    
 		// Set which buttons are shown
@@ -405,7 +415,13 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	$this->checkNum->setAttrib('readonly', null);
 	$this->issueDate->setAttrib('readonly', null);
 	$this->commentText->setAttrib('readonly', null);
-			
+	$this->addr->addrId->setAttrib('readonly', null);
+	$this->addr->street->setAttrib('readonly', null);
+	$this->addr->apt->setAttrib('readonly', null);
+	$this->addr->city->setAttrib('readonly', null);
+	$this->addr->state->setAttrib('readonly', null);
+	$this->addr->zip->setAttrib('readonly', null);
+		    
     }
     public function setInitialButtons()
     {
@@ -431,6 +447,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    ->setAmount($this->amount->getValue())
 	    ->setAccountNumber($this->payeeAccount->getValue())
 	    ->setPhone($this->contactPhone->getValue())
+	    ->setAddress($this->addr->getAddr())
 	    ->setComment($this->commentText->getValue());
 	return $check;
     }
