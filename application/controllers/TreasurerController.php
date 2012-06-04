@@ -102,6 +102,11 @@ class TreasurerController extends Zend_Controller_Action
         $this->view->pageTitle = 'Check Request';
         
         $request = $this->getRequest();
+	
+	// Check if there is param
+        if( !$request->id )
+            $this->_helper->redirector('index');
+            
         $service = new App_Service_TreasurerService();
                 
         $check = $service->getCheckReqById($request->id);
