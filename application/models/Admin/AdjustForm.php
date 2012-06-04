@@ -38,7 +38,6 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 			array('Description', array('class' => 'help-block')),
 			array('HtmlTag', array('tag' => 'div', 'class' => 'controls')),
 			array('Label', array('class' => 'control-label')),
-			'Wrapper',
 		));
 		
 		// Input of total aid a client can receive

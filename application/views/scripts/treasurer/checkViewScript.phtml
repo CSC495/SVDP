@@ -58,10 +58,7 @@
 	    </table>
 </fieldset>
 
-<?php echo $this->element->issueCheck ?>
-<?php echo $this->element->denyCheck ?>
-<?php echo $this->element->editCheck ?>
-<?php echo $this->element->addComment ?>
+<?php foreach( $this->element->getButtons() as $value) { echo $value; } ?>
 </form>
 
 

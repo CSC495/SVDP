@@ -2,9 +2,18 @@
 
 class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horizontal 
 {
-
-    public function __construct($check)
+    const INITIAL = 'INITIAL'; // Used to display all options on the check request form;
+    const READONLY = 'READONLY'; // Used to display Comment State
+    const EDIT = 'EDIT';     // Used to display edit functionality
+    const COMMENT = 'COMMENT'; // Used to display Comment State
+    
+    private $_state;
+    
+    public function __construct($check, $state = Application_Model_Treasurer_CheckForm::READONLY)
     {
+	// Set the state of the form
+	$this->_state = $state;
+	
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		
 		
@@ -217,86 +226,124 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		if($check->getStatus() === 'P'){
 			
-
-			$this->addElement('submit', 'issueCheck', array(
-				'label' => 'Issue Check Request',
-				'decorators' => array('ViewHelper'),
-				'class' => 'btn btn-success',
-			));
-			
-			$this->addElement('submit', 'denyCheck', array(
-				'label' => 'Deny Check Request',
-				'decorators' => array('ViewHelper'),
-				'class' => 'btn btn-success',
-			));
-			
-			$this->addElement('submit', 'editCheck', array(
-				'label' => 'Edit Check Request',
-				'decorators' => array('ViewHelper'),
-				'class' => 'btn btn-success',
-			));
-			
-			$this->addElement('submit', 'addComment', array(
-				'label' => 'Add A Comment',
-				'decorators' => array('ViewHelper'),
-				'class' => 'btn btn-success',
-			));
-			
+		    // Set which buttons are shown
+		    if( $this->_state === Application_Model_Treasurer_CheckForm::INITIAL)
+		    {
+			$this->setInitialButtons();
+		    }
+		    if( $this->_state === Application_Model_Treasurer_CheckForm::EDIT )
+		    {
+			$this->setEditable();
+		    }
+		    if( $this->_state === Application_Model_Treasurer_CheckForm::COMMENT )
+		    {
+			$this->setCommentState();
+		    }
 		}
 		
     }
+    public function getState()
+    {
+	return $this->_state;
+    }
+    public function getButtons()
+    {
+	switch( $this->_state )
+	{
+	    case Application_Model_Treasurer_CheckForm::COMMENT:
+		return array($this->submitComment, $this->cancelComment);
+		break;
+	    case Application_Model_Treasurer_CheckForm::EDIT:
+		return array($this->editCheck, $this->cancelEdits);
+		break;
+	    case Application_Model_Treasurer_CheckForm::INITIAL:
+		return array($this->issueCheck, $this->denyCheck, $this->addComment, $this->editCheck);
+		break;
+	    default:
+		return array();
+		return;
+	}
+	
+    }
+    public function setCommentState()
+    {
+	$this->addElement('submit', 'submitComment', array(
+		'label' => 'Submit Comment',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	));
+	
+	$this->addElement('submit', 'cancelComment', array(
+		'label' => 'Cancel Comment',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	));
 
+	$this->commentText->setAttrib('readonly', null);
+	
+	$this->issueCheck->setAttrib('disabled', true);
+	$this->denyCheck->setAttrib('disabled', true);
+	$this->editCheck->setAttrib('disabled', true);
+	
+	$this->addComment->setLabel('Submit Comment');
+    }
+    public function setEditable()
+    {
+	$this->addElement('submit', 'editCheck', array(
+				'label' => 'Submit Edits',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+				'value' => 'Submit Edits'
+			));
+	$this->addElement('submit', 'cancelEdits', array(
+				'label' => 'Submit Edits',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+				'value' => 'Cancel Edits',
+			));
+	
+	// Set editable field
+	$this->amount->setAttrib('readonly', null);
+	$this->payeeName->setAttrib('readonly', null);
+	$this->payeeAccount->setAttrib('readonly', null);
+	$this->contact->setAttrib('readonly', null);
+	$this->contactPhone->setAttrib('readonly', null);
+	$this->checkNum->setAttrib('readonly', null);
+	$this->issueDate->setAttrib('readonly', null);
+	$this->caseNeed->setAttrib('readonly', null);
+	$this->commentText->setAttrib('readonly', null);
+			
+    }
+    public function setInitialButtons()
+    {
+	
+	$this->addElement('submit', 'issueCheck', array(
+		'label' => 'Issue Check Request',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	));
+	
+	$this->addElement('submit', 'denyCheck', array(
+		'label' => 'Deny Check Request',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	));
+	
+	$this->addElement('submit', 'addComment', array(
+		'label' => 'Add A Comment',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	));
+	
+	$this->addElement('submit', 'editCheck', array(
+		'label' => 'Edit Check Request',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	));
+    }
     public function preValidate($data)
     {
         //$this->  ->preValidate($data);
-    }
-
-    public function editCheckReq($t)
-    {
-		//$this->->setAttrib('readonly', null);
-		
-		if($t === 'Edit Check Request'){
-			$this->SVDPname->setAttrib('readonly', null);
-			$this->amount->setAttrib('readonly', null);
-			$this->payeeName->setAttrib('readonly', null);
-			$this->payeeAccount->setAttrib('readonly', null);
-			$this->contact->setAttrib('readonly', null);
-			$this->contactPhone->setAttrib('readonly', null);
-			$this->checkNum->setAttrib('readonly', null);
-			$this->issueDate->setAttrib('readonly', null);
-			$this->caseNeed->setAttrib('readonly', null);
-			$this->commentText->setAttrib('readonly', null);
-			
-			$this->issueCheck->setAttrib('disabled', true);
-			$this->denyCheck->setAttrib('disabled', true);
-			$this->addComment->setAttrib('disabled', true);
-			
-			$this->editCheck->setLabel('Submit Edits');
-		}
-		
-		if($t === 'Submit Edits'){
-			$this->editCheck->setLabel('Edit Check Request');
-		}
-		
-    }
-	
-	public function addAComment($t)
-    {
-		//$this->->setAttrib('readonly', null);
-		
-		if($t === 'Add A Comment'){
-			$this->commentText->setAttrib('readonly', null);
-			
-			$this->issueCheck->setAttrib('disabled', true);
-			$this->denyCheck->setAttrib('disabled', true);
-			$this->editCheck->setAttrib('disabled', true);
-			
-			$this->addComment->setLabel('Submit Comment');
-		}
-		
-		if($t === 'Submit Comment'){
-			$this->addComment->setLabel('Add A Comment');
-		}
     }
 }
 
