@@ -3,39 +3,35 @@
       method="<?php echo $this->escape($this->element->getMethod()) ?>"
       id="<?php echo $this->escape($this->element->getName()) ?>"
       class="twocol form-horizontal">
+<fieldset class="row-fluid">
+    <legend>Case Information</legend>
+    
+	<div class="span5">
+	    <?php echo $this->element->clientName ?>
+	</div>
+	
+	<div class="span5">
+	    <?php echo $this->element->SVDPname ?>
+	</div>
+	
+	<div class="span5">
+	    <?php echo $this->element->caseID ?>
+	</div>   
+	
+	<div class="span5">
+	    <?php echo $this->element->caseNeed ?>
+	</div>
+</fieldset>
 
 <fieldset class="row-fluid">
-    <legend>Check Request Details</legend>
+    <legend>Check Information</legend>
     
-    <div class="span5">
-        <?php echo $this->element->SVDPname ?>
-    </div>
-    
-    <div class="span5">
-        <?php echo $this->element->caseID ?>
-    </div>   
-    <div class="span5">           
-        <?php echo $this->element->requestDate ?>
-    </div>
-
     <div class="span5">
         <?php echo $this->element->id ?>
     </div>
     
-    <div class="span5">
-        <?php echo $this->element->amount ?>
-    </div>
-    
-    <div class="span5">
-        <?php echo $this->element->contactfname?>
-    </div>
-    
-    <div class="span5">
-        <?php echo $this->element->contactPhone ?>
-    </div>
-    
-    <div class="span5">
-        <?php echo $this->element->contactlname ?>
+    <div class="span5">           
+        <?php echo $this->element->requestDate ?>
     </div>
     
     <div class="span5">
@@ -47,9 +43,20 @@
     </div>
     
     <div class="span5">
-        <?php echo $this->element->caseNeed ?>
+        <?php echo $this->element->amount ?>
     </div>
- 
+
+    <div class="span5">
+        <?php echo $this->element->contactfname?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->contactPhone ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->contactlname ?>
+    </div>
 </fieldset>
 
 <fieldset class="row-fluid">

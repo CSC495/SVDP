@@ -35,6 +35,15 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
             ),
         ));
 		
+		$service = new App_Service_Member();
+		$case = $service->getCaseById($check->getCase());
+		
+		$this->addElement('text', 'clientName', array(
+		'readonly' => true,
+		'required' => true,
+		'label' => 'Client Name',
+		));
+		$this->clientName->setValue($case->getClient()->getFullName());
 		
 		$this->addElement('text', 'id',  array(
 				'filters'    => array('StringTrim'),
@@ -109,12 +118,11 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'amount',  array(
-				'filters'    => array('StringTrim'),
+				'filters'    => array('StringTrim',new App_Filter_Money(),),
 				'validators' => array('float'),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Check Amount',
-				'size'		 => 7,
 		));
 		$this->amount->setValue($check->getAmount());
 		
@@ -125,7 +133,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Case ID',
-				'size'		 => 7,
 		));
 		$this->caseID->setValue($check->getCase());
 		
