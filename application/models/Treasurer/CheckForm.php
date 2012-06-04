@@ -6,8 +6,17 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
     const READONLY = 'READONLY'; // Used to display Comment State
     const EDIT = 'EDIT';     // Used to display edit functionality
     const COMMENT = 'COMMENT'; // Used to display Comment State
+    const MEMBERVIEW = 'MEMBERVIEW'; // Used to display functions enabled for member
     
     private $_state;
+    /**
+     * The buttons that are visible to the user
+     */
+    private $_activeButtons = array();
+    /**
+     * The list of all the buttons associated with the form
+     */
+    private $_buttons = array();
     
     public function __construct($check, $state = Application_Model_Treasurer_CheckForm::READONLY)
     {
@@ -15,7 +24,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	$this->_state = $state;
 	
         $baseUrl = new Zend_View_Helper_BaseUrl();
-		
 		
         parent::__construct(array(
             'action' => $baseUrl->baseUrl(App_Resources::TREASURER) . '/checkReq',
@@ -28,7 +36,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
         ));
 		
 		
-		$this->addElement('text', 'checkID',  array(
+		$this->addElement('text', 'id',  array(
 				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
@@ -36,12 +44,11 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'label'      => 'Check ID',
 				'size'		 => 7,
 		));
-		$this->checkID->setValue($check->getID());
+		$this->id->setValue($check->getID());
 		
 		
 		$this->addElement('text', 'SVDPname',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Submitted By',
@@ -50,20 +57,35 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		$this->SVDPname->setValue($check->getUserFName() . ' ' . $check->getUserLName());
 		
 		
-		$this->addElement('text', 'contact',  array(
+		$this->addElement('text', 'contactfname',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
-				'required'   => true,
-				'label'      => 'Contact Name',
+				'required'   => false,
+				'label'      => 'Contact First Name',
 				'size'		 => 7,
 		));
-		$this->contact->setValue($check->getContactFirstName() . ' ' . $check->getContactLastName());
+		$this->contactfname->setValue($check->getContactFirstName());
+		
+		$this->addElement('text', 'contactlname',  array(
+				'filters'    => array('StringTrim'),
+				'readonly'   => true,
+				'required'   => false,
+				'label'      => 'Contact Last Name',
+				'size'		 => 7,
+		));
+		$this->contactlname->setValue($check->getContactLastName());
 		
 		
 		$this->addElement('text', 'contactPhone',  array(
-				'filters'   =>	array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'filters'   =>	array('StringTrim','Digits'),
+				'validators' => array(
+					array('StringLength', true, array(
+						'min' => 10,
+						'max' => 10,
+						'messages' => array(
+						'stringLengthTooShort' => 'Phone number must be 10 digits.',
+						'stringLengthTooLong' => 'Phone number must be 10 digits.',
+							)))),
 				'readonly'  => 	true,
 				'required'  => 	true,
 				'label'     => 	'Contact Phone #',
@@ -76,7 +98,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('text', 'amount',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'validators' => array('float'),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Check Amount',
@@ -98,7 +120,15 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('text', 'requestDate',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Date'),
+				'validators' => array(
+				    array('Date', true, array(
+					'format' => 'MM/dd/yyyy',
+					'messages' => array(
+					'dateInvalidDate' => 'Birth date must be properly formatted.',
+					'dateFalseFormat' => 'Birth date must be a valid date.',
+					),
+				    )),
+				 ),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Check Requested',
@@ -113,7 +143,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'filters'    => array('StringTrim'),
 				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
-				'required'   => true,
+				'required'   => false,
 				'label'      => 'Real Check Number',
 				'size'		 => 7,
 		));
@@ -122,18 +152,25 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('text', 'issueDate',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'validators' => array(
+				    array('Date', true, array(
+					'format' => 'MM/dd/yyyy',
+					'messages' => array(
+					'dateInvalidDate' => 'Birth date must be properly formatted.',
+					'dateFalseFormat' => 'Birth date must be a valid date.',
+					),
+				    )),
+				 ),
 				'readonly'   => true,
-				'required'   => true,
+				'required'   => false,
 				'label'      => 'Check Issued Date',
-				'size'		 => 7,
+				'class'       => 'date',
 		));
 		$this->issueDate->setValue(App_Formatting::formatDate($check->getIssueDate()));
 		
 		
 		$this->addElement('text', 'payeeName',  array(
 				'filters'    => array('StringTrim'),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Payee Name',
@@ -155,9 +192,8 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'payeeAccount',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
+				'filters'    => array('StringTrim',),
+				'validators' => array(array('StringLength', false, array(1, 30)),),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Payee Account #',
@@ -167,9 +203,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$this->addElement('text', 'caseNeed',  array(
-				'filters'    => array('StringTrim',	array('LocalizedToNormalized', 
-										false, array('precision', 2))),
-				'validators' => array('Alnum', array('StringLength', false, array(1, 7)),),
 				'readonly'   => true,
 				'required'   => true,
 				'label'      => 'Case Need',
@@ -182,7 +215,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$this->addElement('textarea', 'commentText', array(
                 'label' => 'Comment',
-                'required' => true,
+                'required' => false,
                 'filters' => array('StringTrim'),
                 'validators' => array(
                     array('NotEmpty', true, array(
@@ -223,61 +256,132 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'size'		 => 7,
 		));
 		
+	    $this->addElement('submit', 'issueCheck', array(
+		    'label' => 'Issue Check Request',
+		    'decorators' => array('ViewHelper'),
+		    'class' => 'btn btn-success',
+		    'id' => 'issue_check',
+	    ));
+	    array_push($this->_buttons,$this->issueCheck);
+	    
+	    $this->addElement('submit', 'denyCheck', array(
+		    'label' => 'Deny Check Request',
+		    'decorators' => array('ViewHelper'),
+		    'class' => 'btn btn-success',
+		    'id' => 'deny_check',
+	    ));
+	    array_push($this->_buttons,$this->denyCheck);
+	    
+	    $this->addElement('submit', 'addComment', array(
+		    'label' => 'Add A Comment',
+		    'decorators' => array('ViewHelper'),
+		    'class' => 'btn btn-success',
+		    'id' => 'add_comment',
+	    ));
+	    array_push($this->_buttons,$this->addComment);
+	    
+	    $this->addElement('submit', 'editCheck', array(
+		    'label' => 'Edit Check Request',
+		    'decorators' => array('ViewHelper'),
+		    'class' => 'btn btn-success',
+		    'id' => 'edit_check',
+	    ));
+	    array_push($this->_buttons,$this->editCheck);
+	    
+	    $this->addElement('submit', 'submitEdits', array(
+				'label' => 'Submit Edits',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-success',
+				'id' => 'submit_edits',
+	    ));
+	    array_push($this->_buttons,$this->submitEdits);
+	    
+	    $this->addElement('submit', 'cancelEdits', array(
+				'label' => 'Cancel Edits',
+				'decorators' => array('ViewHelper'),
+				'class' => 'btn btn-danger',
+				'id' => 'cancel_edits',
+	    ));
+	    array_push($this->_buttons,$this->cancelEdits);
+	    
+	    $this->addElement('submit', 'submitComment', array(
+		'label' => 'Submit Comment',
+		'id' => 'submit_comment',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	    ));
+	    array_push($this->_buttons,$this->submitComment);
+	    
+	    $this->addElement('submit', 'cancelComment', array(
+		'label' => 'Cancel Comment',
+		'id' => 'cancel_comment',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-danger',
+	    ));
+	    array_push($this->_buttons,$this->cancelComment);
+	    
+	    $this->addElement('submit', 'addComment', array(
+		'label' => 'Add A Comment',
+		'id' => 'add_comment',
+		'decorators' => array('ViewHelper'),
+		'class' => 'btn btn-success',
+	    ));
+	    array_push($this->_buttons,$this->addComment);
 		
-		if($check->getStatus() === 'P'){
-			
-		    // Set which buttons are shown
-		    if( $this->_state === Application_Model_Treasurer_CheckForm::INITIAL)
-		    {
-			$this->setInitialButtons();
-		    }
-		    if( $this->_state === Application_Model_Treasurer_CheckForm::EDIT )
-		    {
-			$this->setEditable();
-		    }
-		    if( $this->_state === Application_Model_Treasurer_CheckForm::COMMENT )
-		    {
-			$this->setCommentState();
-		    }
+	    if($check->getStatus() === 'P'){
+		    
+		// Set which buttons are shown
+		if( $this->_state === Application_Model_Treasurer_CheckForm::INITIAL)
+		{
+		    $this->setInitialButtons();
 		}
-		
+		if( $this->_state === Application_Model_Treasurer_CheckForm::EDIT )
+		{
+		    $this->setEditable();
+		}
+		if( $this->_state === Application_Model_Treasurer_CheckForm::COMMENT )
+		{
+		    $this->setCommentState();
+		}
+		if( $this->_state === Application_Model_Treasurer_CheckForm::MEMBERVIEW)
+		{
+		    $this->setMemberView();
+		}
+	    }
+	    
     }
+    /**
+     * Returns a string representing which button was pressed
+     */
+    public function getAction()
+    {
+	foreach($this->_buttons as $btn)
+	{
+	    if($btn->isChecked()){
+		return $btn->getId();
+	    }
+	}
+	
+    }
+    /**
+     * Gets current state of the form
+     */
     public function getState()
     {
 	return $this->_state;
     }
     public function getButtons()
     {
-	switch( $this->_state )
-	{
-	    case Application_Model_Treasurer_CheckForm::COMMENT:
-		return array($this->submitComment, $this->cancelComment);
-		break;
-	    case Application_Model_Treasurer_CheckForm::EDIT:
-		return array($this->editCheck, $this->cancelEdits);
-		break;
-	    case Application_Model_Treasurer_CheckForm::INITIAL:
-		return array($this->issueCheck, $this->denyCheck, $this->addComment, $this->editCheck);
-		break;
-	    default:
-		return array();
-		return;
-	}
-	
+	return( $this->_activeButtons);
+    }
+    public function setMemberView()
+    {
+	array_push($this->_activeButtons,$this->addComment);
     }
     public function setCommentState()
     {
-	$this->addElement('submit', 'submitComment', array(
-		'label' => 'Submit Comment',
-		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
-	));
-	
-	$this->addElement('submit', 'cancelComment', array(
-		'label' => 'Cancel Comment',
-		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
-	));
+	array_push($this->_activeButtons,$this->submitComment);
+	array_push($this->_activeButtons,$this->cancelComment);
 
 	$this->commentText->setAttrib('readonly', null);
 	
@@ -287,59 +391,50 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	
 	$this->addComment->setLabel('Submit Comment');
     }
-    public function setEditable()
+    public function setEditState()
     {
-	$this->addElement('submit', 'editCheck', array(
-				'label' => 'Submit Edits',
-				'decorators' => array('ViewHelper'),
-				'class' => 'btn btn-success',
-				'value' => 'Submit Edits'
-			));
-	$this->addElement('submit', 'cancelEdits', array(
-				'label' => 'Submit Edits',
-				'decorators' => array('ViewHelper'),
-				'class' => 'btn btn-success',
-				'value' => 'Cancel Edits',
-			));
+	array_push($this->_activeButtons,$this->submitEdits);
+	array_push($this->_activeButtons,$this->cancelEdits);
 	
 	// Set editable field
 	$this->amount->setAttrib('readonly', null);
 	$this->payeeName->setAttrib('readonly', null);
 	$this->payeeAccount->setAttrib('readonly', null);
-	$this->contact->setAttrib('readonly', null);
+	$this->contactfname->setAttrib('readonly', null);
+	$this->contactlname->setAttrib('readonly', null);
 	$this->contactPhone->setAttrib('readonly', null);
 	$this->checkNum->setAttrib('readonly', null);
 	$this->issueDate->setAttrib('readonly', null);
-	$this->caseNeed->setAttrib('readonly', null);
 	$this->commentText->setAttrib('readonly', null);
 			
     }
     public function setInitialButtons()
     {
+	array_push($this->_activeButtons,$this->issueCheck);
+	array_push($this->_activeButtons,$this->denyCheck);
+	array_push($this->_activeButtons,$this->addComment);
+	array_push($this->_activeButtons,$this->editCheck);
+
+    }
+    public function getComment()
+    {
+	return $this->commentText->getValue();
+    }
+    public function getCheckReq()
+    {
+	$service = new App_Service_TreasurerService();
+	$check = $service->getCheckReqById($this->id->getValue());
 	
-	$this->addElement('submit', 'issueCheck', array(
-		'label' => 'Issue Check Request',
-		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
-	));
-	
-	$this->addElement('submit', 'denyCheck', array(
-		'label' => 'Deny Check Request',
-		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
-	));
-	
-	$this->addElement('submit', 'addComment', array(
-		'label' => 'Add A Comment',
-		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
-	));
-	
-	$this->addElement('submit', 'editCheck', array(
-		'label' => 'Edit Check Request',
-		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
-	));
+	$check
+	    ->setPayeeName($this->payeeName->getValue())
+	    ->setContactFirstName($this->contactfname->getValue())
+	    ->setContactLastName($this->contactlname->getValue())
+	    ->setCheckNumber($this->checkNum->getValue())
+	    ->setAmount($this->amount->getValue())
+	    ->setAccountNumber($this->payeeAccount->getValue())
+	    ->setPhone($this->contactPhone->getValue())
+	    ->setComment($this->commentText->getValue());
+	return $check;
     }
     public function preValidate($data)
     {
