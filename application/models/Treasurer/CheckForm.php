@@ -270,7 +270,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    $this->addElement('submit', 'denyCheck', array(
 		    'label' => 'Deny Check Request',
 		    'decorators' => array('ViewHelper'),
-		    'class' => 'btn btn-success',
+		    'class' => 'btn btn-danger',
 		    'id' => 'deny_check',
 		    'required' => false,
 	    ));
@@ -279,7 +279,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    $this->addElement('submit', 'addComment', array(
 		    'label' => 'Add A Comment',
 		    'decorators' => array('ViewHelper'),
-		    'class' => 'btn btn-success',
+		    'class' => 'btn btn-info',
 		    'id' => 'add_comment',
 		    'required' => false,
 	    ));
@@ -288,7 +288,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    $this->addElement('submit', 'editCheck', array(
 		    'label' => 'Edit Check Request',
 		    'decorators' => array('ViewHelper'),
-		    'class' => 'btn btn-success',
+		    'class' => 'btn btn-info',
 		    'id' => 'edit_check',
 		    'required' => false,
 	    ));
@@ -334,7 +334,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		'label' => 'Add A Comment',
 		'id' => 'add_comment',
 		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
+		'class' => 'btn btn-info',
 		'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->addComment);
