@@ -26,7 +26,7 @@ class Application_Model_Treasurer_FundsForm extends Twitter_Bootstrap_Form_Horiz
 						array('StringLength', false, array(1, 7)),
 				),
 				'required'   => true,
-				'label'      => 'Available Funds:',
+				'label'      => 'Total Funds:',
 				'size'		 => 7,
 		));
 		
@@ -41,12 +41,12 @@ class Application_Model_Treasurer_FundsForm extends Twitter_Bootstrap_Form_Horiz
 		//$service->updateParishFunds($funds);
     }
 
-    public function preValidate($data)
+    /*public function preValidate($data)
     {
         //$this->  ->preValidate($data);
-    }
+    }*/
 
-    public function getFunds()
+    /*public function getFunds()
     {
         //$this->updateCurrentFunds->updateParishFunds($funds);
 		//$service->updateParishFunds(300);
@@ -55,7 +55,7 @@ class Application_Model_Treasurer_FundsForm extends Twitter_Bootstrap_Form_Horiz
 		
 		//return App_Formatting::emptyToNull($this->funds->getValue());
 		//return $this->funds->getValue();
-		return 702220;
-    }
+		//return 702220;
+    }*/
 
 }
