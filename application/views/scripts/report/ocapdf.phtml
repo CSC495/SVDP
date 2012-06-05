@@ -111,7 +111,8 @@
     $pdf = new HTML2FPDF('P', 'mm', 'Letter');
     $pdf->AddPage();
     $pdf->WriteHTML($htmlFile);
-    $pdf->Output('C:/SVDPReports/OCAReport.pdf', 'F');
+//    $pdf->Output(APPLICATION_PATH . DIRECTORY_SEPARATOR . 'reports'. DIRECTORY_SEPARATOR . 'OCAReport.pdf', 'F');
+    $pdf->Output('OCAReport.pdf','D');
  ?>
  
   <p>The Report has been successfully created.<br />
