@@ -268,10 +268,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		}
 		
 		if($t === 'Submit Edits'){
-			//$cont = trim($this->contact->getValue());
-			//$num = strpos($cont, ' ');
-			//$fir = substr($cont, 0, $num);
-			//$las = substr($cont, $num);
 			$ph = str_replace(array(' ', '(', ')', '-'), "", $this->contactPhone->getValue());
 			
 			
@@ -284,7 +280,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 			$chk->setCheckNumber($this->checkNum->getValue());
 			$chk->setComment($this->commentText->getValue());
 			
-			$this->commentText->setValue($chk->getCheckNumber());
 			
 		}
 		
@@ -312,23 +307,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		}
     }
 	
-	public function requireCheckNum(){
-		//you can use <p class="alert alert-error">Text here</p>
-		/*in the map view, the message of in or out of parish boundaries uses it
-		if it's in, it's green. if out, it's red.
-		I think you can keep it editable (maybe?) just make it required
-		you can use <p class="alert alert-error">Text here</p>
-		that's the code on the map page*/
-		$this->addElement('textArea', 'checkNumWarning', array(
-				'required'   => true,
-				'label'      => '',
-				'dimension'	 => 3,
-				'rows'		 => 2,
-				'readonly'   => true,
-		));
-		$this->checkNumWarning->setValue('Check Requests cannot be issued without the Check Number Set');
-		
-	}
+	
 
 }
 
