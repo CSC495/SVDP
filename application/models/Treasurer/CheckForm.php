@@ -313,6 +313,12 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
     }
 	
 	public function requireCheckNum(){
+		//you can use <p class="alert alert-error">Text here</p>
+		/*in the map view, the message of in or out of parish boundaries uses it
+		if it's in, it's green. if out, it's red.
+		I think you can keep it editable (maybe?) just make it required
+		you can use <p class="alert alert-error">Text here</p>
+		that's the code on the map page*/
 		$this->addElement('textArea', 'checkNumWarning', array(
 				'required'   => true,
 				'label'      => '',

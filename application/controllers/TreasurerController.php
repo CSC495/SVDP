@@ -58,7 +58,10 @@ class TreasurerController extends Zend_Controller_Action
 			
 			if($request->issueCheck){
 				if($request->checkNum == null){
-					$this->view->form->requireCheckNum();
+					$this->_helper->flashMessenger(array(
+						'type' => 'error',
+						'text' => 'Real Check Number must be Set to Issue the Check Request',
+					));
 				}
 				else{
 				
@@ -74,14 +77,30 @@ class TreasurerController extends Zend_Controller_Action
 			}
 			
 			if($request->editCheck){
-				
-				$ret = $this->view->form->editCheckReq($request->editCheck, $check);
-				$ret->setUserId($ret->getUser());
-				
-				$service->updateCheckRequest($ret);
-				
-				if($request->editCheck === 'Submit Edits'){
-					$this->_helper->redirector('index');
+				if($request->payeeName == null || $request->payeeAccount == null){
+					if($request->payeeName == null){
+						$this->_helper->flashMessenger(array(
+							'type' => 'error',
+							'text' => 'Payee Name cannot be left blank',
+						));
+					}
+					if($request->payeeAccount == null){
+						$this->_helper->flashMessenger(array(
+							'type' => 'error',
+							'text' => 'Payee Account # cannot be left blank',
+						));
+					}
+					$this->view->form->editCheckReq('Edit Check Request', $check);
+				}
+				else {
+					$ret = $this->view->form->editCheckReq($request->editCheck, $check);
+					$ret->setUserId($ret->getUser());
+					
+					$service->updateCheckRequest($ret);
+					
+					if($request->editCheck === 'Submit Edits'){
+						$this->_helper->redirector('index');
+					}
 				}
 			}
 			
