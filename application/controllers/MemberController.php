@@ -905,8 +905,10 @@ class MemberController extends Zend_Controller_Action
                 continue;
             }
 
-            $caseNeedTotal += $need->getAmount();
-            if (!($referralOrCheckReq instanceof Application_Model_Impl_CheckReq)) {
+            if ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq) {
+                $caseNeedTotal += $referralOrCheckReq->getAmount();
+            } else {
+                $caseNeedTotal += $need->getAmount();
                 $caseNeedTotalMinusCheckReqs += $need->getAmount();
             }
         }
