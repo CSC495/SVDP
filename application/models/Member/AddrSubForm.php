@@ -22,10 +22,18 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
     );
 
     /**
+     * Whether or not we have an apartment number field.
+     *
+     * @var bool
+     */
+    private $_hasAptField;
+
+    /**
      * Instantiates a new instance of the `Application_Model_Member_AddrSubForm` class. The
      * following form options may be provided:
      *
      * * `hasParishField` (default `false`): If `true`, displays a "parish of residence" text field
+     * * `hideAptField` (default: `false`): If `true`, the apartment number field shall be hidden
      * * `readOnly` (default `false`): If `true`, all form elements will be marked read only
      * * `title` (default `null`): Sets the legend of a `fieldset` element rendered around the form
      * * `zipRequired` (default `false`): If `true`, the ZIP code text field will be required
@@ -38,6 +46,8 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
             'isArray' => true,
             'decorators' => array('FormElements'),
         ));
+
+        $this->_hasAptField = empty($options['hideAptField']);
 
         if (!empty($options['readOnly'])) {
             $readonlyAttr = 'readonly';
@@ -71,23 +81,25 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
             'readonly' => $readonlyAttr,
         ));
 
-        $this->addElement('text', 'apt', array(
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('StringLength', true, array(
-                    'max' => 30,
-                    'messages' => array(
-                        'stringLengthTooLong'
-                            => 'Apartment number must be shorter than 30 characters.',
-                    ),
-                )),
-            ),
-            'label' => 'Apartment #',
-            'description' => '(Optional)',
-            'maxLength' => 30,
-            'dimension' => 1,
-            'readonly' => $readonlyAttr,
-        ));
+        if ($this->_hasAptField) {
+            $this->addElement('text', 'apt', array(
+                'filters' => array('StringTrim'),
+                'validators' => array(
+                    array('StringLength', true, array(
+                        'max' => 30,
+                        'messages' => array(
+                            'stringLengthTooLong'
+                                => 'Apartment number must be shorter than 30 characters.',
+                        ),
+                    )),
+                ),
+                'label' => 'Apartment #',
+                'description' => '(Optional)',
+                'maxLength' => 30,
+                'dimension' => 1,
+                'readonly' => $readonlyAttr,
+            ));
+        }
 
         $this->addElement('text', 'city', array(
             'required' => true,
@@ -161,7 +173,9 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
             'readonly' => $readonlyAttr,
         ));
 
-        $elements = array('street', 'apt', 'city', 'state', 'zip');
+        $elements = $this->_hasAptField
+            ? array('street', 'apt', 'city', 'state', 'zip')
+            : array('street', 'city', 'state', 'zip');
 
         if (!empty($options['hasParishField'])) {
             $this->addElement('select', 'resideParish', array(
@@ -206,11 +220,14 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
         $addr
             ->setId(App_Formatting::emptyToNull($this->addrId->getValue()))
             ->setStreet(App_Formatting::emptyToNull($this->street->getValue()))
-            ->setApt(App_Formatting::emptyToNull($this->apt->getValue()))
             ->setCity(App_Formatting::emptyToNull($this->city->getValue()))
             ->setState(App_Formatting::emptyToNull($this->state->getValue()))
             ->setZip(App_Formatting::emptyToNull($this->zip->getValue()))
             ->setParish(App_Formatting::emptyToNull($this->resideParish->getValue()));
+
+        if ($this->_hasAptField) {
+            $addr->setApt(App_Formatting::emptyToNull($this->apt->getValue()));
+        }
 
         return $addr;
     }
@@ -225,11 +242,14 @@ class Application_Model_Member_AddrSubForm extends Twitter_Bootstrap_Form_Horizo
     {
         $this->addrId->setValue($addr->getId());
         $this->street->setValue($addr->getStreet());
-        $this->apt->setValue($addr->getApt());
         $this->city->setValue($addr->getCity());
         $this->state->setValue($addr->getState());
         $this->zip->setValue($addr->getZip());
         $this->resideParish->setValue($addr->getParish());
+
+        if ($this->_hasAptField) {
+            $this->apt->setValue($addr->getApt());
+        }
 
         return $this;
     }

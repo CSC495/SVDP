@@ -170,6 +170,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
 
         $this->addSubForm(new Application_Model_Member_AddrSubForm(array(
             'title' => 'Payee address:',
+            'hideAptField' => true,
             'zipRequired' => true,
         )), 'addr' );
 
