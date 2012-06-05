@@ -105,7 +105,7 @@ class App_Service_TreasurerService {
     */
     public function updateCheckReqComment($comment, $id)
     {
-	$change = array('comment' => $this->_db->quote($comment));
+	$change = array('comment' => $comment);
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $id);
 	$this->_db->update('check_request', $change, $where);
     }
