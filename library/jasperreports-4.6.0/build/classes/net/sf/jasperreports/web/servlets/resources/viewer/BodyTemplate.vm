@@ -1,3 +1,0 @@
-<script class='jasperreports'>
-	jasperreports.reportviewertoolbar.loadReport('${reportUrl}', '${jsonParamsObject}', '${toolbarId}');
-</script>
