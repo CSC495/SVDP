@@ -17,11 +17,16 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
      * The list of all the buttons associated with the form
      */
     private $_buttons = array();
+    /**
+     * Holds state of the check that the form is being constructed for
+     */
+    private $_checkStatus = 'P';
     
     public function __construct($check, $state = Application_Model_Treasurer_CheckForm::READONLY)
     {
 	// Set the state of the form
 	$this->_state = $state;
+	$this->_checkStatus = $check->getStatus();
 	
         $baseUrl = new Zend_View_Helper_BaseUrl();
 		
@@ -263,7 +268,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    $this->addElement('submit', 'denyCheck', array(
 		    'label' => 'Deny Check Request',
 		    'decorators' => array('ViewHelper'),
-		    'class' => 'btn btn-success',
+		    'class' => 'btn btn-danger',
 		    'id' => 'deny_check',
 		    'required' => false,
 	    ));
@@ -272,7 +277,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    $this->addElement('submit', 'addComment', array(
 		    'label' => 'Add A Comment',
 		    'decorators' => array('ViewHelper'),
-		    'class' => 'btn btn-success',
+		    'class' => 'btn btn-info',
 		    'id' => 'add_comment',
 		    'required' => false,
 	    ));
@@ -281,7 +286,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    $this->addElement('submit', 'editCheck', array(
 		    'label' => 'Edit Check Request',
 		    'decorators' => array('ViewHelper'),
-		    'class' => 'btn btn-success',
+		    'class' => 'btn btn-info',
 		    'id' => 'edit_check',
 		    'required' => false,
 	    ));
@@ -327,7 +332,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		'label' => 'Add A Comment',
 		'id' => 'add_comment',
 		'decorators' => array('ViewHelper'),
-		'class' => 'btn btn-success',
+		'class' => 'btn btn-info',
 		'required' => false,
 	    ));
 	    array_push($this->_buttons,$this->addComment);
@@ -429,16 +434,18 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
     }
     public function setInitialButtons()
     {
-	// Only show issue or deny if check is not issued
-	if($this->issueDate->getValue() === '' || $this->issueDate->getValue() === null)
+	// Only show issue, deny, edit if check if pending
+	if($this->_checkStatus === 'P')
 	{
 	    array_push($this->_activeButtons,$this->issueCheck);
 	    array_push($this->_activeButtons,$this->denyCheck);
 	    array_push($this->_activeButtons,$this->editCheck);
+	    
+	    $this->checkNum->setAttrib('readonly', null);
 	}
 	array_push($this->_activeButtons,$this->addComment);
 	
-
+	
     }
     public function getComment()
     {
