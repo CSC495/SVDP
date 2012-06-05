@@ -48,14 +48,14 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 // Fetch total funds for sidebar.
 $config     = Zend_Registry::get('config');
 $funds      = $config->getAvailableFunds();
-$fundsStr   = App_Formatting::formatCurrency($funds);
+$fundsStr   = '$' . App_Formatting::formatCurrency($funds);
 $fundsClass = ($funds < 0.0) ? 'error': '';
 
 // Fetch available funds for sidebar
 $service     = new App_Service_GeneralService();
 $requestsAmt = $service->getPendingCheckRequestsAmount();
 $aFunds      = $funds - $requestsAmt;
-$aFundsStr   = App_Formatting::formatCurrency($aFunds);
+$aFundsStr   = '$' . App_Formatting::formatCurrency($aFunds);
 $aFundsClass = ($aFunds < 0.0) ? 'error' : '';
 
 // Fetch user schedule for sidebar.

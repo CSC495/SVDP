@@ -127,11 +127,11 @@ class AdminController extends Zend_Controller_Action
 		// retrieve the list of users
         $service = new App_Service_AdminService();
         $users   = $service->getAllUsers();
-
+        
         $this->view->users = array();
         $lastRowLetter     = null;
 
-		// Set which users will have anchors on the list page
+	// Set which users will have anchors on the list page
         foreach ($users as $userId => $user) {
             $firstName = $user->getFirstName();
 
@@ -142,7 +142,7 @@ class AdminController extends Zend_Controller_Action
             } else { // Assign last to null since this letter has alreayd been assigned
                 $rowLetter = null;
             }
-			// Store array of the user and their row letter
+	    // Store array of the user and their row letter
             $this->view->users[$userId] = array(
                 'user' => $user,
                 'rowLetter' => $rowLetter,
@@ -234,6 +234,15 @@ class AdminController extends Zend_Controller_Action
         $userName = substr($user->getFirstName(),0,1);
         $userName = $userName . $user->getLastName();
         $userName = strtolower($userName);
+        $num = $service->getNextIdNum($userName);
+        
+        // Ensure username fits in DB
+        $szNum = strlen(strval($num));
+        if( (strlen($userName) + $szNum) > 30 )
+        {
+            // Trim off the length of the number
+            $userName = substr($userName,0, $szNum * -1);
+        }
         $userName = $userName . $service->getNextIdNum($userName);
         // Store user name
         $user->setUserId($userName);

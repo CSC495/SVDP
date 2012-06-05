@@ -157,7 +157,7 @@ class Application_Model_Impl_Householder
         $this->_departDate = $departDate;
         return $this;
     }
-    
+
     /**
      * Returns the full name of this client, i.e., the client's first name followed by the client's
      * last name. If either portion is `null`, it shall be omitted. If both names are `null`, the
