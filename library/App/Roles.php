@@ -10,20 +10,25 @@ class App_Roles
      * General Role. 'subclass' role of all other roles
      * @var string
      */
-    const GENERAL   = "G";
+    const GENERAL       = "G";
 	/**
      * Standard Member Role.
      * @var string
      */
-    const MEMBER    = "M";
+    const MEMBER        = "M";
 	/**
      * Treasurer Role
      * @var string
      */
-    const TREASURER = "T";
+    const TREASURER     = "T";
 	/**
      * Admin Role
      * @var string
      */
-    const ADMIN     = "A";
+    const ADMIN         = "A";
+        /**
+     * Data Migration Role
+     * @var string
+     */
+    const DATAMIGRATION = "D";
 }

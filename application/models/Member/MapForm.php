@@ -68,7 +68,9 @@ class Application_Model_Member_MapForm extends Twitter_Bootstrap_Form_Horizontal
         ));
 
         // Elements to collect the potential client's address:
-        $this->addSubForm(new Application_Model_Member_AddrSubForm('Client address:'), 'addr');
+        $this->addSubForm(new Application_Model_Member_AddrSubForm(array(
+            'title' => 'Client address:',
+        )), 'addr');
 
         // Elements that perform form actions:
         $this->addElement('submit', 'search', array(

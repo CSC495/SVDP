@@ -81,7 +81,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 		   ));
 	       
 		// Input of lifetime cases a client can have
-	    $lifetimecases = $this->addElement('text', 'lifetimecases', array(
+		$lifetimecases = $this->addElement('text', 'lifetimecases', array(
 		    'validators' => array('Int',
 				   array('GreaterThan',false,
 					 array("min" => -1, "messages" =>
@@ -106,7 +106,7 @@ class Application_Model_Admin_AdjustForm extends Twitter_Bootstrap_Form_Vertical
 		    'id'         => 'yearlycases',
 		   ));
                
-	    $adjust = $this->addElement('submit', 'adjust', array(
+		$adjust = $this->addElement('submit', 'adjust', array(
 		    'required' => false,
 		    'ignore'   => true,
 		    'label'    => 'Submit',

@@ -1,5 +1,6 @@
 <form action="<?php echo $this->escape($this->element->getAction()) ?>"
       method="<?php echo $this->escape($this->element->getMethod())?>"
+      id="<?php echo $this->escape($this->element->getName()) ?>"
       enctype="multipart/form-data">
 
 <fieldset>
@@ -27,6 +28,8 @@
     
     </table>
 </fieldset>
-    <br/>
+    <br />
     <?php echo $this->element->submit ?>
     <?php echo $this->element->err ?>
+    
+</form>
