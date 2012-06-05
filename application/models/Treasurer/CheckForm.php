@@ -268,10 +268,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		}
 		
 		if($t === 'Submit Edits'){
-			//$cont = trim($this->contact->getValue());
-			//$num = strpos($cont, ' ');
-			//$fir = substr($cont, 0, $num);
-			//$las = substr($cont, $num);
 			$ph = str_replace(array(' ', '(', ')', '-'), "", $this->contactPhone->getValue());
 			
 			
@@ -284,7 +280,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 			$chk->setCheckNumber($this->checkNum->getValue());
 			$chk->setComment($this->commentText->getValue());
 			
-			$this->commentText->setValue($chk->getCheckNumber());
 			
 		}
 		
@@ -312,17 +307,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		}
     }
 	
-	public function requireCheckNum(){
-		$this->addElement('textArea', 'checkNumWarning', array(
-				'required'   => true,
-				'label'      => '',
-				'dimension'	 => 3,
-				'rows'		 => 2,
-				'readonly'   => true,
-		));
-		$this->checkNumWarning->setValue('Check Requests cannot be issued without the Check Number Set');
-		
-	}
+	
 
 }
 
