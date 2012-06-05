@@ -1,88 +1,103 @@
 
-<form action="<?= $this->escape($this->element->getAction()) ?>"
-      method="<?= $this->escape($this->element->getMethod()) ?>">
-
-<fieldset>
-    <table>
-    	<tbody>
-			<tr><td>
-				<p> Case Information </p>
-				</td></tr>
-				
-				<tr><td>
-				<?php echo $this->element->clientName ?>
-				</td><td>
-				<?php echo $this->element->SVDPname ?>
-				</td></tr>
-				
-				<tr><td>
-			    <?php echo $this->element->caseID ?>
-			    </td>
-				<td>
-			    <?php echo $this->element->caseNeed ?>
-			    </td></tr>
-				
-				<tr><td>
-				<p> Contact Information </p>
-				</td></tr>
-
-				
-				<tr><td>
-			    <?php echo $this->element->payeeName ?>
-			    </td>
-				<td>
-			    <?php echo $this->element->payeeAccount ?>
-			    </td>
-				</tr>
-				
-				<tr><td>
-			    <?php echo $this->element->contactFirst ?>
-			    </td>
-				<td>
-			    <?php echo $this->element->contactLast ?>
-			    </td></tr>
-				
-				<tr><td>
-				<?php echo $this->element->contactPhone ?>
-				</td>
-				<td>
-			    <?php echo $this->element->address ?>
-			    </td></tr>
-				
-				<tr><td>
-				<p> Check Information </p>
-				</td></tr>
-				
-				<tr><td>
-			    <?php echo $this->element->checkID ?>
-			    </td>
-				<td>
-			    <?php echo $this->element->requestDate ?>
-			    </td></tr>
-				
-				<tr><td>
-			    <?php echo $this->element->amount ?>
-			    </td>
-				<td>
-			    <?php echo $this->element->issueDate ?>
-			    </td></tr>
-				
-				<tr><td>
-			    <?php echo $this->element->checkNum ?>
-			    </td>
-				<td>
-			    <?php echo $this->element->commentText ?>
-			    </td></tr>
-				
-				
-		    </tbody>
-	    </table>
+<form action="<?php echo $this->escape($this->element->getAction()) ?>"
+      method="<?php echo $this->escape($this->element->getMethod()) ?>"
+      id="<?php echo $this->escape($this->element->getName()) ?>"
+      class="twocol form-horizontal">
+<fieldset class="row-fluid">
+    <legend>Case Information</legend>
+    
+	<div class="span5">
+	    <?php echo $this->element->clientName ?>
+	</div>
+	
+	<div class="span5">
+	    <?php echo $this->element->SVDPname ?>
+	</div>
+	
+	<div class="span5">
+	    <?php echo $this->element->caseID ?>
+	</div>   
+	
+	<div class="span5">
+	    <?php echo $this->element->caseNeed ?>
+	</div>
 </fieldset>
 
-<?php echo $this->element->issueCheck ?>
-<?php echo $this->element->denyCheck ?>
-<?php echo $this->element->editCheck ?>
-<?php echo $this->element->addComment ?>
+<fieldset class="row-fluid">
+    <legend>Check Information</legend>
+    
+    <div class="span5">
+        <?php echo $this->element->id ?>
+    </div>
+    
+    <div class="span5">           
+        <?php echo $this->element->requestDate ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->checkNum ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->issueDate ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->amount ?>
+    </div>
+
+    <div class="span5">
+        <?php echo $this->element->contactfname?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->contactPhone ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->contactlname ?>
+    </div>
+
+</fieldset>
+
+<fieldset class="row-fluid">
+    <legend>Payee Information</legend>
+    
+    <div class="span5">
+        <?php echo $this->element->payeeName ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->payeeAccount ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->addr->street ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->addr->apt ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->addr->city ?>
+    </div>
+    
+    <div class="span3">
+        <?php echo $this->element->addr->state ?>
+    </div>
+    
+    <div class="span5">
+        <?php echo $this->element->addr->zip ?>
+    </div>
+    
+</fieldset>
+
+<fieldset class="row-fluid>
+    <div class="span6">
+        <?php echo $this->element->commentText ?>
+	<?php foreach( $this->element->getButtons() as $value) { echo $value; } ?>
+    </div>
+</fieldset>
+
 </form>
-
-

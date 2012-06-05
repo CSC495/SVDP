@@ -368,7 +368,7 @@ class App_Service_DocumentService {
         $request
             ->setId($results['checkrequest_id'])
             ->setCaseNeedId($results['caseneed_id'])
-            ->setUser($results['user_id'])
+            ->setUserId($results['user_id'])
             ->setRequestDate($results['request_date'])
             ->setAmount($results['amount'])
             ->setComment($results['comment'])

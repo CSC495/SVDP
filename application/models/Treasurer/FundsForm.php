@@ -20,10 +20,14 @@ class Application_Model_Treasurer_FundsForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$funds = $this->addElement('text', 'funds', array(
 				'filters'    => array('StringTrim',
-				array('LocalizedToNormalized', false, array('precision', 2))),
+				    array('LocalizedToNormalized', false, array('precision', 2))),
 				'validators' => array(
-						'Alnum',
-						array('StringLength', false, array(1, 7)),
+				    array('Float',true,array(
+						'messages' => array('notFloat' =>
+						'Value is not valid dollar amount'))),
+				    array('GreaterThan',false,array("min" => -1, "messages" =>
+									array("notGreaterThan" =>
+									      "Value must be 0 or greater"))),
 				),
 				'required'   => true,
 				'label'      => 'Total Funds:',

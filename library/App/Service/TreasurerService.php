@@ -109,17 +109,17 @@ class App_Service_TreasurerService {
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $id);
 	$this->_db->update('check_request', $change, $where);
     }
-    
+	
     /**
      *Denies the indicated check request.
      *
      *@param id of the check request to deny
      *@return void
     */
-    public function denyCheckRequest($id)
-    {
+    public function denyCheckRequest($id, $userId){
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $id);
-	$change = array('status' => 'D');
+	$change = array('status' => 'D',
+			'signee_userid' => $userId);
 	$this->_db->update('check_request', $change, $where);
     }
     
@@ -175,7 +175,7 @@ class App_Service_TreasurerService {
             ->setId($results['checkrequest_id'])
             ->setCaseNeedId($results['caseneed_id'])
 	    ->setCaseNeedName($results['caseneedName'])
-            ->setUser($results['user_id'])
+            ->setUserId($results['user_id'])
 	    ->setUserFName($results['userFName'])
 	    ->setUserLName($results['userLName'])
             ->setRequestDate($results['request_date'])
@@ -212,7 +212,7 @@ class App_Service_TreasurerService {
             'comment' => $request->getComment(),
             'signee_userid' => ($request->getSigneeUserId() !== null)
                 ? $request->getSigneeUserId() : null,
-            'check_number' => $request->getCheckNumber(),
+            'check_number' => App_Formatting::emptyToNull($request->getCheckNumber()),
             'issue_date' => $request->getIssueDate(),
             'account_number' => $request->getAccountNumber(),
             'payee_name' => $request->getPayeeName(),

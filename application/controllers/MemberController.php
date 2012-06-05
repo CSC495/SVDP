@@ -731,13 +731,12 @@ class MemberController extends Zend_Controller_Action
 
         // If everyone's kosher with the form, then we can add the check request and redirect back
         // to the case view page.
-        $user = new Application_Model_Impl_User();
-        $user->setUserId(Zend_Auth::getInstance()->getIdentity()->user_id);
+        $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
 
         $checkReq = $this->view->form->getCheckReq();
         $checkReq
             ->setCaseNeedId($needId)
-            ->setUser($user)
+            ->setUserId($userId)
             ->setRequestDate(date('Y-m-d'))
             ->setStatus('P');
 

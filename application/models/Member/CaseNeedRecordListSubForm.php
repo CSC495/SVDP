@@ -257,7 +257,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             $this->setSubFormReadOnly($caseNeedSubForm, true);
 
             $checkReq        = $referralOrCheckReq;
-            $viewCheckReqUrl = $baseUrl->baseUrl(App_Resources::TREASURER . '/checkReq/id/'
+            $viewCheckReqUrl = $baseUrl->baseUrl(App_Resources::TREASURER . '/view/id/'
                 . urlencode($checkReq->getId()));
 
             $status2 = '<a href="' . htmlspecialchars($viewCheckReqUrl) . '">';
