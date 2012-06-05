@@ -4,6 +4,7 @@ INSERT INTO user VALUES
 ("jcombs", "abc12345", "Julie",  "Combs", "jcombs@123.com", 1231231234, 1231231234, 'M', 0, 1),
 ("rmoney", "abc12345", "Rain",  "Money", "makeitrain@123.com", 1231231234, 1231231234, 'T', 0, 1),
 ("dboss", "abc12345", "Da",  "Boss", "dboss@123.com", 1231231234, 1231231234, 'A', 0, 1),
+("dmigrate", "abc12345", "Data",  "Migration", "dmigrate@123.com", 1231231234, 1231231234, 'D', 0, 1),
 ("cpassword", "abc12345", "Change",  "Password", "cpassword@123.com", 1231231234, 1231231234, 'M', 1, 1);
 
 
@@ -12,6 +13,7 @@ update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 2
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="jcombs";
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="rmoney";
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="dboss";
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="dmigrate";
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="cpassword";
 
 

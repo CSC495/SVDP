@@ -46,39 +46,17 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 		));
 		
 		// Read only user first name
-		$firstname = $this->addElement('text', 'firstname', array(
+	    $firstname = $this->addElement('text', 'firstname', array(
 			'filters'    => array('StringTrim'),
 			'required'   => true,
 			'label'      => 'First Name:',
 			'readonly'   => true,
-			'validators' => array(
-				array('NotEmpty', true, array(
-				    'type' => 'string',
-				    'messages' => array('isEmpty' => 'You must enter a first name.'),
-				)),
-				array('StringLength', true, array(
-				    'max' => 30,
-				    'messages' => array(
-					'stringLengthTooLong' => 'First name must be shorter than 30 characters.',
-				    ),
-				)),),
                ));
 	       
 	    $lastname = $this->addElement('text', 'lastname', array(
 			'filters'    => array('StringTrim'),
 			'required'   => true,
 			'label'      => 'Last Name:',
-			'validators' => array(
-				array('NotEmpty', true, array(
-				    'type' => 'string',
-				    'messages' => array('isEmpty' => 'You must enter a last name.'),
-				)),
-				array('StringLength', true, array(
-				    'max' => 30,
-				    'messages' => array(
-					'stringLengthTooLong' => 'Last name must be shorter than 30 characters.',
-				    ),
-				)),),
 	    ));
         
 		// User e-mail
@@ -87,17 +65,6 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 			'validators' => array('EmailAddress'),
 			'required'   => true,
 			'label'      => 'Email:',
-			'validators' => array(
-				array('NotEmpty', true, array(
-				    'type' => 'string',
-				    'messages' => array('isEmpty' => 'Email must be provided'),
-				)),
-				array('StringLength', true, array(
-				    'max' => 1000,
-				    'messages' => array(
-					'stringLengthTooLong' => 'Email must be shorter than 100 characters.',
-				    ),
-				)),),
 	    ));
                
 	    // User cell phone
@@ -135,10 +102,9 @@ class Application_Model_Admin_ModifyUserForm extends Twitter_Bootstrap_Form_Vert
 	    // Users role
 	    $role = $this->addElement('select','role',array(
 			'label' => 'Role:',
-			'multiOptions' => array ( App_Roles::MEMBER        => 'Member',
-						  App_Roles::TREASURER     => 'Treasurer',
-						  App_Roles::ADMIN         => 'Admin',
-						  App_Roles::DATAMIGRATION => 'Data Migrator',)
+			'multiOptions' => array ( App_Roles::MEMBER      => 'Member',
+						  App_Roles::TREASURER   => 'Treasurer',
+						  App_Roles::ADMIN       => 'Admin',)
 			,));
 	    // Used to indicate errors on role
 	    $roleErr = $this->addElement('hidden','roleErr', array(

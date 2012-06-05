@@ -1,14 +1,9 @@
-<div class='search-results'>
 <?php
 $rowStripeClass = (!isset($this->partialCounter) || $this->partialCounter % 2) ? 'even' : 'odd';
-
 
 echo $this->partial('partial/viewMemberCommon.phtml', array(
     'rowStripeClass' => $rowStripeClass,
     'showEditBtn' => true,
-    'showId' => true,
     'user' => $this->user,
     'rowId' => ($this->rowLetter !== null) ? 'id="' . $this->escape($this->rowLetter) . '" ' : '',
 ));
-?>
-</div>

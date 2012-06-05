@@ -1,0 +1,20 @@
+<?php
+function isMissingPhone($element)
+{
+    return $element->cellPhone->hasErrors()
+        && $element->cellPhone->getValue() === ''
+        && $element->homePhone->getValue() === ''
+        && $element->workPhone->getValue() === '';
+}
+?>
+
+<?php echo $this->element->client; ?>
+
+<?php echo $this->element->caseneedrecordlist; ?>
+
+<?php if (!$this->readOnly) { ?>
+
+<div class=form-actions>
+    <?php echo $this->element->submit; ?>
+</div>
+<?php } ?>

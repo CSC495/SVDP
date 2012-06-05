@@ -30,6 +30,10 @@ class DocumentController extends Zend_Controller_Action
         $this->view->docs = $service->getDocuments();
         
         $this->setPartial();
+		
+	// Add the javascript file
+	$this->view->headScript()->appendFile($this->view->baseUrl('document.js'));
+ 
     }
     
 	/*

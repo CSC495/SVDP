@@ -381,14 +381,14 @@ class MemberController extends Zend_Controller_Action
 
         // A client is displayed read-only if the user is not a normal member (e.g., if they're a
         // treasurer).
-        $this->view->readOnly = ($role === App_Roles::TREASURER);
+        $readOnly = ($role === App_Roles::TREASURER);
 
         if ($this->_hasParam('id')) {
             // Editing an existing client.
             $id = $this->_getParam('id');
 
-            $this->view->pageTitle = $this->view->readOnly ? 'View Client' : 'Edit Client';
-            $this->view->form = new Application_Model_Member_ClientForm($id, $this->view->readOnly);
+            $this->view->pageTitle = $readOnly ? 'View Client' : 'Edit Client';
+            $this->view->form = new Application_Model_Member_ClientForm($id, $readOnly);
 
             if (!$request->isPost()) {
                 // If the user hasn't submitted the form yet, load client info from the database.
@@ -398,7 +398,7 @@ class MemberController extends Zend_Controller_Action
             }
         } else {
             // Adding a new client.
-            if ($this->view->readOnly) {
+            if ($readOnly) {
                 throw new DomainException('Only members can add new clients');
             }
 
@@ -436,7 +436,7 @@ class MemberController extends Zend_Controller_Action
         }
 
         // Ensure that only members can edit clients.
-        if ($this->view->readOnly) {
+        if ($readOnly) {
             throw new DomainException('Only members can edit existing clients');
         }
 

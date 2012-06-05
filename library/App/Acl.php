@@ -29,7 +29,6 @@ class App_Acl extends Zend_Acl
         $this->setMemberAccess();
         $this->setTreasurerAccess();
         $this->setAdminAccess();
-        $this->setDataMigrationAccess();
     }
 
     /**
@@ -69,8 +68,6 @@ class App_Acl extends Zend_Acl
         $this->addRole(new Zend_Acl_Role(App_Roles::TREASURER),App_Roles::GENERAL);
         // Admin roles
         $this->addRole(new Zend_Acl_Role(App_Roles::ADMIN),App_Roles::GENERAL);
-        // Create Migration Role
-        $this->addRole(new Zend_Acl_Role(App_Roles::DATAMIGRATION),App_Roles::GENERAL);
     }
 
 	/**
@@ -143,15 +140,5 @@ class App_Acl extends Zend_Acl
         $this->allow(App_Roles::ADMIN,App_Resources::ADMIN);
         // Allow access to all actions in document controller
         $this->allow(App_Roles::ADMIN,App_Resources::DOCUMENT);
-    }
-    	/**
-	 * Sets the access for the DATA MIGRATION role
-	 *
-	 * @return null
-	 */
-    protected function setDataMigrationAccess()
-    {
-        // Allow access to migration controller
-        $this->allow(App_Roles::DATAMIGRATION,App_Resources::MIGRATION);
     }
 }

@@ -14,7 +14,7 @@ class App_Validate_Url extends Zend_Validate_Abstract
      * @var array
      */
     protected $_messageTemplates = array(
-        self::INVALID_URL => "'%value%' is not a valid URL. Did you forget 'http://'?",
+        self::INVALID_URL => "'%value%' is not a valid URL.",
     );
 	/**
      * Checks to see if a value is a valid URL

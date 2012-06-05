@@ -3,8 +3,6 @@
 abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
 {
 
-    protected $_recordsSubForm;
-
     private $_safeSerializeService;
 
     private $_namespace;
@@ -32,6 +30,8 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
     private $_removedRecordsField;
 
     private $_removedRecordsHashField;
+
+    private $_recordsSubForm;
 
     private $_addRecordBtn;
 
@@ -330,7 +330,6 @@ abstract class App_Form_RecordListSubFormAbstract extends Zend_Form_SubForm
                 array('HtmlTag', array('tag' => 'tr')),
             ))
             ->setElementDecorators(array(
-                'FieldSize',
                 'ViewHelper',
                 'Addon',
                 'ElementErrors',

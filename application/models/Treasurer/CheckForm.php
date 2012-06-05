@@ -37,7 +37,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		$service = new App_Service_Member();
 		$case = $service->getCaseById($check->getCase());
-		
+
 		$this->addElement('text', 'clientName', array(
 		'readonly' => true,
 		'required' => true,
@@ -64,7 +64,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'size'		 => 7,
 		));
 		$this->SVDPname->setValue($check->getUserFName() . ' ' . $check->getUserLName());
-		
 		
 		$this->addElement('text', 'contactfname',  array(
 				'filters'    => array('StringTrim'),
@@ -124,7 +123,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'required'   => true,
 				'label'      => 'Check Amount',
 		));
-		$this->amount->setValue($check->getAmount());
+		$this->amount->setValue(App_Formatting::formatCurrency($check->getAmount()));
 		
 		
 		$this->addElement('text', 'caseID',  array(
@@ -154,7 +153,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'size'		 => 10,
 		));
 		$this->requestDate->setValue(App_Formatting::formatDate($check->getRequestDate()));
-		//$this->requestDate->setValue($check->getRequestDate());
 		
 		
 		$this->addElement('text', 'checkNum',  array(
@@ -197,6 +195,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 		
 		
 		$addr = $check->getAddress();
+
 		$this->addElement('text', 'address',  array(
 				'filters'    => array('StringTrim'),
 				'readonly'   => true,
@@ -224,7 +223,6 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 				'label'      => 'Case Need',
 		));
 		$this->caseNeed->setValue($check->getCaseNeedName());
-		//$this->caseNeed->setValue($this->escape($check->getCase()->getNeedList()));
 		
 		
 		
@@ -462,10 +460,7 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    ->setComment($this->commentText->getValue());
 	return $check;
     }
-    public function preValidate($data)
-    {
-        //$this->  ->preValidate($data);
-    }
+
 }
 
 

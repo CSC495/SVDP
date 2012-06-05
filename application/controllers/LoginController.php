@@ -277,6 +277,9 @@ class LoginController extends Zend_Controller_Action
             case App_Roles::TREASURER:
                 $this->_helper->redirector('index',App_Resources::TREASURER);
                 break;
+            case App_Roles::DATAMIGRATION:
+                $this->_helper->redirector('index',App_Resources::MIGRATION);
+                break;
             default:
                 return;
         }

@@ -48,14 +48,14 @@ $role = $auth->hasIdentity() ? $auth->getIdentity()->role : App_Roles::GENERAL;
 // Fetch total funds for sidebar.
 $config     = Zend_Registry::get('config');
 $funds      = $config->getAvailableFunds();
-$fundsStr   = '$' . App_Formatting::formatCurrency($funds);
+$fundsStr   = App_Formatting::formatCurrency($funds);
 $fundsClass = ($funds < 0.0) ? 'error': '';
 
 // Fetch available funds for sidebar
 $service     = new App_Service_GeneralService();
 $requestsAmt = $service->getPendingCheckRequestsAmount();
 $aFunds      = $funds - $requestsAmt;
-$aFundsStr   = '$' . App_Formatting::formatCurrency($aFunds);
+$aFundsStr   = App_Formatting::formatCurrency($aFunds);
 $aFundsClass = ($aFunds < 0.0) ? 'error' : '';
 
 // Fetch user schedule for sidebar.
@@ -68,7 +68,7 @@ $scheduleEntries = Zend_Registry::get('schedule');
         <?php
 		/* retrieving navigation based on role */
         foreach ($this->navLinks as $path => $link) {
-            echo '<li class=active >'
+            echo '<li class="active">'
                 . '<a href="'
                 . $this->escape($this->baseUrl($path))
                 . '">'
@@ -78,23 +78,25 @@ $scheduleEntries = Zend_Registry::get('schedule');
         }
 		/* returns to login if role not found */
         if ($role !== App_Roles::GENERAL) {
-            echo '<li class=active>'
+            echo '<li class="active logout">'
             . '<a href="'
             . $this->escape($this->baseUrl('login/logout'))
             . '">'
             . '<i class="icon-share icon-white"></i>'
             . 'Logout'
             . '</a>'
-            . '<li>';
+            . '</li>';
         }
         ?>
     </ul>
 
     <div class=row-fluid>
+		<!-- checks that user is signed in -->
         <?php if ($auth->hasIdentity()){ ?>
         <div class=span2>
             <ul class="well nav nav-list">
-				<!-- displays amount of total funds -->
+			
+				<!-- displays amount of available funds -->
                 <li class=nav-header>Total Funds</li>
                 <li class=sidebar-field><p class="<?php echo $this->escape($fundsClass); ?>"><?php echo $this->escape($fundsStr); ?></p></li>
 
@@ -105,12 +107,12 @@ $scheduleEntries = Zend_Registry::get('schedule');
                 <li class=sidebar-field><p class="<?php echo $this->escape($aFundsClass); ?>"><?php echo $this->escape($aFundsStr); ?></p></li>
 
                 <li class=divider></li>
-
-				<!-- displays schedule - begins with "Week of: " followed by dates with names on following line -->
+				
+				<!-- displays schedule - begins with "Week of:" followed by dates with names on following line -->
                 <li class=nav-header>Member Schedule</li>
 				<p>Week of:</p>
                 <?php foreach ($scheduleEntries as $scheduleEntry) { ?>
-                <li> <?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></li>
+                <li><?php echo $this->escape(App_Formatting::formatDate($scheduleEntry->getStartDate())); ?></li>
                 <li class=sidebar-field><p><?php echo $this->escape(App_Formatting::truncateString($scheduleEntry->getUser()->getFullName(), 18));?></p></li>
                 <?php } ?>
 
@@ -118,8 +120,8 @@ $scheduleEntries = Zend_Registry::get('schedule');
 
 				<!-- list of common links -->
                 <li class=nav-header>Quick Links</li>
-                <li><a href="http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
                 <li><a href="http://www.dupagepads.org/">DuPage PADS</a></li>
+                <li><a href="http://www.dupageco.org/PropertyInfo/PropertyLookup.aspx">DuPage Property Lookup</a></li>
                 <li><a href="http://www.napervilletownship.com/">LIHEAP</a></li>
 				<li><a href="http://www.lisletownshipassessor.com/SD/Lisle/content/Detail.aspx?ID=4&amp;CID=c2169f4f-f265-4548-85e5-f8d6fdd4f56b">Lisle Property Lookup</a></li>
                 <li><a href="http://www.loaves-fishes.org/">Loaves &amp; Fishes</a></li>
@@ -130,8 +132,12 @@ $scheduleEntries = Zend_Registry::get('schedule');
                 <li><a href="http://www.sharingconnections.org/">Sharing Connections</a></li>
 				<li><a href="http://www.miltontownshipassessor.com/">Wheaton Property Lookup</a></li>
                 <li><a href="http://www.willcountytaxbill.com/">Will County Collector</a></li>
+
+            
+
+
             </ul>
-            <?php }?>
+		<?php }?>
         </div>
 
         <div class=span10>

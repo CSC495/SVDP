@@ -87,15 +87,6 @@ class Application_Model_Member_CaseNeedRecordListSubForm
         return $this;
     }
 
-    public function isValid($data)
-    {
-        foreach ($this->_recordsSubForm->getSubForms() as $caseNeedSubForm) {
-            $caseNeedSubForm->amount->addFilter('LocalizedToNormalized');
-        }
-
-        return parent::isValid($data);
-    }
-
     protected function initSubForm($caseNeedSubForm)
     {
         $caseNeedSubForm->addPrefixPath('App_Form', 'App/Form/');
@@ -138,19 +129,18 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 )),
             ),
             'decorators' => array(
-                'FieldSize',
                 'ViewHelper',
                 'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
             ),
-            'dimension' => 3,
+            'class' => 'span3',
         ));
 
         $caseNeedSubForm->addElement('text', 'amount', array(
             'required' => true,
-            'filters' => array('StringTrim'),
+            'filters' => array('StringTrim', 'LocalizedToNormalized'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
@@ -165,7 +155,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 )),
             ),
             'maxlength' => 10,
-            'dimension' => 2,
+            'class' => 'span2',
             'prepend' => '$',
         ));
 
@@ -201,7 +191,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
     {
         $caseNeedSubForm->id->setValue($caseNeed->getId());
         $caseNeedSubForm->need->setValue($caseNeed->getNeed());
-        $caseNeedSubForm->amount->setValue(App_Formatting::formatCurrency($caseNeed->getAmount()));
+        $caseNeedSubForm->amount->setValue($caseNeed->getAmount());
 
         if ($this->_showStatus) {
             $this->updateStatus($caseNeedSubForm, $caseNeed);
@@ -244,15 +234,11 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             $referral = $referralOrCheckReq;
 
             $status  = '<span class="label label-info">Referred</span>';
-            $status2 = '<abbr title="'
-                     . htmlspecialchars($referral->getReason())
-                     . '">'
-                     . 'Referral: '
+            $status2 = 'Referral: '
                      . htmlspecialchars($referral->getReferredTo())
                      . ' ('
                      . htmlspecialchars(App_Formatting::formatDate($referral->getDate()))
-                     . ')'
-                     . '</abbr>';
+                     . ')';
         } else if ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq) {
             $this->setSubFormReadOnly($caseNeedSubForm, true);
 
@@ -262,15 +248,28 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
             $status2 = '<a href="' . htmlspecialchars($viewCheckReqUrl) . '">';
 
-            if ($checkReq->getIssueDate() !== null) {
+            switch ($checkReq->getStatus()) {
+            case 'I':
                 $status   = '<span class="label label-success">Issued</span>';
                 $status2 .= 'Issued: '
                           . htmlspecialchars(App_Formatting::formatDate($checkReq->getIssueDate()));
-            } else {
+                break;
+
+            case 'D':
+                $status   = '<span class="label label-important">Denied</span>';
+                $status2 .= 'Denied';
+                if ($checkReq->getIssueDate() !== null) {
+                    $status2 .= ': '
+                              . htmlspecialchars(App_Formatting::formatDate(
+                                  $checkReq->getIssueDate()));
+                }
+                break;
+
+            default:
                 $status   = '<span class="label label-warning">Pending</span>';
                 $status2 .= 'Requested: '
                           . htmlspecialchars(App_Formatting::formatDate(
-                                             $checkReq->getRequestDate()));
+                              $checkReq->getRequestDate()));
             }
 
             $status2 .= '</a>';
