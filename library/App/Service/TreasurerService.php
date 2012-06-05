@@ -109,19 +109,14 @@ class App_Service_TreasurerService {
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $id);
 	$this->_db->update('check_request', $change, $where);
     }
-    
-<<<<<<< HEAD
-    public function denyCheckRequest($id, $userId){
-=======
+	
     /**
      *Denies the indicated check request.
      *
      *@param id of the check request to deny
      *@return void
     */
-    public function denyCheckRequest($id)
-    {
->>>>>>> tucker/master
+    public function denyCheckRequest($id, $userId){
 	$where = $this->_db->quoteInto('checkrequest_id = ?', $id);
 	$change = array('status' => 'D',
 			'signee_userid' => $userId);
