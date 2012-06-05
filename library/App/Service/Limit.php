@@ -66,17 +66,11 @@ class App_Service_Limit
     {
         return (double) $this->_db->fetchOne(
             $this->_db->select()
-            ->from(array('n' => 'case_need'), array('IFNULL(SUM(n.amount), 0)'))
+            ->from(array('t' => 'check_request'), array('IFNULL(SUM(t.amount), 0)'))
+            ->join(array('n' => 'case_need'), 'n.caseneed_id = t.caseneed_id', array())
             ->join(array('s' => 'client_case'), 'n.case_id = s.case_id', array())
             ->join(array('h' => 'household'), 's.household_id = h.household_id', array())
-            ->where(
-                'EXISTS ('
-              . $this->_db->select()
-                    ->from(array('t' => 'check_request'), array('(1)'))
-                    ->where('t.caseneed_id = n.caseneed_id')
-                    ->where('t.status <> "D"')
-              . ')'
-            )
+            ->where('t.status <> "D"')
             ->where('? IN (h.mainclient_id, h.spouse_id)', $clientId)
         );
     }
