@@ -138,7 +138,7 @@ class ReportController extends Zend_Controller_Action
 	}
 	$this->view->totalHours = $totalHours;
 	
-	$refer = $service->getGenReports($start, $end);
+	$refer = $service->getOCAReports($start, $end);
 	$referrals = 0;
 	$referHelped = 0;
 	
@@ -199,7 +199,7 @@ class ReportController extends Zend_Controller_Action
 	}
 	$this->view->totalHours = $totalHours;
 	
-	$refer = $service->getGenReports($start, $end);
+	$refer = $service->getOCAReports($start, $end);
 	$referrals = 0;
 	$referHelped = 0;
 	
