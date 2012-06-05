@@ -126,7 +126,7 @@ class LoginController extends Zend_Controller_Action
             $mail->setBodyHtml('Here is your temporary password. You will be required '
                                . 'to changed it on your next login.' .
                                '<br/><b>' . $password . '</b>');
-            $mail->setFrom('bagura@noctrl.edu', 'System');
+            $mail->setFrom('noreply@raphaelsvdp.org', 'System');
             $mail->addTo( $user->getEmail() );
             $mail->setSubject('SVDP Password Reset');
             $mail->send($transport);
@@ -276,6 +276,9 @@ class LoginController extends Zend_Controller_Action
                 break;
             case App_Roles::TREASURER:
                 $this->_helper->redirector('index',App_Resources::TREASURER);
+                break;
+            case App_Roles::DATAMIGRATION:
+                $this->_helper->redirector('index',App_Resources::MIGRATION);
                 break;
             default:
                 return;

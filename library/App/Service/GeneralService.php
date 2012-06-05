@@ -1,24 +1,22 @@
 <?php
 /**
- *@package ServiceFilePackage
-*/
-/**
- *General Service File
- *
- *Holds methods that all controllers will need to use
- *@package ServiceFilePackage
+ *Service file providing database queries that many controllers need.
  */
 class App_Service_GeneralService {
     /**
-     *Holds connection to DB
+     *Database adapter for service methods.
+     *
+     * @var Zend_Db_Adapter_Abstract
     */
     private $_db;
     
     /**
-     *Creates a connection to the DB available to the class
+     *Creates a connection to the DB available to the class.
+     *
      *@return void
     */
-    function __construct(){
+    function __construct()
+    {
         $this->_db = Zend_Db_Table::getDefaultAdapter();
     }
     
@@ -46,7 +44,7 @@ class App_Service_GeneralService {
     }
     
     /**
-     *Returns the number of pending check requests
+     *Returns the number of pending check requests.
      *
      *@return int number of pending check requests
     */
@@ -65,7 +63,8 @@ class App_Service_GeneralService {
      *
      *@return int total amount of the pending check requests
     */
-    public function getPendingCheckRequestsAmount(){
+    public function getPendingCheckRequestsAmount()
+    {
         $select = $this->_db->select()
                 ->from('check_request',
                        array('totalAmount' => 'SUM(amount)'))

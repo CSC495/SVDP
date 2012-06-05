@@ -168,10 +168,10 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             array('legend' => 'Payee contact information:')
         );
 
-        $this->addSubForm(new Application_Model_Member_AddrSubForm(array(
-            'title' => 'Payee address:',
-            'zipRequired' => true,
-        )), 'addr' );
+        $this->addSubForm(
+            new Application_Model_Member_AddrSubForm('Payee address:', false, true),
+            'addr'
+        );
 
         $this->addElement('submit', 'submit', array(
             'buttonType' => Twitter_Bootstrap_Form_Element_Submit::BUTTON_SUCCESS,
@@ -195,6 +195,7 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
             ->setPayeeName(App_Formatting::emptyToNull($this->payeeName->getValue()))
             ->setAddress($this->addr->getAddr())
             ->setContactFirstName(App_Formatting::emptyToNull($this->contactFirstName->getValue()))
+            ->setPhone($this->phone->getValue())
             ->setContactLastName(App_Formatting::emptyToNull($this->contactLastName->getValue()));
 
         return $checkReq;

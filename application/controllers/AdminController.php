@@ -188,8 +188,9 @@ class AdminController extends Zend_Controller_Action
         
         $error = false;
         if(!$form->isValid($_POST))
+        {
             $error = true;
-            
+        }   
         // Check to ensure atleast one phone number was provided
         if($form->getValue('cell') === '' && $form->getValue('home') === '')
         {
@@ -198,7 +199,7 @@ class AdminController extends Zend_Controller_Action
             
             $error = true;
         }
-            
+
         // If theres an error return
         if($error)
             return;
@@ -206,8 +207,8 @@ class AdminController extends Zend_Controller_Action
 		// Create User
         $user = new Application_Model_Impl_User();
         $user // Normalize the first and last name
-            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
-            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
+            ->setFirstName(ucfirst($form->getValue('firstname')))
+            ->setLastName(ucfirst($form->getValue('lastname')))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))
@@ -256,7 +257,7 @@ class AdminController extends Zend_Controller_Action
                            '<br/><br/><i>If you believe you have received this message in error ' .
                            'please contact the sender.</i>');
         
-        $mail->setFrom('bagura@noctrl.edu', 'System');
+        $mail->setFrom('noreply@raphaelsvdp.org', 'System');
         $mail->addTo($user->getEmail());
         $mail->setSubject('SVDP Account Created');
         $mail->send($transport);
@@ -298,8 +299,8 @@ class AdminController extends Zend_Controller_Action
         
             // Set form default values
             $this->view->form->userid->setValue($user->getUserId());
-            $this->view->form->firstname->setValue($user->getFirstName());
-            $this->view->form->lastname->setValue($user->getLastName());
+            $this->view->form->firstname->setValue(ucfirst($user->getFirstName()));
+            $this->view->form->lastname->setValue(ucfirst($user->getLastName()));
             $this->view->form->email->setValue($user->getEmail());
             $this->view->form->cell->setValue($user->getCellPhone());
             $this->view->form->home->setValue($user->getHomePhone());
@@ -373,8 +374,8 @@ class AdminController extends Zend_Controller_Action
         $user = new Application_Model_Impl_User();
         $user
             ->setUserId($form->getValue('userid')) // Normalize first and last name
-            ->setFirstName(ucfirst(strtolower($form->getValue('firstname'))))
-            ->setLastName(ucfirst(strtolower($form->getValue('lastname'))))
+            ->setFirstName(ucfirst($form->getValue('firstname')))
+            ->setLastName(ucfirst($form->getValue('lastname')))
             ->setEmail($form->getValue('email'))
             ->setCellPhone($form->getValue('cell'))
             ->setHomePhone($form->getValue('home'))

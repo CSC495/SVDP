@@ -49,6 +49,7 @@ class App_Acl extends Zend_Acl
         $this->add(new Zend_Acl_Resource(App_Resources::REPORT));
         $this->add(new Zend_Acl_Resource(App_Resources::DOCUMENT));
         $this->add(new Zend_Acl_Resource(App_Resources::REDIRECT));
+        $this->add(new Zend_Acl_Resource(App_Resources::MIGRATION));
     }
 
     /**

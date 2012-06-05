@@ -19,27 +19,27 @@
     <?php if($this->request[0] != null) ?>
         
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Created By:&nbsp;<?php echo $this->escape($this->request[0]->getUser())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Created By:&nbsp;<?php echo $this->request[0]->getUser()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name:&nbsp;<?php echo $this->escape($this->client->getFullName())   ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name:&nbsp;<?php echo $this->client->getFullName()   ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cell Phone:&nbsp;<?php echo $this->escape($this->client->getFormattedCellPhone())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cell Phone:&nbsp;<?php echo $this->client->getFormattedCellPhone()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home Phone:&nbsp;<?php echo $this->escape($this->client->getFormattedHomePhone())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home Phone:&nbsp;<?php echo $this->client->getFormattedHomePhone()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     <tr>        
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Work Phone:&nbsp;<?php echo $this->escape($this->client->getFormattedWorkPhone())  ?>&nbsp;</td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Work Phone:&nbsp;<?php echo $this->client->getFormattedWorkPhone()  ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
@@ -118,7 +118,6 @@
                 echo '<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>';
                 echo '</tr>';
             }
-            
         }
             
             echo '<tr>';

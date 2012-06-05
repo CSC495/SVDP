@@ -1,35 +1,25 @@
 <fieldset>
-    <legend>Household History:</legend>
-    <div class=search-results>
-        <table class=search-results>
-            <?php
-            
-			$rowStripeClass = (!(isset($this->i) && $this->i % 2)) ? 'even' : 'odd';
-			$viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
-			    . urlencode($this->client->getId()));
-			
-			$options = array(
-			    'rowStripeClass' => $rowStripeClass,
-			    'client' => $this->client,
-			);
-			
-			if (empty($this->noClientLinks)) {
-			    $options['viewClientUrl'] = $viewClientUrl;
-			    $options['gotoUrl']   = $viewClientUrl;
-			    $options['gotoLabel'] = 'Client';
-			} else if (!empty($this->viewSpouseUrl)) {
-			    $options['gotoUrl']   = $this->viewSpouseUrl;
-			    $options['gotoLabel'] = 'Spouse';
-			}
-			
-			echo $this->partial('partial/viewHouseholdHistory.phtml', $options);
-			?>
-			            <tr class="search-result <?php echo $rowStripeClass; ?>">
-		    <th class="search-cell bot first">Address</th>
-		    <td colspan=5 class="search-cell bot"><?php echo $this->escape($this->client->getCurrentAddr()->getFullAddr()); ?></td>
-		    <td class="search-cell last"><?php if ($this->client->isDoNotHelp()) { ?><span class="label label-important">Do not help</span><?php } ?></td>
-			</tr>
+    <legend>Current household:</legend>
+    <?php
+    echo $this->partial('partial/clientHistoryEntry.phtml', array(
+        'addr' => $this->client->getCurrentAddr(),
+        'spouse' => $this->client->getSpouse(),
+        'householders' => $this->householders,
+        'client' => $this->client,
+    ));
+    ?>
+</fieldset>
 
-        </table>
-    </div>
+<fieldset>
+    <legend>Previous households:</legend>
+
+    <?php
+    if ($this->history) {
+        foreach ($this->history as $historyEntry) {
+            echo $this->partial('partial/clientHistoryEntry.phtml', $historyEntry);
+        }
+    } else {
+    ?>
+    <p class="search-results help-block">No previous households on record.</p>
+    <?php } ?>
 </fieldset>

@@ -1,8 +1,8 @@
 
 <form action="<?php echo $this->escape($this->element->getAction()) ?>"
       method="<?php echo $this->escape($this->element->getMethod()) ?>"
-      class="twocol form-horizontal"
-      onsubmit="javascript:return validate_new(this)">
+      id="<?php echo $this->escape($this->element->getName()) ?>"
+      class="twocol form-horizontal">
 
 <fieldset class="row-fluid">
     <legend>Add New SVDP User</legend>
@@ -14,7 +14,6 @@
     <div class="span6">
         <?php echo $this->element->lastname ?>
     </div>   
-     
     <div class="span6">           
         <?php echo $this->element->home ?>
     </div>

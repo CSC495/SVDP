@@ -5,7 +5,13 @@
 <fieldset>
     <table>
     	<tbody>
-    		<tr><td>
+			<tr><td>
+				<p> Case Information </p>
+				</td></tr>
+				
+				<tr><td>
+				<?php echo $this->element->clientName ?>
+				</td><td>
 				<?php echo $this->element->SVDPname ?>
 				</td></tr>
 				
@@ -13,15 +19,13 @@
 			    <?php echo $this->element->caseID ?>
 			    </td>
 				<td>
-			    <?php echo $this->element->requestDate ?>
+			    <?php echo $this->element->caseNeed ?>
 			    </td></tr>
 				
 				<tr><td>
-			    <?php echo $this->element->checkID ?>
-			    </td>
-				<td>
-			    <?php echo $this->element->amount ?>
-			    </td></tr>
+				<p> Contact Information </p>
+				</td></tr>
+
 				
 				<tr><td>
 			    <?php echo $this->element->payeeName ?>
@@ -32,27 +36,44 @@
 				</tr>
 				
 				<tr><td>
-			    <?php echo $this->element->contact ?>
+			    <?php echo $this->element->contactFirst ?>
 			    </td>
 				<td>
-			    <?php echo $this->element->contactPhone ?>
+			    <?php echo $this->element->contactLast ?>
 			    </td></tr>
 				
 				<tr><td>
-			    <?php echo $this->element->checkNum ?>
+				<?php echo $this->element->contactPhone ?>
+				</td>
+				<td>
+			    <?php echo $this->element->address ?>
+			    </td></tr>
+				
+				<tr><td>
+				<p> Check Information </p>
+				</td></tr>
+				
+				<tr><td>
+			    <?php echo $this->element->checkID ?>
+			    </td>
+				<td>
+			    <?php echo $this->element->requestDate ?>
+			    </td></tr>
+				
+				<tr><td>
+			    <?php echo $this->element->amount ?>
 			    </td>
 				<td>
 			    <?php echo $this->element->issueDate ?>
 			    </td></tr>
 				
 				<tr><td>
-			    <?php echo $this->element->caseNeed ?>
+			    <?php echo $this->element->checkNum ?>
 			    </td>
 				<td>
 			    <?php echo $this->element->commentText ?>
 			    </td></tr>
 				
-
 				
 		    </tbody>
 	    </table>

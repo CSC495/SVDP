@@ -248,15 +248,28 @@ class Application_Model_Member_CaseNeedRecordListSubForm
 
             $status2 = '<a href="' . htmlspecialchars($viewCheckReqUrl) . '">';
 
-            if ($checkReq->getIssueDate() !== null) {
+            switch ($checkReq->getStatus()) {
+            case 'I':
                 $status   = '<span class="label label-success">Issued</span>';
                 $status2 .= 'Issued: '
                           . htmlspecialchars(App_Formatting::formatDate($checkReq->getIssueDate()));
-            } else {
+                break;
+
+            case 'D':
+                $status   = '<span class="label label-important">Denied</span>';
+                $status2 .= 'Denied';
+                if ($checkReq->getIssueDate() !== null) {
+                    $status2 .= ': '
+                              . htmlspecialchars(App_Formatting::formatDate(
+                                  $checkReq->getIssueDate()));
+                }
+                break;
+
+            default:
                 $status   = '<span class="label label-warning">Pending</span>';
                 $status2 .= 'Requested: '
                           . htmlspecialchars(App_Formatting::formatDate(
-                                             $checkReq->getRequestDate()));
+                              $checkReq->getRequestDate()));
             }
 
             $status2 .= '</a>';

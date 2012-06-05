@@ -19,7 +19,7 @@ class App_Validate_Password extends Zend_Validate_Abstract
      * Constant for defining required password length
      * @var string
      */
-    const $minimum = 8;
+    const minimum = 8;
     
 	/**
      * Constant for defining message variables

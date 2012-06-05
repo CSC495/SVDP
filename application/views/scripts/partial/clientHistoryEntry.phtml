@@ -1,0 +1,77 @@
+<?php
+if (isset($this->client)) {
+    $maritalStatus = $this->client->getMaritalStatus();
+} else {
+    $maritalStatus = isset($this->spouse) ? 'Married' : 'Single';
+}
+
+$searchCellClass = ' top';
+?>
+<div class="well wishing-well">
+    <div class=search-results>
+        <table class=search-results>
+            <tr class=search-result>
+            <?php
+            if (isset($this->client)) {
+                $viewClientUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
+                    . urlencode($this->client->getId()));
+            ?>
+            <tr class="search-result even">
+                <th class="search-cell first<?php echo $searchCellClass; ?>">Client ID</th>
+                <td class="search-cell id<?php echo $searchCellClass; ?>"><a href="<?php $this->escape($viewClientUrl) ?>"><?php echo $this->escape($this->client->getId()); ?></a></td>
+                <th class="search-cell<?php echo $searchCellClass; ?>">Name</th>
+                <td class="search-cell name<?php echo $searchCellClass; ?>"><?php echo $this->escape($this->client->getFullName()); ?></td>
+                <th class="search-cell<?php echo $searchCellClass; ?>">Phone</th>
+                <td class="search-cell<?php echo $searchCellClass; ?>"><?php echo $this->escape($this->client->getFormattedPhone()); ?></td>
+                <td class="search-cell last<?php echo $searchCellClass; ?>"><a href="<?php echo $viewClientUrl; ?>" class="btn btn-mini btn-info">Go to Client</a></td>
+            </tr>
+            <?php
+                $searchCellClass = '';
+            }
+            ?>
+            <tr class="search-result even">
+                <th class="search-cell first<?php echo $searchCellClass; ?>">Status</th>
+                <?php
+                if (isset($this->spouse)) {
+                    $viewSpouseUrl  = $this->baseUrl(App_Resources::MEMBER . '/viewClient/id/'
+                        . urlencode($this->spouse->getId()));
+                ?>
+                <td class="search-cell <?php echo $searchCellClass; ?>"><?php echo $this->escape($maritalStatus); ?></td>
+                <th class=search-cell>Spouse</th>
+                <td class="search-cell name"><?php echo $this->escape($this->spouse->getFullName()); ?></td>
+                <th class=search-cell>Spouse ID</th>
+                <td class=search-cell><a href="<?php echo $this->escape($viewSpouseUrl); ?>"><?php echo $this->escape($this->spouse->getId()); ?></a></td>
+                <td class="search-cell last"><a href="<?php echo $this->escape($viewSpouseUrl); ?>" class="btn btn-mini btn-info">Go to Spouse</a></td>
+                <?php } else { ?>
+                <td colspan=6 class="search-cell <?php echo $searchCellClass; ?>"><?php echo $this->escape($maritalStatus); ?></td>
+                <?php } ?>
+            </tr>
+            <tr class="search-result even">
+                <th class="search-cell bot first">Address</th>
+                <td colspan=5 class="search-cell bot"><?php echo $this->escape($this->addr->getFullAddr()); ?></td>
+    <td class="search-cell last"><?php if (isset($this->client) && $this->client->isDoNotHelp()) { ?><span class="label label-important">Do not help</span><?php } ?></td>
+            </tr>
+        </table>
+    </div>
+
+    <?php if ($this->householders) { ?>
+    <table class="table table-bordered table-striped">
+    <tr>
+        <th>Household Member Name</th>
+        <th>Relationship</th>
+        <th>Birth Date</th>
+        <th>Departure Date</th>
+    </tr>
+    <?php foreach ($this->householders as $householder) { ?>
+    <tr>
+        <td><?php echo $this->escape($householder->getFullName()); ?></td>
+        <td><?php echo $this->escape($householder->getRelationship()); ?></td>
+        <td><?php echo $this->escape(App_Formatting::formatDate($householder->getBirthDate())); ?></td>
+        <td><?php echo $this->escape(App_Formatting::formatDate($householder->getDepartDate())); ?></td>
+    </tr>
+    <?php } ?>
+    </table>
+    <?php } else { ?>
+    <p class="search-results help-block">No other household members listed.</p>
+    <?php } ?>
+</div>

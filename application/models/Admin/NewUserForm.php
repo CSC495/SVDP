@@ -57,7 +57,7 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
 		$home = $this->addElement('text', 'home', array(
 					'filters'    => array('StringTrim','Digits'),
 					'required'   => false,
-					'class'      => 'phone',
+					'class'      => 'phone requireone',
 					'label'      => 'Home Phone:',
 					'validators' => array(
 					array('StringLength', true, array(
@@ -73,7 +73,7 @@ class Application_Model_Admin_NewUserForm extends Twitter_Bootstrap_Form_Horizon
 		$cell = $this->addElement('text', 'cell', array(
                    'filters'    => array('StringTrim','Digits'),
                    'required'   => false,
-				   'class'      => 'phone',
+		   'class'      => 'phone requireone',
                    'label'      => 'Cell Phone:',
 				   'validators' => array(
 					array('StringLength', true, array(
