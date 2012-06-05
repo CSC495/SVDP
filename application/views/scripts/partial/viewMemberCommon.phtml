@@ -1,19 +1,18 @@
 <tr <?php echo $this->rowId; ?>class='search-result <?php echo $this->rowStripeClass; ?>'>
     <th class='search-cell top first name'>Name</th>
-    <td class='search-cell top'><?php echo $this->escape($this->user->getFullName()); ?></td>
-    <th class='search-cell top id'>User Id</th>
-    <td class='search-cell top'><?php echo $this->escape($this->user->getUserId()); ?></td>
-    <th class='search-cell top'>Email</th>
-    <td class='search-cell top'><?php echo $this->escape($this->user->getEmail()); ?></td>
-    <td class='search-cell top last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId())); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
-    
+    <td class='search-cell top name'><?php echo $this->escape($this->user->getFullName()); ?></td>
+    <th class='search-cell top name'>Email</th>
+    <td class='search-cell top name'><?php echo $this->escape($this->user->getEmail()); ?></td>
+    <th class='search-cell top'>Role</th>
+    <td class='search-cell top'><?php echo $this->escape(App_Formatting::formatRole($this->user->getRole())); ?></td>
+    <td class='search-cell top icon last'><?php if ($this->showEditBtn) { ?><a href="<?php echo $this->escape($this->baseUrl(App_Resources::ADMIN .'/modify/id/' . urlencode($this->user->getUserId()))); ?>" class='btn btn-mini'>Edit</a><?php } ?></td>
 </tr>
 <tr class='search-result <?php echo $this->rowStripeClass; ?>'>
-    <th class='search-cell bot first'>Home Phone</th>
-    <td class='search-cell bot'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getHomePhone())); ?></td>
-    <th class='search-cell bot'>Cell Phone</th>
-    <td class='search-cell bot'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getCellPhone())); ?></td>
-    <th class='search-cell bot'>Role</th>
-    <td class='search-cell bot'><?php echo $this->escape(App_Formatting::formatRole($this->user->getRole())); ?></td>
-    <td class="search-cell last"><?php if (!$this->user->isActive()) { ?><span class="label label-important">Inactive</span><?php } ?></td>
+    <th class='search-cell bot first name'>Home Phone</th>
+    <td class='search-cell bot name'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getHomePhone())); ?></td>
+    <th class='search-cell bot name'>Cell Phone</th>
+    <td class='search-cell bot name'><?php echo $this->escape(App_Formatting::formatPhone($this->user->getCellPhone())); ?></td>
+    <th class='search-cell bot name'><?php if ($this->showId) { echo "User Id"; }?></th>
+    <td class='search-cell bot'><?php if($this->showId) { echo $this->escape($this->user->getUserId()); }?></td>
+    <td class="search-cell icon last"><?php if (!$this->user->isActive()) { ?><span class="label label-important">Inactive</span><?php } ?></td>
 </tr>

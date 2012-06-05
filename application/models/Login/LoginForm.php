@@ -53,6 +53,7 @@ class Application_Model_Login_LoginForm extends Twitter_Bootstrap_Form_Vertical
                    'required'   => true,
                    'label'      => 'Password:',
 				   'class'      => 'input-large',
+		   'class'	=> 'required',
                ));
         
 		// Used to indicate errors

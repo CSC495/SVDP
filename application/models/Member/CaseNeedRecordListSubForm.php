@@ -87,6 +87,15 @@ class Application_Model_Member_CaseNeedRecordListSubForm
         return $this;
     }
 
+    public function isValid($data)
+    {
+        foreach ($this->_recordsSubForm->getSubForms() as $caseNeedSubForm) {
+            $caseNeedSubForm->amount->addFilter('LocalizedToNormalized');
+        }
+
+        return parent::isValid($data);
+    }
+
     protected function initSubForm($caseNeedSubForm)
     {
         $caseNeedSubForm->addPrefixPath('App_Form', 'App/Form/');
@@ -129,18 +138,19 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 )),
             ),
             'decorators' => array(
+                'FieldSize',
                 'ViewHelper',
                 'Addon',
                 'ElementErrors',
                 'Wrapper',
                 array('HtmlTag', array('tag' => 'td', 'closeOnly' => true)),
             ),
-            'class' => 'span3',
+            'dimension' => 3,
         ));
 
         $caseNeedSubForm->addElement('text', 'amount', array(
             'required' => true,
-            'filters' => array('StringTrim', 'LocalizedToNormalized'),
+            'filters' => array('StringTrim'),
             'validators' => array(
                 array('NotEmpty', true, array(
                     'type' => 'string',
@@ -155,7 +165,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
                 )),
             ),
             'maxlength' => 10,
-            'class' => 'span2',
+            'dimension' => 2,
             'prepend' => '$',
         ));
 
@@ -191,7 +201,7 @@ class Application_Model_Member_CaseNeedRecordListSubForm
     {
         $caseNeedSubForm->id->setValue($caseNeed->getId());
         $caseNeedSubForm->need->setValue($caseNeed->getNeed());
-        $caseNeedSubForm->amount->setValue($caseNeed->getAmount());
+        $caseNeedSubForm->amount->setValue(App_Formatting::formatCurrency($caseNeed->getAmount()));
 
         if ($this->_showStatus) {
             $this->updateStatus($caseNeedSubForm, $caseNeed);
@@ -234,11 +244,15 @@ class Application_Model_Member_CaseNeedRecordListSubForm
             $referral = $referralOrCheckReq;
 
             $status  = '<span class="label label-info">Referred</span>';
-            $status2 = 'Referral: '
+            $status2 = '<abbr title="'
+                     . htmlspecialchars($referral->getReason())
+                     . '">'
+                     . 'Referral: '
                      . htmlspecialchars($referral->getReferredTo())
                      . ' ('
                      . htmlspecialchars(App_Formatting::formatDate($referral->getDate()))
-                     . ')';
+                     . ')'
+                     . '</abbr>';
         } else if ($referralOrCheckReq instanceof Application_Model_Impl_CheckReq) {
             $this->setSubFormReadOnly($caseNeedSubForm, true);
 

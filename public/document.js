@@ -1,5 +1,3 @@
-var targetUrl;
-
 function initDocView() {
     // Create a dialog to confirm the case close operation.
     var deleteDoc = $('.deleteDoc');

@@ -6,6 +6,12 @@
 class App_Nav
 {
 
+    /**
+     * Navigation links are stored as an array of arrays, indexed first by user role and second by
+     * URL relative to the site's root.
+     *
+     * @var string[][]
+     */
     private static $_NAV_LINKS_BY_ROLE = array(
         // Navigation for general volunteers.
         App_Roles::MEMBER => array(
@@ -42,7 +48,7 @@ class App_Nav
      * paths relative to the site's base URL and whose values are page names.
      *
      * @param string $role
-     * @return array
+     * @return string[]
      */
     public static function getNavLinksByRole($role) {
         return isset(self::$_NAV_LINKS_BY_ROLE[$role]) ? self::$_NAV_LINKS_BY_ROLE[$role] : array();
