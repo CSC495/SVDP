@@ -5,13 +5,7 @@
 <table>
     <tr>
         <td>&nbsp;</td><td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td>
-        <td>
-            <form action="<?php echo $baseUrl->baseUrl('/report/ocapdf/')?>" method=post>
-                <input type="hidden" name="startDate" value="<?php echo $this->start ?>">
-                <input type="hidden" name="endDate" value="<?php echo $this->end ?>">
-                <input type="submit" value="Generate PDF">    
-            </form>
-        </td>      
+        <td>&nbsp;</td> <td>&nbsp;</td>    
     </tr>
     <tr>
         <td>&nbsp;</td><td><h4><center>On Call Activities Report&nbsp;</center></h4></td><td>&nbsp;</td>
@@ -96,6 +90,19 @@
         <td><strong>Estimated # of Miles: </strong>&nbsp;&nbsp;<?php echo $this->escape($this->totalMiles) ?>&nbsp;</td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+            <form action="<?php echo $baseUrl->baseUrl('/report/ocapdf/')?>" method=post>
+                <input type="hidden" name="startDate" value="<?php echo $this->start ?>">
+                <input type="hidden" name="endDate" value="<?php echo $this->end ?>">
+                <input type="submit" value="Generate PDF" class="btn btn-success">    
+            </form>
+        </td>
+        <td>&nbsp;</td><td>&nbsp;</td>
     </tr>
 </table>
 

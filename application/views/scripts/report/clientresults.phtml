@@ -7,12 +7,7 @@
 <table>
     <tr>
         <td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td><td>&nbsp;</td>
-        <td>
-            <form action="<?php echo $baseUrl->baseUrl('/report/clientpdf/')?>" method=post>
-            <input type="hidden" name="clientid" value="<?php echo $this->client->getId() ?>">
-            <input type="submit" value="Generate PDF">
-            </form>
-        </td>      
+         <td>&nbsp;</td>    
     </tr>
     <tr>
         <td><h4><center>Client Information Report&nbsp;</center></h4></td><td>&nbsp;</td><td>&nbsp;</td>
@@ -88,6 +83,19 @@
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Veteran:&nbsp;<?php if($this->client->isVeteran()){echo "Yes";}else{echo "No";} ?>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+            <form action="<?php echo $baseUrl->baseUrl('/report/clientpdf/')?>" method=post>
+            <input type="hidden" name="clientid" value="<?php echo $this->client->getId() ?>">
+            <input type="submit" value="Generate PDF" class="btn btn-success">
+            </form>
+        </td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>

@@ -3,12 +3,7 @@
 <table>
     <tr>
         <td><h2><center>St. Vincent de Paul&nbsp;&nbsp;</center></h2></td>
-        <td>
-            <form action="<?php echo $baseUrl->baseUrl('/report/reimbursepdf/')?>" method=post>
-                <input type="hidden" name="caseId" value="<?php echo $this->escape($this->request[0]->getId()) ?>">
-                <input type="submit" value="Generate PDF">
-            </form>
-        </td>
+        <td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     <tr>
         <td><h4><center>Reimbursement Report&nbsp;</center></h4></td><td>&nbsp;</td>
@@ -132,12 +127,24 @@
             echo '</td><td>&nbsp;</td>';
             echo '</tr>';
     ?>
+    <tr>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+            <form action="<?php echo $baseUrl->baseUrl('/report/reimbursepdf/')?>" method=post>
+                <input type="hidden" name="caseId" value="<?php echo $this->escape($this->request[0]->getId()) ?>">
+                <input type="submit" value="Generate Excel Doc" class="btn btn-success">
+            </form>
+        </td>       
+    </tr>
+    <tr>
+        <td>
+            Excel Reimbursement Form will only include consider the following types:<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;Rent, Water, Gas, Electric
+        </td>
+    </tr>
    
 </table>
 
-<p><br />Excel Reimbursement Form will only include consider the following types:<br />
-&nbsp;&nbsp;&nbsp;&nbsp;Rent <br />
-&nbsp;&nbsp;&nbsp;&nbsp;Water <br />
-&nbsp;&nbsp;&nbsp;&nbsp;Gas <br />
-&nbsp;&nbsp;&nbsp;&nbsp;Electric</p>
 
