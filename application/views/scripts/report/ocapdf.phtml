@@ -107,12 +107,10 @@
             </tr>
         </table>";
     
-    
+    $this->layout()->disableLayout();
     $pdf = new HTML2FPDF('P', 'mm', 'Letter');
     $pdf->AddPage();
     $pdf->WriteHTML($htmlFile);
-    $pdf->Output('C:/SVDPReports/OCAReport.pdf', 'F');
+    $pdf->Output('OCAReport.pdf', 'D');
  ?>
  
-  <p>The Report has been successfully created.<br />
-    It was saved as 'OCAReport.pdf'</p>

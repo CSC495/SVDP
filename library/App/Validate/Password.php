@@ -27,7 +27,7 @@ class App_Validate_Password extends Zend_Validate_Abstract
     protected $_minimum = 8;
     
         /**
-     * Constant for degining max password length
+     * Constant for beginning max password length
      * @var int
      */
     protected $_maximum = 256;

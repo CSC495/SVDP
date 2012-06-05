@@ -103,6 +103,10 @@ class ReportController extends Zend_Controller_Action
 	$totalMiles = 0;
 	$teleHelped = 0;
 	$homeHelped = 0;
+	if($end == null || $start == null)
+	{
+	    $this->_helper->redirector('error');
+	}
 	$miles = $service->getCaseVisitMiles($start, $end);
 	foreach($miles as $key=>$value)
 	{
@@ -134,7 +138,7 @@ class ReportController extends Zend_Controller_Action
 	}
 	$this->view->totalHours = $totalHours;
 	
-	$refer = $service->getGenReports($start, $end);
+	$refer = $service->getOCAReports($start, $end);
 	$referrals = 0;
 	$referHelped = 0;
 	
@@ -145,7 +149,8 @@ class ReportController extends Zend_Controller_Action
 	}
 	
 	$this->view->referrals = $referrals;
-	$this->view->referHelped = $referHelped;	
+	$this->view->referHelped = $referHelped;
+	
     }
     /**queries database on call activities information displays in pdf*/ 
     public function ocapdfAction(){
@@ -194,7 +199,7 @@ class ReportController extends Zend_Controller_Action
 	}
 	$this->view->totalHours = $totalHours;
 	
-	$refer = $service->getGenReports($start, $end);
+	$refer = $service->getOCAReports($start, $end);
 	$referrals = 0;
 	$referHelped = 0;
 	

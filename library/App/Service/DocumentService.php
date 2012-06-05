@@ -149,7 +149,7 @@ class App_Service_DocumentService {
      *@return array of Application_Model_Impl_GenReport
      */
     //THIS SHOULD BE RENAMED
-    public function getGenReports($startDate, $endDate)
+    public function getOCAReports($startDate, $endDate)
     {
         $newStartDate = new Zend_Date($startDate, 'MM-dd-YYYY', 'en');
         $newStartDate = $newStartDate->get('YYYY-MM-dd');

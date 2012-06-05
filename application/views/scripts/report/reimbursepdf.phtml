@@ -63,7 +63,7 @@
     <table border="1">
         <font >
             <tr>
-                <td align="center" colspan="11" ><strong>St. Vincent dePaul Society -- Financial Assistance Fund</strong></td>
+                <td align="center" colspan="11" ><strong>St. Vincent de Paul Society -- Financial Assistance Fund</strong></td>
             </tr>
             <tr>
                 <td align="center" colspan="11">213 Main Street, West Chicago, IL 60185
@@ -139,7 +139,7 @@
             <tr>        
                 <td colspan="2">Mortgage/Landlord Name</td>
                 <td colspan="2"><?php if($rent != null){echo $rent->getPayeeName();} ?></td>
-                <td colspan="2"><?php if($rent != null){echo $rent->getAccountNumber();} ?></td>
+                <td colspan="2"><?php if($rent != null){echo $rent->getCheckNumber();} ?></td>
                 <td colspan="2"><?php if($rent != null){echo $format->formatCurrency($rent->getAmount());} ?></td>
                 <td>&nbsp;</td><td>&nbsp;</td>
             </tr>
