@@ -69,13 +69,11 @@
             </tr>
         </table>";
     /** @param $pdf new pdf object*/
+    $this->layout()->disableLayout();
     $pdf = new HTML2FPDF('P', 'mm', 'Letter');
     $pdf->AddPage();
     $pdf->WriteHTML($htmlFile);
-//    $pdf->Output(APPLICATION_PATH . DIRECTORY_SEPARATOR . 'reports'. DIRECTORY_SEPARATOR . $lName . $fName . 'InfoReport.pdf', 'F');
     $pdf->Output($lName . $fName . ".pdf",'D');    
-
-
  ?>
- <p>The Report has been successfully created.<br />
-    It was saved as '<?php echo $lName; echo $fName;?>InfoReport.pdf'</p>
+ 
+
