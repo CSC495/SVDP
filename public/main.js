@@ -396,15 +396,16 @@ function renderMap(centerCoords, clientCoords) {
 
 function initEditClientForm() {
     // Attach event handlers.
+    var clientIdTextField    = $('#clientId');
     var maritalStatusDropbox = $('#maritalStatus');
-    var doNotHelpCheckbox = $('#doNotHelp');
-    var changeTypeDropbox = $('#changeType');
+    var doNotHelpCheckbox    = $('#doNotHelp');
+    var changeTypeDropbox    = $('#changeType');
 
-    var memberSpouseDivs = $('.member-spouse');
+    var memberSpouseDivs   = $('.member-spouse');
     var memberDoNotHelpDiv = $('.member-donothelp');
 
     var addrTextFields = $('#street, #apt, #city, #state, #zip');
-    var addrDropboxes = $('#resideParish');
+    var addrDropboxes  = $('#resideParish');
 
     function update() {
         if (maritalStatusDropbox.val() == 'Married') {
@@ -419,7 +420,8 @@ function initEditClientForm() {
             memberDoNotHelpDiv.addClass('invisible');
         }
 
-        if (!changeTypeDropbox.length || changeTypeDropbox.val() == '') {
+        if ((!changeTypeDropbox.length && clientIdTextField.length)
+                || changeTypeDropbox.val() == '') {
             addrTextFields.attr('readonly', 'readonly');
             addrDropboxes.attr('disabled', 'disabled');
         } else {
