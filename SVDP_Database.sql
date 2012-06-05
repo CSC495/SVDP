@@ -134,8 +134,8 @@ CREATE TABLE case_visit(
 	visit_id INT NOT NULL AUTO_INCREMENT,
 	case_id INT,
 	visit_date DATE,
-     	miles DECIMAL(3,2),
-     	hours DECIMAL(3,2),
+     	miles DECIMAL(5,2),
+     	hours DECIMAL(5,2),
 	PRIMARY KEY (visit_id),
 	FOREIGN KEY (case_id) REFERENCES client_case(case_id)
 ) ENGINE = InnoDB;
