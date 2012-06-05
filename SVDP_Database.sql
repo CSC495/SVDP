@@ -134,8 +134,8 @@ CREATE TABLE case_visit(
 	visit_id INT NOT NULL AUTO_INCREMENT,
 	case_id INT,
 	visit_date DATE,
-     	miles DECIMAL(3,2),
-     	hours DECIMAL(3,2),
+     	miles DECIMAL(5,2),
+     	hours DECIMAL(5,2),
 	PRIMARY KEY (visit_id),
 	FOREIGN KEY (case_id) REFERENCES client_case(case_id)
 ) ENGINE = InnoDB;
@@ -240,3 +240,10 @@ CREATE TABLE documents(
 	internal_flag TINYINT(1),
 	PRIMARY KEY (doc_id)
 ) ENGINE = InnoDB;
+
+INSERT INTO user VALUES
+("admin", "abc12345", "Default",  "Administrator", "noreply@raphaelsvdp.org", 1231231234, 1231231234, 'A', 0, 1),
+("migrate", "abc12345", "User",  "Migration", "migrate@raphaelsvdp.org", 1231231234, 1231231234, 'M', 0, 1);
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="admin";
+update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="migrate";
+

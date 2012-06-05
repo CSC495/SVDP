@@ -5,8 +5,8 @@ INSERT INTO user VALUES
 ("rmoney", "abc12345", "Rain",  "Money", "makeitrain@123.com", 1231231234, 1231231234, 'T', 0, 1),
 ("dboss", "abc12345", "Da",  "Boss", "dboss@123.com", 1231231234, 1231231234, 'A', 0, 1),
 ("dmigrate", "abc12345", "Data",  "Migration", "dmigrate@123.com", 1231231234, 1231231234, 'D', 0, 1),
+("admin", "abc12345", "Da",  "Boss", "dboss@123.com", 1231231234, 1231231234, 'A', 0, 1),
 ("cpassword", "abc12345", "Change",  "Password", "cpassword@123.com", 1231231234, 1231231234, 'M', 1, 1);
-
 
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="asmith";
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="badams";
@@ -16,14 +16,12 @@ update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 2
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="dmigrate";
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="cpassword";
 
-
 INSERT INTO client VALUES
 (NULL, "badams", "John", "Doe", NULL, "Married", '1968-12-12', 1111, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Raphael", 1),
 (NULL, "badams", "Kathy", "Doe", NULL, "Married", '1968-1-1', 1114, 1231231235, 1231231236, 1231231237, '2008-12-12', "St. Raphael", 0),
 (NULL, "asmith", "Mary", "Stevens", "Jane", "Single", '1968-1-13', 1112, 1231231238, 1231231239, 1231231240, '2006-7-12', "SS. Peter & Paul", 0),
 (NULL, "jcombs", "Julie", "Johnson", "Rose", "Divorced", '1973-10-3', 1117, 1231231244, 1231231245, 1231231246, '2010-3-8', "St. Raphael", 0),
 (NULL, "jcombs", "Jake", "Johnson", NULL, "Divorced", '1970-8-2', 1113, 1231231241, 1231231242, 1231231243, '2010-3-8', "St. Raphael", 0);
-
 
 INSERT INTO address VALUES
 (NULL, 1, "13302 Wellesley Circle", NULL, "Plainfield",'IL', '60585', "Other"),
