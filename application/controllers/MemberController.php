@@ -733,11 +733,15 @@ class MemberController extends Zend_Controller_Action
         // to the case view page.
         $userId = Zend_Auth::getInstance()->getIdentity()->user_id;
 
+        $needs = $case->getNeeds();
+        $need  = $needs[$needId];
+
         $checkReq = $this->view->form->getCheckReq();
         $checkReq
             ->setCaseNeedId($needId)
             ->setUserId($userId)
             ->setRequestDate(date('Y-m-d'))
+            ->setAmount($need->getAmount())
             ->setStatus('P');
 
         $service->createCheckRequest($checkReq);

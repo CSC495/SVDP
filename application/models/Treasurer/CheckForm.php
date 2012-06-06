@@ -369,6 +369,16 @@ class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horiz
 	    }
 	    
     }
+
+    public function isValid($data)
+    {
+        if ($this->amount->getFilter('LocalizedToNormalized') === false) {
+            $this->amount->addFilter('LocalizedToNormalized');
+        }
+
+        return parent::isValid($data);
+    }
+
     /**
      * Returns a string representing which button was pressed
      */

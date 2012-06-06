@@ -72,16 +72,28 @@ class App_Service_TreasurerService {
     }
     
     /**
-     *Updates the indicated check request with data in the given CheckReq object.
+     *Updates the indicated check request with data in the given CheckReq object. Also updates the
+     *referenced case need with the changed check request amount, if any.
      *
      *@param Application_Model_Impl_CheckReq
      *@return void
     */
     public function updateCheckRequest($reqObj)
     {
-	$reqData = $this->disassembleCheckRequestModel($reqObj);
-	$where = $this->_db->quoteInto('checkrequest_id = ?', $reqObj->getId());
-	$this->_db->update('check_request', $reqData, $where);
+        $this->_db->beginTransaction();
+        try {
+            $reqData = $this->disassembleCheckRequestModel($reqObj);
+            $where = $this->_db->quoteInto('checkrequest_id = ?', $reqObj->getId());
+            $this->_db->update('check_request', $reqData, $where);
+
+            $needData = array('amount' => $reqObj->getAmount());
+            $where = $this->_db->quoteInto('caseneed_id = ?', $reqObj->getCaseNeedId());
+            $this->_db->update('case_need', $needData, $where);
+
+            $this->_db->commit();
+        } catch (Exception $ex) {
+            $this->_db->rollBack();
+        }
     }
     
     /**
@@ -126,7 +138,7 @@ class App_Service_TreasurerService {
     /****** PRIVATE GET QUERIES  ******/
     
     /**
-     *Returns the amount of the indicated chech request.
+     *Returns the amount of the indicated check request.
      *
      *@param int indicated check request id
      *@return void
