@@ -246,4 +246,5 @@ INSERT INTO user VALUES
 ("migrate", "abc12345", "User",  "Migration", "migrate@raphaelsvdp.org", 1231231234, 1231231234, 'M', 0, 1);
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="admin";
 update user set password=sha2('tIHn1G$0 d1F5r 3tyHW33 tnR1uN5jt@ L@8abc12345', 256) where user_id="migrate";
-
+INSERT INTO parish_funds VALUES	  	
+(20000.00, 1, 5000.00, 4, 1500.00);
