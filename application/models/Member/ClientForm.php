@@ -173,7 +173,6 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
         ));
 
         $this->addElement('text', 'ssn4', array(
-            'required' => true,
             'filters' => array('StringTrim'),
             'validators' => array(
                 array('NotEmpty', true, array(
@@ -193,6 +192,7 @@ class Application_Model_Member_ClientForm extends Twitter_Bootstrap_Form_Horizon
                 )),
             ),
             'label' => 'Last four digits of SSN',
+            'description' => '(Optional)',
             'maxlength' => 4,
             'dimension' => 1,
         ));
