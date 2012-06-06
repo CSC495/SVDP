@@ -29,26 +29,11 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         ));
 
         $this->addElement('text', 'amount', array(
-            'value' => App_Formatting::formatCurrency($need->getAmount()),
-            'required' => true,
-            'filters' => array('StringTrim'),
-            'validators' => array(
-                array('NotEmpty', true, array(
-                    'type' => 'string',
-                    'messages' => array('isEmpty' => 'Check amount must be provided.'),
-                )),
-                array('Float', true, array(
-                    'messages' => array('notFloat' => 'Check amount must be a number.'),
-                )),
-                array('GreaterThan', true, array(
-                    'min' => 0,
-                    'messages' => array('notGreaterThan' => 'Check amount be a positive number.'),
-                )),
-            ),
             'label' => 'Amount',
-            'maxlength' => 10,
+            'value' => App_Formatting::formatCurrency($need->getAmount()),
             'dimension' => 2,
             'prepend' => '$',
+            'readonly' => true,
         ));
 
         $this->addElement('textarea', 'comment', array(
@@ -186,18 +171,10 @@ class Application_Model_Member_CheckReqForm extends Twitter_Bootstrap_Form_Horiz
         );
     }
 
-    public function isValid($data)
-    {
-        $this->amount->addFilter('LocalizedToNormalized');
-
-        return parent::isValid($data);
-    }
-
     public function getCheckReq()
     {
         $checkReq = new Application_Model_Impl_CheckReq();
         $checkReq
-            ->setAmount(App_Formatting::emptyToNull($this->amount->getValue()))
             ->setComment(App_Formatting::emptyToNull($this->comment->getValue()))
             ->setAccountNumber(App_Formatting::emptyToNull($this->accountNumber->getValue()))
             ->setPayeeName(App_Formatting::emptyToNull($this->payeeName->getValue()))
