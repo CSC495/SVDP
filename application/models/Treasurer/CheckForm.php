@@ -1,5 +1,5 @@
 <?php
-
+//Test edit in github
 class Application_Model_Treasurer_CheckForm extends Twitter_Bootstrap_Form_Horizontal 
 {
     const INITIAL = 'INITIAL'; // Used to display all options on the check request form;
